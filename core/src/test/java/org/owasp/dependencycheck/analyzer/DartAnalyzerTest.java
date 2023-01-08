@@ -126,7 +126,7 @@ public class DartAnalyzerTest extends BaseTest {
     public void testDartPubspecYamlAnalyzer() throws AnalysisException {
         final Engine engine = new Engine(getSettings());
         final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
-                "dart/pubspec.yaml"));
+                "dart.yaml/pubspec.yaml"));
         dartAnalyzer.analyze(result, engine);
 
         assertThat(engine.getDependencies().length, equalTo(7));
@@ -185,6 +185,25 @@ public class DartAnalyzerTest extends BaseTest {
         assertThat(dependency7.getVersion(), equalTo("2.17.0"));
     }
 
+    /**
+     * Test case for issue #5008.
+     * @throws AnalysisException 
+     */
+    @Test
+    public void testDartPubspecYamlAnalyzerAddressbook() throws AnalysisException {
+        final Engine engine = new Engine(getSettings());
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
+                "dart.addressbook/pubspec.yaml"));
+        dartAnalyzer.analyze(result, engine);
+
+        assertThat(engine.getDependencies().length, equalTo(1));
+
+        Dependency dependency1 = engine.getDependencies()[0];
+       
+        assertThat(dependency1.getName(), equalTo("protobuf"));
+        assertThat(dependency1.getVersion(), equalTo(""));
+    }
+    
     @Test
     public void testIsEnabledIsTrueByDefault() {
         assertTrue(dartAnalyzer.isEnabled());

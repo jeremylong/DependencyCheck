@@ -1,0 +1,794 @@
+#**
+This file is part of dependency-check-core.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+
+@author Jeremy Long <jeremy.long@owasp.org>
+@version 1.4
+*#
+
+
+#[[
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Dependency-Check Report</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="shortcut icon" href="data:;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAVLSURBVFhHvZdvbFRFEMB3913v9Vr+FKUNRdtrewg1lQgRE0gMYkJSowYMwcSPkGDwg8ZigMR+UYzGaIuAEj+R+IfE+EUlRL+QYAwhGBMqkFQDpO1xd/YPBaSU9u767r0dZ5a513vtXVsq8Zcsb3bu9c3szuzsIMU8iEaj5fhYJlzRYCkZ7Utd+wbnQL+Nd0TeoyeAPLFgf/oiyTNxXw6g4WUhTz4JEtaiNXLCEE8l3seHJjlzsOJHfLxMsgHE4cje9B6eTUPxc0ZoxbFHG1qVFq9rCRsKjc+KFG3oFGQ6Kw6xJsCsDqDxNZYWbWSYVUFAJFkyaA2XWAxiHIlcGPukYg1rDCVDQKsOadmqBaxllY8CuKHBuqOlHlNKufFk/GdUmxxoeqTpMbBg1dGXRlZtqHc2R8rgedIXgk4eqNyXMblS1AE2vhWNP84qAxl2hewno6wyFHOAZOLAc6PRbU+kd2OyrmbVPTg3pjlQzDgazGmh40rKMY3LZrVBCi/Tl0z+gqJxYGV9fWNOWC0kF3Jm1/C2pZWwk6cG2olpOcDb7hsHgLQGcUWAGs0bV1K7EuSQFbbOLKmuPkOvkZ64mkzG8bXz5BirDBuP1fzQP6I+5yl9eAS9vxjYAVz9esx0P2a0ck+73VKGPFaR8Vtpx7k0ODiYZlVJmpcvfzirwi1SyUWsMiF5ZXX6A1zJzsq9mRO+A7T1lO2BIyZVN/6bJZFWnQO4Wl1dnerq6sqRbq401TWtw9qxjGT6zhfbs3+0Hrw+THPfgVhdA8Xdz3j84RpIdZOngrY1kUgMOR3lG1kVREkHhBp3smJ4wdLmf+TuoJOxuroW3NI6zN6L9B1W33MAV1+FW99mNIgUclBaYtCPObjx3lTqT5KxqJyk52y4nv5u4f7stzzNY+Hww0ncS0JXBIoDWryRN07JVlVTc9Xo74OQpV7F6ndk5CO7iVVEwDihVqxYYVtKrOc5bckIgHJIpnhl3MxfpWIuJZyWAMdo0Io1AOXMJFI0hm3VzrOiYG2BmsLEAz0Zd9DWzZmyHd/tLt+bOUmDthuzun3C8dryjqCDdzF5tqcPRr40f1AElcvl6lgmJkC5d1kWYS8bZ3HOVL0z0TcKiz70tBjAML4opVgsoeB2nIJyXfeKJfRxGo52j4ds+xwWmN9t1/7t8sDALX7vvqjdd31cChgi40YhZdXUSyiPGkAjPalUL43+/v6/e3p6btC4PHB5XsZ9sMqxZJAWbGIxwJz6gfkAWl5jcUYUbU1+3D60uIp0PPwiNR/wZAW3HERRh5Sy4C3LEhdoiAn368b6xhdoxKLRVn5nXmDpfZZFg7J00f5QgRYJlkV5GWyJVnk2yRpUKBaLFZ6QOYMFaAdW0x08xcXDr5E9E8V3wAmFD7NseO3pMf8uh1xuJYuzQuGjMJreT4rJc4/XrvZk6aZ0yZ47WPkm47M55mxnET23IrW1tRU8DUBFBlf2faYzcptGuefETRix9+NXDNhLHJmpPTenAON1xMyQRbZevaV5ooanwrbsdSz6kPF8kaEz7o9CqOEAvPO59yuFccBR4a/MjGnfNDp5M2IzgQnpd8QB41NBoxRvarWyVrgRe77Ad4vhHzX6H41S8l2eitO9ZR+/+dNDZ3lqbsW+VN/52x12YxlY04xbZd5IqUSbCd8BSiLby13AlTWwSnx6tvKNY10LzCmhm7E3kTiFYqAp/a/4lZCSUYIX6Frffmb86K6nxqJknDoZVD1Q48S0ajc1FBTXU8mFzVs/G77OmgdK0XLLZ7nNnGHuXvmn/w9yYrwzUvIefzAI8S83C2sS1J4rmAAAAABJRU5ErkJggg==" />
+        <style type="text/css">
+            #modal-background {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: white;
+                opacity: .50;
+                -webkit-opacity: .5;
+                -moz-opacity: .5;
+                filter: alpha(opacity=50);
+                z-index: 1000;
+            }
+
+            #modal-content {
+                background-color: white;
+                border-radius: 10px;
+                -webkit-border-radius: 10px;
+                -moz-border-radius: 10px;
+                box-shadow: 0 0 20px 0 #222;
+                -webkit-box-shadow: 0 0 20px 0 #222;
+                -moz-box-shadow: 0 0 20px 0 #222;
+                display: none;
+                height: 240px;
+                left: 50%;
+                margin: -120px 0 0 -160px;
+                padding: 10px;
+                position: fixed;
+                top: 50%;
+                z-index: 1000;
+            }
+            #modal-add-header {
+                display: none;
+            }
+            #modal-add-header.active {
+                display: block;
+            }
+            #modal-background.active, #modal-content.active {
+                display: block;
+            }
+            #modal-text {
+                border: 0;
+                overflow: hidden
+            }
+            #modal-text:focus {
+                outline: none;
+            }
+            .suppresstype {
+                display: none;
+            }
+            .suppresstype.active {
+                display: block;
+            }  
+            .suppressedLabel {
+                cursor: default;
+                padding:1px;
+                background-color: #eeeeee;
+                border: 1px solid #555555;
+                color:#555555;
+                text-decoration:none;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -khtml-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
+            }
+            .copybutton {
+                padding:1px;
+                background-color: #eeeeee;
+                border: 1px solid #555555;
+                color:#555555;
+                text-decoration:none;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -khtml-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
+            }
+            .copybutton:hover {
+                padding:1px;
+                background-color: #dddddd;
+                border: 1px solid #444444;
+                color:#444444;
+                text-decoration:none;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -khtml-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
+            }
+            .modal-button {
+                padding:1px;
+                float:left;
+                background-color: #eeeeee;
+                border: 1px solid #555555;
+                color:#555555;
+                text-decoration:none;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -khtml-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
+            }
+            .modal-button:hover {
+                padding:1px;
+                float:left;
+                background-color: #dddddd;
+                border: 1px solid #333333;
+                color:#333333;
+                text-decoration:none;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -khtml-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
+            }
+            .modal-button-right {
+                padding:1px;
+                float:right;
+                background-color: #eeeeee;
+                border: 1px solid #555555;
+                color:#555555;
+                text-decoration:none;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -khtml-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
+            }
+            .modal-button-right:hover {
+                padding:1px;
+                float:right;
+                background-color: #dddddd;
+                border: 1px solid #333333;
+                color:#333333;
+                text-decoration:none;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+                -khtml-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
+            }
+            .rounded-corners {
+                -moz-border-radius: 20px;
+                -webkit-border-radius: 20px;
+                -khtml-border-radius: 20px;
+                -o-border-radius: 20px;
+                border-radius: 20px;
+            }
+            .hidden {
+                display: none;
+            }
+            .standardsubsection {
+                -moz-border-radius-bottomleft:0px; /* bottom left corner */
+                -webkit-border-bottom-left-radius:0px; /* bottom left corner */
+                border-bottom-left-radius: 0px;
+                border-bottom: 0px solid #ffffff;
+            }
+            .content {
+                margin-top:0px;
+                margin-left:20px;
+                margin-right:20px;
+                margin-bottom:20px;
+                background: #ffffff;
+                padding: 20px;
+            }
+
+            .sectionheader {
+                background-color: #cccccc;
+                margin-top: 20px;
+                margin-right: 20px;
+                margin-left: 20px;
+                margin-bottom: 0px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-left:20px;
+                padding-right:20px;
+                border-top: 1px solid #ccc;
+                border-right: 1px solid #ccc;
+                border-left: 1px solid #ccc;
+                border-bottom: 0px;
+
+                /*
+                -moz-border-radius: 15px;
+                -webkit-border-radius: 15px;
+                -o-border-radius: 15px;
+                border-radius: 15px;
+                */
+
+                /* firefox's individual border radius properties */
+                -moz-border-radius-topleft:15px; /* top left corner */
+                -moz-border-radius-topright:0px; /* top right corner */
+                -moz-border-radius-bottomleft:0px; /* bottom left corner */
+                -moz-border-radius-bottomright:0px; /* bottom right corner */
+
+                /* webkit's individual border radius properties */
+                -webkit-border-top-left-radius:15px; /* top left corner */
+                -webkit-border-top-right-radius:0px; /* top right corner */
+                -webkit-border-bottom-left-radius:0px; /* bottom left corner */
+                -webkit-border-bottom-right-radius:0px; /* bottom right corner */
+                /* ie9+ */
+                border-top-left-radius: 15px;
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 0px;
+                border-bottom-left-radius: 0px;
+            }
+            .sectioncontent {
+                margin-top:0px;
+                margin-left:20px;
+                margin-right:20px;
+                margin-bottom:10px;
+                background: #ffffff;
+
+                padding-top: 10px;
+                padding-bottom: 20px;
+                padding-left:20px;
+                padding-right:20px;
+
+                border-top: 0px;
+                border-right: 1px solid #ccc;
+                border-left: 1px solid #ccc;
+                border-bottom: 1px solid #ccc;
+
+                -moz-border-radius-topleft:0px; /* top left corner */
+                -moz-border-radius-topright:0px; /* top right corner */
+                -moz-border-radius-bottomright:15px; /* bottom right corner */
+                -moz-border-radius-bottomleft:15px; /* bottom right corner */
+
+                /* webkit's individual border radius properties */
+                -webkit-border-top-left-radius:0px; /* top left corner */
+                -webkit-border-top-right-radius:0px; /* top right corner */
+                -webkit-border-bottom-right-radius:15px; /* bottom right corner */
+                -webkit-border-bottom-left-radius:15px; /* bottom right corner */
+                /* ie9+ */
+                border-top-left-radius: 0px;
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 15px;
+                border-bottom-left-radius: 15px;
+            }
+
+            .subsectionheader {
+                background-color: #cccccc;
+                margin-top: 20px;
+                margin-right: 20px;
+                margin-left: 0px;
+                margin-bottom: 0px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                padding-left:20px;
+                padding-right:20px;
+                border-top: 1px solid #ccc;
+                border-right: 1px solid #ccc;
+                border-left: 1px solid #ccc;
+
+                /* firefox's individual border radius properties */
+                -moz-border-radius-topleft:15px; /* top left corner */
+                -moz-border-radius-topright:0px; /* top right corner */
+                -moz-border-radius-bottomright:0px; /* bottom right corner */
+
+                /* webkit's individual border radius properties */
+                -webkit-border-top-left-radius:15px; /* top left corner */
+                -webkit-border-top-right-radius:0px; /* top right corner */
+                -webkit-border-bottom-right-radius:0px; /* bottom right corner */
+                /* ie9+ */
+                border-top-left-radius: 15px;
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 0px;
+            }
+            .subsectioncontent {
+                margin-top:0px;
+                margin-left:0px;
+                margin-right:20px;
+                margin-bottom:10px;
+                background: #ffffff;
+                padding-top: 10px;
+                padding-left: 20px;
+                padding-right: 20px;
+                padding-bottom: 20px;
+                border-top: 0px;
+                border-right: 1px solid #ccc;
+                border-left: 1px solid #ccc;
+                border-bottom: 1px solid #ccc;
+
+                -moz-border-radius-topleft:0px; /* top left corner */
+                -moz-border-radius-topright:0px; /* top right corner */
+                -moz-border-radius-bottomleft:15px; /* bottom left corner */
+                -moz-border-radius-bottomright:15px; /* bottom right corner */
+
+                /* webkit's individual border radius properties */
+                -webkit-border-top-left-radius:0px; /* top left corner */
+                -webkit-border-top-right-radius:0px; /* top right corner */
+                -webkit-border-bottom-left-radius:15px; /* bottom left corner */
+                -webkit-border-bottom-right-radius:15px; /* bottom right corner */
+                /* ie9+ */
+                border-top-left-radius: 0px;
+                border-top-right-radius: 0px;
+                border-bottom-right-radius: 15px;
+                border-bottom-left-radius: 15px;
+
+            }
+            .white {
+                background-color: #ffffff;
+            }
+            .red {
+                background-color: #DF0101;
+            }
+            .left {
+                text-align: left;
+            }
+            .indent {
+                margin-left:20px;
+            }
+            td{
+                vertical-align:text-top;
+                padding:6px;
+                margin:0px;
+            }
+            th {
+                text-align:left;
+                vertical-align:text-top;
+                padding:6px;
+                margin:0px;
+                border-bottom:1px;
+                border-color: black;
+            }
+            table {
+                border: 0px;
+            }
+            table.lined tr:nth-child(even) {
+                background-color: #f3f3f3;
+            }
+            .fullwidth {
+                width:100%;
+            }
+            body {
+                font: 13px "Droid Sans",Arial,"Helvetica Neue","Lucida Grande",sans-serif
+            }
+            ul {
+                margin-top:3px;
+                margin-bottom:3px;
+            }
+            .vulnerable {
+                color: #000;
+            }
+            .notvulnerable {
+                display:none;
+            }
+            .hidden {
+                display:none;
+            }
+            .infolink {
+                text-decoration:none;
+                color: blue;
+                float:right;
+            }
+            .infolink:hover {
+                text-decoration:none;
+                color: blue;
+                float:right;
+            }
+            .disclaimer {
+                color: #888888;
+                font: 9px "Droid Sans",Arial,"Helvetica Neue","Lucida Grande",sans-serif
+            }
+            .sortable {
+                cursor:pointer;
+            }
+            .sortable:hover {
+                text-decoration:underline;
+            }
+            pre {
+                white-space: pre-wrap;
+                font: 13px "Droid Sans",Arial,"Helvetica Neue","Lucida Grande",sans-serif
+            }
+            .underline {
+                text-decoration: underline;
+            }
+            .tooltip {
+              position: relative;
+              display: inline-block;
+              border-bottom: 1px dotted black;
+            }
+
+            .tooltip .tooltiptext {
+              visibility: hidden;
+              width: 220px;
+              background-color: #cccccc;
+              text-align: center;
+              border-radius: 6px;
+              padding: 5px 0;
+
+              /* Position the tooltip */
+              position: absolute;
+              z-index: 1;
+            }
+
+            .tooltip:hover .tooltiptext {
+              visibility: visible;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="459.5" height="150" viewBox="0 0 459.5 150" enable-background="new 0 0 595.28 841.89" xml:space="preserve"><g transform="translate(-79.10464,-172.551)"><path d="m246.1 274.3c-2.6 0-5.3-0.2-6.6-0.5-0.6-0.1-0.9-0.4-0.9-1.1l0-20.4c0-0.7 0.3-1 0.9-1.1 1.3-0.2 4-0.5 6.6-0.5 6.1 0 9.8 3.2 9.8 9.7l0 4c0 6.5-3.7 9.7-9.8 9.7zm4.6-13.7c0-4.2-1.8-5.3-4.6-5.3-0.8 0-1.8 0-2.2 0.1l0 14.4c0.4 0 1.4 0.1 2.2 0.1 2.8 0 4.6-1.1 4.6-5.3l0-4zM273 273.9 273 273.9c-1.1 0.2-2.6 0.4-6 0.4-4 0-7.5-1-7.5-6.6l0-10.2c0-5.6 3.5-6.6 7.5-6.6 3.3 0 4.9 0.2 5.9 0.4 0.4 0.1 0.6 0.2 0.6 0.6l0 2.9c0 0.3-0.3 0.6-0.6 0.6l-6.3 0c-1.4 0-2 0.5-2 2.1l0 2.8 8 0c0.3 0 0.6 0.3 0.6 0.6l0 2.9c0 0.3-0.3 0.6-0.6 0.6l-8 0 0 3.3c0 1.6 0.5 2.1 2 2.1l6.3 0c0.3 0 0.6 0.3 0.6 0.6l0 2.9c0 0.4-0.2 0.6-0.6 0.6zM285.2 266c-0.7 0-1.7-0.1-2.5-0.1l0 7.5c0 0.3-0.3 0.6-0.6 0.6l-4 0c-0.3 0-0.6-0.2-0.6-0.6l0-20.7c0-1 0.4-1.3 1.4-1.5 1.6-0.2 4-0.4 6.3-0.4 4.7 0 9.2 1.6 9.2 7.4l0 0.3c0 5.8-4.6 7.5-9.2 7.5zm3.9-7.7c0-2.2-1.4-3-3.9-3-0.4 0-2.1 0.1-2.5 0.1l0 6.3c0.3 0 2.2 0.1 2.5 0.1 2.7 0 3.9-1 3.9-3.1l0-0.3zM311 273.9c-1.1 0.2-2.6 0.4-6 0.4-4 0-7.5-1-7.5-6.6l0-10.2c0-5.6 3.5-6.6 7.5-6.6 3.3 0 4.9 0.2 5.9 0.4 0.4 0.1 0.6 0.2 0.6 0.6l0 2.9c0 0.3-0.3 0.6-0.6 0.6l-6.3 0c-1.4 0-2 0.5-2 2.1l0 2.8 8 0c0.3 0 0.6 0.3 0.6 0.6l0 2.9c0 0.3-0.3 0.6-0.6 0.6l-8 0 0 3.3c0 1.6 0.5 2.1 2 2.1l6.3 0c0.3 0 0.6 0.3 0.6 0.6l0 2.9c0 0.4-0.2 0.6-0.6 0.6zM332.4 274l-3 0c-0.6 0-1.1-0.1-1.6-1l-7-12.1c-0.1-0.2-0.2-0.2-0.3-0.2-0.1 0-0.2 0.1-0.2 0.2l0 12.5c0 0.3-0.3 0.6-0.6 0.6l-3.6 0c-0.3 0-0.6-0.3-0.6-0.6l0-21.1c0-0.6 0.5-1.2 1.2-1.2l3.1 0c0.6 0 0.9 0.3 1.3 1l7.3 12.7c0.1 0.2 0.2 0.2 0.2 0.2 0.1 0 0.2-0.1 0.2-0.3l0-13c0-0.3 0.3-0.6 0.6-0.6l3.6 0c0.3 0 0.6 0.2 0.6 0.6l0 21.1c0 0.6-0.6 1.2-1.2 1.2zM345.4 274.3c-2.6 0-5.3-0.2-6.6-0.5-0.6-0.1-0.9-0.4-0.9-1.1l0-20.4c0-0.7 0.3-1 0.9-1.1 1.3-0.2 4-0.5 6.6-0.5 6.1 0 9.8 3.2 9.8 9.7l0 4c0 6.5-3.7 9.7-9.8 9.7zm4.6-13.7c0-4.2-1.8-5.3-4.6-5.3-0.8 0-1.8 0-2.2 0.1l0 14.4c0.4 0 1.4 0.1 2.2 0.1 2.8 0 4.6-1.1 4.6-5.3l0-4zM372.3 273.9c-1.1 0.2-2.6 0.4-6 0.4-4 0-7.5-1-7.5-6.6l0-10.2c0-5.6 3.5-6.6 7.5-6.6 3.3 0 4.9 0.2 5.9 0.4 0.4 0.1 0.6 0.2 0.6 0.6l0 2.9c0 0.3-0.3 0.6-0.6 0.6l-6.3 0c-1.4 0-2 0.5-2 2.1l0 2.8 8 0c0.3 0 0.6 0.3 0.6 0.6l0 2.9c0 0.3-0.3 0.6-0.6 0.6l-8 0 0 3.3c0 1.6 0.5 2.1 2 2.1l6.3 0c0.3 0 0.6 0.3 0.6 0.6l0 2.9c0 0.4-0.2 0.6-0.6 0.6zM393.7 274l-3 0c-0.6 0-1.1-0.1-1.6-1l-7-12.1c-0.1-0.2-0.2-0.2-0.3-0.2-0.1 0-0.2 0.1-0.2 0.2l0 12.5c0 0.3-0.3 0.6-0.6 0.6l-3.6 0c-0.3 0-0.6-0.3-0.6-0.6l0-21.1c0-0.6 0.5-1.2 1.2-1.2l3.1 0c0.6 0 0.9 0.3 1.3 1l7.3 12.7c0.1 0.2 0.2 0.2 0.2 0.2 0.1 0 0.2-0.1 0.2-0.3l0-13c0-0.3 0.3-0.6 0.6-0.6l3.6 0c0.3 0 0.6 0.2 0.6 0.6l0 21.1c0 0.6-0.6 1.2-1.2 1.2zM412.4 273.8c-0.6 0.2-2.4 0.5-4.6 0.5-4.7 0-9.1-2.5-9.1-9.8l0-3.9c0-7.3 4.4-9.8 9.1-9.8 2.2 0 3.9 0.3 4.6 0.5 0.4 0.1 0.7 0.2 0.7 0.7l0 3c0 0.4-0.2 0.6-0.6 0.6 0 0-0.1 0-0.1 0-1.2-0.1-2.9-0.2-4.6-0.2-2.1 0-3.8 1.1-3.8 5.2l0 3.9c0 4.1 1.7 5.2 3.8 5.2 1.7 0 3.4-0.2 4.6-0.2 0 0 0.1 0 0.1 0 0.4 0 0.6 0.2 0.6 0.6l0 3c0 0.4-0.2 0.6-0.7 0.7zM433.6 251.8l-4.7 10.7c-0.6 1.4-1.3 2.1-2 2.4l0 8.6c0 0.3-0.3 0.6-0.6 0.6l-4 0c-0.3 0-0.6-0.3-0.6-0.6l0-8.6c-0.7-0.3-1.4-1-2-2.4l-4.7-10.7c0-0.1 0-0.2 0-0.2 0-0.2 0.2-0.5 0.5-0.5l4.4 0c0.3 0 0.5 0.2 0.6 0.5l3.3 8.7c0.2 0.4 0.2 0.5 0.5 0.5 0.2 0 0.3-0.1 0.5-0.5l3.3-8.7c0.1-0.3 0.3-0.5 0.6-0.5l4.4 0c0.3 0 0.5 0.2 0.5 0.5 0 0.1 0 0.2 0 0.2zM442 266.5l-6 0c-0.3 0-0.6-0.2-0.6-0.6l0-2.5c0-0.3 0.3-0.6 0.6-0.6l6 0c0.3 0 0.6 0.2 0.6 0.6l0 2.5c0 0.3-0.3 0.6-0.6 0.6z" style="fill:#231f20;opacity:0.5"/><path d="m459 273.8c-0.6 0.2-2.4 0.5-4.6 0.5-4.7 0-9.1-2.5-9.1-9.8l0-3.9c0-7.3 4.4-9.8 9.1-9.8 2.2 0 3.9 0.3 4.6 0.5 0.4 0.1 0.7 0.2 0.7 0.7l0 3c0 0.4-0.2 0.6-0.6 0.6 0 0-0.1 0-0.1 0-1.2-0.1-2.9-0.2-4.6-0.2-2.1 0-3.8 1.1-3.8 5.2l0 3.9c0 4.1 1.7 5.2 3.8 5.2 1.7 0 3.4-0.2 4.6-0.2 0 0 0.1 0 0.1 0 0.4 0 0.6 0.2 0.6 0.6l0 3c0 0.4-0.2 0.6-0.7 0.7zM480.6 274l-4 0M480.6 274l-4 0c-0.3 0-0.6-0.3-0.6-0.6l0-8.9-7.6 0 0 8.9c0 0.3-0.3 0.6-0.6 0.6l-4 0c-0.3 0-0.6-0.3-0.6-0.6l0-21.7c0-0.3 0.3-0.6 0.6-0.6l4 0c0.3 0 0.6 0.2 0.6 0.6l0 8.2 7.6 0 0-8.2c0-0.3 0.3-0.6 0.6-0.6l4 0c0.3 0 0.6 0.2 0.6 0.6l0 21.7c0 0.3-0.3 0.6-0.6 0.6zM498.9 273.9c-1.1 0.2-2.6 0.4-6 0.4-4 0-7.5-1-7.5-6.6l0-10.2c0-5.6 3.5-6.6 7.5-6.6 3.3 0 4.9 0.2 5.9 0.4 0.4 0.1 0.6 0.2 0.6 0.6l0 2.9c0 0.3-0.3 0.6-0.6 0.6l-6.3 0c-1.4 0-2 0.5-2 2.1l0 2.8 8 0c0.3 0 0.6 0.3 0.6 0.6l0 2.9c0 0.3-0.3 0.6-0.6 0.6l-8 0 0 3.3c0 1.6 0.5 2.1 2 2.1l6.3 0c0.3 0 0.6 0.3 0.6 0.6l0 2.9c0 0.4-0.2 0.6-0.6 0.6zM516.6 273.8c-0.6 0.2-2.4 0.5-4.6 0.5-4.7 0-9.1-2.5-9.1-9.8l0-3.9c0-7.3 4.4-9.8 9.1-9.8 2.2 0 3.9 0.3 4.6 0.5 0.4 0.1 0.7 0.2 0.7 0.7l0 3c0 0.4-0.2 0.6-0.6 0.6 0 0-0.1 0-0.1 0-1.2-0.1-2.9-0.2-4.6-0.2-2.1 0-3.8 1.1-3.8 5.2l0 3.9c0 4.1 1.7 5.2 3.8 5.2 1.7 0 3.4-0.2 4.6-0.2 0 0 0.1 0 0.1 0 0.4 0 0.6 0.2 0.6 0.6l0 3c0 0.4-0.2 0.6-0.7 0.7zM538.5 251.9l-7.3 10.4 7.4 11.1c0.1 0.1 0.1 0.2 0.1 0.3 0 0.2-0.2 0.3-0.4 0.3l-5.3 0c-0.4 0-0.5-0.2-0.7-0.4l-6.3-10.2 0 10c0 0.3-0.3 0.6-0.6 0.6l-4 0c-0.3 0-0.6-0.3-0.6-0.6l0-21.7c0-0.3 0.3-0.6 0.6-0.6l4 0c0.3 0 0.6 0.2 0.6 0.6l0 9.8 6.8-10c0.2-0.2 0.3-0.4 0.7-0.4l4.7 0c0.3 0 0.5 0.2 0.5 0.3 0 0.1-0.1 0.3-0.2 0.4z" fill="#f78d0a"/><path d="m151.6 187.1 0-14.6c-36.7 5.4-65.9 33.9-72.2 70.4l14.7 0C100 214.5 122.8 192.2 151.6 187.1Z" style="fill:#231f20;opacity:0.5"/><path d="m151.6 200.4 0-13.3c-28.7 5.1-51.6 27.3-57.5 55.8l13.3 0c5.5-21.2 22.6-37.8 44.2-42.5z" style="fill:#231f20;opacity:0.3"/><path d="m193 237-10.9 10.9c0.3 0.6 0.7 1.2 1 1.9 1 2.5 1.5 5.3 1.5 8.2l0 0.2c0 3-0.5 5.8-1.5 8.2-1 2.5-2.4 4.6-4.2 6.4-1.8 1.8-3.9 3.2-6.4 4.2-2.5 1-5.3 1.5-8.3 1.5l-11.5 0 0-1-14.4 14.4 25.9 0c5.3 0 10.1-0.9 14.6-2.6 4.4-1.7 8.2-4.1 11.4-7.2 3.2-3 5.7-6.6 7.4-10.7 1.7-4.1 2.6-8.6 2.6-13.3l0-0.2c0-4.8-0.9-9.2-2.6-13.3-1.2-2.7-2.7-5.2-4.5-7.5z" fill="#f78d0a"/><path d="m152.7 237.6 11.5 0c3 0 5.8 0.5 8.3 1.5 2.5 1 4.7 2.4 6.4 4.2 1.3 1.3 2.3 2.9 3.2 4.6l10.9-10.9c-0.9-1.1-1.8-2.2-2.9-3.2-3.2-3-7-5.4-11.4-7.1-4.4-1.7-9.3-2.6-14.6-2.6l-26.4 0 0 67.7 0.5 0 14.4-14.4 0-39.8z" style="fill:#f78d0a;opacity:0.7"/><path d="m179.5 187.7 0 13.4c11.9 3.2 22.3 10.1 29.9 19.4l9.2-9.3c-10-11.7-23.6-20.1-39.2-23.5z" style="fill:#231f20;opacity:0.3"/><path d="m179.5 173 0 14.7c15.5 3.4 29.2 11.8 39.2 23.5l10.2-10.2c-12.6-14.3-29.8-24.5-49.4-28zM93.7 270.9l-14.6 0M93.7 270.9l-14.6 0c3.1 20.5 13.6 38.6 28.5 51.7l10.2-10.2C105.5 301.9 96.8 287.4 93.7 270.9Z" fill="#f78d0a"/><path d="m107 270.9-13.3 0c3.1 16.5 11.8 31 24.1 41.5l9.2-9.3c-9.9-8.1-17.1-19.3-20-32.2z" style="fill:#231f20;opacity:0.3"/></g></svg>
+<p class="disclaimer">Dependency-Check is an open source tool performing a best effort analysis of 3rd party dependencies;
+false positives and false negatives may exist in the analysis performed by the tool. Use of the tool and
+the reporting provided constitutes acceptance for use in an AS IS condition, and there are NO warranties,
+implied or otherwise, with regard to the analysis or its use. Any use of the tool and the reporting provided
+is at the user’s risk. In no event shall the copyright holder or OWASP be held liable for any damages whatsoever
+arising out of or in connection with the use of this tool, the analysis performed, or the resulting report.</p>
+<h3><a href="http://jeremylong.github.io/DependencyCheck/general/thereport.html" target="_blank">How&nbsp;to&nbsp;read&nbsp;the&nbsp;report</a> | 
+<a href="http://jeremylong.github.io/DependencyCheck/general/suppression.html" target="_blank">Suppressing false positives</a> |
+Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" target="_blank">github issues</a><br/><br/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="10pt" height="10pt" viewBox="0 0 10 10" version="1.1"><g id="surface1"><path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,0%);fill-opacity:1;" d="M 8.125 4.167969 C 7.089844 4.167969 6.25 5.007812 6.25 6.042969 C 6.25 7.078125 7.089844 7.917969 8.125 7.917969 C 9.160156 7.917969 10 7.078125 10 6.042969 C 10 5.007812 9.160156 4.167969 8.125 4.167969 Z M 9.167969 6.25 L 8.332031 6.25 L 8.332031 7.082031 L 7.917969 7.082031 L 7.917969 6.25 L 7.082031 6.25 L 7.082031 5.832031 L 7.917969 5.832031 L 7.917969 5 L 8.332031 5 L 8.332031 5.832031 L 9.167969 5.832031 Z M 6.445312 8.164062 C 5.984375 8.617188 5.5 9.089844 5 9.582031 C 2.320312 6.925781 0 4.9375 0 2.996094 C 0 1.328125 1.289062 0.417969 2.617188 0.417969 C 3.53125 0.417969 4.464844 0.851562 5 1.769531 C 5.53125 0.855469 6.46875 0.421875 7.386719 0.421875 C 8.710938 0.421875 10 1.324219 10 2.996094 C 10 3.308594 9.933594 3.621094 9.824219 3.933594 C 9.605469 3.757812 9.355469 3.617188 9.085938 3.511719 C 9.136719 3.335938 9.167969 3.164062 9.167969 2.996094 C 9.167969 1.800781 8.242188 1.253906 7.386719 1.253906 C 6.027344 1.253906 5.3125 2.703125 5 3.347656 C 4.6875 2.703125 3.964844 1.25 2.617188 1.25 C 1.652344 1.25 0.832031 1.882812 0.832031 2.996094 C 0.832031 4.429688 2.808594 6.265625 5 8.414062 L 5.878906 7.554688 C 6.035156 7.785156 6.226562 7.988281 6.445312 8.164062 Z M 6.445312 8.164062 "/></g></svg>&nbsp;<a aria-label="Sponsor @jeremylong" target="_blank" href="https://github.com/sponsors/jeremylong">Sponsor</a></h3>
+]]#
+            <h2 class="">Project:&nbsp;$enc.html($applicationName)</h2>
+            #if ($groupID && $artifactID && $applicationVersion)
+            <h4>$enc.html($groupID):$enc.html($artifactID):$enc.html($applicationVersion)</h4>
+            #end
+            <div class="">
+                #set($depCount=$dependencies.size())
+                #set($vulnDepCount=0)
+                #set($vulnCount=0)
+                #set($vulnSuppressedCount=0)
+                #set($cpeSuppressedCount=0)
+
+                #foreach($dependency in $dependencies)
+                    #set($depCount=$depCount+$dependency.getRelatedDependencies().size())
+                    #if($dependency.getVulnerabilities().size()>0)
+                        #set($vulnDepCount=$vulnDepCount+1)
+                        #set($vulnCount=$vulnCount+$dependency.getVulnerabilities().size())
+                    #end
+                    #if($dependency.getSuppressedIdentifiers().size()>0)
+                        #set($cpeSuppressedCount=$cpeSuppressedCount+1)
+                    #end
+                    #if($dependency.getSuppressedVulnerabilities().size()>0)
+                        #set($vulnSuppressedCount=$vulnSuppressedCount+$dependency.getSuppressedVulnerabilities().size())
+                    #end
+                #end
+                Scan Information:<br/>
+                    <ul class="indent">
+                        <li><i>dependency-check version</i>: $version</li>
+                        <li><i>Report Generated On</i>: $scanDate</li>
+                        <li><i>Dependencies Scanned</i>:&nbsp;$depCount ($dependencies.size() unique)</li>
+                        <li><i>Vulnerable Dependencies</i>:&nbsp;<span id="vulnerableCount">$vulnDepCount</span></li>
+                        <li><i>Vulnerabilities Found</i>:&nbsp;$vulnCount</li>
+                        <li><i>Vulnerabilities Suppressed</i>:&nbsp;$vulnSuppressedCount</li>
+                    </ul><br/>
+                #set($cnt=0)
+#if($exceptions)
+    #macro( writeHtmlException $type $ex $depth)
+        #set($cnt=$cnt+1)
+        <h4 id="header$cnt" class="subsectionheader white">$enc.html($ex.getMessage())</h4>
+        <div id="content$cnt" class="subsectioncontent standardsubsection">
+        <b>$type</b>: $enc.html($ex.toString())
+        #if($ex.getStackTrace())
+            <pre>
+            #foreach($t in $ex.getStackTrace())
+                $enc.html($t.toString())<br/>
+            #end
+            </pre>
+        #end
+        #if($ex.getCause() && $depth<20)
+            #set($cause="cause")
+            #set($currentDepth=$depth+1)
+            #writeHtmlException($cause $ex.getCause() $currentDepth)
+        #end
+        </div>
+    #end
+        <h2>Analysis Exceptions</h2>
+            #foreach($ex in $exceptions)
+                #set($type="exception")
+                #set($d=0)
+                #writeHtmlException($type $ex $d)
+            #end
+        <br/>
+#end
+<h2>Summary</h2>
+                #set($lnkcnt=0)
+                <table id="summaryTable" class="lined">
+                    <thead><tr style="text-align:left">
+                        <th class="sortable" data-sort="string" title="The name of the dependency">Dependency</th>
+                        <th class="sortable" data-sort="string" title="The Common Platform Enumeration">Vulnerability&nbsp;IDs</th>
+                        <th class="sortable" data-sort="string" title="The Build Coordinates">Package</th>
+                        <th class="sortable" data-sort="float"    title="The highest CVE Severity">Highest&nbsp;Severity</th>
+                        <th class="sortable" data-sort="int"    title="The number of Common Vulnerability and Exposure (CVE) entries">CVE&nbsp;Count</th>
+                        <th class="sortable" data-sort="string" title="The confidence rating dependency-check has for the identified CPE">Confidence</th>
+                        <th class="sortable" data-sort="int"    title="The count of evidence collected to identify the CPE">Evidence&nbsp;Count</th>
+                    </tr></thead>
+                    #foreach($dependency in $dependencies)
+                    #if($dependency.getVulnerabilities().size()>0)
+                    #set($lnkcnt=$lnkcnt+1)
+                    <tr class="vulnerable">
+                        <td data-sort-value="$enc.html($dependency.DisplayFileName.toUpperCase())"><a href="#l${lnkcnt}_$enc.html($enc.url($dependency.Sha1sum))">$enc.html($dependency.DisplayFileName)</a></td>
+                        #set($mavenlink="")
+                        #set($cpeIdCount=0)
+                        #set($cpeIdConf="")
+                        #set($sortValue="")
+                        #foreach($id in $dependency.getVulnerableSoftwareIdentifiers())
+                            #set($sortValue=$sortValue+$id.value)
+                        #end
+                        <td data-sort-value="$sortValue">
+                        #set($sortValue="")
+                        #set($cpeSort=0)
+                        #foreach($id in $dependency.getVulnerableSoftwareIdentifiers())
+                            #if ($cpeIdCount>=1)
+                                <br/>
+                            #end
+                            #if( $id.url )
+                                <a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>
+                            #else
+                                $enc.html($id.value)
+                            #end
+                            #if ($cpeIdConf == "")
+                                #set($cpeIdConf=$id.confidence)
+                                #set($cpeSort=$id.confidence.ordinal())
+                            #elseif ($cpeIdConf.compareTo($id.confidence)>0)
+                                #set($cpeIdConf=$id.confidence)
+                                #set($cpeSort=$id.confidence.ordinal())
+                            #end
+                            #set($cpeIdCount=$cpeIdCount+1)
+                        #end
+                        </td>
+                        #foreach($id in $dependency.getSoftwareIdentifiers())
+                            #set($sortValue=$sortValue+$id.value)
+                        #end
+                        <td data-sort-value="$sortValue">
+                        #set($sortValue="")
+                        #set($idCount=0)
+                        #foreach($id in $dependency.getSoftwareIdentifiers())
+                            #if ($idCount>=1)
+                                <br/>
+                            #end
+                            #if( $id.url )
+                                <a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>
+                            #else
+                                $enc.html($id.value)
+                            #end
+                            #set($idCount=$idCount+1)
+                        #end</td>
+                        #set($cveImpact=-1)
+                        #set($cveSeverity="&nbsp;")
+                        #if($dependency.getVulnerabilities().size()>0)
+                            #set($severestVuln=$dependency.getVulnerabilities(true).iterator().next())
+                            ## yes - we are mixing v2 and v3...  no consistency in data so doing the best we can
+                            ## with a set sorted approximately on descending severity
+                            #if ($severestVuln.cvssV3)
+                                #set($cveImpact=$severestVuln.cvssV3.baseScore)
+                            #elseif ($severestVuln.cvssV2)
+                                #set($cveImpact=$severestVuln.cvssV2.score)
+                            #end
+                            #set($cveSeverity=$enc.html($severestVuln.highestSeverityText))
+                        #end
+                        #set($sortValue=$cveImpact*10)
+                        <td data-sort-value="$sortValue">$cveSeverity</td>
+                        <td>$dependency.getVulnerabilities().size()</td>
+                        <td data-sort-value="$cpeSort">$WordUtils.capitalizeFully($cpeIdConf.toString())</td>
+                        <td>$dependency.size()</td>
+                    </tr>
+                    #end
+                    #end
+                </table>
+                <h2>Dependencies</h2>
+                #set($lnkcnt=0)
+                #set($vsctr=0) ##counter to create unique groups for vulnerable software
+                #foreach($dependency in $dependencies)
+                    #if($dependency.getVulnerabilities().size()>0)
+                    #set($lnkcnt=$lnkcnt+1)
+                    <h3 class="subsectionheader #if($dependency.getVulnerabilities().size()==0) notvulnerable#end"><a name="l${lnkcnt}_$enc.html($dependency.Sha1sum)"></a>$enc.html($dependency.DisplayFileName)</h3>
+                    <div class="subsectioncontent#if($dependency.getVulnerabilities().size()==0) notvulnerable#end">
+                        #if ($dependency.description)
+                            <p><b>Description:</b><pre>$enc.html($dependency.description)</pre></p>
+                        #end
+                        <p>
+                        #if ($dependency.license)
+                            #if ($dependency.license.startsWith("http://"))
+                            <b>License:</b><pre class="indent"><a href="$enc.html($dependency.license)">$enc.html($dependency.license)</a></pre>
+                            #else
+                            <b>License:</b><pre class="indent">$enc.html($dependency.license)</pre>
+                            #end
+                        #end
+                            <b>File&nbsp;Path:</b>&nbsp;$enc.html($dependency.FilePath)<br/>
+                            #if(!$dependency.isVirtual())
+                            <b>MD5:</b>&nbsp;$enc.html($dependency.Md5sum)<br/>
+                            <b>SHA1:</b>&nbsp;$enc.html($dependency.Sha1sum)<br/>
+                            <b>SHA256:</b>$enc.html($dependency.Sha256sum)
+                            #end
+                            #if ($dependency.projectReferences.size()==1)
+                                <br/><b>Referenced In Project/Scope:</b> $enc.html($dependency.projectReferences.iterator().next())
+                            #end
+                            #if ($dependency.projectReferences.size()>1)
+                                <br/><b>Referenced In Projects/Scopes:</b><ul>
+                                #foreach($ref in $dependency.projectReferences)
+                                    <li>$enc.html($ref)</li>
+                                #end
+                                </ul>
+                            #end
+                            #if ($dependency.includedBy && $dependency.includedBy.size()==1)
+                                <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span> $enc.html($dependency.includedBy.iterator().next())
+                            #end
+                            #if ($dependency.includedBy && $dependency.includedBy.size()>1)
+                                <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span><ul>
+                                #foreach($parent in $dependency.includedBy)
+                                    <li>$enc.html($parent)</li>
+                                #end
+                                </ul>
+                            #end
+                        </p>
+                        #if($dependency.getRelatedDependencies().size()>0)
+                            #set($cnt=$cnt+1)
+                            <h4 id="header$cnt" class="subsectionheader white">Related Dependencies</h4>
+                            <div id="content$cnt" class="subsectioncontent standardsubsection">
+                            <ul>
+                            #foreach($related in $dependency.getRelatedDependencies())
+                                <li>$enc.html($related.DisplayFileName)
+                                    <ul>
+                                        <li>File Path:&nbsp;$enc.html($related.FilePath)</li>
+                                        #if(!$related.isVirtual())
+                                        <li>MD5:&nbsp;$enc.html($related.Md5sum)</li>
+                                        <li>SHA1:&nbsp;$enc.html($related.Sha1sum)</li>
+                                        <li>SHA256:&nbsp;$enc.html($related.Sha256sum)</li>
+                                        #end
+                                        #foreach($id in $related.getSoftwareIdentifiers())
+                                            #if( $id.url )                                                
+                                                ##yes, we are HTML Encoding the href. this is okay. We can't URL encode as we have to trust the analyzer here...
+                                                <li><a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a></li>
+                                            #else
+                                                <li>$enc.html($id.value)</li>
+                                            #end
+                                        #end
+                                     </ul>
+                                </li>
+                            #end
+                            </ul>
+                            </div>
+                        #end
+                        #set($cnt=$cnt+1)
+                        <h4 id="header$cnt" class="subsectionheader white">Identifiers</h4>
+                        ##:&nbsp;<a href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($cpevalue)" target="_blank">$enc.html($cpevalue)</a></h4>
+                        <div id="content$cnt" class="subsectioncontent standardsubsection">
+                        #if ($dependency.getSoftwareIdentifiers().size()==0 && $dependency.getVulnerableSoftwareIdentifiers().size()==0)
+                            <ul><li><b>None</b></li></ul>
+                        #else
+                            <ul>
+                            #foreach($id in $dependency.getSoftwareIdentifiers())
+                                #if( $id.url )
+                                    <li><a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>
+                                #else
+                                    <li>$enc.html($id.value)
+                                #end
+                                #if ($id.confidence)
+                                    &nbsp;&nbsp;(<i>Confidence</i>:$WordUtils.capitalizeFully($id.confidence.toString()))
+                                #end
+                                #if ($id.notes)
+                                    <ul><li>Notes: $enc.html($id.notes)</li></ul>
+                                #end
+                                </li>
+                            #end
+                            #foreach($id in $dependency.getVulnerableSoftwareIdentifiers())
+                                #if( $id.url )
+                                <li><a href="$enc.html($id.url)" target="_blank">$enc.html($id.value)</a>
+                                #else
+                                <li>$enc.html($id.value)
+                                #end
+                                #if ($id.confidence)
+                                    &nbsp;&nbsp;(<i>Confidence</i>:$WordUtils.capitalizeFully($id.confidence.toString()))
+                                #end
+                                #if ($id.notes)
+                                    <ul><li>Notes: $enc.html($id.notes)</li></ul>
+                                #end
+                            </li>
+                            #end
+                            </ul>
+                        #end
+                        </div>
+                        #set($cnt=$cnt+1)
+                        <h4 id="header$cnt" class="subsectionheader white">Published Vulnerabilities</h4>
+                        <div id="content$cnt" class="subsectioncontent standardsubsection">
+                        #foreach($vuln in $dependency.getVulnerabilities(true))
+                            #set($vsctr=$vsctr+1)
+                            #if($vuln.getSource().name().equals("NVD"))
+                                <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b></p>
+                            #elseif($vuln.getSource().name().equals("NPM"))
+                                <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b></p>
+                            #else
+                                <p><span class="underline"><b>$enc.html($vuln.name)</b>&nbsp;($vuln.getSource().name())</span></p>
+                            #end
+                            <p>#if($vuln.description)
+                            <pre>$enc.html($vuln.description)</pre>
+                            #end
+                            #if ($vuln.cwes.toString())
+                                $vuln.cwes.toString()<br/><br/>
+                            #end
+                            #if ($vuln.notes)
+                                Notes: $enc.html($vuln.notes)<br/><br/>
+                            #end
+                            #if($vuln.getCvssV2())
+                            CVSSv2:
+                            <ul><li>Base Score: $enc.html($vuln.getCvssV2().getSeverity()) ($vuln.getCvssV2().getScore())</li>
+                            <li>Vector: $enc.html($vuln.getCvssV2().toString())</li></ul>
+                            #end
+                            #if($vuln.getCvssV3())
+                            CVSSv3:
+                            <ul><li>Base Score: $enc.html($vuln.getCvssV3().getBaseSeverity()) ($vuln.getCvssV3().getBaseScore())</li>
+                            <li>Vector: $enc.html($vuln.getCvssV3().toString())</li></ul>
+                            #end
+                            #if ($vuln.unscoredSeverity)
+                            Unscored:
+                                <ul><li>Severity: #if($vuln.unscoredSeverity.equals("0.0"))Unknown#else$enc.html($vuln.unscoredSeverity)#end</li></ul>
+                            #end
+                            #if ($vuln.getReferences().size()>0)
+                                <br/>References:<ul>
+                                #foreach($ref in $vuln.getReferences(true))
+                                    #if ($ref.url)
+                                    <li>$enc.html($ref.source) - <a target="_blank" href="$enc.html($ref.url)">$enc.html($ref.name)</a></li>
+                                    #else
+                                    <li>$enc.html($ref.source) - $enc.html($ref.name)</li>
+                                    #end
+                                #end
+                                </ul>
+                            #end
+                            </p>
+                            #if ($vuln.getSource().name().equals("NVD") && $vuln.matchedVulnerableSoftware)
+                                #if ($vuln.getVulnerableSoftware().size()<2)
+                                    <p>Vulnerable Software &amp; Versions:<ul>
+                                        <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
+                                    </ul></p>
+                                #else
+                                    <p>Vulnerable Software &amp; Versions:<ul>
+                                        <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vuln.matchedVulnerableSoftware.toCpe22Uri())">$enc.html($vuln.matchedVulnerableSoftware.toString())</a></li>
+                                    #foreach($vs in $vuln.getVulnerableSoftware(true))
+                                        <li class="vs$vsctr"><a target="_blank" href="https://web.nvd.nist.gov/view/vuln/search-results?adv_search=true&cves=on&cpe_version=$enc.url($vs.toCpe22Uri())">$enc.html($vs.toString())</a></li>
+                                    #end
+                                    </ul></p>
+                                #end
+                            #elseif ($vuln.getVulnerableSoftware().size()!=0)
+                                <p>Vulnerable Software &amp; Versions ($vuln.getSource().name()):
+                                    <ul>
+                                    #foreach($vs in $vuln.getVulnerableSoftware(true))
+                                        <li class="vs$vsctr">$enc.html($vs.toString())</li>
+                                    #end
+                                    </ul>
+                                </p>
+                            #end
+                        #end
+                    </div>
+                    #end
+                </div>
+                #end
+            </div>
+        </div>
+        <div>
+            <br/><br/>
+            This report contains data retrieved from the <a href="https://nvd.nist.gov">National Vulnerability Database</a>.
+            <br/>
+            This report may contain data retrieved from the <a href="https://www.npmjs.com/advisories">NPM Public Advisories</a>.
+            <br/>
+            This report may contain data retrieved from <a href="https://retirejs.github.io/retire.js/">RetireJS</a>.
+            <br/>
+            This report may contain data retrieved from the <a href="https://ossindex.sonatype.org">Sonatype OSS Index</a>.
+        </div>
+    </body>
+</html>

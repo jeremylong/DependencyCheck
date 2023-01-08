@@ -267,4 +267,46 @@ public class NodePackageAnalyzerTest extends BaseTest {
         //final boolean isMac = !System.getProperty("os.name").toLowerCase().contains("mac");
         assertEquals("Expected 1 dependencies", 1, engine.getDependencies().length);
     }
+
+    /**
+     * Test of inspect method for package-lock v2
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testPackageLockV2() throws AnalysisException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(true));
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
+        final Dependency packageJson = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/test_lockv2/package.json"));
+        final Dependency packageLockJson = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/test_lockv2/package-lock.json"));
+        engine.addDependency(packageJson);
+        engine.addDependency(packageLockJson);
+        analyzer.analyze(packageJson, engine);
+        assertEquals("Expected 1 dependencies", 1, engine.getDependencies().length);
+        analyzer.analyze(packageLockJson, engine);
+        assertEquals("Expected 1 dependencies", 6, engine.getDependencies().length);
+    }
+
+    /**
+     * Test of inspect method for package-lock v3
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testPackageLockV3() throws AnalysisException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(true));
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED), is(true));
+        final Dependency packageJson = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/test_lockv3/package.json"));
+        final Dependency packageLockJson = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/test_lockv3/package-lock.json"));
+        engine.addDependency(packageJson);
+        engine.addDependency(packageLockJson);
+        analyzer.analyze(packageJson, engine);
+        assertEquals("Expected 1 dependencies", 1, engine.getDependencies().length);
+        analyzer.analyze(packageLockJson, engine);
+        assertEquals("Expected 1 dependencies", 6, engine.getDependencies().length);
+    }
 }

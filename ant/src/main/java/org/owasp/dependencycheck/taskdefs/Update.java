@@ -485,7 +485,7 @@ public class Update extends Purge {
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     @Override
-    public void execute() throws BuildException {
+    protected void executeWithContextClassloader() throws BuildException {
         populateSettings();
         try (Engine engine = new Engine(Update.class.getClassLoader(), getSettings())) {
             engine.doUpdates();

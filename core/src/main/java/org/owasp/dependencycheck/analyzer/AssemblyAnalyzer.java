@@ -468,7 +468,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     private boolean isDotnetPath() {
         final String[] args = new String[2];
         args[0] = "dotnet";
-        args[1] = "--version";
+        args[1] = "--info";
         final ProcessBuilder pb = new ProcessBuilder(args);
         try {
             final Process proc = pb.start();

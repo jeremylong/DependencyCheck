@@ -20,11 +20,18 @@ package org.owasp.dependencycheck.taskdefs;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.commons.jcs.JCS;
+import org.apache.commons.jcs.access.CacheAccess;
+import org.apache.commons.jcs.engine.CompositeCacheAttributes;
+import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.cache.DataCache;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.pom.Model;
 import org.slf4j.impl.StaticLoggerBinder;
 
 /**
@@ -128,6 +135,23 @@ public class Purge extends Task {
     }
 
     /**
+     * Sets the {@link Thread#getContextClassLoader() Thread Context Class Loader} to the one for this class, and then calls {@link #executeWithContextClassloader()}. This is done because the JCS cache needs to have the Thread Context Class Loader set to something that can resolve it's classes. Other build tools do this by default but Ant does not.
+     *
+     * @throws BuildException throws if there is a problem. See {@link #executeWithContextClassloader()} for details
+     */
+    @Override
+    public final void execute() throws BuildException {
+        ClassLoader current = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+            executeWithContextClassloader();
+        } finally {
+            Thread.currentThread().setContextClassLoader(current);
+        }
+    }
+
+    /**
      * Executes the dependency-check purge to delete the existing local copy of
      * the NVD CVE data.
      *
@@ -135,8 +159,7 @@ public class Purge extends Task {
      */
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
-    @Override
-    public void execute() throws BuildException {
+    protected void executeWithContextClassloader() throws BuildException {
         populateSettings();
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
             engine.purge();

@@ -98,6 +98,14 @@ public class Check extends Update {
      */
     private String retireJsUrl;
     /**
+     * The user to download URL to the RetireJS JSON data.
+     */
+    private String retireJsUrlUser;
+    /**
+     * The password to download URL to the RetireJS JSON data.
+     */
+    private String retireJsUrlPassword;
+    /**
      * Whether or not the RetireJS Analyzer will be updated regardless of the
      * `autoupdate` settings. Defaults to false.
      */
@@ -181,6 +189,10 @@ public class Check extends Update {
      */
     private String pathToGo;
     /**
+     * Sets whether the Dart analyzer is enabled. Default is true.
+     */
+    private Boolean dartAnalyzerEnabled;
+    /**
      * The path to `yarn`.
      */
     private String pathToYarn;
@@ -225,12 +237,12 @@ public class Check extends Update {
      */
     private Boolean autoUpdate;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, JENKINS,
      * ALL). Default is HTML.
      */
     private String reportFormat = "HTML";
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, JENKINS,
      * ALL). Default is HTML.
      */
     private final List<String> reportFormats = new ArrayList<>();
@@ -311,6 +323,10 @@ public class Check extends Update {
      * Whether the pipfile analyzer should be enabled.
      */
     private Boolean pipfileAnalyzerEnabled;
+    /**
+     * Whether the Poetry analyzer should be enabled.
+     */
+    private Boolean poetryAnalyzerEnabled;
     /**
      * Sets the path for the mix_audit binary.
      */
@@ -929,6 +945,24 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of poetryAnalyzerEnabled.
+     *
+     * @return the value of poetryAnalyzerEnabled
+     */
+    public Boolean isPoetryAnalyzerEnabled() {
+        return poetryAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of poetryAnalyzerEnabled.
+     *
+     * @param poetryAnalyzerEnabled new value of poetryAnalyzerEnabled
+     */
+    public void setPoetryAnalyzerEnabled(Boolean poetryAnalyzerEnabled) {
+        this.poetryAnalyzerEnabled = poetryAnalyzerEnabled;
+    }
+
+    /**
      * Returns if the Bundle Audit Analyzer is enabled.
      *
      * @return if the Bundle Audit Analyzer is enabled.
@@ -1226,6 +1260,42 @@ public class Check extends Update {
     }
 
     /**
+     * Get the value of User Retire JS repository URL.
+     *
+     * @return the value of retireJsUrlUser
+     */
+    public String getRetireJsUrlUser() {
+        return retireJsUrlUser;
+    }
+
+    /**
+     * Set the value of the User Retire JS repository URL.
+     *
+     * @param retireJsUrlUser new value of retireJsUrlUser
+     */
+    public void setRetireJsUrlUser(String retireJsUrlUser) {
+        this.retireJsUrlUser = retireJsUrlUser;
+    }
+
+    /**
+     * Get the value of Password Retire JS repository URL.
+     *
+     * @return the value of retireJsUrlPassword
+     */
+    public String getRetireJsUrlPassword() {
+        return retireJsUrlPassword;
+    }
+
+    /**
+     * Set the value of the Password Retire JS repository URL.
+     *
+     * @param retireJsUrlPassword new value of retireJsUrlPassword
+     */
+    public void setRetireJsUrlPassword(String retireJsUrlPassword) {
+        this.retireJsUrlPassword = retireJsUrlPassword;
+    }
+
+    /**
      * Get the value of retireJsAnalyzerEnabled.
      *
      * @return the value of retireJsAnalyzerEnabled
@@ -1445,6 +1515,24 @@ public class Check extends Update {
      */
     public void setGolangModEnabled(Boolean golangModEnabled) {
         this.golangModEnabled = golangModEnabled;
+    }
+
+    /**
+     * Get the value of dartAnalyzerEnabled.
+     *
+     * @return the value of dartAnalyzerEnabled
+     */
+    public Boolean isDartAnalyzerEnabled() {
+        return dartAnalyzerEnabled;
+    }
+
+    /**
+     * Set the value of dartAnalyzerEnabled.
+     *
+     * @param dartAnalyzerEnabled new value of dartAnalyzerEnabled
+     */
+    public void setDartAnalyzerEnabled(Boolean dartAnalyzerEnabled) {
+        this.dartAnalyzerEnabled = dartAnalyzerEnabled;
     }
 
     /**
@@ -1870,7 +1958,7 @@ public class Check extends Update {
     //see note on `dealWithReferences()` for information on this suppression
     @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     @Override
-    public void execute() throws BuildException {
+    protected void executeWithContextClassloader() throws BuildException {
         dealWithReferences();
         validateConfiguration();
         populateSettings();
@@ -1997,6 +2085,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_MAVEN_INSTALL_ENABLED, mavenInstallAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIP_ENABLED, pipAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIPFILE_ENABLED, pipfileAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_POETRY_ENABLED, poetryAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPANFILE_ENABLED, cpanfileAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
@@ -2008,11 +2097,14 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, retireJsUrlUser);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD, retireJsUrlPassword);      
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsAnalyzerForceUpdate);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
         getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_DART_ENABLED, dartAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);
@@ -2088,7 +2180,7 @@ public class Check extends Update {
 
     /**
      * An enumeration of supported report formats: "ALL", "HTML", "XML", "CSV",
-     * "JSON", "JUNIT", "SARIF", etc..
+     * "JSON", "JUNIT", "SARIF", 'JENkINS', etc..
      */
     public static class ReportFormats extends EnumeratedAttribute {
 

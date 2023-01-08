@@ -169,8 +169,8 @@ CREATE PROCEDURE insert_software (
     @vulnerabilityId INT, @part CHAR(1), @vendor VARCHAR(255), @product VARCHAR(255),
     @version VARCHAR(255), @update_version VARCHAR(255), @edition VARCHAR(255), @lang VARCHAR(20),
     @sw_edition VARCHAR(255), @target_sw VARCHAR(255), @target_hw VARCHAR(255), @other VARCHAR(255), 
-    @ecosystem VARCHAR(255), @versionEndExcluding VARCHAR(50), @versionEndIncluding VARCHAR(50), 
-    @versionStartExcluding VARCHAR(50), @versionStartIncluding VARCHAR(50), @vulnerable BIT) AS
+    @ecosystem VARCHAR(255), @versionEndExcluding VARCHAR(100), @versionEndIncluding VARCHAR(100), 
+    @versionStartExcluding VARCHAR(100), @versionStartIncluding VARCHAR(100), @vulnerable BIT) AS
 BEGIN
     DECLARE @cpeId INT;
     DECLARE @currentEcosystem VARCHAR(255);
@@ -207,7 +207,7 @@ END;
 
 GO
 
-INSERT INTO properties(id,value) VALUES ('version','5.2.1');
+INSERT INTO properties(id,value) VALUES ('version','5.3');
 
 GO
 /**

@@ -40,7 +40,6 @@ import org.apache.commons.collections4.MultiValuedMap;
  */
 @ThreadSafe
 public final class NpmPayloadBuilder {
-
     /**
      * Private constructor for utility class.
      */
@@ -102,9 +101,19 @@ public final class NpmPayloadBuilder {
         payloadBuilder.add("requires", requiresBuilder.build());
 
         final JsonObjectBuilder dependenciesBuilder = Json.createObjectBuilder();
-        final JsonObject dependencies = lockJson.getJsonObject("dependencies");
+        final int lockJsonVersion = lockJson.containsKey("lockfileVersion") ? lockJson.getInt("lockfileVersion") : 1;
+        JsonObject dependencies = lockJson.getJsonObject("dependencies");
+        if (lockJsonVersion >= 2 && dependencies == null) {
+            dependencies = lockJson.getJsonObject("packages");
+        }
+
         if (dependencies != null) {
             dependencies.forEach((key, value) -> {
+                final int indexOfNodeModule = key.lastIndexOf(NodePackageAnalyzer.NODE_MODULES_DIRNAME);
+                if (indexOfNodeModule >= 0) {
+                    key = key.substring(indexOfNodeModule + NodePackageAnalyzer.NODE_MODULES_DIRNAME.length() + 1);
+                }
+
                 final JsonObject dep = ((JsonObject) value);
                 final String version = dep.getString("version");
                 final boolean isDev = dep.getBoolean("dev", false);
@@ -240,9 +249,22 @@ public final class NpmPayloadBuilder {
         if (dep.containsKey("dependencies")) {
             final JsonObjectBuilder dependeciesBuilder = Json.createObjectBuilder();
             dep.getJsonObject("dependencies").forEach((key, value) -> {
-                final String v = ((JsonObject) value).getString("version");
-                dependencyMap.put(key, v);
-                dependeciesBuilder.add(key, buildDependencies((JsonObject) value, dependencyMap));
+                if (value.getValueType() == JsonValue.ValueType.OBJECT) {
+                    final JsonObject currentDep = (JsonObject) value;
+                    final String v = currentDep.getString("version");
+                    dependencyMap.put(key, v);
+                    dependeciesBuilder.add(key, buildDependencies(currentDep, dependencyMap));
+                } else {
+                    final String tmp = value.toString();
+                    final String v;
+                    if (tmp.startsWith("\"")) {
+                        v = tmp.substring(1, tmp.length() - 1);
+                    } else {
+                        v = tmp;
+                    }
+                    dependencyMap.put(key, v);
+                    dependeciesBuilder.add(key, v);
+                }
             });
             depBuilder.add("dependencies", dependeciesBuilder.build());
         }

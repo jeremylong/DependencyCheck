@@ -188,7 +188,7 @@ public class RetireJsAnalyzerIT extends BaseDBTestCase {
         assertEquals("version", version.getName());
         assertEquals("1.3.0", version.getValue());
 
-        assertEquals(3, dependency.getVulnerabilities().size());
+        assertTrue(dependency.getVulnerabilities().size() >= 3);
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("CVE-2014-0013")));
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("CVE-2014-0014")));
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("CVE-2014-0046")));

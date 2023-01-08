@@ -269,6 +269,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "pathToGo")
     private String pathToGo;
+
     /**
      * Sets the path to `yarn`.
      */
@@ -288,7 +289,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "dependency-check.virtualSnapshotsFromReactor", defaultValue = "true")
     private Boolean virtualSnapshotsFromReactor;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, JENKINS,
      * ALL). Multiple formats can be selected using a comma delineated list.
      */
     @SuppressWarnings("CanBeFinal")
@@ -302,7 +303,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "prettyPrint")
     private Boolean prettyPrint;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, JENKINS,
      * ALL). Multiple formats can be selected using a comma delineated list.
      */
     @Parameter(property = "formats", required = true)
@@ -397,6 +398,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Boolean jarAnalyzerEnabled;
 
     /**
+     * Sets whether the Dart analyzer is enabled. Default is true.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "dartAnalyzerEnabled")
+    private Boolean dartAnalyzerEnabled;
+
+    /**
      * Whether or not the Archive Analyzer is enabled.
      */
     @SuppressWarnings("CanBeFinal")
@@ -457,6 +465,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "pipfileAnalyzerEnabled")
     private Boolean pipfileAnalyzerEnabled;
     /**
+     * Sets whether or not the poetry Analyzer should be used.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "poetryAnalyzerEnabled")
+    private Boolean poetryAnalyzerEnabled;
+    /**
      * Sets whether or not the PHP Composer Lock File Analyzer should be used.
      */
     @Parameter(property = "composerAnalyzerEnabled")
@@ -478,6 +492,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nodeAuditAnalyzerEnabled")
     private Boolean nodeAuditAnalyzerEnabled;
+
+    /**
+     * The Node Audit API URL for the Node Audit Analyzer.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "nodeAuditAnalyzerUrl")
+    private String nodeAuditAnalyzerUrl;
 
     /**
      * Sets whether or not the Yarn Audit Analyzer should be used.
@@ -506,7 +527,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "nodeAuditSkipDevDependencies")
     private Boolean nodeAuditSkipDevDependencies;
     /**
-     * Sets whether or not the Node Audit Analyzer should skip devDependencies.
+     * Sets whether or not the Node.js Analyzer should skip devDependencies.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nodePackageSkipDevDependencies")
@@ -523,6 +544,23 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "retireJsUrl")
     private String retireJsUrl;
+    /**
+     * The username to use when connecting to the CVE-URL.
+     */
+    @Parameter(property = "retireJsUser")
+    private String retireJsUser;
+    /**
+     * The password to authenticate to the CVE-URL.
+     */
+    @Parameter(property = "retireJsPassword")
+    private String retireJsPassword;
+    /**
+     * The server id in the settings.xml; used to retrieve encrypted passwords
+     * from the settings.xml for cve-URLs.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "retireJsUrlServerId")
+    private String retireJsUrlServerId;
     /**
      * Whether the Retire JS repository will be updated regardless of the
      * `autoupdate` settings.
@@ -653,12 +691,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private String ossIndexServerId;
 
     /**
-     * Whether we should only warn about Sonatype OSS Index remote errors instead of failing the goal completely.
+     * Whether we should only warn about Sonatype OSS Index remote errors
+     * instead of failing the goal completely.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "ossIndexWarnOnlyOnRemoteErrors")
     private Boolean ossIndexWarnOnlyOnRemoteErrors;
-    
+
     /**
      * Whether or not the Elixir Mix Audit Analyzer is enabled.
      */
@@ -1383,15 +1422,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                                 final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
                                 final List<org.apache.maven.model.Dependency> managedDependencies
                                         = project.getDependencyManagement() == null ? null : project.getDependencyManagement()
-                                                                                                    .getDependencies();
+                                        .getDependencies();
                                 final Iterable<ArtifactResult> allDeps
                                         = dependencyResolver.resolveDependencies(buildingRequest, dependencies, managedDependencies,
-                                                                                 null);
+                                                null);
                                 allDeps.forEach(allResolvedDeps::add);
                             } catch (DependencyResolverException dre) {
                                 if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
-                                    final List<ArtifactResult> successResults =
-                                            Mshared998Util.getResolutionResults(
+                                    final List<ArtifactResult> successResults
+                                            = Mshared998Util.getResolutionResults(
                                                     (org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
                                     allResolvedDeps.addAll(successResults);
                                 } else {
@@ -1504,13 +1543,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Utility method for a work-around to MSHARED-998
      *
      * @param allDeps The List of ArtifactResults for all dependencies
-     * @param unresolvedArtifact The ArtifactCoordinate of the artifact we're looking for
+     * @param unresolvedArtifact The ArtifactCoordinate of the artifact we're
+     * looking for
      * @param project The project in whose context resolution was attempted
      * @return the resolved artifact matching with {@code unresolvedArtifact}
-     * @throws DependencyNotFoundException If {@code unresolvedArtifact} could not be found within {@code allDeps}
+     * @throws DependencyNotFoundException If {@code unresolvedArtifact} could
+     * not be found within {@code allDeps}
      */
     private Artifact findInAllDeps(final List<ArtifactResult> allDeps, final Artifact unresolvedArtifact,
-                                   final MavenProject project)
+            final MavenProject project)
             throws DependencyNotFoundException {
         Artifact result = null;
         for (final ArtifactResult res : allDeps) {
@@ -1530,8 +1571,10 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Utility method for a work-around to MSHARED-998
      *
      * @param res A single ArtifactResult obtained from the DependencyResolver
-     * @param unresolvedArtifact The unresolved Artifact from the dependencyGraph that we try to find
-     * @return {@code true} when unresolvedArtifact is non-null and matches with the artifact of res
+     * @param unresolvedArtifact The unresolved Artifact from the
+     * dependencyGraph that we try to find
+     * @return {@code true} when unresolvedArtifact is non-null and matches with
+     * the artifact of res
      */
     private boolean sameArtifact(final ArtifactResult res, final Artifact unresolvedArtifact) {
         if (res == null || res.getArtifact() == null || unresolvedArtifact == null) {
@@ -1539,7 +1582,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         boolean result = Objects.equals(res.getArtifact().getGroupId(), unresolvedArtifact.getGroupId());
         result &= Objects.equals(res.getArtifact().getArtifactId(), unresolvedArtifact.getArtifactId());
-        result &= Objects.equals(res.getArtifact().getBaseVersion(), unresolvedArtifact.getBaseVersion());
+        // accept any version as matching "LATEST" and any non-snapshot version as matching "RELEASE" meta-version
+        if ("RELEASE".equals(unresolvedArtifact.getBaseVersion())) {
+            result &= !res.getArtifact().isSnapshot();
+        } else if (!"LATEST".equals(unresolvedArtifact.getBaseVersion())) {
+            result &= Objects.equals(res.getArtifact().getBaseVersion(), unresolvedArtifact.getBaseVersion());
+        }
         result &= Objects.equals(res.getArtifact().getClassifier(), unresolvedArtifact.getClassifier());
         result &= Objects.equals(res.getArtifact().getType(), unresolvedArtifact.getType());
         return result;
@@ -1706,7 +1754,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * <code>false</code>
      */
     private boolean addVirtualDependencyFromReactor(Engine engine, Artifact artifact,
-                                                    final MavenProject depender, String infoLogTemplate) {
+            final MavenProject depender, String infoLogTemplate) {
 
         getLog().debug(String.format("Checking the reactor projects (%d) for %s:%s:%s",
                 reactorProjects.size(),
@@ -1983,12 +2031,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         final Set<String> selectedFormats = getFormats();
         if (selectedFormats.contains("HTML") || selectedFormats.contains("ALL") || selectedFormats.size() > 1) {
             return "dependency-check-report";
+        } else if (selectedFormats.contains("JENKINS")) {
+            return "dependency-check-jenkins.html";
         } else if (selectedFormats.contains("XML")) {
             return "dependency-check-report.xml";
         } else if (selectedFormats.contains("JUNIT")) {
             return "dependency-check-junit.xml";
         } else if (selectedFormats.contains("JSON")) {
             return "dependency-check-report.json";
+        } else if (selectedFormats.contains("SARIF")) {
+            return "dependency-check-report.sarif";
         } else if (selectedFormats.contains("CSV")) {
             return "dependency-check-report.csv";
         } else {
@@ -2054,12 +2106,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIRED_ENABLED, enableRetired);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED, golangDepEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED, golangModEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_DART_ENABLED, dartAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_GOLANG_PATH, pathToGo);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);
 
         final Proxy proxy = getMavenProxy();
+        boolean proxySet = false;
         if (proxy != null) {
+            proxySet = true;
             settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());
             settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
             final String userName = proxy.getUsername();
@@ -2077,6 +2132,21 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
             settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
             settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());
+        }
+        if (!proxySet && System.getProperty("http.proxyHost") != null) {
+            settings.setString(Settings.KEYS.PROXY_SERVER, System.getProperty("http.proxyHost", ""));
+            if (System.getProperty("http.proxyPort") != null) {
+                settings.setString(Settings.KEYS.PROXY_PORT, System.getProperty("http.proxyPort"));
+            }
+            if (System.getProperty("http.proxyUser") != null) {
+                settings.setString(Settings.KEYS.PROXY_USERNAME, System.getProperty("http.proxyUser"));
+            }
+            if (System.getProperty("http.proxyPassword") != null) {
+                settings.setString(Settings.KEYS.PROXY_PASSWORD, System.getProperty("http.proxyPassword"));
+            }
+            if (System.getProperty("http.nonProxyHosts") != null) {
+                settings.setString(Settings.KEYS.PROXY_NON_PROXY_HOSTS, System.getProperty("http.nonProxyHosts"));
+            }
         }
         final String[] suppressions = determineSuppressions();
         settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);
@@ -2123,18 +2193,29 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MAVEN_INSTALL_ENABLED, mavenInstallAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIP_ENABLED, pipAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PIPFILE_ENABLED, pipfileAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_POETRY_ENABLED, poetryAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED, composerAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CPANFILE_ENABLED, cpanfileAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED, nodeAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED, nodeAuditAnalyzerEnabled);
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_URL, nodeAuditAnalyzerUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_USE_CACHE, nodeAuditAnalyzerUseCache);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, nodePackageSkipDevDependencies);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, pnpmAuditAnalyzerEnabled);
+        
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsForceUpdate);
+
+        if (retireJsUser == null && retireJsPassword == null && retireJsUrlServerId != null) {
+            configureServerCredentials(retireJsUrlServerId, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD);
+        } else {
+            settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, retireJsUser);
+            settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD, retireJsPassword);
+        }
+
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_ENABLED, mixAuditAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH, mixAuditPath);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);

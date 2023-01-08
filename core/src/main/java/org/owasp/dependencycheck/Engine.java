@@ -83,6 +83,7 @@ import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_FINDING_ANALY
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_IDENTIFIER_ANALYSIS;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_INFORMATION_COLLECTION;
 import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
+import org.owasp.dependencycheck.dependency.naming.Identifier;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -250,11 +251,26 @@ public class Engine implements FileFilter, AutoCloseable {
     }
 
     /**
-     * Adds a dependency.
+     * Adds a dependency. In some cases, when adding a virtual dependency, the
+     * method will identify if the virtual dependency was previously added and update
+     * the existing dependency rather then adding a duplicate.
      *
      * @param dependency the dependency to add
      */
     public synchronized void addDependency(Dependency dependency) {
+        if (dependency.isVirtual()) {
+            for (Dependency existing : dependencies) {
+                if (existing.isVirtual()
+                        && existing.getSha256sum() != null
+                        && existing.getSha256sum().equals(dependency.getSha256sum())
+                        && existing.getDisplayFileName() != null
+                        && existing.getDisplayFileName().equals(dependency.getDisplayFileName())
+                        && identifiersMatch(existing.getSoftwareIdentifiers(), dependency.getSoftwareIdentifiers())) {
+                    DependencyBundlingAnalyzer.mergeDependencies(existing, dependency, null);
+                    return;
+                }
+            }
+        }
         dependencies.add(dependency);
         dependenciesExternalView = null;
     }
@@ -1247,6 +1263,22 @@ public class Engine implements FileFilter, AutoCloseable {
         }
     }
     //CSON: LineLength
+
+    private boolean identifiersMatch(Set<Identifier> left, Set<Identifier> right) {
+        if (left != null && right != null && left.size() > 0 && left.size() == right.size()) {
+            int count = 0;
+            for (Identifier l : left) {
+                for (Identifier r : right) {
+                    if (l.getValue().equals(r.getValue())) {
+                        count += 1;
+                        break;
+                    }
+                }
+            }
+            return count == left.size();
+        }
+        return false;
+    }
 
     /**
      * {@link Engine} execution modes.

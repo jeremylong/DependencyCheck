@@ -56,9 +56,11 @@ excludes                            | A list of exclude patterns to filter out m
 jarAnalyzerEnabled                  | Sets whether Jar Analyzer will be used.                                                                                                             | true
 centralAnalyzerEnabled              | Sets whether Central Analyzer will be used; by default in the Maven plugin this analyzer is disabled as all information gained from Central is already available in the build. | false
 centralAnalyzerUseCache             | Sets whether the Central Analyer will cache results. Cached results expire after 30 days.                                                           | true
+dartAnalyzerEnabled                 | Sets whether the [experimental](../analyzers/index.html) Dart Analyzer will be used.                                                                | true
 ossindexAnalyzerEnabled             | Sets whether the [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be enabled. This analyzer requires an internet connection.         | true
 ossindexAnalyzerUseCache            | Sets whether the OSS Index Analyzer will cache results. Cached results expire after 24 hours.                                                       | true
 ossindexServerId                    | The id of a server defined in the settings.xml to retrieve the credentials (username and password) to connect to OSS Index instance; not it is not required to have a registered account and use this configuration. | &nbsp;
+ossindexAnalyzerUrl                 | The OSS Index server URL | https://ossindex.sonatype.org
 ossIndexWarnOnlyOnRemoteErrors      | Sets whether remote errors from the OSS Index (e.g. BAD GATEWAY, RATE LIMIT EXCEEDED) will result in warnings only instead of failing execution.    | false
 nexusAnalyzerEnabled                | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 nexusUrl                            | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
@@ -80,6 +82,7 @@ cmakeAnalyzerEnabled                | Sets whether the [experimental](../analyze
 autoconfAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used. `enableExperimental` must be set to true.                | true
 pipAnalyzerEnabled                  | Sets whether the [experimental](../analyzers/index.html) pip Analyzer should be used. `enableExperimental` must be set to true.                     | true
 pipfileAnalyzerEnabled              | Sets whether the [experimental](../analyzers/index.html) Pipfile Analyzer should be used. `enableExperimental` must be set to true.                 | true
+poetryAnalyzerEnabled               | Sets whether the [experimental](../analyzers/index.html) Poetry Analyzer should be used. `enableExperimental` must be set to true.                 | true
 composerAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used. `enableExperimental` must be set to true.  | true
 cpanfileAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) Perl CPAN File Analyzer should be used. `enableExperimental` must be set to true.          | true
 yarnAuditAnalyzerEnabled            | Sets whether the Yarn Audit Analyzer should be used. This analyzer requires yarn and an internet connection.  Use `nodeAuditSkipDevDependencies` to skip dev dependencies. | true
@@ -90,6 +93,7 @@ nodeAnalyzerEnabled                 | Sets whether the [retired](../analyzers/in
 nodeAuditAnalyzerEnabled            | Sets whether the Node Audit Analyzer should be used. This analyzer requires an internet connection.                                                 | true
 nodeAuditAnalyzerUseCache           | Sets whether the Node Audit Analyzer will cache results. Cached results expire after 24 hours.                                                      | true
 nodeAuditSkipDevDependencies        | Sets whether the Node Audit Analyzer will skip devDependencies.                                                                                     | false
+nodeAuditAnalyzerUrl                | The Node Audit API URL for the Node Audit Analyzer.                                                                                                 | https://registry.npmjs.org/-/npm/v1/security/audits
 nodePackageSkipDevDependencies      | Sets whether the Node Package Analyzer will skip devDependencies.                                                                                   | false
 retireJsAnalyzerEnabled             | Sets whether the RetireJS Analyzer should be used.                                                                                                  | true
 retireJsForceUpdate                 | Sets whether the RetireJS Analyzer should update regardless of the `autoupdate` setting.                                                            | false
@@ -157,6 +161,9 @@ databasePassword         | The password used when connecting to the database.   
 hostedSuppressionsForceUpdate                 | Whether the hosted suppressions file will update regardless of the `autoupdate` setting.                              | false
 hostedSuppressionsUrl                         | The URL to a mirrored copy of the hosted suppressions file for internet-constrained environments.                     | https://jeremylong.github.io/DependencyCheck/suppressions/publishedSuppressions.xml
 hostedSuppressionsValidForHours            | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 2
+retireJsUrlServerId      | The id of a server defined in the settings.xml to retrieve the credentials (username and password) to connect to RetireJS instance. | &nbsp;
+retireJsUser          | If you don't want register user/password in settings.xml, you can specify user. | &nbsp;
+retireJsPassword         | If you don't want register user/password in settings.xml, you can specify user. | &nbsp;
 
 Proxy Configuration
 ====================

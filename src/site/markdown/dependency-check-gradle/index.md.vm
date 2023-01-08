@@ -1,6 +1,6 @@
 Usage
 ==============================
-The OWASP dependency-check-gradle plugin provides monitoring of the projects dependent
+The [OWASP dependency-check-gradle plugin][plugin-site] provides monitoring of the projects dependent
 libraries; creating a report of known vulnerable components that are included in the build.
 
 It is important to understand that the first time this task is executed it may
@@ -45,21 +45,16 @@ The OWASP dependency-check-gradle plugin contains three tasks: [dependencyCheckA
 [dependencyCheckAggregate](configuration-aggregate.html), [dependencyCheckUpdate](configuration-update.html),
 and [dependencyCheckPurge](configuration-purge.html). Please see each tasks configuration page for more information.
 
-Mailing List
-------------
-
-Subscribe: [dependency-check+subscribe@googlegroups.com] [subscribe]
-
-Post: [dependency-check@googlegroups.com] [post]
+More information can be found in the [GitHub repository][github].
 
 License
 -------------------
 
-Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt] [license] file for the full license.
+Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt][license] file for the full license.
 
-Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt] [notices] file for more information.
+Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt][notices] file for more information.
 
-  [subscribe]: mailto:dependency-check+subscribe@googlegroups.com
-  [post]: mailto:dependency-check@googlegroups.com
-  [license]: https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-gradle/LICENSE.txt
-  [notices]: https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-gradle/NOTICE.txt
+  [license]: https://github.com/dependency-check/dependency-check-gradle/blob/main/LICENSE.txt
+  [notices]: https://github.com/dependency-check/dependency-check-gradle/blob/main/NOTICE.txt
+  [plugin-site]: https://plugins.gradle.org/plugin/org.owasp.dependencycheck
+  [github]: https://github.com/dependency-check/dependency-check-gradle
