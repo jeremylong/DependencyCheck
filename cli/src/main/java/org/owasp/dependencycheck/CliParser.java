@@ -64,7 +64,7 @@ public final class CliParser {
     /**
      * The supported reported formats.
      */
-    private static final String SUPPORTED_FORMATS = "HTML, XML, CSV, JSON, JUNIT, SARIF, or ALL";
+    private static final String SUPPORTED_FORMATS = "HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, or ALL";
 
     /**
      * Constructs a new CLI Parser object with the configured settings.
@@ -147,9 +147,10 @@ public final class CliParser {
             if (line.hasOption(ARGUMENT.OUTPUT_FORMAT)) {
                 for (String validating : getReportFormat()) {
                     if (!isValidFormat(validating)
-                        && !isValidFilePath(validating, "format")) {
+                            && !isValidFilePath(validating, "format")) {
                         final String msg = String.format("An invalid 'format' of '%s' was specified. "
-                                                         + "Supported output formats are %s, and custom template files.", validating, SUPPORTED_FORMATS);
+                                + "Supported output formats are %s, and custom template files.",
+                                validating, SUPPORTED_FORMATS);
                         throw new ParseException(msg);
                     }
                 }
@@ -388,6 +389,8 @@ public final class CliParser {
                 .addOption(newOptionWithArg(ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY, "path",
                         "The path to working directory that the bundle-audit command should be executed from when "
                         + "doing Gem bundle analysis."))
+                .addOption(newOptionWithArg(ARGUMENT.OSSINDEX_URL, "url",
+                        "Alternative URL for the OSS Index. If not set the public Sonatype OSS Index will be used."))
                 .addOption(newOptionWithArg(ARGUMENT.OSSINDEX_USERNAME, "username",
                         "The username to authenticate to Sonatype's OSS Index. If not set the Sonatype OSS Index "
                         + "Analyzer will use an unauthenticated connection."))
@@ -400,6 +403,10 @@ public final class CliParser {
                         + "even if autoupdate is disabled"))
                 .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL, "url",
                         "The Retire JS Respository URL"))
+                .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL_USER, "username",
+                        "The password to authenticate to Retire JS Respository URL"))
+                .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL_PASSWORD, "password",
+                        "The password to authenticate to Retire JS Respository URL"))
                 .addOption(newOption(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE, "Specifies that the Retire JS "
                         + "Analyzer should filter out non-vulnerable JS files from the report."))
                 .addOption(newOptionWithArg(ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS, "true/false",
@@ -464,7 +471,9 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_PIPFILE, "Disable the Pipfile Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_COMPOSER, "Disable the PHP Composer Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_CPAN, "Disable the Perl CPAN file Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_POETRY, "Disable the Poetry Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_GOLANG_MOD, "Disable the Golang Mod Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_DART, "Disable the Dart Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_OPENSSL, "Disable the OpenSSL Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NUSPEC, "Disable the Nuspec Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_NUGETCONF, "Disable the Nuget packages.config Analyzer."))
@@ -1206,6 +1215,10 @@ public final class CliParser {
          */
         public static final String DISABLE_GOLANG_MOD = "disableGolangMod";
         /**
+         * Disables the Dart Analyzer.
+         */
+        public static final String DISABLE_DART = "disableDart";
+        /**
          * The CLI argument name for setting the path to `go`.
          */
         public static final String PATH_TO_GO = "go";
@@ -1237,6 +1250,10 @@ public final class CliParser {
          * Disables the Pipfile Analyzer.
          */
         public static final String DISABLE_PIPFILE = "disablePipfile";
+        /**
+         * Disables the Poetry Analyzer.
+         */
+        public static final String DISABLE_POETRY = "disablePoetry";
         /**
          * Disables the Cmake Analyzer.
          */
@@ -1295,6 +1312,10 @@ public final class CliParser {
          */
         public static final String DISABLE_OSSINDEX_CACHE = "disableOssIndexCache";
         /**
+         * The alternative URL for the Sonatype OSS Index.
+         */
+        public static final String OSSINDEX_URL = "ossIndexUrl";
+        /**
          * The username for the Sonatype OSS Index.
          */
         public static final String OSSINDEX_USERNAME = "ossIndexUsername";
@@ -1351,6 +1372,14 @@ public final class CliParser {
          * The URL to the retire JS repository.
          */
         public static final String RETIREJS_URL = "retireJsUrl";
+        /**
+         * The username to the retire JS repository.
+         */
+        public static final String RETIREJS_URL_USER = "retireJsUrlUser";
+        /**
+         * The password to the retire JS repository.
+         */
+        public static final String RETIREJS_URL_PASSWORD = "retireJsUrlPass";
         /**
          * The URL of the nexus server.
          */

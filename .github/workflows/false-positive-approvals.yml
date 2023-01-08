@@ -4,8 +4,13 @@ on:
   issue_comment:
     types: [ created ]
 
+permissions: {}
 jobs:
   update_suppression:
+    permissions:
+      contents: write # to push changes in repo (jamesives/github-pages-deploy-action)
+      issues: write
+
     name: Update Suppression Rules
     if: ${{ !github.event.issue.pull_request && 
       contains(github.event.issue.labels.*.name, 'FP Report') && 
@@ -18,13 +23,13 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: generatedSuppressions
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3.6.0
       - run: |
           npm install fast-xml-parser@4.0.9
           npm install fs
       - name: Commit Suppression Rule
         id: fp-ops-commit
-        uses: actions/github-script@v6.2.0
+        uses: actions/github-script@v6.3.3
         with:
           script: |
             const { execSync } = require("child_process");
@@ -124,7 +129,7 @@ jobs:
                 if (err) throw err;
               });
 
-              execSync('git commit -m "' + commitComment + '" generatedSuppressions.xml;git push origin generatedSuppressions', (err, stdout, stderr) => {
+              execSync('git commit -m "fix(fp): ' + commitComment + '" generatedSuppressions.xml;git push origin generatedSuppressions', (err, stdout, stderr) => {
                 if (err) throw err;
                 console.log('committed suppression rule');
               });
@@ -145,14 +150,14 @@ jobs:
             } 
       - name: Publish Updated Suppressions
         if: ${{ steps.fp-ops-commit.outputs.publish == 'true' }}
-        uses: JamesIves/github-pages-deploy-action@v4.4.0
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           branch: gh-pages
           folder: suppressions
           target-folder: suppressions
       - name: Message failure
         if: ${{ failure() || steps.fp-ops-commit.outputs.failed }}
-        uses: actions/github-script@v6.2.0
+        uses: actions/github-script@v6.3.3
         with:
           script: |
             github.rest.issues.createComment({

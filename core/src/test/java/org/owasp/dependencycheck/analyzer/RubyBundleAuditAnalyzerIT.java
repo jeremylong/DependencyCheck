@@ -17,11 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Assume;

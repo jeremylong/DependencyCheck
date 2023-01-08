@@ -496,6 +496,10 @@ public class App {
                 cli.hasOption(CliParser.ARGUMENT.PRETTY_PRINT));
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
                 cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL));
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER,
+                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL_USER));
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD,
+                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL_PASSWORD));                
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE,
                 cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));
         settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,
@@ -516,6 +520,8 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIP, Settings.KEYS.ANALYZER_PIP_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_PIPFILE_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIPFILE, Settings.KEYS.ANALYZER_PIPFILE_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_POETRY_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_POETRY, Settings.KEYS.ANALYZER_POETRY_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CMAKE, Settings.KEYS.ANALYZER_CMAKE_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED,
@@ -540,6 +546,8 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GOLANG_MOD, Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_DART_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_DART, Settings.KEYS.ANALYZER_DART_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED));
         //TODO next major - remove the deprecated check in isNodeAuditDisabled
@@ -576,6 +584,8 @@ public class App {
                 cli.hasOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED,
                 cli.hasOption(CliParser.ARGUMENT.ENABLE_NEXUS));
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL,
+                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_URL));
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER,
                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_USERNAME));
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD,

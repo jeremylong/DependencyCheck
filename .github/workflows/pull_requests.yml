@@ -22,7 +22,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - uses: actions/setup-dotnet@v2
+      - uses: actions/setup-dotnet@v3.0.3
         with:
           dotnet-version: '6.0.x'
       - name: Set up JDK 1.8
@@ -31,7 +31,7 @@ jobs:
         with:
           java-version: 8
           distribution: 'zulu'
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: pnpm/action-setup@v2.2.4
         with:
           version: 6.0.2
       - name: Test with Maven
@@ -53,7 +53,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - uses: actions/setup-dotnet@v2
+      - uses: actions/setup-dotnet@v3.0.3
         with:
           dotnet-version: '6.0.x'
       - name: Set up JDK 1.8
@@ -62,7 +62,7 @@ jobs:
         with:
           java-version: 8
           distribution: 'zulu'
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: pnpm/action-setup@v2.2.4
         with:
           version: 6.0.2
       - name: Regression Test Maven Plugin

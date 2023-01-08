@@ -40,6 +40,7 @@ _odc_completions()
             --disableCmake
             --disableCocoapodsAnalyzer
             --disableComposer
+            --disableDart
             --disableFileName
             --disableGolangDep
             --disableGolangMod

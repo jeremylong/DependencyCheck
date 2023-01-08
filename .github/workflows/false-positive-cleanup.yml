@@ -4,8 +4,12 @@ on:
   schedule:
     - cron: '0 8 * * *'
 
+permissions: {}
 jobs:
   cleanup:
+    permissions:
+      actions: write  #  to delete workflow runs
+
     runs-on: ubuntu-latest
     steps:
       - name: Delete workflow runs

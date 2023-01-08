@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.nvdcve;
 //CSOFF: AvoidStarImport
 
+import com.google.common.io.Resources;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.collections.map.ReferenceMap;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -28,14 +29,18 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.anarres.jdiagnostics.DefaultQuery;
 
 import static org.apache.commons.collections.map.AbstractReferenceMap.HARD;
 import static org.apache.commons.collections.map.AbstractReferenceMap.SOFT;
@@ -76,6 +81,11 @@ public final class CveDB implements AutoCloseable {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CveDB.class);
+
+    /**
+     * Resource location for SQL file containing updates to the ecosystem cache.
+     */
+    public static final String DB_ECOSYSTEM_CACHE = "data/dbEcosystemCacheUpdates.sql";
 
     /**
      * The database connection manager.
@@ -119,6 +129,35 @@ public final class CveDB implements AutoCloseable {
      * Flag indicating if the database is H2.
      */
     private boolean isH2 = false;
+
+    /**
+     * Updates the EcoSystem Cache.
+     *
+     * @return The number of records updated by the DB_ECOSYSTEM_CACHE update script.
+     */
+    public int updateEcosystemCache() {
+        LOGGER.debug("Updating the ecosystem cache");
+        int updateCount = 0;
+        try {
+            final URL url = Resources.getResource(DB_ECOSYSTEM_CACHE);
+            final List<String> sql = Resources.readLines(url, StandardCharsets.UTF_8);
+
+            try (Connection conn = databaseManager.getConnection();
+                    Statement statement = conn.createStatement()) {
+                for (String single : sql) {
+                    updateCount += statement.executeUpdate(single);
+                }
+            } catch (SQLException ex) {
+                LOGGER.debug("", ex);
+                throw new DatabaseException("Unable to update the ecosystem cache", ex);
+            }
+        } catch (IOException ex) {
+            throw new DatabaseException("Unable to update the ecosystem cache", ex);
+        } catch (LinkageError ex) {
+            LOGGER.debug(new DefaultQuery(ex).call().toString());
+        }
+        return updateCount;
+    }
 
     /**
      * The enumeration value names must match the keys of the statements in the
@@ -1312,8 +1351,6 @@ public final class CveDB implements AutoCloseable {
     public void cleanupDatabase() {
         LOGGER.info("Begin database maintenance");
         final long start = System.currentTimeMillis();
-        saveCpeEcosystemCache();
-        clearCache();
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement psOrphans = getPreparedStatement(conn, CLEANUP_ORPHANS);
                 PreparedStatement psEcosystem = getPreparedStatement(conn, UPDATE_ECOSYSTEM);
@@ -1344,6 +1381,14 @@ public final class CveDB implements AutoCloseable {
             LOGGER.debug("", ex);
             throw new DatabaseException("Unexpected SQL Exception", ex);
         }
+    }
+
+    /**
+     * Persist the EcosystemCache into the database.
+     */
+    public void persistEcosystemCache() {
+        saveCpeEcosystemCache();
+        clearCache();
     }
 
     /**

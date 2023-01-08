@@ -20,8 +20,11 @@ package org.owasp.dependencycheck.data.update.nvd;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import java.io.EOFException;
@@ -86,8 +89,16 @@ public final class NvdCveParser {
     public void parse(File file) throws UpdateException, CorruptedDatastreamException {
         LOGGER.debug("Parsing " + file.getName());
 
-        final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.registerModule(new AfterburnerModule());
+        final Module module;
+        if (getJavaVersion() <= 8) {
+            module = new AfterburnerModule();
+        } else {
+            module = new BlackbirdModule();
+        }
+        final ObjectMapper objectMapper = JsonMapper.builder()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .addModule(module)
+                .build();
 
         final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);
 
@@ -115,12 +126,24 @@ public final class NvdCveParser {
     }
 
     /**
-     * Naive implementation that skips to the first JSON Array
+     * Returns the Java major version as a whole number.
      *
-     * @param parser the parser to skip to first array
-     * @throws IOException thrown if there is an error?
+     * @return the Java major version as a whole number
      */
-    private void init(JsonParser parser) throws IOException {
+    private static int getJavaVersion() {
+        String version = System.getProperty("java.specification.version");
+        if (version.startsWith("1.")) {
+            version = version.substring(2, 3);
+        } else {
+            final int dot = version.indexOf(".");
+            if (dot != -1) {
+                version = version.substring(0, dot);
+            }
+        }
+        return Integer.parseInt(version);
+    }
+
+    void init(JsonParser parser) throws IOException {
         JsonToken nextToken = parser.nextToken();
         if (nextToken != JsonToken.START_OBJECT) {
             throw new IOException("Expected " + JsonToken.START_OBJECT + ", got " + nextToken);

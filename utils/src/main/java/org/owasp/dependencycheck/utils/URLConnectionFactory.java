@@ -167,12 +167,19 @@ public final class URLConnectionFactory {
                 && StringUtils.isNotEmpty(settings.getString(passwordKey))) {
             final String user = settings.getString(userKey);
             final String password = settings.getString(passwordKey);
-            final String userColonPassword = user + ":" + password;
-            final String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userColonPassword.getBytes(UTF_8));
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Adding user/pw from settings.xml as basic authorization");
+
+            if (user.isEmpty() || password.isEmpty()) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Skip authentication as user and/or password is empty");
+                }
+            } else {
+                final String userColonPassword = user + ":" + password;
+                final String basicAuth = "Basic " + Base64.getEncoder().encodeToString(userColonPassword.getBytes(UTF_8));
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Adding user/password from settings.xml as basic authorization");
+                }
+                conn.addRequestProperty("Authorization", basicAuth);
             }
-            conn.addRequestProperty("Authorization", basicAuth);
         }
     }
 
