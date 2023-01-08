@@ -158,6 +158,9 @@ connectionString         | The connection string used to connect to the database
 serverId                 | The id of a server defined in the settings.xml; this can be used to encrypt the database password. See [password encryption](http://maven.apache.org/guides/mini/guide-encryption.html) for more information. | &nbsp; |
 databaseUser             | The username used when connecting to the database.                                                                                         | &nbsp;                                                              |
 databasePassword         | The password used when connecting to the database.                                                                                         | &nbsp;                                                              |
+retireJsUrlServerId      | The id of a server defined in the settings.xml to retrieve the credentials (username and password) to connect to RetireJS instance. | &nbsp;
+retireJsUser          | If you don't want register user/password in settings.xml, you can specify user. | &nbsp;
+retireJsPassword         | If you don't want register user/password in settings.xml, you can specify user. | &nbsp;
 
 Proxy Configuration
 ====================
