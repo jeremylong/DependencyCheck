@@ -42,6 +42,7 @@ For more information see [How dependency-check works](https://jeremylong.github.
                 #end
                 #if($rule.cvssv3BaseSeverity)
                     "cvssv3_baseScore": $rule.cvssv3BaseScore,
+                    "security-severity": $rule.cvssv3BaseScore,
                     "cvssv3_attackVector": "$enc.json($rule.cvssv3AttackVector)",
                     "cvssv3_attackComplexity": "$enc.json($rule.cvssv3AttackComplexity)",
                     "cvssv3_privilegesRequired": "$enc.json($rule.cvssv3PrivilegesRequired)",

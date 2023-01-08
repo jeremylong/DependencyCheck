@@ -1,5 +1,13 @@
 # Change Log
 
+## [Version 7.4.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.4) (2022-01-06)
+
+### Fixed
+
+- Resolved issue processing NVD CVE data due to column width (#5229)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/56?closed=1).
+
 ## [Version 7.4.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.3) (2022-12-29)
 
 ### Fixed
