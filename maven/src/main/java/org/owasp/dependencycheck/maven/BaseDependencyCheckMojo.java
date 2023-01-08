@@ -1273,7 +1273,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     for (Dependency dep : deps) {
                         if (d != null && d != dep) {
                             //TODO convert to package URL
-                            dep.addIncludedBy(groupId + ":" + artifactId + ":" + version + " (plugins)");
+                            dep.addIncludedBy(groupId + ":" + artifactId + ":" + version, "plugins");
                         }
                     }
                 }
@@ -1281,7 +1281,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
                     d.addAsEvidence("pom", ma, Confidence.HIGHEST);
                     if (parent != null) {
-                        d.addIncludedBy(parent + " (plugins)");
+                        d.addIncludedBy(parent, "plugins");
                     } else {
                         final String includedby = String.format("%s:%s:%s",
                                 project.getGroupId(),

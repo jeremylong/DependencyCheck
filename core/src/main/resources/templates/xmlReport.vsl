@@ -92,7 +92,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 #if ($dependency.includedBy.size()>0)
             <includedBy>
 #foreach($ref in $dependency.includedBy)
-                <reference>$enc.xml($ref)</reference>
+                <reference#if($ref.getRight()) type="$enc.xml($ref.getRight())"#end>$enc.xml($ref.getLeft())</reference>
 #end
             </includedBy>
 #end

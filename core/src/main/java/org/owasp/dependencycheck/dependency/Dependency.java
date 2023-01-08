@@ -46,6 +46,7 @@ import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Pair;
 
 /**
  * A program dependency. This object is one of the core components within
@@ -104,9 +105,11 @@ public class Dependency extends EvidenceCollection implements Serializable {
     private final SortedSet<Dependency> relatedDependencies = new TreeSet<>(Dependency.NAME_COMPARATOR);
     /**
      * The set of dependencies that included this dependency (i.e., this is a
-     * transitive dependency because it was included by X).
+     * transitive dependency because it was included by X). This is a pair where
+     * the left element is the includedBy and the right element is the type
+     * (e.g. buildEnv, plugins).
      */
-    private final Set<String> includedBy = new HashSet<>();
+    private final Set<Pair<String, String>> includedBy = new HashSet<>();
     /**
      * A list of projects that reference this dependency.
      */
@@ -780,7 +783,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      *
      * @return the unmodifiable set of includedBy
      */
-    public synchronized Set<String> getIncludedBy() {
+    public synchronized Set<Pair<String, String>> getIncludedBy() {
         return Collections.unmodifiableSet(new HashSet<>(includedBy));
     }
 
@@ -791,7 +794,16 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param includedBy a project reference
      */
     public synchronized void addIncludedBy(String includedBy) {
-        this.includedBy.add(includedBy);
+        this.includedBy.add(new Pair<>(includedBy, null));
+    }
+        /**
+     * Adds the parent or root of the transitive dependency chain (i.e., this
+     * was included by the parent dependency X).
+     *
+     * @param includedBy a project reference
+     */
+    public synchronized void addIncludedBy(String includedBy, String type) {
+        this.includedBy.add(new Pair<>(includedBy, type));
     }
 
     /**
@@ -799,7 +811,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      *
      * @param includedBy a set of project references
      */
-    public synchronized void addAllIncludedBy(Set<String> includedBy) {
+    public synchronized void addAllIncludedBy(Set<Pair<String,String>> includedBy) {
         this.includedBy.addAll(includedBy);
     }
 

@@ -627,12 +627,13 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 </ul>
                             #end
                             #if ($dependency.includedBy && $dependency.includedBy.size()==1)
-                                <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span> $enc.html($dependency.includedBy.iterator().next())
+                                #set($incBy=$dependency.includedBy.iterator().next())
+                                <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span> $enc.html($incBy.getLeft())#if($incBy.getRight()) ($enc.html($incBy.getRight()))#end
                             #end
                             #if ($dependency.includedBy && $dependency.includedBy.size()>1)
                                 <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span><ul>
                                 #foreach($parent in $dependency.includedBy)
-                                    <li>$enc.html($parent)</li>
+                                    <li>$enc.html($parent.getLeft())#if($parent.getRight()) ($enc.html($parent.getRight()))#end</li>
                                 #end
                                 </ul>
                             #end

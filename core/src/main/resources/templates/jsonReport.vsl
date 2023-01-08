@@ -73,7 +73,7 @@
             ,"includedBy": [
             #foreach($ref in $dependency.includedBy)
                 #if($foreach.count > 1),#end
-                "$enc.json($ref)"
+                { "reference":"$enc.json($ref.getLeft())"#if($ref.getRight()),"type":"$enc.json($ref.getRight())"#end }
             #end
             ]
             #end
