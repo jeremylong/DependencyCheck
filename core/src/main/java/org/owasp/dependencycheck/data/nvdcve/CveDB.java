@@ -1492,7 +1492,7 @@ public final class CveDB implements AutoCloseable {
                 ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                final org.owasp.dependencycheck.data.knownexploited.json.Vulnerability kev = 
+                final org.owasp.dependencycheck.data.knownexploited.json.Vulnerability kev =
                         new org.owasp.dependencycheck.data.knownexploited.json.Vulnerability();
                 kev.setCveID(rs.getString(1));
                 kev.setVendorProject(rs.getString(2));
