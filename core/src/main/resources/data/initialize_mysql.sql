@@ -300,7 +300,10 @@ INSERT INTO knownExploited (`cveID`, `vendorProject`, `product`, `vulnerabilityN
             `dateAdded`, `shortDescription`, `requiredAction`, `dueDate`, `notes`) 
        VALUES (p_cveID, p_vendorProject, p_product, p_vulnerabilityName, p_dateAdded,
             p_shortDescription, p_requiredAction, p_dueDate, p_notes)
-       ON DUPLICATE KEY UPDATE `cveID`=p_cveID;
+       ON DUPLICATE KEY UPDATE `vendorProject`=p_vendorProject, `product`=p_product,
+            `vulnerabilityName`=p_vulnerabilityName, `dateAdded`=p_dateAdded,
+            `shortDescription`=p_shortDescription, `requiredAction`=p_requiredAction, 
+            `dueDate`=p_dueDate, `notes`=p_notes;
 END //
 DELIMITER ;
 
