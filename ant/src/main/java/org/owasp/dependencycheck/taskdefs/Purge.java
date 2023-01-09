@@ -112,7 +112,10 @@ public class Purge extends Task {
     }
 
     /**
-     * Sets the {@link Thread#getContextClassLoader() Thread Context Class Loader} to the one for this class, and then calls {@link #executeWithContextClassloader()}. This is done because the JCS cache needs to have the Thread Context Class Loader set to something that can resolve it's classes. Other build tools do this by default but Ant does not.
+     * Sets the {@link Thread#getContextClassLoader() Thread Context Class Loader} to the one for this class, and
+     * then calls {@link #executeWithContextClassloader()}. This is done because the JCS cache needs to have the
+     * Thread Context Class Loader set to something that can resolve it's classes. Other build tools do this by
+     * default but Ant does not.
      *
      * @throws BuildException throws if there is a problem. See {@link #executeWithContextClassloader()} for details
      */
