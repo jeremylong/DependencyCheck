@@ -109,7 +109,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * the left element is the includedBy and the right element is the type
      * (e.g. buildEnv, plugins).
      */
-    private final Set<Pair<String, String>> includedBy = new HashSet<>();
+    private final Set<IncludedByReference> includedBy = new HashSet<>();
     /**
      * A list of projects that reference this dependency.
      */
@@ -783,7 +783,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      *
      * @return the unmodifiable set of includedBy
      */
-    public synchronized Set<Pair<String, String>> getIncludedBy() {
+    public synchronized Set<IncludedByReference> getIncludedBy() {
         return Collections.unmodifiableSet(new HashSet<>(includedBy));
     }
 
@@ -794,16 +794,18 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param includedBy a project reference
      */
     public synchronized void addIncludedBy(String includedBy) {
-        this.includedBy.add(new Pair<>(includedBy, null));
+        this.includedBy.add(new IncludedByReference(includedBy, null));
     }
-        /**
+
+    /**
      * Adds the parent or root of the transitive dependency chain (i.e., this
      * was included by the parent dependency X).
      *
      * @param includedBy a project reference
+     * @param type the type of project reference (i.e. 'plugins', 'buildEnv')
      */
     public synchronized void addIncludedBy(String includedBy, String type) {
-        this.includedBy.add(new Pair<>(includedBy, type));
+        this.includedBy.add(new IncludedByReference(includedBy, type));
     }
 
     /**
@@ -811,7 +813,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
      *
      * @param includedBy a set of project references
      */
-    public synchronized void addAllIncludedBy(Set<Pair<String,String>> includedBy) {
+    public synchronized void addAllIncludedBy(Set<IncludedByReference> includedBy) {
         this.includedBy.addAll(includedBy);
     }
 

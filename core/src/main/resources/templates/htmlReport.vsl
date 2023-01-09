@@ -837,12 +837,12 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             #end
                             #if ($dependency.includedBy.size()==1)
                                 #set($incBy=$dependency.includedBy.iterator().next())
-                                <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span> $enc.html($incBy.getLeft())#if($incBy.getRight()) ($enc.html($incBy.getRight()))#end
+                                <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span> $enc.html($incBy.getReference())#if($incBy.getType()) ($enc.html($incBy.getType()))#end
                             #end
                             #if ($dependency.includedBy.size()>1)
                                 <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span><ul>
                                 #foreach($parent in $dependency.includedBy)
-                                    <li>$enc.html($parent.getLeft())#if($parent.getRight()) ($enc.html($parent.getRight()))#end</li>
+                                    <li>$enc.html($parent.getReference())#if($parent.getType()) ($enc.html($parent.getType()))#end</li>
                                 #end
                                 </ul>
                             #end
@@ -1057,12 +1057,12 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                 #end
                                 #if ($dependency.includedBy.size()==1)
                                     #set($incBy=$dependency.includedBy.iterator().next())
-                                    <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span> $enc.html($incBy.getLeft())#if($incBy.getRight()) ($enc.html($incBy.getRight()))#end
+                                    <br/><span class="tooltip"><span class="tooltiptext">$enc.html($dependency.DisplayFileName) is in the transitive dependency tree of the listed items.</span><b>Included by:</b></span> $enc.html($incBy.getReference())#if($incBy.getType()) ($enc.html($incBy.getType()))#end
                                 #end
                                 #if ($dependency.includedBy.size()>1)
                                     <br/><b>Included by:</b><ul>
                                     #foreach($parent in $dependency.includedBy)
-                                        <li>$enc.html($parent.getLeft())#if($parent.getRight()) ($enc.html($parent.getRight()))#end</li>
+                                        <li>$enc.html($parent.getReference())#if($parent.getType()) ($enc.html($parent.getType()))#end</li>
                                     #end
                                     </ul>
                                 #end
