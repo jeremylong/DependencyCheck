@@ -1333,8 +1333,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             final PackageURL purl = new PackageURL("maven", groupId, artifactId, version, null, null);
             includedBy = purl.toString();
         } catch (MalformedPackageURLException ex) {
-            getLog().warn("Unable to generate build reference for " + groupId + 
-                    ":" + artifactId + ":" + version, ex);
+            getLog().warn("Unable to generate build reference for " + groupId
+                    + ":" + artifactId + ":" + version, ex);
             includedBy = groupId + ":" + artifactId + ":" + version;
         }
         return includedBy;
@@ -2208,7 +2208,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, nodeAuditSkipDevDependencies);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED, yarnAuditAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED, pnpmAuditAnalyzerEnabled);
-        
+
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsForceUpdate);
