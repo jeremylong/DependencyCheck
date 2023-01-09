@@ -271,7 +271,7 @@ public final class CveDB implements AutoCloseable {
         /**
          * Key for SQL Statement.
          */
-        MERGE_KNOWN_VULNERABLE
+        MERGE_KNOWN_EXPLOITED
     }
 
     /**
@@ -1058,7 +1058,7 @@ public final class CveDB implements AutoCloseable {
             List<org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> vulnerabilities)
             throws DatabaseException, SQLException {
         try (Connection conn = databaseManager.getConnection();
-                PreparedStatement mergeKnownVulnerability = getPreparedStatement(conn, MERGE_KNOWN_VULNERABLE)) {
+                PreparedStatement mergeKnownVulnerability = getPreparedStatement(conn, MERGE_KNOWN_EXPLOITED)) {
             int ctr = 0;
             for (org.owasp.dependencycheck.data.knownexploited.json.Vulnerability v : vulnerabilities) {
                 mergeKnownVulnerability.setString(1, v.getCveID());
