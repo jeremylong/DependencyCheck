@@ -390,6 +390,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     // Ignore/skip linked entries (as they don't have "version" and
                     // later logic will crash)
                     if (jo.getBoolean("link", false)) {
+                        LOGGER.warn("Skipping `" + name + "` because it is a link dependency");
                         continue;
                     }
 
