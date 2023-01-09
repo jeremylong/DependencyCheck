@@ -403,6 +403,10 @@ public final class CliParser {
                         + "even if autoupdate is disabled"))
                 .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL, "url",
                         "The Retire JS Respository URL"))
+                .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL_USER, "username",
+                        "The password to authenticate to Retire JS Respository URL"))
+                .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL_PASSWORD, "password",
+                        "The password to authenticate to Retire JS Respository URL"))
                 .addOption(newOption(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE, "Specifies that the Retire JS "
                         + "Analyzer should filter out non-vulnerable JS files from the report."))
                 .addOption(newOptionWithArg(ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS, "true/false",
@@ -1368,6 +1372,14 @@ public final class CliParser {
          * The URL to the retire JS repository.
          */
         public static final String RETIREJS_URL = "retireJsUrl";
+        /**
+         * The username to the retire JS repository.
+         */
+        public static final String RETIREJS_URL_USER = "retireJsUrlUser";
+        /**
+         * The password to the retire JS repository.
+         */
+        public static final String RETIREJS_URL_PASSWORD = "retireJsUrlPass";
         /**
          * The URL of the nexus server.
          */

@@ -363,6 +363,14 @@ public final class Settings {
          */
         public static final String ANALYZER_RETIREJS_REPO_JS_URL = "analyzer.retirejs.repo.js.url";
         /**
+         * The properties key for the Nexus search credentials username.
+         */
+        public static final String ANALYZER_RETIREJS_REPO_JS_USER = "analyzer.retirejs.repo.js.username";
+        /**
+         * The properties key for the Nexus search credentials password.
+         */
+        public static final String ANALYZER_RETIREJS_REPO_JS_PASSWORD = "analyzer.retirejs.repo.js.password";
+        /**
          * The properties key for defining whether the RetireJS repository will
          * be updated regardless of the autoupdate settings.
          */
