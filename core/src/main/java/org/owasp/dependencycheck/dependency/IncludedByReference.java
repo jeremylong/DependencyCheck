@@ -17,24 +17,43 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import java.io.Serializable;
 
 /**
+ * POJO to store a reference to the "included by" node in a dependency tree;
+ * where included by is the root node that caused a dependency to be included.
  *
  * @author Jeremy Long
  */
-public class IncludedByReference {
+public class IncludedByReference implements Serializable {
 
+    /**
+     * The serial version UID for serialization.
+     */
+    private static final long serialVersionUID = 4339975160204621746L;
+
+    /**
+     * The reference.
+     */
     private final String reference;
-
+    /**
+     * The reference's type.
+     */
     private final String type;
 
+    /**
+     * Constructs a new reference.
+     *
+     * @param reference the reference
+     * @param type the reference's type
+     */
     public IncludedByReference(String reference, String type) {
         this.reference = reference;
         this.type = type;
     }
 
     /**
-     * Get the value of reference
+     * Get the value of reference.
      *
      * @return the value of reference
      */
@@ -43,7 +62,7 @@ public class IncludedByReference {
     }
 
     /**
-     * Get the value of type
+     * Get the value of type.
      *
      * @return the value of type
      */

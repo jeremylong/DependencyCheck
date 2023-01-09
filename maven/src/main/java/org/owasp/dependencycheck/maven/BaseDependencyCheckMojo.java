@@ -1292,7 +1292,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     }
                     for (Dependency dep : deps) {
                         if (d != null && d != dep) {
-                            String includedBy = buildReference(groupId, artifactId, version);
+                            final String includedBy = buildReference(groupId, artifactId, version);
                             dep.addIncludedBy(includedBy, "plugins");
                         }
                     }
@@ -1327,7 +1327,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         return exCol;
     }
 
-    private String buildReference(final String groupId, final String artifactId, final String version) throws RuntimeException {
+    private String buildReference(final String groupId, final String artifactId, final String version) {
         String includedBy;
         try {
             final PackageURL purl = new PackageURL("maven", groupId, artifactId, version, null, null);
@@ -2760,7 +2760,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
             for (Dependency dep : deps) {
                 if (d != null && d != dep) {
-                    String includedBy = buildReference(groupId, artifactId, version);
+                    final String includedBy = buildReference(groupId, artifactId, version);
                     dep.addIncludedBy(includedBy);
                 }
             }
