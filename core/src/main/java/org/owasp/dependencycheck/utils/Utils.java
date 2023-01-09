@@ -24,6 +24,12 @@ package org.owasp.dependencycheck.utils;
 public final class Utils {
 
     /**
+     * Empty constructor for utility class.
+     */
+    private Utils() {
+    }
+
+    /**
      * Returns the Java major version as a whole number.
      *
      * @return the Java major version as a whole number

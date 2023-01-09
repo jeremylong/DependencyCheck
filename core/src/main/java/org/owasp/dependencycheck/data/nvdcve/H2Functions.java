@@ -347,13 +347,13 @@ public final class H2Functions {
         }
         PreparedStatement merge = null;
         try {
-            if (Strings.isNullOrEmpty(id)) {//insert
+            if (Strings.isNullOrEmpty(id)) {
                 merge = conn.prepareStatement("INSERT INTO knownExploited ("
                         + "vendorProject, product, vulnerabilityName, "
                         + "dateAdded, shortDescription, requiredAction, "
                         + "dueDate, notes, cveID) "
                         + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            } else {//update
+            } else {
                 merge = conn.prepareStatement("UPDATE knownExploited SET "
                         + "vendorProject=?, product=?, vulnerabilityName=?, "
                         + "dateAdded=?, shortDescription=?, requiredAction=?, "

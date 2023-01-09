@@ -133,7 +133,8 @@ public final class CveDB implements AutoCloseable {
     /**
      * Updates the EcoSystem Cache.
      *
-     * @return The number of records updated by the DB_ECOSYSTEM_CACHE update script.
+     * @return The number of records updated by the DB_ECOSYSTEM_CACHE update
+     * script.
      */
     public int updateEcosystemCache() {
         LOGGER.debug("Updating the ecosystem cache");
@@ -1491,8 +1492,8 @@ public final class CveDB implements AutoCloseable {
                 ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                final org.owasp.dependencycheck.data.knownexploited.json.Vulnerability kev
-                        = new org.owasp.dependencycheck.data.knownexploited.json.Vulnerability();
+                final org.owasp.dependencycheck.data.knownexploited.json.Vulnerability kev = 
+                        new org.owasp.dependencycheck.data.knownexploited.json.Vulnerability();
                 kev.setCveID(rs.getString(1));
                 kev.setVendorProject(rs.getString(2));
                 kev.setProduct(rs.getString(3));
