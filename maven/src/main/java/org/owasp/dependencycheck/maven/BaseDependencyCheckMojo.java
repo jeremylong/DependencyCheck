@@ -19,6 +19,7 @@ package org.owasp.dependencycheck.maven;
 
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL.StandardTypes;
+import com.github.packageurl.PackageURL;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
@@ -292,8 +293,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "dependency-check.virtualSnapshotsFromReactor", defaultValue = "true")
     private Boolean virtualSnapshotsFromReactor;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, JENKINS,
-     * ALL). Multiple formats can be selected using a comma delineated list.
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * JENKINS, ALL). Multiple formats can be selected using a comma delineated
+     * list.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "format", defaultValue = "HTML", required = true)
@@ -306,8 +308,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "prettyPrint")
     private Boolean prettyPrint;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, JENKINS,
-     * ALL). Multiple formats can be selected using a comma delineated list.
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * JENKINS, ALL). Multiple formats can be selected using a comma delineated
+     * list.
      */
     @Parameter(property = "formats", required = true)
     private String[] formats;
@@ -1199,8 +1202,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Scans the project's artifacts for plugin-dependencies and adds them to the engine's dependency
-     * list.
+     * Scans the project's artifacts for plugin-dependencies and adds them to
+     * the engine's dependency list.
      *
      * @param project the project to scan the plugin-dependencies of
      * @param engine the engine to use to scan the plugin-dependencies
@@ -1272,8 +1275,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     }
                     for (Dependency dep : deps) {
                         if (d != null && d != dep) {
-                            //TODO convert to package URL
-                            dep.addIncludedBy(groupId + ":" + artifactId + ":" + version, "plugins");
+                            String includedBy = buildReference(groupId, artifactId, version);
+                            dep.addIncludedBy(includedBy, "plugins");
                         }
                     }
                 }
@@ -1283,11 +1286,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     if (parent != null) {
                         d.addIncludedBy(parent, "plugins");
                     } else {
-                        final String includedby = String.format("%s:%s:%s",
+                        final String includedby = buildReference(
                                 project.getGroupId(),
                                 project.getArtifactId(),
                                 project.getVersion());
-                        d.addIncludedBy(includedby);
+                        d.addIncludedBy(includedby, "plugins");
                     }
                     if (availableVersions != null) {
                         for (ArtifactVersion av : availableVersions) {
@@ -1305,6 +1308,19 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
 
         return exCol;
+    }
+
+    private String buildReference(final String groupId, final String artifactId, final String version) throws RuntimeException {
+        String includedBy;
+        try {
+            final PackageURL purl = new PackageURL("maven", groupId, artifactId, version, null, null);
+            includedBy = purl.toString();
+        } catch (MalformedPackageURLException ex) {
+            getLog().warn("Unable to generate build reference for " + groupId + 
+                    ":" + artifactId + ":" + version, ex);
+            includedBy = groupId + ":" + artifactId + ":" + version;
+        }
+        return includedBy;
     }
 
     protected Set<Artifact> resolveArtifactDependencies(final DependableCoordinate artifact, MavenProject project)
@@ -1731,8 +1747,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 d.setEcosystem(JarAnalyzer.DEPENDENCY_ECOSYSTEM);
                 d.setDisplayFileName(displayName);
                 d.addProjectReference(depender.getName());
-                //TODO - consider packageUrL
-                final String includedby = String.format("%s:%s:%s",
+                final String includedby = buildReference(
                         depender.getGroupId(),
                         depender.getArtifactId(),
                         depender.getVersion());
@@ -2719,8 +2734,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
             for (Dependency dep : deps) {
                 if (d != null && d != dep) {
-                    //TODO convert to package URL
-                    dep.addIncludedBy(groupId + ":" + artifactId + ":" + version);
+                    String includedBy = buildReference(groupId, artifactId, version);
+                    dep.addIncludedBy(includedBy);
                 }
             }
         }
@@ -2728,15 +2743,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);
             d.addAsEvidence("pom", ma, Confidence.HIGHEST);
             if (root != null) {
-                //TODO convert to packageURL
-                final String includedby = String.format("%s:%s:%s",
+                final String includedby = buildReference(
                         root.getArtifact().getGroupId(),
                         root.getArtifact().getArtifactId(),
                         root.getArtifact().getVersion());
                 d.addIncludedBy(includedby);
             } else {
-                //TODO convert to packageURL
-                final String includedby = String.format("%s:%s:%s", project1.getGroupId(), project1.getArtifactId(), project1.getVersion());
+                final String includedby = buildReference(project1.getGroupId(), project1.getArtifactId(), project1.getVersion());
                 d.addIncludedBy(includedby);
             }
             if (availableVersions != null) {
@@ -2760,15 +2773,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             final Model pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
             JarAnalyzer.setPomEvidence(d, pom, null, true);
             if (root != null) {
-                //TODO convert to packageURL
-                final String includedby = String.format("%s:%s:%s",
+                final String includedby = buildReference(
                         root.getArtifact().getGroupId(),
                         root.getArtifact().getArtifactId(),
                         root.getArtifact().getVersion());
                 d.addIncludedBy(includedby);
             } else {
-                //TODO convert to packageURL
-                final String includedby = String.format("%s:%s:%s", project1.getGroupId(), project1.getArtifactId(), project1.getVersion());
+                final String includedby = buildReference(project1.getGroupId(), project1.getArtifactId(), project1.getVersion());
                 d.addIncludedBy(includedby);
             }
             engine.addDependency(d);
