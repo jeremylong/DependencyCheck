@@ -363,7 +363,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 String name = pathName;
                 File base;
 
-                final int indexOfNodeModule = name.lastIndexOf(NODE_MODULES_DIRNAME);
+                final int indexOfNodeModule = name.lastIndexOf(NODE_MODULES_DIRNAME + "/");
                 if (indexOfNodeModule >= 0) {
                     name = name.substring(indexOfNodeModule + NODE_MODULES_DIRNAME.length() + 1);
                     base = Paths.get(baseDir.getPath(), pathName).toFile();
