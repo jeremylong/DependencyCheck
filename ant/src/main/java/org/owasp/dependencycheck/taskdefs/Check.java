@@ -237,13 +237,13 @@ public class Check extends Update {
      */
     private Boolean autoUpdate;
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, JENKINS,
-     * ALL). Default is HTML.
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * JENKINS, ALL). Default is HTML.
      */
     private String reportFormat = "HTML";
     /**
-     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF, JENKINS,
-     * ALL). Default is HTML.
+     * The report format to be generated (HTML, XML, JUNIT, CSV, JSON, SARIF,
+     * JENKINS, ALL). Default is HTML.
      */
     private final List<String> reportFormats = new ArrayList<>();
     /**
@@ -282,6 +282,10 @@ public class Check extends Update {
      * Whether or not the Archive Analyzer is enabled.
      */
     private Boolean archiveAnalyzerEnabled;
+    /**
+     * Whether or not the Known Exploited Vulnerability Analyzer is enabled.
+     */
+    private Boolean knownExploitedEnabled;
     /**
      * Whether or not the .NET Nuspec Analyzer is enabled.
      */
@@ -774,12 +778,30 @@ public class Check extends Update {
     }
 
     /**
-     * Sets whether or not the analyzer is enabled.
+     * Sets whether the analyzer is enabled.
      *
      * @param archiveAnalyzerEnabled the value of the new setting
      */
     public void setArchiveAnalyzerEnabled(Boolean archiveAnalyzerEnabled) {
         this.archiveAnalyzerEnabled = archiveAnalyzerEnabled;
+    }
+
+    /**
+     * Returns whether the analyzer is enabled.
+     *
+     * @return true if the analyzer is enabled
+     */
+    public Boolean isKnownExploitedEnabled() {
+        return knownExploitedEnabled;
+    }
+
+    /**
+     * Sets whether the analyzer is enabled.
+     *
+     * @param knownExploitedEnabled the value of the new setting
+     */
+    public void setKnownExploitedEnabled(Boolean knownExploitedEnabled) {
+        this.knownExploitedEnabled = knownExploitedEnabled;
     }
 
     /**
@@ -2098,7 +2120,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, retireJsUrlUser);
-        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD, retireJsUrlPassword);      
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD, retireJsUrlPassword);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsAnalyzerForceUpdate);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FILTER_NON_VULNERABLE, retirejsFilterNonVulnerable);
         getSettings().setArrayIfNotEmpty(Settings.KEYS.ANALYZER_RETIREJS_FILTERS, retirejsFilters);
@@ -2116,6 +2138,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, centralAnalyzerUseCache);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_KNOWN_EXPLOITED_ENABLED, knownExploitedEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED, msbuildAnalyzerEnabled);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);

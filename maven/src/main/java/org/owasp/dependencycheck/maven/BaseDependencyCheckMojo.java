@@ -416,7 +416,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "archiveAnalyzerEnabled")
     private Boolean archiveAnalyzerEnabled;
-
+/**
+     * Whether or not the Known Exploited Vulnerability Analyzer is enabled.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "knownExploitedEnabled")
+    private Boolean knownExploitedEnabled;
     /**
      * Sets whether the Python Distribution Analyzer will be used.
      */
@@ -2189,6 +2194,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED, msbuildAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_KNOWN_EXPLOITED_ENABLED, knownExploitedEnabled);
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);

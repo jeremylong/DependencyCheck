@@ -457,6 +457,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_MSBUILD, "Disable the MS Build Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_JAR, "Disable the Jar Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_ARCHIVE, "Disable the Archive Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_KEV, "Disable the Known Exploited Vulnerability Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_ASSEMBLY, "Disable the .NET Assembly Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_PY_DIST, "Disable the Python Distribution Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_CMAKE, "Disable the Cmake Analyzer."))
@@ -1192,6 +1193,10 @@ public final class CliParser {
          * Disables the Archive Analyzer.
          */
         public static final String DISABLE_ARCHIVE = "disableArchive";
+        /**
+         * Disables the Known Exploited Analyzer.
+         */
+        public static final String DISABLE_KEV = "disableKnownExploited";
         /**
          * Disables the Python Distribution Analyzer.
          */

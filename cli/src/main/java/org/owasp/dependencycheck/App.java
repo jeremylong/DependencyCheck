@@ -508,6 +508,8 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MSBUILD, Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_ARCHIVE, Settings.KEYS.ANALYZER_ARCHIVE_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_KNOWN_EXPLOITED_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_KEV, Settings.KEYS.ANALYZER_KNOWN_EXPLOITED_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_DIST, Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED,
