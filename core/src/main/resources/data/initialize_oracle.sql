@@ -97,6 +97,17 @@ EXCEPTION
 END;
 /
 
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE knownExploited CASCADE CONSTRAINTS';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN
+            RAISE;
+        END IF;
+END;
+/
+
+
 CREATE TABLE vulnerability (id INT NOT NULL PRIMARY KEY, cve VARCHAR(20) UNIQUE,
     description CLOB,
     v2Severity VARCHAR(20), v2ExploitabilityScore DECIMAL(3,1),
@@ -132,6 +143,17 @@ INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('tensorflow',
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('scikit-learn', 'scikit-learn', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('unicode', 'international_components_for_unicode', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('icu-project', 'international_components_for_unicode', 'MULTIPLE');
+
+CREATE TABLE knownExploited (cveID varchar(20) PRIMARY KEY,
+    vendorProject VARCHAR(255),
+    product VARCHAR(255),
+    vulnerabilityName VARCHAR(500),
+    dateAdded CHAR(10),
+    shortDescription VARCHAR(2000),
+    requiredAction VARCHAR(1000),
+    dueDate CHAR(10),
+    notes VARCHAR(2000));
+
 
 -- CREATE INDEX idxCwe ON cweEntry(cveid); -- PK automatically receives index
 -- CREATE INDEX idxVulnerability ON vulnerability(cve); -- PK automatically receives index
@@ -189,6 +211,34 @@ END;
 /
 
 GRANT EXECUTE ON merge_ecosystem TO dcuser;
+
+CREATE OR REPLACE PROCEDURE merge_knownexploited(
+    p_cveID IN knownExploited.cveID%type,
+    p_vendorProject IN knownExploited.vendorProject%type,
+    p_product IN knownExploited.product%type,
+    p_vulnerabilityName IN knownExploited.vulnerabilityName%type,
+    p_dateAdded IN knownExploited.dateAdded%type,
+    p_shortDescription IN knownExploited.shortDescription%type,
+    p_requiredAction IN knownExploited.requiredAction%type,
+    p_dueDate IN knownExploited.dueDate%type,
+    p_notes IN knownExploited.notes%type)
+AS
+BEGIN
+    INSERT INTO knownExploited (cveID, vendorProject, product, vulnerabilityName,
+            dateAdded, shortDescription, requiredAction, dueDate, notes)
+    VALUES (p_cveID, p_vendorProject, p_product, p_vulnerabilityName, p_dateAdded,
+            p_shortDescription, p_requiredAction, p_dueDate, p_notes);
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        UPDATE knownExploited
+        SET vendorProject=p_vendorProject, product=p_product, vulnerabilityName=p_vulnerabilityName, 
+            dateAdded=p_dateAdded, shortDescription=p_shortDescription, requiredAction=p_requiredAction, 
+            dueDate=p_dueDate, notes=p_notes
+        WHERE cveID=p_cveID;
+END;
+/
+
+GRANT EXECUTE ON merge_knownexpoited TO dcuser;
 
 CREATE OR REPLACE PROCEDURE update_vulnerability(p_cveId IN vulnerability.cve%type,
                                       p_description IN vulnerability.description%type,
@@ -396,4 +446,4 @@ CREATE OR REPLACE VIEW v_update_ecosystems AS
     ON c.vendor=e.vendor
         AND c.product=e.product;
 
-INSERT INTO properties(id,value) VALUES ('version','5.3');
+INSERT INTO properties(id,value) VALUES ('version','5.4');

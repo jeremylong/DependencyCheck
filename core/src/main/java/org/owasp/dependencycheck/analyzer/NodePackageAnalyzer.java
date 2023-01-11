@@ -363,7 +363,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                 String name = pathName;
                 File base;
 
-                final int indexOfNodeModule = name.lastIndexOf(NODE_MODULES_DIRNAME);
+                final int indexOfNodeModule = name.lastIndexOf(NODE_MODULES_DIRNAME + "/");
                 if (indexOfNodeModule >= 0) {
                     name = name.substring(indexOfNodeModule + NODE_MODULES_DIRNAME.length() + 1);
                     base = Paths.get(baseDir.getPath(), pathName).toFile();
@@ -386,6 +386,14 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
                 if (entry.getValue() instanceof JsonObject) {
                     jo = (JsonObject) entry.getValue();
+
+                    // Ignore/skip linked entries (as they don't have "version" and
+                    // later logic will crash)
+                    if (jo.getBoolean("link", false)) {
+                        LOGGER.warn("Skipping `" + name + "` because it is a link dependency");
+                        continue;
+                    }
+
                     version = jo.getString("version");
                     optional = jo.getBoolean("optional", false);
                     isDev = jo.getBoolean("dev", false);

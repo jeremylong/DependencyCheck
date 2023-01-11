@@ -118,7 +118,7 @@ Copyright (c) 2012 - Jeremy Long
         <github.global.server>github</github.global.server>
         
         <apache.lucene.version>8.11.2</apache.lucene.version>
-        <apache.ant.version>1.10.12</apache.ant.version>
+        <apache.ant.version>1.10.13</apache.ant.version>
         
         <!-- upgrading slf4j and logback can cause issues ;) https://github.com/jeremylong/DependencyCheck/issues/4846 -->
         <slf4j.version>1.7.36</slf4j.version>

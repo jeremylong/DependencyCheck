@@ -133,7 +133,8 @@ public final class CveDB implements AutoCloseable {
     /**
      * Updates the EcoSystem Cache.
      *
-     * @return The number of records updated by the DB_ECOSYSTEM_CACHE update script.
+     * @return The number of records updated by the DB_ECOSYSTEM_CACHE update
+     * script.
      */
     public int updateEcosystemCache() {
         LOGGER.debug("Updating the ecosystem cache");
@@ -263,7 +264,15 @@ public final class CveDB implements AutoCloseable {
         /**
          * Key for SQL Statement.
          */
-        ADD_DICT_CPE
+        ADD_DICT_CPE,
+        /**
+         * Key for SQL Statement.
+         */
+        SELECT_KNOWN_EXPLOITED_VULNERABILITIES,
+        /**
+         * Key for SQL Statement.
+         */
+        MERGE_KNOWN_EXPLOITED
     }
 
     /**
@@ -1040,6 +1049,55 @@ public final class CveDB implements AutoCloseable {
     }
 
     /**
+     * Merges the list of known exploited vulnerabilities into the database.
+     *
+     * @param vulnerabilities the list of known exploited vulnerabilities
+     * @throws DatabaseException thrown if there is an exception... duh..
+     * @throws SQLException thrown if there is an exception... duh..
+     */
+    public void updateKnownExploitedVulnerabilities(
+            List<org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> vulnerabilities)
+            throws DatabaseException, SQLException {
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement mergeKnownVulnerability = getPreparedStatement(conn, MERGE_KNOWN_EXPLOITED)) {
+            int ctr = 0;
+            for (org.owasp.dependencycheck.data.knownexploited.json.Vulnerability v : vulnerabilities) {
+                mergeKnownVulnerability.setString(1, v.getCveID());
+                addNullableStringParameter(mergeKnownVulnerability, 2, v.getVendorProject());
+                addNullableStringParameter(mergeKnownVulnerability, 3, v.getProduct());
+                addNullableStringParameter(mergeKnownVulnerability, 4, v.getVulnerabilityName());
+                addNullableStringParameter(mergeKnownVulnerability, 5, v.getDateAdded());
+                addNullableStringParameter(mergeKnownVulnerability, 6, v.getShortDescription());
+                addNullableStringParameter(mergeKnownVulnerability, 7, v.getRequiredAction());
+                addNullableStringParameter(mergeKnownVulnerability, 8, v.getDueDate());
+                addNullableStringParameter(mergeKnownVulnerability, 9, v.getNotes());
+                if (isBatchInsertEnabled()) {
+                    mergeKnownVulnerability.addBatch();
+                    ctr++;
+                    if (ctr >= getBatchSize()) {
+                        mergeKnownVulnerability.executeBatch();
+                        ctr = 0;
+                    }
+                } else {
+                    try {
+                        mergeKnownVulnerability.execute();
+                    } catch (SQLException ex) {
+                        if (ex.getMessage().contains("Duplicate entry")) {
+                            final String msg = String.format("Duplicate known exploited vulnerability key identified in '%s'", v.getCveID());
+                            LOGGER.info(msg, ex);
+                        } else {
+                            throw ex;
+                        }
+                    }
+                }
+            }
+            if (isBatchInsertEnabled()) {
+                mergeKnownVulnerability.executeBatch();
+            }
+        }
+    }
+
+    /**
      * Used when updating a vulnerability - this method inserts the list of
      * vulnerable software.
      *
@@ -1419,6 +1477,39 @@ public final class CveDB implements AutoCloseable {
         } catch (SQLException ex) {
             LOGGER.error("Unable to add CPE dictionary entry", ex);
         }
+    }
+
+    /**
+     * Returns a map of known exploited vulnerabilities.
+     *
+     * @return a map of known exploited vulnerabilities
+     */
+    public Map<String, org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> getknownExploitedVulnerabilities() {
+        final Map<String, org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> known = new HashMap<>();
+
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_KNOWN_EXPLOITED_VULNERABILITIES);
+                ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                final org.owasp.dependencycheck.data.knownexploited.json.Vulnerability kev =
+                        new org.owasp.dependencycheck.data.knownexploited.json.Vulnerability();
+                kev.setCveID(rs.getString(1));
+                kev.setVendorProject(rs.getString(2));
+                kev.setProduct(rs.getString(3));
+                kev.setVulnerabilityName(rs.getString(4));
+                kev.setDateAdded(rs.getString(5));
+                kev.setShortDescription(rs.getString(6));
+                kev.setRequiredAction(rs.getString(7));
+                kev.setDueDate(rs.getString(8));
+                kev.setNotes(rs.getString(9));
+                known.put(kev.getCveID(), kev);
+            }
+
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+        return known;
     }
 
     /**

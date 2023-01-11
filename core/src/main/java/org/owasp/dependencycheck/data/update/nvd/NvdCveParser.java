@@ -46,6 +46,7 @@ import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.Utils;
 
 /**
  * Parser and processor of NVD CVE JSON data feeds.
@@ -90,7 +91,7 @@ public final class NvdCveParser {
         LOGGER.debug("Parsing " + file.getName());
 
         final Module module;
-        if (getJavaVersion() <= 8) {
+        if (Utils.getJavaVersion() <= 8) {
             module = new AfterburnerModule();
         } else {
             module = new BlackbirdModule();
@@ -117,30 +118,12 @@ public final class NvdCveParser {
             LOGGER.error(ex.getMessage());
             throw new UpdateException("Unable to find the NVD CVE file, `" + file + "`, to parse", ex);
         } catch (ZipException | EOFException ex) {
-            throw new CorruptedDatastreamException("Error reading parsing NVD CVE file", ex);
+            throw new CorruptedDatastreamException("Error parsing NVD CVE file", ex);
         } catch (IOException ex) {
             LOGGER.error("Error reading NVD JSON data: {}", file);
             LOGGER.debug("Error extracting the NVD JSON data from: " + file, ex);
             throw new UpdateException("Unable to find the NVD CVE file to parse", ex);
         }
-    }
-
-    /**
-     * Returns the Java major version as a whole number.
-     *
-     * @return the Java major version as a whole number
-     */
-    private static int getJavaVersion() {
-        String version = System.getProperty("java.specification.version");
-        if (version.startsWith("1.")) {
-            version = version.substring(2, 3);
-        } else {
-            final int dot = version.indexOf(".");
-            if (dot != -1) {
-                version = version.substring(0, dot);
-            }
-        }
-        return Integer.parseInt(version);
     }
 
     void init(JsonParser parser) throws IOException {

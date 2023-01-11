@@ -309,4 +309,26 @@ public class NodePackageAnalyzerTest extends BaseTest {
         analyzer.analyze(packageLockJson, engine);
         assertEquals("Expected 1 dependencies", 6, engine.getDependencies().length);
     }
+
+    /**
+     * Test of analysis of package with a local package as a dependency.
+     *
+     * This test crashes with an NPE if issue #1947 isn't resolved.
+     *
+     * @throws AnalysisException if there was a problem with the analysis
+     */
+    @Test
+    public void testLocalPackageDependency() throws AnalysisException, InvalidSettingException {
+        Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(true));
+        final Dependency packageJson = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/local_package/package.json"));
+        final Dependency packageLockJson = new Dependency(BaseTest.getResourceAsFile(this,
+                "nodejs/local_package/package-lock.json"));
+        engine.addDependency(packageJson);
+        engine.addDependency(packageLockJson);
+        analyzer.analyze(packageJson, engine);
+        assertEquals("Expected 1 dependencies", 1, engine.getDependencies().length);
+        analyzer.analyze(packageLockJson, engine);
+        assertEquals("Expected 2 dependencies", 2, engine.getDependencies().length);
+    }
 }

@@ -451,6 +451,21 @@ public class Dependency extends EvidenceCollection implements Serializable {
     }
 
     /**
+     * Returns true if the dependency has a known exploited vulnerability.
+     *
+     * @return true if the dependency has a known exploited vulnerability;
+     * otherwise false.
+     */
+    public synchronized boolean hasKnownExploitedVulnerability() {
+        for (Vulnerability v : vulnerabilities) {
+            if (v.getKnownExploitedVulnerability() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Adds a set of Identifiers to the current list of software identifiers.
      * Only used for testing.
      *

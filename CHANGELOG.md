@@ -1,6 +1,6 @@
 # Change Log
 
-## [Version 7.4.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.4) (2022-01-06)
+## [Version 7.4.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.4) (2023-01-06)
 
 ### Fixed
 
