@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>7.4.5-SNAPSHOT</version>
+        <version>8.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -103,19 +103,35 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.jsonschema2pojo</groupId>
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
-                <configuration>
-                    <sourceDirectory>${basedir}/src/main/resources/schema/nvdcve/json</sourceDirectory>
-                    <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
-                    <includeGetters>true</includeGetters>
-                    <annotationStyle>jackson</annotationStyle>
-                    <targetPackage>org.owasp.dependencycheck.data.nvd.json</targetPackage>
-                </configuration>
+
                 <executions>
                     <execution>
+                        <id>generate-nvd</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirectory>${basedir}/src/main/resources/schema/external/nvd</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
+                            <includeGetters>true</includeGetters>
+                            <annotationStyle>jackson</annotationStyle>
+                            <targetPackage>org.owasp.dependencycheck.data.nvd.json</targetPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-knownexploited</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${basedir}/src/main/resources/schema/external/cisa</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
+                            <includeGetters>true</includeGetters>
+                            <annotationStyle>jackson</annotationStyle>
+                            <targetPackage>org.owasp.dependencycheck.data.knownexploited.json</targetPackage>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

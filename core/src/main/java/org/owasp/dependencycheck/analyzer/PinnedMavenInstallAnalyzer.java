@@ -159,15 +159,19 @@ public class PinnedMavenInstallAnalyzer extends AbstractFileTypeAnalyzer {
             final String artifact = pieces[1];
             final String version;
             String classifier = null;
-            if (pieces.length == 3) {
-                version = pieces[2];
-            } else if (pieces.length == 4) {
-                classifier = pieces[2];
-                version = pieces[3];
-            } else {
-                // length == 5 as guaranteed above.
-                classifier = pieces[3];
-                version = pieces[4];
+            switch (pieces.length) {
+                case 3:
+                    version = pieces[2];
+                    break;
+                case 4:
+                    classifier = pieces[2];
+                    version = pieces[3];
+                    break;
+                default:
+                    // length == 5 as guaranteed above.
+                    classifier = pieces[3];
+                    version = pieces[4];
+                    break;
             }
 
             if ("sources".equals(classifier) || "javadoc".equals(classifier)) {

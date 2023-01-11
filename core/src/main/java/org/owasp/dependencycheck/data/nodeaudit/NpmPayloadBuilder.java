@@ -109,7 +109,7 @@ public final class NpmPayloadBuilder {
 
         if (dependencies != null) {
             dependencies.forEach((key, value) -> {
-                final int indexOfNodeModule = key.lastIndexOf(NodePackageAnalyzer.NODE_MODULES_DIRNAME);
+                final int indexOfNodeModule = key.lastIndexOf(NodePackageAnalyzer.NODE_MODULES_DIRNAME + "/");
                 if (indexOfNodeModule >= 0) {
                     key = key.substring(indexOfNodeModule + NodePackageAnalyzer.NODE_MODULES_DIRNAME.length() + 1);
                 }

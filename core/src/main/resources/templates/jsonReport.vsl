@@ -48,7 +48,8 @@
             "NVD": "This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov",
             "NPM": "This report may contain data retrieved from the NPM Public Advisories: https://www.npmjs.com/advisories",
             "RETIREJS": "This report may contain data retrieved from the RetireJS community: https://retirejs.github.io/retire.js/",
-            "OSSINDEX": "This report may contain data retrieved from the Sonatype OSS Index: https://ossindex.sonatype.org"
+            "OSSINDEX": "This report may contain data retrieved from the Sonatype OSS Index: https://ossindex.sonatype.org",
+            "CISA": "This report may contain data retrieved from the CISA Known Exploited Vulnerabilities Catalog: https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
         }
     },
     "dependencies": [
@@ -174,6 +175,18 @@
             #foreach($vuln in $dependency.getVulnerabilities(true))#if($foreach.count > 1),#end {
                 "source": "$enc.json($vuln.getSource().name())",
                 "name": "$enc.json($vuln.name)",
+                #if($vuln.getKnownExploitedVulnerability())
+                "knownExploitedVulnerability": {
+                    "VendorProject": "#if($vuln.getKnownExploitedVulnerability().getVendorProject())$enc.json($vuln.getKnownExploitedVulnerability().getVendorProject())#end",
+                    "Product": "#if($vuln.getKnownExploitedVulnerability().getProduct())$enc.json($vuln.getKnownExploitedVulnerability().getProduct())#end",
+                    "Name": "#if($vuln.getKnownExploitedVulnerability().getVulnerabilityName())$enc.json($vuln.getKnownExploitedVulnerability().getVulnerabilityName())#end",
+                    "DateAdded": "#if($vuln.getKnownExploitedVulnerability().getDateAdded())$enc.json($vuln.getKnownExploitedVulnerability().getDateAdded())#end",
+                    "Description": "#if($vuln.getKnownExploitedVulnerability().getShortDescription())$enc.json($vuln.getKnownExploitedVulnerability().getShortDescription())#end",
+                    "RequiredAction": "#if($vuln.getKnownExploitedVulnerability().getRequiredAction())$enc.json($vuln.getKnownExploitedVulnerability().getRequiredAction())#end",
+                    "DueDate": "#if($vuln.getKnownExploitedVulnerability().getDueDate())$enc.json($vuln.getKnownExploitedVulnerability().getDueDate())#end",
+                    "Notes": "#if($vuln.getKnownExploitedVulnerability().getNotes())$enc.json($vuln.getKnownExploitedVulnerability().getNotes())#end"
+                },
+                #end
                 #if($vuln.UnscoredSeverity)"unscored": "true", "severity" : "#if($vuln.unscoredSeverity.equals("0.0"))Unknown#else$enc.json($vuln.unscoredSeverity)#end",
 #elseif($vuln.cvssV3 && $vuln.cvssV3.baseSeverity)
                     "severity" : "$enc.json($vuln.cvssV3.baseSeverity)",
