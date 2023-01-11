@@ -3,28 +3,31 @@ USE dependencycheck;
 GO
 
 if exists (SELECT 1 FROM sysobjects WHERE name='software' AND xtype='U')
-	drop table software;
+    drop table software;
 if exists (SELECT 1 FROM sysobjects WHERE name='cpeEntry' AND xtype='U')
-	drop table cpeEntry;
+    drop table cpeEntry;
 if exists (SELECT 1 FROM sysobjects WHERE name='reference' AND xtype='U')
-	drop table reference;
+    drop table reference;
 if exists (SELECT 1 FROM sysobjects WHERE name='properties' AND xtype='U')
-	drop table properties;
+    drop table properties;
 if exists (SELECT 1 FROM sysobjects WHERE name='cweEntry' AND xtype='U')
-	drop table cweEntry;
+    drop table cweEntry;
 if exists (SELECT 1 FROM sysobjects WHERE name='cpeEcosystemCache' AND xtype='U')
-	drop table cpeEcosystemCache;
+    drop table cpeEcosystemCache;
 if exists (SELECT 1 FROM sysobjects WHERE name='vulnerability' AND xtype='U')
-	drop table vulnerability;
+    drop table vulnerability;
 if exists (SELECT 1 FROM sysobjects WHERE name='save_property' AND xtype='P')
-	drop procedure save_property;
+    drop procedure save_property;
 if exists (SELECT 1 FROM sysobjects WHERE name='merge_ecosystem' AND xtype='P')
-	drop procedure merge_ecosystem;
+    drop procedure merge_ecosystem;
 if exists (SELECT 1 FROM sysobjects WHERE name='update_vulnerability' AND xtype='P')
-	drop procedure update_vulnerability;
+    drop procedure update_vulnerability;
 if exists (SELECT 1 FROM sysobjects WHERE name='insert_software' AND xtype='P')
-	drop procedure insert_software;    
-
+    drop procedure insert_software;    
+if exists (SELECT 1 FROM sysobjects WHERE name='knownExploited' AND xtype='U')
+    drop table knownExploited;
+if exists (SELECT 1 FROM sysobjects WHERE name='merge_knownexpoited' AND xtype='P')
+    drop procedure merge_knownexpoited;    
 
 CREATE TABLE vulnerability (id int identity(1,1) PRIMARY KEY, cve VARCHAR(20) UNIQUE,
 	description VARCHAR(8000), v2Severity VARCHAR(20), v2ExploitabilityScore DECIMAL(3,1), 
@@ -60,6 +63,16 @@ INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('tensorflow',
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('scikit-learn', 'scikit-learn', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('unicode', 'international_components_for_unicode', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('icu-project', 'international_components_for_unicode', 'MULTIPLE');
+
+CREATE TABLE knownExploited (cveID varchar(20) PRIMARY KEY,
+    vendorProject VARCHAR(255),
+    product VARCHAR(255),
+    vulnerabilityName VARCHAR(500),
+    dateAdded CHAR(10),
+    shortDescription VARCHAR(2000),
+    requiredAction VARCHAR(1000),
+    dueDate CHAR(10),
+    notes VARCHAR(2000));
 
 CREATE INDEX idxCwe ON cweEntry(cveid);
 CREATE INDEX idxVulnerability ON vulnerability(cve);
@@ -204,10 +217,35 @@ BEGIN
             @versionStartExcluding, @versionStartIncluding, @vulnerable);
 END;
 
+GO
+
+CREATE PROCEDURE merge_knownexploited (@cveID varchar(20),
+    @vendorProject VARCHAR(255),
+    @product VARCHAR(255),
+    @vulnerabilityName VARCHAR(500),
+    @dateAdded CHAR(10),
+    @shortDescription VARCHAR(2000),
+    @requiredAction VARCHAR(1000),
+    @dueDate CHAR(10),
+    @notes VARCHAR(2000))
+AS
+BEGIN
+IF EXISTS(SELECT * FROM knownExploited WHERE cveID=@cveID)
+    UPDATE knownExploited
+    SET vendorProject=@vendorProject, product=@product, vulnerabilityName=@vulnerabilityName, 
+        dateAdded=@dateAdded, shortDescription=@shortDescription, requiredAction=@requiredAction, 
+        dueDate=@dueDate, notes=@notes
+    WHERE cveID=@cveID
+ELSE
+    INSERT INTO knownExploited (vendorProject, product, vulnerabilityName,
+        dateAdded, shortDescription, requiredAction, dueDate, notes, cveID) 
+    VALUES (@vendorProject, @product, @vulnerabilityName,
+        @dateAdded, @shortDescription, @requiredAction, @dueDate, @notes, @cveID)
+END;
 
 GO
 
-INSERT INTO properties(id,value) VALUES ('version','5.3');
+INSERT INTO properties(id,value) VALUES ('version','5.4');
 
 GO
 /**

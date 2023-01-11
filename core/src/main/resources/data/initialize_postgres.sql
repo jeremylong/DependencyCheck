@@ -6,6 +6,7 @@ DROP FUNCTION IF EXISTS public.save_property;
 DROP FUNCTION IF EXISTS public.update_vulnerability;
 DROP FUNCTION IF EXISTS public.insert_software;
 DROP FUNCTION IF EXISTS public.merge_ecosystem;
+DROP FUNCTION IF EXISTS public.merge_knownexpoited;
 DROP TABLE IF EXISTS software;
 DROP TABLE IF EXISTS cpeEntry;
 DROP TABLE IF EXISTS reference;
@@ -13,6 +14,7 @@ DROP TABLE IF EXISTS properties;
 DROP TABLE IF EXISTS cweEntry;
 DROP TABLE IF EXISTS vulnerability;
 DROP TABLE IF EXISTS cpeEcosystemCache;
+DROP TABLE IF EXISTS knownExploited;
 
 CREATE TABLE vulnerability (id SERIAL PRIMARY KEY, cve VARCHAR(20) UNIQUE,
     description VARCHAR(8000), v2Severity VARCHAR(20), v2ExploitabilityScore DECIMAL(3,1), 
@@ -47,6 +49,16 @@ INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('icu-project'
 
 CREATE TABLE cweEntry (cveid INT, cwe VARCHAR(20),
     CONSTRAINT fkCweEntry FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE);
+
+CREATE TABLE knownExploited (cveID varchar(20) PRIMARY KEY,
+    vendorProject VARCHAR(255),
+    product VARCHAR(255),
+    vulnerabilityName VARCHAR(500),
+    dateAdded CHAR(10),
+    shortDescription VARCHAR(2000),
+    requiredAction VARCHAR(1000),
+    dueDate CHAR(10),
+    notes VARCHAR(2000));
 
 CREATE INDEX idxCwe ON cweEntry(cveid);
 CREATE INDEX idxVulnerability ON vulnerability(cve);
@@ -91,6 +103,37 @@ END
 $$ LANGUAGE plpgsql;
 
 GRANT EXECUTE ON FUNCTION public.merge_ecosystem(VARCHAR(255), VARCHAR(255), varchar(255)) TO dcuser;
+
+
+CREATE FUNCTION merge_knownexploited (
+    IN p_cveID varchar(20),
+    IN p_vendorProject VARCHAR(255),
+    IN p_product VARCHAR(255),
+    IN p_vulnerabilityName VARCHAR(500),
+    IN p_dateAdded CHAR(10),
+    IN p_shortDescription VARCHAR(2000),
+    IN p_requiredAction VARCHAR(1000),
+    IN p_dueDate CHAR(10),
+    IN p_notes VARCHAR(2000))
+RETURNS void
+AS $$
+BEGIN
+IF EXISTS(SELECT 1 FROM knownExploited WHERE cveID=p_cveID) THEN
+    UPDATE knownExploited
+    SET vendorProject=p_vendorProject, product=p_product, vulnerabilityName=p_vulnerabilityName, 
+        dateAdded=p_dateAdded, shortDescription=p_shortDescription, requiredAction=p_requiredAction, 
+        dueDate=p_dueDate, notes=p_notes
+    WHERE cveID=p_cveID
+ELSE
+    INSERT INTO knownExploited (cveID, vendorProject, product, vulnerabilityName,
+            dateAdded, shortDescription, requiredAction, dueDate, notes)
+    VALUES (p_cveID, p_vendorProject, p_product, p_vulnerabilityName, p_dateAdded,
+            p_shortDescription, p_requiredAction, p_dueDate, p_notes);
+END IF;
+END
+$$ LANGUAGE plpgsql;
+
+GRANT EXECUTE ON FUNCTION public.merge_knownexpoited(varchar(20), VARCHAR(255), VARCHAR(255), VARCHAR(500), CHAR(10), VARCHAR(2000), VARCHAR(1000), CHAR(10), VARCHAR(2000)) TO dcuser;
 
 CREATE FUNCTION update_vulnerability (
     IN p_cveId VARCHAR(20), IN p_description VARCHAR(8000), IN p_v2Severity VARCHAR(20), 
@@ -211,4 +254,4 @@ GRANT EXECUTE ON FUNCTION public.insert_software (INT, CHAR(1), VARCHAR(255),
 
 
 
-INSERT INTO properties(id,value) VALUES ('version','5.3');
+INSERT INTO properties(id,value) VALUES ('version','5.4');
