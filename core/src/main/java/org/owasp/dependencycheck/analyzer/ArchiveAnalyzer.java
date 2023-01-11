@@ -133,7 +133,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INITIAL;
 
     /**
-     * Make java compiler happy
+     * Make java compiler happy.
      */
     public ArchiveAnalyzer() {
     }
@@ -586,7 +586,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 //final File file = new File(destination, entry.getName());
                 final Path f = d.resolve(entry.getName()).normalize();
                 if (!f.startsWith(d)) {
-                    LOGGER.debug("ZipSlip detected\n-Destination: " + d.toString() + "\n-Path: " + f.toString());
+                    LOGGER.debug("ZipSlip detected\n-Destination: " + d + "\n-Path: " + f);
                     final String msg = String.format(
                             "Archive contains a file (%s) that would be extracted outside of the target directory.",
                             entry.getName());

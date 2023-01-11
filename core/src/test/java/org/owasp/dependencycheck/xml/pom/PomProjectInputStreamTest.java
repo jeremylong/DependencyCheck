@@ -62,7 +62,7 @@ public class PomProjectInputStreamTest {
             + "<blue></blue>";
 
     @Test
-    public void testFilter() throws UnsupportedEncodingException, IOException {
+    public void testFilter() throws IOException {
         InputStream in = new ByteArrayInputStream(POM.getBytes(StandardCharsets.UTF_8));
         PomProjectInputStream instance = new PomProjectInputStream(in);
         byte[] expected = "<project></project>".getBytes(StandardCharsets.UTF_8);

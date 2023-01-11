@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.data.nvdcve;
 //CSOFF: AvoidStarImport
 
+import com.google.common.io.Resources;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.collections.map.ReferenceMap;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -28,14 +29,18 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.anarres.jdiagnostics.DefaultQuery;
 
 import static org.apache.commons.collections.map.AbstractReferenceMap.HARD;
 import static org.apache.commons.collections.map.AbstractReferenceMap.SOFT;
@@ -76,6 +81,11 @@ public final class CveDB implements AutoCloseable {
      * The logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(CveDB.class);
+
+    /**
+     * Resource location for SQL file containing updates to the ecosystem cache.
+     */
+    public static final String DB_ECOSYSTEM_CACHE = "data/dbEcosystemCacheUpdates.sql";
 
     /**
      * The database connection manager.
@@ -119,6 +129,36 @@ public final class CveDB implements AutoCloseable {
      * Flag indicating if the database is H2.
      */
     private boolean isH2 = false;
+
+    /**
+     * Updates the EcoSystem Cache.
+     *
+     * @return The number of records updated by the DB_ECOSYSTEM_CACHE update
+     * script.
+     */
+    public int updateEcosystemCache() {
+        LOGGER.debug("Updating the ecosystem cache");
+        int updateCount = 0;
+        try {
+            final URL url = Resources.getResource(DB_ECOSYSTEM_CACHE);
+            final List<String> sql = Resources.readLines(url, StandardCharsets.UTF_8);
+
+            try (Connection conn = databaseManager.getConnection();
+                    Statement statement = conn.createStatement()) {
+                for (String single : sql) {
+                    updateCount += statement.executeUpdate(single);
+                }
+            } catch (SQLException ex) {
+                LOGGER.debug("", ex);
+                throw new DatabaseException("Unable to update the ecosystem cache", ex);
+            }
+        } catch (IOException ex) {
+            throw new DatabaseException("Unable to update the ecosystem cache", ex);
+        } catch (LinkageError ex) {
+            LOGGER.debug(new DefaultQuery(ex).call().toString());
+        }
+        return updateCount;
+    }
 
     /**
      * The enumeration value names must match the keys of the statements in the
@@ -224,7 +264,15 @@ public final class CveDB implements AutoCloseable {
         /**
          * Key for SQL Statement.
          */
-        ADD_DICT_CPE
+        ADD_DICT_CPE,
+        /**
+         * Key for SQL Statement.
+         */
+        SELECT_KNOWN_EXPLOITED_VULNERABILITIES,
+        /**
+         * Key for SQL Statement.
+         */
+        MERGE_KNOWN_EXPLOITED
     }
 
     /**
@@ -396,7 +444,7 @@ public final class CveDB implements AutoCloseable {
      *
      * @return the database properties
      */
-    protected DatabaseProperties reloadProperties() {
+    DatabaseProperties reloadProperties() {
         databaseProperties = new DatabaseProperties(this);
         return databaseProperties;
     }
@@ -1001,6 +1049,55 @@ public final class CveDB implements AutoCloseable {
     }
 
     /**
+     * Merges the list of known exploited vulnerabilities into the database.
+     *
+     * @param vulnerabilities the list of known exploited vulnerabilities
+     * @throws DatabaseException thrown if there is an exception... duh..
+     * @throws SQLException thrown if there is an exception... duh..
+     */
+    public void updateKnownExploitedVulnerabilities(
+            List<org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> vulnerabilities)
+            throws DatabaseException, SQLException {
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement mergeKnownVulnerability = getPreparedStatement(conn, MERGE_KNOWN_EXPLOITED)) {
+            int ctr = 0;
+            for (org.owasp.dependencycheck.data.knownexploited.json.Vulnerability v : vulnerabilities) {
+                mergeKnownVulnerability.setString(1, v.getCveID());
+                addNullableStringParameter(mergeKnownVulnerability, 2, v.getVendorProject());
+                addNullableStringParameter(mergeKnownVulnerability, 3, v.getProduct());
+                addNullableStringParameter(mergeKnownVulnerability, 4, v.getVulnerabilityName());
+                addNullableStringParameter(mergeKnownVulnerability, 5, v.getDateAdded());
+                addNullableStringParameter(mergeKnownVulnerability, 6, v.getShortDescription());
+                addNullableStringParameter(mergeKnownVulnerability, 7, v.getRequiredAction());
+                addNullableStringParameter(mergeKnownVulnerability, 8, v.getDueDate());
+                addNullableStringParameter(mergeKnownVulnerability, 9, v.getNotes());
+                if (isBatchInsertEnabled()) {
+                    mergeKnownVulnerability.addBatch();
+                    ctr++;
+                    if (ctr >= getBatchSize()) {
+                        mergeKnownVulnerability.executeBatch();
+                        ctr = 0;
+                    }
+                } else {
+                    try {
+                        mergeKnownVulnerability.execute();
+                    } catch (SQLException ex) {
+                        if (ex.getMessage().contains("Duplicate entry")) {
+                            final String msg = String.format("Duplicate known exploited vulnerability key identified in '%s'", v.getCveID());
+                            LOGGER.info(msg, ex);
+                        } else {
+                            throw ex;
+                        }
+                    }
+                }
+            }
+            if (isBatchInsertEnabled()) {
+                mergeKnownVulnerability.executeBatch();
+            }
+        }
+    }
+
+    /**
      * Used when updating a vulnerability - this method inserts the list of
      * vulnerable software.
      *
@@ -1239,7 +1336,7 @@ public final class CveDB implements AutoCloseable {
             }
             LOGGER.error("Unable to access the local database.\n\nEnsure that '{}' is a writable directory. "
                     + "If the problem persist try deleting the files in '{}' and running {} again. If the problem continues, please "
-                    + "create a log file (see documentation at http://jeremylong.github.io/DependencyCheck/) and open a ticket at "
+                    + "create a log file (see documentation at https://jeremylong.github.io/DependencyCheck/) and open a ticket at "
                     + "https://github.com/jeremylong/DependencyCheck/issues and include the log file.\n\n",
                     dd, dd, settings.getString(Settings.KEYS.APPLICATION_NAME));
             LOGGER.debug("", ex);
@@ -1255,8 +1352,6 @@ public final class CveDB implements AutoCloseable {
     public void cleanupDatabase() {
         LOGGER.info("Begin database maintenance");
         final long start = System.currentTimeMillis();
-        saveCpeEcosystemCache();
-        clearCache();
         try (Connection conn = databaseManager.getConnection();
                 PreparedStatement psOrphans = getPreparedStatement(conn, CLEANUP_ORPHANS);
                 PreparedStatement psEcosystem = getPreparedStatement(conn, UPDATE_ECOSYSTEM);
@@ -1290,6 +1385,14 @@ public final class CveDB implements AutoCloseable {
     }
 
     /**
+     * Persist the EcosystemCache into the database.
+     */
+    public void persistEcosystemCache() {
+        saveCpeEcosystemCache();
+        clearCache();
+    }
+
+    /**
      * If the database is using an H2 file based database calling
      * <code>defrag()</code> will de-fragment the database.
      */
@@ -1320,7 +1423,7 @@ public final class CveDB implements AutoCloseable {
      * @param vulnerableSoftware a set of the vulnerable software
      * @return true if the identified version is affected, otherwise false
      */
-    protected VulnerableSoftware getMatchingSoftware(Cpe cpe, Set<VulnerableSoftware> vulnerableSoftware) {
+    VulnerableSoftware getMatchingSoftware(Cpe cpe, Set<VulnerableSoftware> vulnerableSoftware) {
         VulnerableSoftware matched = null;
         for (VulnerableSoftware vs : vulnerableSoftware) {
             if (vs.matches(cpe)) {
@@ -1374,6 +1477,39 @@ public final class CveDB implements AutoCloseable {
         } catch (SQLException ex) {
             LOGGER.error("Unable to add CPE dictionary entry", ex);
         }
+    }
+
+    /**
+     * Returns a map of known exploited vulnerabilities.
+     *
+     * @return a map of known exploited vulnerabilities
+     */
+    public Map<String, org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> getknownExploitedVulnerabilities() {
+        final Map<String, org.owasp.dependencycheck.data.knownexploited.json.Vulnerability> known = new HashMap<>();
+
+        try (Connection conn = databaseManager.getConnection();
+                PreparedStatement ps = getPreparedStatement(conn, SELECT_KNOWN_EXPLOITED_VULNERABILITIES);
+                ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                final org.owasp.dependencycheck.data.knownexploited.json.Vulnerability kev =
+                        new org.owasp.dependencycheck.data.knownexploited.json.Vulnerability();
+                kev.setCveID(rs.getString(1));
+                kev.setVendorProject(rs.getString(2));
+                kev.setProduct(rs.getString(3));
+                kev.setVulnerabilityName(rs.getString(4));
+                kev.setDateAdded(rs.getString(5));
+                kev.setShortDescription(rs.getString(6));
+                kev.setRequiredAction(rs.getString(7));
+                kev.setDueDate(rs.getString(8));
+                kev.setNotes(rs.getString(9));
+                known.put(kev.getCveID(), kev);
+            }
+
+        } catch (SQLException ex) {
+            throw new DatabaseException(ex);
+        }
+        return known;
     }
 
     /**
@@ -1441,7 +1577,7 @@ public final class CveDB implements AutoCloseable {
      */
     private void setBooleanValue(PreparedStatement ps, int i, Map<String, Object> props, String key) throws SQLException {
         if (props != null && props.containsKey(key)) {
-            ps.setBoolean(i, Boolean.valueOf(props.get(key).toString()));
+            ps.setBoolean(i, Boolean.parseBoolean(props.get(key).toString()));
         } else {
             ps.setNull(i, java.sql.Types.NULL);
         }

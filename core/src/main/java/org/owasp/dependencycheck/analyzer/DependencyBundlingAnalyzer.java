@@ -18,9 +18,8 @@
 package org.owasp.dependencycheck.analyzer;
 
 import com.github.packageurl.MalformedPackageURLException;
-import com.vdurmont.semver4j.Semver;
-import com.vdurmont.semver4j.Semver.SemverType;
-import com.vdurmont.semver4j.SemverException;
+import org.semver4j.Semver;
+import org.semver4j.SemverException;
 import java.io.File;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -196,7 +195,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
             final Dependency relatedDependency, final Set<Dependency> dependenciesToRemove,
             final boolean copyVulnsAndIds) {
         dependency.addRelatedDependency(relatedDependency);
-        relatedDependency.getRelatedDependencies().stream()
+        relatedDependency.getRelatedDependencies()
                 .forEach(dependency::addRelatedDependency);
         relatedDependency.clearRelatedDependencies();
 
@@ -461,16 +460,12 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
         final String nextName = nextDependency.getFileName().toLowerCase();
         if (mainName.endsWith(".jar") && nextName.endsWith(".js") && nextName.startsWith(mainName)) {
             return dependency.getSoftwareIdentifiers()
-                    .stream().map(id -> id.getValue()).collect(toSet())
-                    .containsAll(nextDependency.getSoftwareIdentifiers().stream().map(id -> {
-                        return identifierToWebJarForCompairson(id);
-                    }).collect(toSet()));
+                    .stream().map(Identifier::getValue).collect(toSet())
+                    .containsAll(nextDependency.getSoftwareIdentifiers().stream().map(this::identifierToWebJarForComparison).collect(toSet()));
         } else if (nextName.endsWith(".jar") && mainName.endsWith("js") && mainName.startsWith(nextName)) {
             return nextDependency.getSoftwareIdentifiers()
-                    .stream().map(id -> id.getValue()).collect(toSet())
-                    .containsAll(dependency.getSoftwareIdentifiers().stream().map(id -> {
-                        return identifierToWebJarForCompairson(id);
-                    }).collect(toSet()));
+                    .stream().map(Identifier::getValue).collect(toSet())
+                    .containsAll(dependency.getSoftwareIdentifiers().stream().map(this::identifierToWebJarForComparison).collect(toSet()));
         }
         return false;
     }
@@ -482,7 +477,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
      * @return a Maven CPE for a web jar if conversion is possible; otherwise
      * the original CPE is returned
      */
-    private String identifierToWebJarForCompairson(Identifier id) {
+    private String identifierToWebJarForComparison(Identifier id) {
         if (id instanceof PurlIdentifier) {
             final PurlIdentifier pid = (PurlIdentifier) id;
             try {
@@ -629,7 +624,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 }
             }
             try {
-                final Semver v = new Semver(right, SemverType.NPM);
+                final Semver v = new Semver(right);
                 return v.satisfies(left);
             } catch (SemverException ex) {
                 LOGGER.trace("ignore", ex);
@@ -642,7 +637,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 }
             }
             try {
-                Semver v = new Semver(left, SemverType.NPM);
+                Semver v = new Semver(left);
                 if (!right.isEmpty() && v.satisfies(right)) {
                     return true;
                 }
@@ -650,7 +645,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                     left = current;
                     right = stripLeadingNonNumeric(right);
                     if (right != null) {
-                        v = new Semver(right, SemverType.NPM);
+                        v = new Semver(right);
                         return v.satisfies(left);
                     }
                 }

@@ -21,6 +21,7 @@ org.owasp.dependencycheck.analyzer.PythonDistributionAnalyzer
 org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer
 org.owasp.dependencycheck.analyzer.PipAnalyzer
 org.owasp.dependencycheck.analyzer.PipfileAnalyzer
+org.owasp.dependencycheck.analyzer.PoetryAnalyzer
 org.owasp.dependencycheck.analyzer.AutoconfAnalyzer
 org.owasp.dependencycheck.analyzer.OpenSSLAnalyzer
 org.owasp.dependencycheck.analyzer.CMakeAnalyzer
@@ -42,3 +43,8 @@ org.owasp.dependencycheck.analyzer.SwiftPackageResolvedAnalyzer
 org.owasp.dependencycheck.analyzer.VersionFilterAnalyzer
 org.owasp.dependencycheck.analyzer.OssIndexAnalyzer
 org.owasp.dependencycheck.analyzer.PerlCpanfileAnalyzer
+org.owasp.dependencycheck.analyzer.PinnedMavenInstallAnalyzer
+org.owasp.dependencycheck.analyzer.KnownExploitedVulnerabilityAnalyzer
+org.owasp.dependencycheck.analyzer.DartAnalyzer
+org.owasp.dependencycheck.analyzer.UnusedSuppressionRuleAnalyzer
+

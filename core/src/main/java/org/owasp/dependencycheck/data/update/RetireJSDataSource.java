@@ -89,7 +89,7 @@ public class RetireJSDataSource implements CachedWebDataSource {
                 initializeRetireJsRepo(settings, url, repoFile);
             }
         } catch (MalformedURLException ex) {
-            throw new UpdateException(String.format("Inavlid URL for RetireJS repository (%s)", configuredUrl), ex);
+            throw new UpdateException(String.format("Invalid URL for RetireJS repository (%s)", configuredUrl), ex);
         } catch (IOException ex) {
             throw new UpdateException("Unable to get the data directory", ex);
         }
@@ -131,17 +131,19 @@ public class RetireJSDataSource implements CachedWebDataSource {
      * @throws UpdateException thrown if there is an exception during
      * initialization
      */
+    @SuppressWarnings("try")
     private void initializeRetireJsRepo(Settings settings, URL repoUrl, File repoFile) throws UpdateException {
         try (WriteLock lock = new WriteLock(settings, true, repoFile.getName() + ".lock")) {
             LOGGER.debug("RetireJS Repo URL: {}", repoUrl.toExternalForm());
             final Downloader downloader = new Downloader(settings);
-            downloader.fetchFile(repoUrl, repoFile);
+            downloader.fetchFile(repoUrl, repoFile, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD);
         } catch (IOException | TooManyRequestsException | ResourceNotFoundException | WriteLockException ex) {
             throw new UpdateException("Failed to initialize the RetireJS repo", ex);
         }
     }
 
     @Override
+    @SuppressWarnings("try")
     public boolean purge(Engine engine) {
         this.settings = engine.getSettings();
         boolean result = true;

@@ -228,7 +228,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
             }
 
         });
-        removalSet.forEach((i) -> dependency.removeVulnerableSoftwareIdentifier(i));
+        removalSet.forEach(dependency::removeVulnerableSoftwareIdentifier);
     }
 
     /**
@@ -335,7 +335,7 @@ public class FalsePositiveAnalyzer extends AbstractAnalyzer {
                 }
             }
         }
-        toRemove.stream().forEach(dependency::removeVulnerableSoftwareIdentifier);
+        toRemove.forEach(dependency::removeVulnerableSoftwareIdentifier);
     }
 
     /**

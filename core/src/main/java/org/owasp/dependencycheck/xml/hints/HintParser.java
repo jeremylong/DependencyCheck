@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.xml.hints;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -165,7 +164,7 @@ public class HintParser {
                 this.hintRules = handler.getHintRules();
                 this.vendorDuplicatingHintRules = handler.getVendorDuplicatingHintRules();
             }
-        } catch (ParserConfigurationException | FileNotFoundException ex) {
+        } catch (ParserConfigurationException | IOException ex) {
             LOGGER.debug("", ex);
             throw new HintParseException(ex);
         } catch (SAXException ex) {
@@ -175,9 +174,6 @@ public class HintParser {
                 LOGGER.debug("", ex);
                 throw new HintParseException(ex);
             }
-        } catch (IOException ex) {
-            LOGGER.debug("", ex);
-            throw new HintParseException(ex);
         }
     }
 }

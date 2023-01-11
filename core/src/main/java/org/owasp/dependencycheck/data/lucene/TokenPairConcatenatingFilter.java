@@ -100,13 +100,6 @@ public final class TokenPairConcatenatingFilter extends TokenFilter {
         return false;
     }
 
-//    @Override
-//    public void reset() throws IOException {
-//        super.reset();
-//        previousWord = null;
-//        addSingleTerm = true;
-//    }
-
     /**
      * Resets the filter. This must be manually called between searching and
      * indexing. Unable to rely on `reset` as it appears to be called between

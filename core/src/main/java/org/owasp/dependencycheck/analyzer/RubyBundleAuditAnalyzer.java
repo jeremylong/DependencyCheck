@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.StringUtils;
@@ -209,7 +210,7 @@ public class RubyBundleAuditAnalyzer extends AbstractFileTypeAnalyzer {
         }
         String bundleAuditVersionDetails = null;
         try {
-            final List<String> bundleAuditArgs = Arrays.asList("version");
+            final List<String> bundleAuditArgs = Collections.singletonList("version");
             final Process process = launchBundleAudit(getSettings().getTempDirectory(), bundleAuditArgs);
             try (ProcessReader processReader = new ProcessReader(process)) {
                 processReader.readAll();

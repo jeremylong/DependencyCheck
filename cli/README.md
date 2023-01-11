@@ -7,18 +7,12 @@ Top 10 as [A06:2021 – Vulnerable and Outdated Components](https://owasp.org/To
 
 Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/index.html).
 
-Mailing List
-------------
-
-Subscribe: [dependency-check+subscribe@googlegroups.com](mailto:dependency-check+subscribe@googlegroups.com)
-
-Post: [dependency-check@googlegroups.com](mailto:dependency-check@googlegroups.com)
 
 Copyright & License
 ------------
 
 Dependency-Check is Copyright (c) 2012-2014 Jeremy Long. All Rights Reserved.
 
-Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/LICENSE.txt) file for the full license.
+Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://github.com/jeremylong/DependencyCheck/blob/main/cli/LICENSE.txt) file for the full license.
 
-Dependency-Check Command Line makes use of other open source libraries. Please see the [NOTICE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/master/dependency-check-cli/NOTICE.txt) file for more information.
+Dependency-Check Command Line makes use of other open source libraries. Please see the [NOTICE.txt](https://github.com/jeremylong/DependencyCheck/blob/main/cli/NOTICE.txt) file for more information.

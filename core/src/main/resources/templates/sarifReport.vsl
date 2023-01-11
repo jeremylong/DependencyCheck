@@ -38,10 +38,10 @@ For more information see [How dependency-check works](https://jeremylong.github.
                     "cvssv2_integrityImpact": "$enc.json($rule.cvssv2IntegrityImpact)",
                     "cvssv2_availabilityImpact": "$enc.json($rule.cvssv2AvailabilityImpact)",
                     "cvssv2_severity": "$enc.json($rule.cvssv2Severity)",
-
                 #end
                 #if($rule.cvssv3BaseSeverity)
                     "cvssv3_baseScore": $rule.cvssv3BaseScore,
+                    "security-severity": $rule.cvssv3BaseScore,
                     "cvssv3_attackVector": "$enc.json($rule.cvssv3AttackVector)",
                     "cvssv3_attackComplexity": "$enc.json($rule.cvssv3AttackComplexity)",
                     "cvssv3_privilegesRequired": "$enc.json($rule.cvssv3PrivilegesRequired)",
@@ -64,7 +64,8 @@ For more information see [How dependency-check works](https://jeremylong.github.
           "nvd": "This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov",
           "npm": "This report may contain data retrieved from the NPM Public Advisories: https://www.npmjs.com/advisories",
           "retirejs": "This report may contain data retrieved from the RetireJS community: https://retirejs.github.io/retire.js/",
-          "ossindex": "This report may contain data retrieved from the Sonatype OSS Index: https://ossindex.sonatype.org"
+          "ossindex": "This report may contain data retrieved from the Sonatype OSS Index: https://ossindex.sonatype.org",
+          "CISA": "This report may contain data retrieved from the CISA Known Exploited Vulnerabilities Catalog: https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
           #foreach($prop in $properties.getMetaData().entrySet())
             ,"$enc.json($prop.key)": "$enc.json($prop.value)"
           #end

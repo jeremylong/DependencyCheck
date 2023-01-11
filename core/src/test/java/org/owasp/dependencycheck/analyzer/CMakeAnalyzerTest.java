@@ -28,6 +28,8 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Dependency;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -36,6 +38,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
+
 import org.owasp.dependencycheck.dependency.Evidence;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 
@@ -188,5 +191,48 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
             }
         }
         assertTrue("Expected version evidence to contain \"" + version + "\".", found);
+    }
+
+    @Test
+    public void testRemoveSelfReferences() {
+        // Given
+        Map<String, String> input = new HashMap<>();
+        input.put("Deflate_OLD_FIND_LIBRARY_PREFIXES", "${CMAKE_FIND_LIBRARY_PREFIXES}");
+        input.put("Deflate_INCLUDE_DIRS", "${Deflate_INCLUDE_DIR}");
+        input.put("Deflate_LIBRARIES", "${Deflate_LIBRARY}");
+        input.put("Deflate_MINOR_VERSION", "${Deflate_VERSION_MINOR}");
+        input.put("Deflate_VERSION_STRING", "${Deflate_MAJOR_VERSION}.${Deflate_MINOR_VERSION}");
+        input.put("CMAKE_FIND_LIBRARY_PREFIXES", "${Deflate_OLD_FIND_LIBRARY_PREFIXES}");
+        input.put("Deflate_MAJOR_VERSION", "${Deflate_VERSION_MAJOR}");
+
+        Map<String, String> expectedOutput = new HashMap<>();
+        expectedOutput.put("Deflate_INCLUDE_DIRS", "${Deflate_INCLUDE_DIR}");
+        expectedOutput.put("Deflate_LIBRARIES", "${Deflate_LIBRARY}");
+        expectedOutput.put("Deflate_MINOR_VERSION", "${Deflate_VERSION_MINOR}");
+        expectedOutput.put("Deflate_VERSION_STRING", "${Deflate_MAJOR_VERSION}.${Deflate_MINOR_VERSION}");
+        expectedOutput.put("Deflate_MAJOR_VERSION", "${Deflate_VERSION_MAJOR}");
+
+        // When
+        Map<String, String> output = analyzer.removeSelfReferences(input);
+
+        // Then
+        assertEquals(expectedOutput, output);
+    }
+
+    /**
+     * Test the analyzer does not end up in an infinite loop when a temp
+     * variable is used to store old value and then restore it afterwards.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testAnalyzeCMakeTempVariable() throws AnalysisException {
+        try (Engine engine = new Engine(getSettings())) {
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+                    this, "cmake/libtiff/FindDeflate.cmake"));
+            analyzer.analyze(result, engine);
+
+            assertEquals("FindDeflate.cmake", result.getFileName());
+        }
     }
 }

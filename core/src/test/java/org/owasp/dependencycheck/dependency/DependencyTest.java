@@ -280,9 +280,7 @@ public class DependencyTest extends BaseTest {
         assertTrue(instance.size() == 4);
         assertFalse(instance.getSoftwareIdentifiers().isEmpty());
 
-        instance.getSoftwareIdentifiers().forEach((i) -> {
-            assertNull(i.getUrl());
-        });
+        instance.getSoftwareIdentifiers().forEach((i) -> assertNull(i.getUrl()));
 
         mavenArtifact = new MavenArtifact("group", "artifact", "version", "url");
         instance.addAsEvidence("pom", mavenArtifact, Confidence.HIGH);
@@ -290,8 +288,6 @@ public class DependencyTest extends BaseTest {
         assertTrue(instance.size() == 4);
         assertFalse(instance.getSoftwareIdentifiers().isEmpty());
 
-        instance.getSoftwareIdentifiers().forEach((i) -> {
-            assertNotNull(i.getUrl());
-        });
+        instance.getSoftwareIdentifiers().forEach((i) -> assertNotNull(i.getUrl()));
     }
 }

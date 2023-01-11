@@ -38,7 +38,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
@@ -84,11 +88,11 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Regex to obtain variables.
      */
     private static final Pattern SET_VAR_REGEX = Pattern.compile(
-            "^\\s*set\\s*\\(\\s*([a-zA-Z0-9_\\-]*)\\s+\"?([a-zA-Z0-9_\\-\\.\\$\\{\\}]*)\"?\\s*\\)", REGEX_OPTIONS);
+            "^\\s*set\\s*\\(\\s*([a-zA-Z\\d_\\-]*)\\s+\"?([a-zA-Z\\d_\\-.${}]*)\"?\\s*\\)", REGEX_OPTIONS);
     /**
      * Regex to find inlined variables to replace them.
      */
-    private static final Pattern INL_VAR_REGEX = Pattern.compile("(\\$\\s*\\{([^\\}]*)\\s*\\})", REGEX_OPTIONS);
+    private static final Pattern INL_VAR_REGEX = Pattern.compile("(\\$\\s*\\{([^}]*)\\s*})", REGEX_OPTIONS);
     /**
      * Regex to extract the product information.
      */
@@ -102,7 +106,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * Group 2: Version
      */
     private static final Pattern SET_VERSION = Pattern
-            .compile("^\\s*set\\s*\\(\\s*(\\w+)_version\\s+\"?([^\"\\)]*)\\s*\"?\\)", REGEX_OPTIONS);
+            .compile("^\\s*set\\s*\\(\\s*(\\w+)_version\\s+\"?([^\")]*)\\s*\"?\\)", REGEX_OPTIONS);
 
     /**
      * Detects files that can be analyzed.
@@ -173,8 +177,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                     "Problem occurred while reading dependency file.", e);
         }
         if (StringUtils.isNotBlank(contents)) {
-            final HashMap<String, String> vars = new HashMap<>();
-            collectDefinedVariables(dependency, engine, contents, vars);
+            final Map<String, String> vars = collectDefinedVariables(contents);
 
             String contentsReplacer = contents;
             Matcher r = INL_VAR_REGEX.matcher(contents);
@@ -241,13 +244,12 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Collect defined CMake variables
      *
-     * @param dependency the dependency being analyzed
-     * @param engine the dependency-check engine
      * @param contents the version information
-     * @param vars map of variable replacement tokens
+     *
+     * @return a map referencing identified variables
      */
-    private void collectDefinedVariables(Dependency dependency, Engine engine, String contents,
-            HashMap<String, String> vars) {
+    private Map<String, String> collectDefinedVariables(String contents) {
+        final Map<String, String> vars = new HashMap<>();
         final Matcher m = SET_VAR_REGEX.matcher(contents);
         int count = 0;
         while (m.find()) {
@@ -261,6 +263,7 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
             vars.put(name, value);
         }
         LOGGER.debug("Found {} matches.", count);
+        return removeSelfReferences(vars);
     }
 
     /**
@@ -339,5 +342,46 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         return Settings.KEYS.ANALYZER_CMAKE_ENABLED;
+    }
+
+    /**
+     * This method prevents to generate an infinite loop when variables are
+     * initialized by other variables and end up forming an unresolvable
+     * chain.
+     *
+     * This method takes the resolved variables map as an input and will return
+     * a new map, without the keys generate an infinite resolution chain.
+     *
+     * @param vars variables initialization detected in the CMake build file
+     *
+     * @return a new map without infinite chain variables
+     */
+    Map<String, String> removeSelfReferences(final Map<String, String> vars) {
+        final Map<String, String> resolvedVars = new HashMap<>();
+
+        vars.forEach((key, value) -> {
+            if (!isVariableSelfReferencing(vars, key)) {
+                resolvedVars.put(key, value);
+            }
+        });
+
+        return resolvedVars;
+    }
+
+    private boolean isVariableSelfReferencing(Map<String, String> vars, String key) {
+        final List<String> resolutionChain = new ArrayList<>();
+        resolutionChain.add(key);
+
+        String nextKey = resolutionChain.get(0);
+        do {
+            final Matcher matcher = INL_VAR_REGEX.matcher(vars.get(nextKey));
+            if (!matcher.find()) {
+                break;
+            }
+            nextKey = matcher.group(2);
+            resolutionChain.add(nextKey);
+        } while (Objects.nonNull(nextKey) && vars.containsKey(nextKey) && !key.equals(nextKey));
+
+        return resolutionChain.size() != 1 && key.equals(nextKey);
     }
 }

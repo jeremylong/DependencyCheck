@@ -21,9 +21,8 @@ import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURL.StandardTypes;
 import com.github.packageurl.PackageURLBuilder;
-import com.vdurmont.semver4j.Semver;
-import com.vdurmont.semver4j.Semver.SemverType;
-import com.vdurmont.semver4j.SemverException;
+import org.semver4j.Semver;
+import org.semver4j.SemverException;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nodeaudit.Advisory;
 import org.owasp.dependencycheck.data.nodeaudit.NodeAuditSearch;
@@ -530,7 +529,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
         }
         for (String v : availableVersions) {
             try {
-                final Semver version = new Semver(v, SemverType.NPM);
+                final Semver version = new Semver(v);
                 if (version.satisfies(versionRange)) {
                     return v;
                 }

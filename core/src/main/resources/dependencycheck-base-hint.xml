@@ -457,4 +457,13 @@
             <evidence type="product" source="hint analyzer" name="product" value="xerces-j" confidence="HIGHEST"/>
         </add>
     </hint>
+    <hint>
+        <!-- false negative per issue #4930 -->
+        <given>
+            <evidence type="product" source="pom" name="parent-artifactid" value="parquet"/>
+        </given>
+        <add>
+            <evidence type="product" source="hint analyzer" name="product" value="parquet-mr" confidence="HIGH"/>
+        </add>
+    </hint>
 </hints>

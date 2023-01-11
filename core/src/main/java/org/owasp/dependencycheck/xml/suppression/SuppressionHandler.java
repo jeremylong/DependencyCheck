@@ -104,10 +104,6 @@ public class SuppressionHandler extends DefaultHandler {
      * The current node text being extracted from the element.
      */
     private StringBuilder currentText;
-    /**
-     * The suppression rule filter.
-     */
-    private SuppressionRuleFilter filter;
 
     /**
      * Get the value of suppressionRules.
@@ -116,17 +112,6 @@ public class SuppressionHandler extends DefaultHandler {
      */
     public List<SuppressionRule> getSuppressionRules() {
         return suppressionRules;
-    }
-
-    /**
-     * Constructs a Suppression Handler.
-     *
-     * @param filter The suppression rule filter used when loading the
-     * suppression rules. This is used to differentiate vulnerability
-     * suppression rules from CPE suppression rules.
-     */
-    public SuppressionHandler(SuppressionRuleFilter filter) {
-        this.filter = filter;
     }
 
     /**
@@ -176,8 +161,6 @@ public class SuppressionHandler extends DefaultHandler {
                 case SUPPRESS:
                     if (rule.getUntil() != null && rule.getUntil().before(Calendar.getInstance())) {
                         LOGGER.info("Suppression is expired for rule: {}", rule);
-                    } else if (filter != null && filter.filter(rule)) {
-                        LOGGER.debug("Filtering {} for {}", rule.toString(), filter.getName());
                     } else {
                         suppressionRules.add(rule);
                     }

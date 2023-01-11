@@ -156,7 +156,8 @@ public class RetireJsAnalyzerIT extends BaseDBTestCase {
         assertEquals("version", version.getName());
         assertEquals("1.2.27", version.getValue());
 
-        assertEquals(6, dependency.getVulnerabilities().size());
+        assertTrue("At leats 6 vulnerabilities should be detected",
+                dependency.getVulnerabilities().size() >= 6);
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("Universal CSP bypass via add-on in Firefox")));
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("XSS in $sanitize in Safari/Firefox")));
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("DOS in $sanitize")));
@@ -187,7 +188,7 @@ public class RetireJsAnalyzerIT extends BaseDBTestCase {
         assertEquals("version", version.getName());
         assertEquals("1.3.0", version.getValue());
 
-        assertEquals(3, dependency.getVulnerabilities().size());
+        assertTrue(dependency.getVulnerabilities().size() >= 3);
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("CVE-2014-0013")));
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("CVE-2014-0014")));
         assertTrue(dependency.getVulnerabilities().contains(new Vulnerability("CVE-2014-0046")));

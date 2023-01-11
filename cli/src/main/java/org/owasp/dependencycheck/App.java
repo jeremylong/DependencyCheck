@@ -39,7 +39,6 @@ import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.impl.StaticLoggerBinder;
 
 import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
@@ -67,9 +66,13 @@ public class App {
      */
     private static final String ERROR_LOADING_PROPERTIES_FILE = "Error loading properties file";
     /**
+     * System specific new line character.
+     */
+    private static final String NEW_LINE = System.getProperty("line.separator", "\n");
+    /**
      * The configured settings.
      */
-    private Settings settings;
+    private final Settings settings;
 
     /**
      * The main method for the application.
@@ -296,17 +299,46 @@ public class App {
     private int determineReturnCode(Engine engine, float cvssFailScore) {
         int retCode = 0;
         //Set the exit code based on whether we found a high enough vulnerability
+        final StringBuilder ids = new StringBuilder();
         for (Dependency d : engine.getDependencies()) {
+            boolean addName = true;
             for (Vulnerability v : d.getVulnerabilities()) {
-                if ((v.getCvssV2() != null && v.getCvssV2().getScore() >= cvssFailScore)
-                        || (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= cvssFailScore)
-                        || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= cvssFailScore)
-                        || (cvssFailScore <= 0.0f)) { //safety net to fail on any if for some reason the above misses on 0
-                    retCode = 15;
-                    break;
+                final float cvssV2 = v.getCvssV2() != null ? v.getCvssV2().getScore() : -1;
+                final float cvssV3 = v.getCvssV3() != null ? v.getCvssV3().getBaseScore() : -1;
+                final float unscoredCvss = v.getUnscoredSeverity() != null ? SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) : -1;
+
+                if (cvssV2 >= cvssFailScore
+                        || cvssV3 >= cvssFailScore
+                        || unscoredCvss >= cvssFailScore
+                        //safety net to fail on any if for some reason the above misses on 0
+                        || (cvssFailScore <= 0.0f)) {
+                    float score = 0.0f;
+                    if (cvssV3 >= 0.0f) {
+                        score = cvssV3;
+                    } else if (cvssV2 >= 0.0f) {
+                        score = cvssV2;
+                    } else if (unscoredCvss >= 0.0f) {
+                        score = unscoredCvss;
+                    }
+                    if (addName) {
+                        addName = false;
+                        ids.append(NEW_LINE).append(d.getFileName()).append(": ");
+                        ids.append(v.getName()).append('(').append(score).append(')');
+                    } else {
+                        ids.append(", ").append(v.getName()).append('(').append(score).append(')');
+                    }
                 }
             }
         }
+        if (ids.length() > 0) {
+            LOGGER.error(
+                    String.format("%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or "
+                            + "equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n", cvssFailScore, ids)
+            );
+
+            retCode = 15;
+        }
+
         return retCode;
     }
 
@@ -355,7 +387,7 @@ public class App {
             if (scanner.getIncludedFilesCount() > 0) {
                 for (String s : scanner.getIncludedFiles()) {
                     final File f = new File(baseDir, s);
-                    LOGGER.debug("Found file {}", f.toString());
+                    LOGGER.debug("Found file {}", f);
                     paths.add(f);
                 }
             }
@@ -464,6 +496,10 @@ public class App {
                 cli.hasOption(CliParser.ARGUMENT.PRETTY_PRINT));
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
                 cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL));
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER,
+                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL_USER));
+        settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD,
+                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL_PASSWORD));                
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE,
                 cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));
         settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,
@@ -478,10 +514,14 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_PKG, Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_AUTOCONF_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_AUTOCONF, Settings.KEYS.ANALYZER_AUTOCONF_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_MAVEN_INSTALL_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_MAVEN_INSTALL, Settings.KEYS.ANALYZER_MAVEN_INSTALL_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_PIP_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIP, Settings.KEYS.ANALYZER_PIP_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_PIPFILE_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PIPFILE, Settings.KEYS.ANALYZER_PIPFILE_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_POETRY_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_POETRY, Settings.KEYS.ANALYZER_POETRY_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_CMAKE_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_CMAKE, Settings.KEYS.ANALYZER_CMAKE_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_NUSPEC_ENABLED,
@@ -506,6 +546,8 @@ public class App {
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GO_DEP, Settings.KEYS.ANALYZER_GOLANG_DEP_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_GOLANG_MOD, Settings.KEYS.ANALYZER_GOLANG_MOD_ENABLED));
+        settings.setBoolean(Settings.KEYS.ANALYZER_DART_ENABLED,
+                !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_DART, Settings.KEYS.ANALYZER_DART_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED));
         //TODO next major - remove the deprecated check in isNodeAuditDisabled
@@ -542,6 +584,8 @@ public class App {
                 cli.hasOption(CliParser.ARGUMENT.DISABLE_NODE_AUDIT_SKIPDEV));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED,
                 cli.hasOption(CliParser.ARGUMENT.ENABLE_NEXUS));
+        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_URL,
+                cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_URL));
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_USER,
                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_USERNAME));
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD,
@@ -623,9 +667,7 @@ public class App {
      * @param verboseLog the path to the verbose log file
      */
     private void prepareLogger(String verboseLog) {
-        final StaticLoggerBinder loggerBinder = StaticLoggerBinder.getSingleton();
-        final LoggerContext context = (LoggerContext) loggerBinder.getLoggerFactory();
-
+        final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
         encoder.setPattern("%d %C:%L%n%-5level - %msg%n");
         encoder.setContext(context);
@@ -698,6 +740,7 @@ public class App {
      * @param file a file path
      * @return the position of the last file separator
      */
+    @SuppressWarnings("ManualMinMaxCalculation")
     private int getLastFileSeparator(String file) {
         if (file.contains("*") || file.contains("?")) {
             int p1 = file.indexOf('*');

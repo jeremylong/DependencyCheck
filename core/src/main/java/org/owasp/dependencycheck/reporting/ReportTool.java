@@ -95,8 +95,8 @@ public class ReportTool {
             for (Vulnerability v : d.getVulnerabilities()) {
                 if (!rules.containsKey(v.getName())) {
                     final SarifRule r = new SarifRule(v.getName(),
-                            buildShortDescription(d, v),
-                            v.getDescription(),
+                            buildShortDescription(d, v, v.getKnownExploitedVulnerability() != null),
+                            buildDescription(v.getDescription(), v.getKnownExploitedVulnerability()),
                             v.getSource().name(),
                             v.getCvssV2(),
                             v.getCvssV3());
@@ -129,13 +129,10 @@ public class ReportTool {
             case "high":
                 return "High";
             case "medium":
-                return "Medium";
             case "moderate":
                 return "Medium";
             case "low":
-                return "Low";
             case "informational":
-                return "Low";
             case "info":
                 return "Low";
             default:
@@ -148,9 +145,10 @@ public class ReportTool {
      *
      * @param d the dependency
      * @param vuln the vulnerability
+     * @param knownExploited true if the vulnerability is known to be exploited
      * @return the short description
      */
-    private String buildShortDescription(Dependency d, Vulnerability vuln) {
+    private String buildShortDescription(Dependency d, Vulnerability vuln, boolean knownExploited) {
         final StringBuilder sb = new StringBuilder();
         sb.append(determineScore(vuln))
                 .append(" severity - ")
@@ -167,7 +165,44 @@ public class ReportTool {
         } else {
             sb.append(d.getDisplayFileName());
         }
+        if (knownExploited) {
+            sb.append(" *Known Exploited Vulnerability*");
+        }
         return sb.toString();
     }
 
+    private String buildDescription(String description,
+            org.owasp.dependencycheck.data.knownexploited.json.Vulnerability knownExploitedVulnerability) {
+        final StringBuilder sb = new StringBuilder();
+        if (knownExploitedVulnerability != null) {
+            sb.append("CISA Known Exploited Vulnerability\n");
+            if (knownExploitedVulnerability.getVendorProject() != null) {
+                sb.append("Vendor/Project: ").append(knownExploitedVulnerability.getVendorProject()).append("\n");
+            }
+            if (knownExploitedVulnerability.getProduct() != null) {
+                sb.append("Product: ").append(knownExploitedVulnerability.getProduct()).append("\n");
+            }
+            if (knownExploitedVulnerability.getVulnerabilityName() != null) {
+                sb.append("Vulnerability Name: ").append(knownExploitedVulnerability.getVulnerabilityName()).append("\n");
+            }
+            if (knownExploitedVulnerability.getDateAdded() != null) {
+                sb.append("Date Added: ").append(knownExploitedVulnerability.getDateAdded()).append("\n");
+            }
+            if (knownExploitedVulnerability.getShortDescription() != null) {
+                sb.append("Short Description: ").append(knownExploitedVulnerability.getShortDescription()).append("\n");
+            }
+            if (knownExploitedVulnerability.getRequiredAction() != null) {
+                sb.append("Required Action: ").append(knownExploitedVulnerability.getRequiredAction()).append("\n");
+            }
+            if (knownExploitedVulnerability.getDueDate() != null) {
+                sb.append("Due Date").append(knownExploitedVulnerability.getDueDate()).append("\n");
+            }
+            if (knownExploitedVulnerability.getNotes() != null) {
+                sb.append("Notes: ").append(knownExploitedVulnerability.getNotes()).append("\n");
+            }
+            sb.append("\n");
+        }
+        sb.append(description);
+        return sb.toString();
+    }
 }

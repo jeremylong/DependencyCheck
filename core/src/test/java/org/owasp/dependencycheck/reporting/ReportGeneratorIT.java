@@ -74,7 +74,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
         settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
         settings.setBoolean(Settings.KEYS.PRETTY_PRINT, true);
 
-        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, writeSarifTo, suppressionFile);
+        generateReport(settings, writeTo, writeJsonTo, writeHtmlTo, writeJunitTo, writeCsvTo, writeSarifTo, suppressionFile);        
     }
 
     /**
@@ -198,7 +198,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
                 engine.writeReports("Test Report", "org.owasp", "dependency-check-core", "1.4.8", writeSarifTo, "SARIF", exceptions);
             }
             //Test XML
-            InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.2.5.xsd");
+            InputStream xsdStream = ReportGenerator.class.getClassLoader().getResourceAsStream("schema/dependency-check.3.0.xsd");
             StreamSource xsdSource = new StreamSource(xsdStream);
             StreamSource xmlSource = new StreamSource(writeTo);
             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -209,8 +209,6 @@ public class ReportGeneratorIT extends BaseDBTestCase {
             //Test CSV
             int linesWritten = countLines(writeCsvTo);
             Assert.assertEquals(vulnCount + 1, linesWritten);
-        } catch (InvalidSettingException ex) {
-            fail(ex.getMessage());
         } catch (DatabaseException | ExceptionCollection | ReportException | SAXException | IOException ex) {
             fail(ex.getMessage());
         }
@@ -219,7 +217,7 @@ public class ReportGeneratorIT extends BaseDBTestCase {
     /**
      * create the parent folder if doesn't exist
      * @param file the file
-     * @return boolean is all fine ?
+     * @return true if all fine ?
      */
     private boolean createParentFolder(File file){
         if (!file.getParentFile().exists()) {

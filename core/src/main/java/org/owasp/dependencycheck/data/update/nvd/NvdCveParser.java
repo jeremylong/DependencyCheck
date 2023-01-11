@@ -20,8 +20,11 @@ package org.owasp.dependencycheck.data.update.nvd;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import java.io.EOFException;
@@ -43,6 +46,7 @@ import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
 import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.Utils;
 
 /**
  * Parser and processor of NVD CVE JSON data feeds.
@@ -80,13 +84,22 @@ public final class NvdCveParser {
      *
      * @param file the NVD JSON file to parse
      * @throws UpdateException thrown if the file could not be read
-     * @throws CorruptedDatastreamException thrown if the file was found to be a corrupted download (ZipException or premature EOF)
+     * @throws CorruptedDatastreamException thrown if the file was found to be a
+     * corrupted download (ZipException or premature EOF)
      */
     public void parse(File file) throws UpdateException, CorruptedDatastreamException {
         LOGGER.debug("Parsing " + file.getName());
 
-        final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.registerModule(new AfterburnerModule());
+        final Module module;
+        if (Utils.getJavaVersion() <= 8) {
+            module = new AfterburnerModule();
+        } else {
+            module = new BlackbirdModule();
+        }
+        final ObjectMapper objectMapper = JsonMapper.builder()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .addModule(module)
+                .build();
 
         final ObjectReader objectReader = objectMapper.readerFor(DefCveItem.class);
 
@@ -105,15 +118,15 @@ public final class NvdCveParser {
             LOGGER.error(ex.getMessage());
             throw new UpdateException("Unable to find the NVD CVE file, `" + file + "`, to parse", ex);
         } catch (ZipException | EOFException ex) {
-            throw new CorruptedDatastreamException("Error reading parsing NVD CVE file", ex);
+            throw new CorruptedDatastreamException("Error parsing NVD CVE file", ex);
         } catch (IOException ex) {
             LOGGER.error("Error reading NVD JSON data: {}", file);
-            LOGGER.debug("Error extracting the NVD JSON data from: " + file.toString(), ex);
+            LOGGER.debug("Error extracting the NVD JSON data from: " + file, ex);
             throw new UpdateException("Unable to find the NVD CVE file to parse", ex);
         }
     }
 
-    protected void init(JsonParser parser) throws IOException {
+    void init(JsonParser parser) throws IOException {
         JsonToken nextToken = parser.nextToken();
         if (nextToken != JsonToken.START_OBJECT) {
             throw new IOException("Expected " + JsonToken.START_OBJECT + ", got " + nextToken);

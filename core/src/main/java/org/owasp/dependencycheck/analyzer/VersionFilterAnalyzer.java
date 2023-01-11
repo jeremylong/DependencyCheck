@@ -185,7 +185,7 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
                 version = DependencyVersionUtil.parseVersion(e.getValue(), true);
                 if (version != null && evidence.stream()
                         .map(ev -> DependencyVersionUtil.parseVersion(ev.getValue(), true))
-                        .allMatch(v -> version.equals(v))) {
+                        .allMatch(version::equals)) {
                     dependency.setVersion(version.toString());
                 }
             }

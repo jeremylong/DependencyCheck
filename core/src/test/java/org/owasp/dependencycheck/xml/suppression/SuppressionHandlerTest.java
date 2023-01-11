@@ -48,7 +48,7 @@ public class SuppressionHandlerTest extends BaseTest {
         File file = BaseTest.getResourceAsFile(this, "suppressions.xml");
         InputStream schemaStream = BaseTest.getResourceAsStream(this, "schema/suppression.xsd");
 
-        SuppressionHandler handler = new SuppressionHandler(null);
+        SuppressionHandler handler = new SuppressionHandler();
         SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream);
         XMLReader xmlReader = saxParser.getXMLReader();
         xmlReader.setErrorHandler(new SuppressionErrorHandler());

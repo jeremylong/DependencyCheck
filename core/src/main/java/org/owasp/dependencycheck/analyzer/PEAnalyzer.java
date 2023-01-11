@@ -207,7 +207,7 @@ public class PEAnalyzer extends AbstractFileTypeAnalyzer {
                             LOGGER.debug("PE Analyzer found `" + key + "` with a value:" + value);
                     }
                     if (fVersion != null && pVersion != null) {
-                        final int max = fVersion.length() > pVersion.length() ? pVersion.length() : fVersion.length();
+                        final int max = Math.min(fVersion.length(), pVersion.length());
                         int pos;
                         for (pos = 0; pos < max; pos++) {
                             if (fVersion.charAt(pos) != pVersion.charAt(pos)) {

@@ -64,29 +64,30 @@ public class CpeSuppressionAnalyzerIT extends BaseDBTestCase {
     @Test
     public void testAnalyze() throws Exception {
 
-        //File file = new File(this.getClass().getClassLoader().getResource("commons-fileupload-1.2.1.jar").getPath());
         File file = BaseTest.getResourceAsFile(this, "commons-fileupload-1.2.1.jar");
-        //File suppression = new File(this.getClass().getClassLoader().getResource("commons-fileupload-1.2.1.suppression.xml").getPath());
         File suppression = BaseTest.getResourceAsFile(this, "commons-fileupload-1.2.1.suppression.xml");
         getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, false);
         getSettings().setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, false);
+        Dependency dependency;
+        int cveSize = 0;
+        int cpeSize = 0;
         try (Engine engine = new Engine(getSettings())) {
             engine.scan(file);
             engine.analyzeDependencies();
-            Dependency dependency = getDependency(engine, file);
-            int cveSize = dependency.getVulnerabilities().size();
-            int cpeSize = dependency.getVulnerableSoftwareIdentifiers().size();
+            dependency = getDependency(engine, file);
+            cveSize = dependency.getVulnerabilities().size();
+            cpeSize = dependency.getVulnerableSoftwareIdentifiers().size();
             assertTrue(cveSize > 0);
             assertTrue(cpeSize > 0);
-            getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppression.getAbsolutePath());
+        }
+        getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, suppression.getAbsolutePath());
+        try (Engine engine = new Engine(getSettings())) {
             CpeSuppressionAnalyzer instance = new CpeSuppressionAnalyzer();
             instance.initialize(getSettings());
             instance.prepare(engine);
             instance.analyze(dependency, engine);
-            //after adding filtering to the load - the cpe suppression
-            //analyzer no longer suppresses CPEs.
-            //cveSize -= 1;
+
             cpeSize -= 1;
             assertEquals(cveSize, dependency.getVulnerabilities().size());
             assertEquals(cpeSize, dependency.getVulnerableSoftwareIdentifiers().size());

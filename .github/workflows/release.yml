@@ -2,7 +2,7 @@ name: Build and Deploy Release
 
 ##
 ## Automates the release process
-## 1. Update the 'body:' below and the release_notes.md
+## 1. Update the 'body:' below and the changelog.md
 ## 2. Run `./prepare-release.sh`
 ## 3. Create PR, merge PR
 ## 4. Run `git push origin main --tags`
@@ -45,7 +45,7 @@ jobs:
         with:
           path: core/target/data
           key: odc-data
-      - uses: actions/setup-dotnet@v2
+      - uses: actions/setup-dotnet@v3.0.3
         with:
           dotnet-version: '6.0.x'
       - name: Set up JDK 1.8
@@ -57,7 +57,7 @@ jobs:
           server-id: ossrh
           server-username: ${{ secrets.OSSRH_USERNAME }}
           server-password: ${{ secrets.OSSRH_TOKEN }}
-      - uses: pnpm/action-setup@v2.2.1
+      - uses: pnpm/action-setup@v2.2.4
         with:
           version: 6.0.2
       - name: Configure Git user
@@ -185,11 +185,11 @@ jobs:
           prerelease: false
           draft: false
           body: |
-            ### Changes
-            - Improved sorting in the HTML report ([see #4112](https://github.com/jeremylong/DependencyCheck/issues/4112)).
-            - Improved support for Swift ([see #4265](https://github.com/jeremylong/DependencyCheck/pull/4265)).
-            - Resolved several false positives.
-            - See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/44?closed=1).
+            ### Fixed
+
+            - Resolved issue processing NVD CVE data due to column width (#5229)
+
+            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/56?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
@@ -258,7 +258,8 @@ jobs:
         run: ls -R
         working-directory: target
       - name: Deploy gh-pages
-        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           branch: gh-pages
           folder: target/staging
+          clean: false

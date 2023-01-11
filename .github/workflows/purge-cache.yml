@@ -1,0 +1,38 @@
+name: Purge Cache
+
+on: workflow_dispatch
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  build:
+    name: Purge GitHub Cache
+    runs-on: ubuntu-latest 
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check Maven Cache
+        id: maven-cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Check Local Maven Cache
+        id: maven-it-cache
+        uses: actions/cache@v3
+        with:
+          path: maven/target/local-repo
+          key: mvn-it-repo
+      - name: Check ODC Data Cache
+        id: odc-data-cache
+        uses: actions/cache@v3
+        with:
+          path: core/target/data
+          key: odc-data
+      - name: Delete Data Directories
+        run: |
+          rm -rf ~/.m2/repository/org/owasp/dependency-check-data
+          rm -rf maven/target/local-repo/org/owasp/dependency-check-data
+          rm -rf core/target/data

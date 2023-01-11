@@ -97,6 +97,17 @@ EXCEPTION
 END;
 /
 
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE knownExploited CASCADE CONSTRAINTS';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN
+            RAISE;
+        END IF;
+END;
+/
+
+
 CREATE TABLE vulnerability (id INT NOT NULL PRIMARY KEY, cve VARCHAR(20) UNIQUE,
     description CLOB,
     v2Severity VARCHAR(20), v2ExploitabilityScore DECIMAL(3,1),
@@ -118,8 +129,8 @@ CREATE TABLE cpeEntry (id INT NOT NULL PRIMARY KEY, part CHAR(1), vendor VARCHAR
 version VARCHAR(255), update_version VARCHAR(255), edition VARCHAR(255), lang VARCHAR(20), sw_edition VARCHAR(255), 
 target_sw VARCHAR(255), target_hw VARCHAR(255), other VARCHAR(255), ecosystem VARCHAR(255));
 
-CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(60), versionEndIncluding VARCHAR(60), 
-                       versionStartExcluding VARCHAR(60), versionStartIncluding VARCHAR(60), vulnerable number(1)
+CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(100), versionEndIncluding VARCHAR(100), 
+                       versionStartExcluding VARCHAR(100), versionStartIncluding VARCHAR(100), vulnerable number(1)
     , CONSTRAINT fkSoftwareCve FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE
     , CONSTRAINT fkSoftwareCpeProduct FOREIGN KEY (cpeEntryId) REFERENCES cpeEntry(id));
 
@@ -130,6 +141,19 @@ CREATE TABLE cpeEcosystemCache (vendor VARCHAR(255), product VARCHAR(255), ecosy
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('apache', 'zookeeper', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('tensorflow', 'tensorflow', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('scikit-learn', 'scikit-learn', 'MULTIPLE');
+INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('unicode', 'international_components_for_unicode', 'MULTIPLE');
+INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('icu-project', 'international_components_for_unicode', 'MULTIPLE');
+
+CREATE TABLE knownExploited (cveID varchar(20) PRIMARY KEY,
+    vendorProject VARCHAR(255),
+    product VARCHAR(255),
+    vulnerabilityName VARCHAR(500),
+    dateAdded CHAR(10),
+    shortDescription VARCHAR(2000),
+    requiredAction VARCHAR(1000),
+    dueDate CHAR(10),
+    notes VARCHAR(2000));
+
 
 -- CREATE INDEX idxCwe ON cweEntry(cveid); -- PK automatically receives index
 -- CREATE INDEX idxVulnerability ON vulnerability(cve); -- PK automatically receives index
@@ -187,6 +211,34 @@ END;
 /
 
 GRANT EXECUTE ON merge_ecosystem TO dcuser;
+
+CREATE OR REPLACE PROCEDURE merge_knownexploited(
+    p_cveID IN knownExploited.cveID%type,
+    p_vendorProject IN knownExploited.vendorProject%type,
+    p_product IN knownExploited.product%type,
+    p_vulnerabilityName IN knownExploited.vulnerabilityName%type,
+    p_dateAdded IN knownExploited.dateAdded%type,
+    p_shortDescription IN knownExploited.shortDescription%type,
+    p_requiredAction IN knownExploited.requiredAction%type,
+    p_dueDate IN knownExploited.dueDate%type,
+    p_notes IN knownExploited.notes%type)
+AS
+BEGIN
+    INSERT INTO knownExploited (cveID, vendorProject, product, vulnerabilityName,
+            dateAdded, shortDescription, requiredAction, dueDate, notes)
+    VALUES (p_cveID, p_vendorProject, p_product, p_vulnerabilityName, p_dateAdded,
+            p_shortDescription, p_requiredAction, p_dueDate, p_notes);
+EXCEPTION
+    WHEN DUP_VAL_ON_INDEX THEN
+        UPDATE knownExploited
+        SET vendorProject=p_vendorProject, product=p_product, vulnerabilityName=p_vulnerabilityName, 
+            dateAdded=p_dateAdded, shortDescription=p_shortDescription, requiredAction=p_requiredAction, 
+            dueDate=p_dueDate, notes=p_notes
+        WHERE cveID=p_cveID;
+END;
+/
+
+GRANT EXECUTE ON merge_knownexpoited TO dcuser;
 
 CREATE OR REPLACE PROCEDURE update_vulnerability(p_cveId IN vulnerability.cve%type,
                                       p_description IN vulnerability.description%type,
@@ -394,4 +446,4 @@ CREATE OR REPLACE VIEW v_update_ecosystems AS
     ON c.vendor=e.vendor
         AND c.product=e.product;
 
-INSERT INTO properties(id,value) VALUES ('version','5.2');
+INSERT INTO properties(id,value) VALUES ('version','5.4');

@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.Engine.Mode;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.InitializationException;
@@ -49,9 +50,9 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
      * Suppression file to test with.
      */
     private static final String SUPPRESSIONS_FILE = "suppressions.xml";
-    
+
     private AbstractSuppressionAnalyzer instance;
-    
+
     @Before
     public void createObjectUnderTest() throws Exception {
         instance = new AbstractSuppressionAnalyzerImpl();
@@ -106,18 +107,20 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         final String[] suppressionFiles = {SUPPRESSIONS_FILE, OTHER_SUPPRESSIONS_FILE};
         getSettings().setArrayIfNotEmpty(KEYS.SUPPRESSION_FILE, suppressionFiles);
         instance.initialize(getSettings());
-        instance.prepare(null);
+        Engine engine = new Engine(getSettings());
+        instance.prepare(engine);
 
         // THEN rules from both files were loaded
         final int expectedSize = rulesInFirstFile + rulesInSecondFile + rulesInCoreFile;
-        assertThat("Expected suppressions from both files", instance.getRuleCount(), is(expectedSize));
+        assertThat("Expected suppressions from both files", instance.getRuleCount(engine), is(expectedSize));
     }
-    
+
     @Test(expected = InitializationException.class)
     public void testFailureToLocateSuppressionFileAnywhere() throws Exception {
         getSettings().setString(Settings.KEYS.SUPPRESSION_FILE, "doesnotexist.xml");
         instance.initialize(getSettings());
-        instance.prepare(null);
+        Engine engine = new Engine(Mode.EVIDENCE_COLLECTION, getSettings());
+        instance.prepare(engine);
     }
 
     /**
@@ -131,8 +134,10 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         getSettings().removeProperty(KEYS.SUPPRESSION_FILE);
         final AbstractSuppressionAnalyzerImpl coreFileAnalyzer = new AbstractSuppressionAnalyzerImpl();
         coreFileAnalyzer.initialize(getSettings());
-        coreFileAnalyzer.prepare(null);
-        return coreFileAnalyzer.getRuleCount();
+        Engine engine = new Engine(Mode.EVIDENCE_COLLECTION, getSettings());
+        coreFileAnalyzer.prepare(engine);
+        int count = AbstractSuppressionAnalyzer.getRuleCount(engine);
+        return count;
     }
 
     /**
@@ -147,27 +152,29 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
         getSettings().setString(KEYS.SUPPRESSION_FILE, path);
         final AbstractSuppressionAnalyzerImpl fileAnalyzer = new AbstractSuppressionAnalyzerImpl();
         fileAnalyzer.initialize(getSettings());
-        fileAnalyzer.prepare(null);
-        return fileAnalyzer.getRuleCount();
+        Engine engine = new Engine(Mode.EVIDENCE_COLLECTION, getSettings());
+        fileAnalyzer.prepare(engine);
+        int count = AbstractSuppressionAnalyzer.getRuleCount(engine);
+        return count;
     }
-    
+
     public static class AbstractSuppressionAnalyzerImpl extends AbstractSuppressionAnalyzer {
-        
+
         @Override
         public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
         @Override
         public String getName() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
         @Override
         public AnalysisPhase getAnalysisPhase() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-        
+
         @Override
         protected String getAnalyzerEnabledSettingKey() {
             return "unknown";
@@ -178,5 +185,5 @@ public class AbstractSuppressionAnalyzerTest extends BaseTest {
             return false;
         }
     }
-    
+
 }

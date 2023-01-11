@@ -8,8 +8,12 @@ on:
       - '**/*.md'
       - '**/*.txt'
 
+permissions: {}
 jobs:
   build:
+    permissions:
+      contents: read # to fetch code (actions/checkout)
+
     name: Build dependency-check
     runs-on: ubuntu-latest 
     steps:
@@ -39,7 +43,7 @@ jobs:
         with:
           path: core/target/data
           key: odc-data
-      - uses: actions/setup-dotnet@v2
+      - uses: actions/setup-dotnet@v3.0.3
         with:
           dotnet-version: '6.0.x'
       - name: Set up JDK 1.8
@@ -51,7 +55,7 @@ jobs:
           server-id: ossrh
           server-username: ${{ secrets.OSSRH_USERNAME }}
           server-password: ${{ secrets.OSSRH_TOKEN }}
-      - uses: pnpm/action-setup@v2.2.1
+      - uses: pnpm/action-setup@v2.2.4
         with:
           version: 6.0.2
       - name: Build Snapshot with Maven
@@ -106,6 +110,9 @@ jobs:
           coverage-reports: utils/target/jacoco-results/jacoco.xml,core/target/jacoco-results/jacoco.xml,maven/target/jacoco-results/jacoco.xml,ant/target/jacoco-results/jacoco.xml,cli/target/jacoco-results/jacoco.xml
 
   docker:
+    permissions:
+      contents: read # to fetch code (actions/checkout)
+
     name: Build and Test Docker
     runs-on: ubuntu-latest
     needs: build

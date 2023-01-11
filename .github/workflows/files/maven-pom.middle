@@ -20,14 +20,6 @@
         </repository>
 
         <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>central</id>
-            <name>libs-release</name>
-            <url>https://repo.spring.io/libs-release</url>
-        </repository>
-        <repository>
             <name>mavengoogle</name>
             <id>mavengoogle</id>
             <url>https://dl.google.com/android/maven2/</url>
@@ -61,6 +53,11 @@
             <id>gradle</id>
             <name>gradle</name>
             <url>https://plugins.gradle.org/m2/</url>
+        </repository>
+        <repository>
+            <id>vaadin-addon</id>
+            <name>vaadin addons</name>
+            <url>https://vaadin.com/nexus/content/repositories/vaadin-addons/</url>
         </repository>
         <repository>
             <releases>

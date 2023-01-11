@@ -22,6 +22,7 @@ import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
 
 import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+import org.owasp.dependencycheck.data.nvd.json.LangString;
 import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 
@@ -57,8 +58,7 @@ public class CveItemOperator {
      */
     public String extractDescription(DefCveItem cve) {
         return cve.getCve().getDescription().getDescriptionData().stream().filter((desc)
-                -> "en".equals(desc.getLang())).map(d
-                -> d.getValue()).collect(Collectors.joining(" "));
+                -> "en".equals(desc.getLang())).map(LangString::getValue).collect(Collectors.joining(" "));
     }
 
     //CSOFF: MissingSwitchDefault
@@ -204,7 +204,7 @@ public class CveItemOperator {
      * <code>false</code>
      */
     public boolean isRejected(String description) {
-        return description.startsWith("** REJECT **");
+        return description.startsWith("** REJECT **") || description.startsWith("DO NOT USE THIS CANDIDATE NUMBER");
     }
 
     /**

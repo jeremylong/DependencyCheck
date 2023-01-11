@@ -278,7 +278,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      */
     private boolean isExcludedJar(File path) {
         final String fileName = path.getName().toLowerCase();
-        return EXCLUDE_JARS.stream().anyMatch(exclude -> fileName.endsWith(exclude));
+        return EXCLUDE_JARS.stream().anyMatch(fileName::endsWith);
     }
     //</editor-fold>
 
@@ -586,7 +586,8 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return true if there was evidence within the pom that we could use;
      * otherwise false
      */
-    public static boolean setPomEvidence(Dependency dependency, Model pom, List<ClassNameInformation> classes, boolean isMainPom) {
+    public static boolean setPomEvidence(Dependency dependency, Model pom,
+            List<ClassNameInformation> classes, boolean isMainPom) {
         if (pom == null) {
             return false;
         }
@@ -693,8 +694,6 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     id = new PurlIdentifier(purl, Confidence.HIGH);
                 } else {
                     LOGGER.debug("Invalid maven identifier identified: " + originalGroupID + ":" + originalArtifactID);
-//                    final String gav = String.format("%s:%s:%s", originalGroupID, originalArtifactID, version);
-//                    id = new GenericIdentifier("generic:" + gav, Confidence.LOW);
                 }
             } catch (MalformedPackageURLException ex) {
                 final String gav = String.format("%s:%s:%s", originalGroupID, originalArtifactID, version);

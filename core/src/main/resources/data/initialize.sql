@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS vulnerability;
 DROP TABLE IF EXISTS properties;
 DROP TABLE IF EXISTS cweEntry;
 DROP TABLE IF EXISTS cpeEcosystemCache;
+DROP TABLE IF EXISTS knownExploited;
 DROP ALIAS IF EXISTS update_vulnerability;
 DROP ALIAS IF EXISTS insert_software;
 
@@ -28,8 +29,8 @@ CREATE TABLE cpeEntry (id INT auto_increment PRIMARY KEY, part CHAR(1), vendor V
 version VARCHAR(255), update_version VARCHAR(255), edition VARCHAR(255), lang VARCHAR(20), sw_edition VARCHAR(255), 
 target_sw VARCHAR(255), target_hw VARCHAR(255), other VARCHAR(255), ecosystem VARCHAR(255));
 
-CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(60), versionEndIncluding VARCHAR(60),
-                       versionStartExcluding VARCHAR(60), versionStartIncluding VARCHAR(60), vulnerable BOOLEAN
+CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(100), versionEndIncluding VARCHAR(100),
+                       versionStartExcluding VARCHAR(100), versionStartIncluding VARCHAR(100), vulnerable BOOLEAN
     , CONSTRAINT fkSoftwareCve FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE
     , CONSTRAINT fkSoftwareCpeProduct FOREIGN KEY (cpeEntryId) REFERENCES cpeEntry(id));
 
@@ -43,6 +44,16 @@ INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('scikit-learn
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('unicode', 'international_components_for_unicode', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('icu-project', 'international_components_for_unicode', 'MULTIPLE');
 
+CREATE TABLE knownExploited (cveID varchar(20) PRIMARY KEY,
+    vendorProject VARCHAR(255),
+    product VARCHAR(255),
+    vulnerabilityName VARCHAR(500),
+    dateAdded CHAR(10),
+    shortDescription VARCHAR(2000),
+    requiredAction VARCHAR(1000),
+    dueDate CHAR(10),
+    notes VARCHAR(2000));
+
 CREATE INDEX idxCwe ON cweEntry(cveid);
 CREATE INDEX idxVulnerability ON vulnerability(cve);
 CREATE INDEX idxReference ON reference(cveid);
@@ -54,5 +65,7 @@ CREATE INDEX idxCpe ON cpeEntry(vendor, product);
 CREATE ALIAS update_vulnerability FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.updateVulnerability";
 CREATE ALIAS insert_software FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.insertSoftware";
 
+CREATE ALIAS merge_knownexploited FOR "org.owasp.dependencycheck.data.nvdcve.H2Functions.mergeKnownExploited";
+
 CREATE TABLE properties (id varchar(50) PRIMARY KEY, `value` varchar(500));
-INSERT INTO properties(id, `value`) VALUES ('version', '5.2.1');
+INSERT INTO properties(id, `value`) VALUES ('version', '5.4');

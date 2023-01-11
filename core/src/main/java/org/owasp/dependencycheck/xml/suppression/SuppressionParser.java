@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.xml.suppression;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -77,14 +76,13 @@ public class SuppressionParser {
      * contained.
      *
      * @param file an XML file containing suppression rules
-     * @param filter the suppression rule filter
      * @return a list of suppression rules
      * @throws SuppressionParseException thrown if the XML file cannot be parsed
      */
     @SuppressFBWarnings(justification = "try with resource will clenaup the resources", value = {"OBL_UNSATISFIED_OBLIGATION"})
-    public List<SuppressionRule> parseSuppressionRules(File file, SuppressionRuleFilter filter) throws SuppressionParseException {
+    public List<SuppressionRule> parseSuppressionRules(File file) throws SuppressionParseException {
         try (FileInputStream fis = new FileInputStream(file)) {
-            return parseSuppressionRules(fis, filter);
+            return parseSuppressionRules(fis);
         } catch (SAXException | IOException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
@@ -96,25 +94,24 @@ public class SuppressionParser {
      * contained.
      *
      * @param inputStream an InputStream containing suppression rules
-     * @param filter a filter to use when loading suppression rules
      * @return a list of suppression rules
      * @throws SuppressionParseException thrown if the XML cannot be parsed
      * @throws SAXException thrown if the XML cannot be parsed
      */
-    public List<SuppressionRule> parseSuppressionRules(InputStream inputStream, SuppressionRuleFilter filter)
+    public List<SuppressionRule> parseSuppressionRules(InputStream inputStream)
             throws SuppressionParseException, SAXException {
         try (
                 InputStream schemaStream13 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_3);
                 InputStream schemaStream12 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_2);
                 InputStream schemaStream11 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_1);
-                InputStream schemaStream10 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_0);) {
+                InputStream schemaStream10 = FileUtils.getResourceAsStream(SUPPRESSION_SCHEMA_1_0)) {
 
             final BOMInputStream bomStream = new BOMInputStream(inputStream);
             final ByteOrderMark bom = bomStream.getBOM();
             final String defaultEncoding = StandardCharsets.UTF_8.name();
             final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
 
-            final SuppressionHandler handler = new SuppressionHandler(filter);
+            final SuppressionHandler handler = new SuppressionHandler();
             final SAXParser saxParser = XmlUtils.buildSecureSaxParser(schemaStream13, schemaStream12, schemaStream11, schemaStream10);
             final XMLReader xmlReader = saxParser.getXMLReader();
             xmlReader.setErrorHandler(new SuppressionErrorHandler());
@@ -125,7 +122,7 @@ public class SuppressionParser {
                 xmlReader.parse(in);
                 return handler.getSuppressionRules();
             }
-        } catch (ParserConfigurationException | FileNotFoundException ex) {
+        } catch (ParserConfigurationException | IOException ex) {
             LOGGER.debug("", ex);
             throw new SuppressionParseException(ex);
         } catch (SAXException ex) {
@@ -135,9 +132,6 @@ public class SuppressionParser {
                 LOGGER.debug("", ex);
                 throw new SuppressionParseException(ex);
             }
-        } catch (IOException ex) {
-            LOGGER.debug("", ex);
-            throw new SuppressionParseException(ex);
         }
     }
 

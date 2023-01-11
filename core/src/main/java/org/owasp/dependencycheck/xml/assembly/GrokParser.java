@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.xml.assembly;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -92,7 +91,7 @@ public class GrokParser {
                 xmlReader.parse(in);
                 return handler.getAssemblyData();
             }
-        } catch (ParserConfigurationException | FileNotFoundException ex) {
+        } catch (ParserConfigurationException | IOException ex) {
             LOGGER.debug("", ex);
             throw new GrokParseException(ex);
         } catch (SAXException ex) {
@@ -102,9 +101,6 @@ public class GrokParser {
                 LOGGER.debug("", ex);
                 throw new GrokParseException(ex);
             }
-        } catch (IOException ex) {
-            LOGGER.debug("", ex);
-            throw new GrokParseException(ex);
         }
     }
 }

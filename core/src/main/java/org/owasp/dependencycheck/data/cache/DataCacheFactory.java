@@ -92,7 +92,7 @@ public class DataCacheFactory {
                     throw new CacheException("Unable to obtain disk cache directory path", ex);
                 }
                 if (!cacheDirectory.isDirectory() && !cacheDirectory.mkdirs()) {
-                    throw new CacheException("Unable to create disk cache: " + cacheDirectory.toString());
+                    throw new CacheException("Unable to create disk cache: " + cacheDirectory);
                 }
                 try (InputStream in = FileUtils.getResourceAsStream(CACHE_PROPERTIES)) {
                     if (in == null) {
@@ -104,7 +104,7 @@ public class DataCacheFactory {
                     properties.put("jcs.auxiliary.ODC.attributes.DiskPath", cacheDirectory.getCanonicalPath());
                     for (CacheType t : CacheType.values()) {
                         final File fp = new File(cacheDirectory, t.toString());
-                        properties.put("jcs.auxiliary." + t.toString() + ".attributes.DiskPath", fp.getCanonicalPath());
+                        properties.put("jcs.auxiliary." + t + ".attributes.DiskPath", fp.getCanonicalPath());
                     }
 
                     JCS.setConfigProperties(properties);

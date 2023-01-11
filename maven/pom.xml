@@ -20,7 +20,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>7.1.1-SNAPSHOT</version>
+        <version>8.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>dependency-check-maven</artifactId>
     <packaging>maven-plugin</packaging>
@@ -29,7 +29,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     <inceptionYear>2013</inceptionYear>
     <properties>
         <!-- upgrading has caused publishing errors -->
-        <version.maven-plugin-plugin>3.6.4</version.maven-plugin-plugin>
+        <version.maven-plugin-plugin>3.7.0</version.maven-plugin-plugin>
     </properties>
     <scm>
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
@@ -38,7 +38,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         <tag>v6.4.1</tag>
     </scm>
     <prerequisites>
-        <maven>${maven.api.version}</maven>
+        <maven>3.1.0</maven>
     </prerequisites>
     <build>
         <resources>
@@ -65,7 +65,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>${version.maven-plugin-plugin}</version>
                 <configuration>
-                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                     <goalPrefix>dependency-check</goalPrefix>
                 </configuration>
                 <executions>
@@ -165,16 +164,6 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-model-builder</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-compat</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>

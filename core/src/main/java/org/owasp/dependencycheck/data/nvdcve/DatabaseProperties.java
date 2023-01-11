@@ -76,6 +76,15 @@ public class DatabaseProperties {
     public static final String VERSION = "version";
 
     /**
+     * The key for the last check time for the Known Exploited Vulnerabilities.
+     */
+    public static final String KEV_LAST_CHECKED = "kev.checked";
+    /**
+     * The key for the version the Known Exploited Vulnerabilities.
+     */
+    public static final String KEV_VERSION = "kev.version";
+
+    /**
      * A collection of properties about the data.
      */
     private final Properties properties;

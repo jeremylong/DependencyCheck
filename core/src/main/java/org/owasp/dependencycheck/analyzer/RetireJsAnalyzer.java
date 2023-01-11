@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import com.esotericsoftware.minlog.Log;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
@@ -118,6 +119,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      * contained in a JAR.
      */
     //TODO implement this
+    @SuppressWarnings("FieldMayBeFinal")
     private boolean skipNonVulnerableInJAR = true;
 
     /**
@@ -178,6 +180,14 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
      */
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        // RetireJS outputs a bunch of repeated output like the following for
+        // vulnerable dependencies, with little context:
+        // 
+        // INFO: Vulnerability found: jquery below 1.6.3
+        //
+        // This logging is suppressed because it isn't particularly useful, and
+        // it aligns with other analyzers that don't log such information.
+        Log.set(Log.LEVEL_WARN);
 
         File repoFile = null;
         boolean repoEmpty = false;
@@ -225,7 +235,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             this.jsRepository = new VulnerabilitiesRepositoryLoader().loadFromInputStream(in);
         } catch (JSONException ex) {
             this.setEnabled(false);
-            throw new InitializationException("Failed to initialize the RetireJS repo: `" + repoFile.toString()
+            throw new InitializationException("Failed to initialize the RetireJS repo: `" + repoFile
                     + "` appears to be malformed. Please delete the file or run the dependency-check purge "
                     + "command and re-try running dependency-check.", ex);
         } catch (IOException ex) {
@@ -439,5 +449,10 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
         } catch (IOException | DatabaseException e) {
             throw new AnalysisException(e);
         }
+    }
+
+    @Override
+    protected void closeAnalyzer() throws Exception {
+        Log.set(Log.LEVEL_INFO);
     }
 }

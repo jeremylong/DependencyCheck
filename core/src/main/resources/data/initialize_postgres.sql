@@ -6,6 +6,7 @@ DROP FUNCTION IF EXISTS public.save_property;
 DROP FUNCTION IF EXISTS public.update_vulnerability;
 DROP FUNCTION IF EXISTS public.insert_software;
 DROP FUNCTION IF EXISTS public.merge_ecosystem;
+DROP FUNCTION IF EXISTS public.merge_knownexpoited;
 DROP TABLE IF EXISTS software;
 DROP TABLE IF EXISTS cpeEntry;
 DROP TABLE IF EXISTS reference;
@@ -13,6 +14,7 @@ DROP TABLE IF EXISTS properties;
 DROP TABLE IF EXISTS cweEntry;
 DROP TABLE IF EXISTS vulnerability;
 DROP TABLE IF EXISTS cpeEcosystemCache;
+DROP TABLE IF EXISTS knownExploited;
 
 CREATE TABLE vulnerability (id SERIAL PRIMARY KEY, cve VARCHAR(20) UNIQUE,
     description VARCHAR(8000), v2Severity VARCHAR(20), v2ExploitabilityScore DECIMAL(3,1), 
@@ -33,8 +35,8 @@ CREATE TABLE cpeEntry (id SERIAL PRIMARY KEY, part CHAR(1), vendor VARCHAR(255),
     version VARCHAR(255), update_version VARCHAR(255), edition VARCHAR(255), lang VARCHAR(20), sw_edition VARCHAR(255), 
     target_sw VARCHAR(255), target_hw VARCHAR(255), other VARCHAR(255), ecosystem VARCHAR(255));
 
-CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(60), versionEndIncluding VARCHAR(60), 
-                       versionStartExcluding VARCHAR(60), versionStartIncluding VARCHAR(60), vulnerable BOOLEAN
+CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(100), versionEndIncluding VARCHAR(100), 
+                       versionStartExcluding VARCHAR(100), versionStartIncluding VARCHAR(100), vulnerable BOOLEAN
     , CONSTRAINT fkSoftwareCve FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE
     , CONSTRAINT fkSoftwareCpeProduct FOREIGN KEY (cpeEntryId) REFERENCES cpeEntry(id));
 
@@ -42,9 +44,21 @@ CREATE TABLE cpeEcosystemCache (vendor VARCHAR(255), product VARCHAR(255), ecosy
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('apache', 'zookeeper', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('tensorflow', 'tensorflow', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('scikit-learn', 'scikit-learn', 'MULTIPLE');
+INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('unicode', 'international_components_for_unicode', 'MULTIPLE');
+INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('icu-project', 'international_components_for_unicode', 'MULTIPLE');
 
 CREATE TABLE cweEntry (cveid INT, cwe VARCHAR(20),
     CONSTRAINT fkCweEntry FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE);
+
+CREATE TABLE knownExploited (cveID varchar(20) PRIMARY KEY,
+    vendorProject VARCHAR(255),
+    product VARCHAR(255),
+    vulnerabilityName VARCHAR(500),
+    dateAdded CHAR(10),
+    shortDescription VARCHAR(2000),
+    requiredAction VARCHAR(1000),
+    dueDate CHAR(10),
+    notes VARCHAR(2000));
 
 CREATE INDEX idxCwe ON cweEntry(cveid);
 CREATE INDEX idxVulnerability ON vulnerability(cve);
@@ -89,6 +103,37 @@ END
 $$ LANGUAGE plpgsql;
 
 GRANT EXECUTE ON FUNCTION public.merge_ecosystem(VARCHAR(255), VARCHAR(255), varchar(255)) TO dcuser;
+
+
+CREATE FUNCTION merge_knownexploited (
+    IN p_cveID varchar(20),
+    IN p_vendorProject VARCHAR(255),
+    IN p_product VARCHAR(255),
+    IN p_vulnerabilityName VARCHAR(500),
+    IN p_dateAdded CHAR(10),
+    IN p_shortDescription VARCHAR(2000),
+    IN p_requiredAction VARCHAR(1000),
+    IN p_dueDate CHAR(10),
+    IN p_notes VARCHAR(2000))
+RETURNS void
+AS $$
+BEGIN
+IF EXISTS(SELECT 1 FROM knownExploited WHERE cveID=p_cveID) THEN
+    UPDATE knownExploited
+    SET vendorProject=p_vendorProject, product=p_product, vulnerabilityName=p_vulnerabilityName, 
+        dateAdded=p_dateAdded, shortDescription=p_shortDescription, requiredAction=p_requiredAction, 
+        dueDate=p_dueDate, notes=p_notes
+    WHERE cveID=p_cveID
+ELSE
+    INSERT INTO knownExploited (cveID, vendorProject, product, vulnerabilityName,
+            dateAdded, shortDescription, requiredAction, dueDate, notes)
+    VALUES (p_cveID, p_vendorProject, p_product, p_vulnerabilityName, p_dateAdded,
+            p_shortDescription, p_requiredAction, p_dueDate, p_notes);
+END IF;
+END
+$$ LANGUAGE plpgsql;
+
+GRANT EXECUTE ON FUNCTION public.merge_knownexpoited(varchar(20), VARCHAR(255), VARCHAR(255), VARCHAR(500), CHAR(10), VARCHAR(2000), VARCHAR(1000), CHAR(10), VARCHAR(2000)) TO dcuser;
 
 CREATE FUNCTION update_vulnerability (
     IN p_cveId VARCHAR(20), IN p_description VARCHAR(8000), IN p_v2Severity VARCHAR(20), 
@@ -166,8 +211,8 @@ CREATE FUNCTION insert_software (
     IN p_vulnerabilityId INT, IN p_part CHAR(1), IN p_vendor VARCHAR(255), IN p_product VARCHAR(255),
     IN p_version VARCHAR(255), IN p_update_version VARCHAR(255), IN p_edition VARCHAR(255), IN p_lang VARCHAR(20),
     IN p_sw_edition VARCHAR(255), IN p_target_sw VARCHAR(255), IN p_target_hw VARCHAR(255), IN p_other VARCHAR(255), 
-    IN p_ecosystem VARCHAR(255), IN p_versionEndExcluding VARCHAR(50), IN p_versionEndIncluding VARCHAR(50), 
-    IN p_versionStartExcluding VARCHAR(50), IN p_versionStartIncluding VARCHAR(50), IN p_vulnerable BOOLEAN)
+    IN p_ecosystem VARCHAR(255), IN p_versionEndExcluding VARCHAR(100), IN p_versionEndIncluding VARCHAR(100), 
+    IN p_versionStartExcluding VARCHAR(100), IN p_versionStartIncluding VARCHAR(100), IN p_vulnerable BOOLEAN)
 RETURNS void
 AS $$
 DECLARE 
@@ -209,4 +254,4 @@ GRANT EXECUTE ON FUNCTION public.insert_software (INT, CHAR(1), VARCHAR(255),
 
 
 
-INSERT INTO properties(id,value) VALUES ('version','5.2');
+INSERT INTO properties(id,value) VALUES ('version','5.4');

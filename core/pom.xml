@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>7.1.1-SNAPSHOT</version>
+        <version>8.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -30,7 +30,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <description>dependency-check-core is the engine and reporting tool used to identify and report if there are any known, publicly disclosed vulnerabilities in the scanned project's dependencies. The engine extracts meta-data from the dependencies and uses this to do fuzzy key-word matching against the Common Platfrom Enumeration (CPE), if any CPE identifiers are found the associated Common Vulnerability and Exposure (CVE) entries are added to the generated report.</description>
     <scm>
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
-        <url>https://github.com/jeremylong/DependencyCheck/tree/master/core</url>
+        <url>https://github.com/jeremylong/DependencyCheck/tree/main/core</url>
         <developerConnection>scm:git:git@github.com:jeremylong/DependencyCheck.git</developerConnection>
         <tag>v6.4.1</tag>
     </scm>
@@ -103,19 +103,35 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <plugin>
                 <groupId>org.jsonschema2pojo</groupId>
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
-                <configuration>
-                    <sourceDirectory>${basedir}/src/main/resources/schema/nvdcve/json</sourceDirectory>
-                    <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
-                    <includeGetters>true</includeGetters>
-                    <annotationStyle>jackson</annotationStyle>
-                    <targetPackage>org.owasp.dependencycheck.data.nvd.json</targetPackage>
-                </configuration>
+
                 <executions>
                     <execution>
+                        <id>generate-nvd</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirectory>${basedir}/src/main/resources/schema/external/nvd</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
+                            <includeGetters>true</includeGetters>
+                            <annotationStyle>jackson</annotationStyle>
+                            <targetPackage>org.owasp.dependencycheck.data.nvd.json</targetPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-knownexploited</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${basedir}/src/main/resources/schema/external/cisa</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
+                            <includeGetters>true</includeGetters>
+                            <annotationStyle>jackson</annotationStyle>
+                            <targetPackage>org.owasp.dependencycheck.data.knownexploited.json</targetPackage>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -189,7 +205,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>cpe-parser</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.vdurmont</groupId>
+            <groupId>org.semver4j</groupId>
             <artifactId>semver4j</artifactId>
         </dependency>
         <dependency>
@@ -274,6 +290,14 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>jackson-module-afterburner</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-blackbird</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.h3xstream.retirejs</groupId>
             <artifactId>retirejs-core</artifactId>
         </dependency>
@@ -298,159 +322,6 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
-        </dependency>
-        <!-- The following dependencies are only used during testing
-        and must not be converted to a properties based version number -->
-        <dependency>
-            <groupId>io.github.faob-dev</groupId>
-            <artifactId>aar</artifactId>
-            <version>1.0.0</version>
-            <type>aar</type>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.jslipc</groupId>
-            <artifactId>jslipc</artifactId>
-            <version>0.2.0</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.scm</groupId>
-            <artifactId>maven-scm-provider-cvsexe</artifactId>
-            <version>1.8.1</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>2.5.5</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>3.0.0.RELEASE</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast</artifactId>
-            <version>2.5</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-core</artifactId>
-            <version>2.2.0</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.struts</groupId>
-            <artifactId>struts2-core</artifactId>
-            <version>2.1.2</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty</artifactId>
-            <version>6.1.0</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-spring</artifactId>
-            <version>1.4.1</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-adb</artifactId>
-            <version>1.4.1</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.daytrader</groupId>
-            <artifactId>daytrader-ear</artifactId>
-            <version>2.1.7</version>
-            <type>ear</type>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.main.admingui</groupId>
-            <artifactId>war</artifactId>
-            <version>4.0</version>
-            <type>war</type>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.dojotoolkit</groupId>
-            <artifactId>dojo-war</artifactId>
-            <version>1.3.0</version>
-            <type>war</type>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa</artifactId>
-            <version>2.0.1</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>3.0</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.retry</groupId>
-            <artifactId>spring-retry</artifactId>
-            <version>1.1.0.RELEASE</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>uk.ltd.getahead</groupId>
-            <artifactId>dwr</artifactId>
-            <version>1.1.1</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <version>2.7.0</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.4.8</version>
-            <scope>test</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.2.1</version>
-            <scope>test</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>commons-validator</groupId>
@@ -546,7 +417,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>42.3.5</version>
+                    <version>42.5.1</version>
                 </dependency>
             </dependencies>
             <build>
@@ -585,82 +456,121 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 </plugins>
             </build>
         </profile>
-        <!--
-            The following profile adds additional dependencies that are only
-            used during testing.
-
-            TODO move the following FP tests to a seperate invoker test in the
-            maven plugin project. Add checks against the XML to validate that
-            these do not report FP.
-        -->
-        <!--profile>
-            <id>False Positive Tests</id>
+        <profile>
+            <id>test-dependencies</id>
+            <!-- dependencies required for unit and integration tests -->
             <activation>
-                <property>
-                    <name>releaseTesting</name>
-                </property>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <dependencies>
+                <!-- The following dependencies are only used during testing
+                and must not be converted to a properties based version number -->
                 <dependency>
-                    <groupId>org.apache.xmlgraphics</groupId>
-                    <artifactId>batik-util</artifactId>
-                    <version>1.7</version>
+                    <groupId>io.github.faob-dev</groupId>
+                    <artifactId>aar</artifactId>
+                    <version>1.0.0</version>
+                    <type>aar</type>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>org.apache.ws.security</groupId>
-                    <artifactId>wss4j</artifactId>
-                    <version>1.5.7</version>
+                    <groupId>org.jslipc</groupId>
+                    <artifactId>jslipc</artifactId>
+                    <version>0.2.0</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>com.ganyo</groupId>
-                    <artifactId>gcm-server</artifactId>
-                    <version>1.0.2</version>
+                    <groupId>org.apache.maven.scm</groupId>
+                    <artifactId>maven-scm-provider-cvsexe</artifactId>
+                    <version>1.8.1</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>org.python</groupId>
-                    <artifactId>jython-standalone</artifactId>
-                    <version>2.7-b1</version>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                    <version>2.5.5</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>org.jruby</groupId>
-                    <artifactId>jruby-complete</artifactId>
-                    <version>1.7.4</version>
+                    <groupId>org.springframework.security</groupId>
+                    <artifactId>spring-security-web</artifactId>
+                    <version>3.0.0.RELEASE</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>org.jruby</groupId>
-                    <artifactId>jruby</artifactId>
-                    <version>1.6.3</version>
+                    <groupId>com.hazelcast</groupId>
+                    <artifactId>hazelcast</artifactId>
+                    <version>2.5</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>org.glassfish.jersey.core</groupId>
-                    <artifactId>jersey-client</artifactId>
-                    <version>2.12</version>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache-core</artifactId>
+                    <version>2.2.0</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-client</artifactId>
-                    <version>1.11.1</version>
+                    <groupId>org.apache.struts</groupId>
+                    <artifactId>struts2-core</artifactId>
+                    <version>2.1.2</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>com.sun.faces</groupId>
-                    <artifactId>jsf-impl</artifactId>
-                    <version>2.2.8-02</version>
+                    <groupId>org.mortbay.jetty</groupId>
+                    <artifactId>jetty</artifactId>
+                    <version>6.1.0</version>
+                    <scope>test</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.axis2</groupId>
+                    <artifactId>axis2-spring</artifactId>
+                    <version>1.4.1</version>
+                    <scope>test</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.axis2</groupId>
+                    <artifactId>axis2-adb</artifactId>
+                    <version>1.4.1</version>
+                    <scope>test</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.geronimo.daytrader</groupId>
+                    <artifactId>daytrader-ear</artifactId>
+                    <version>2.1.7</version>
+                    <type>ear</type>
+                    <scope>test</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>org.glassfish.main.admingui</groupId>
+                    <artifactId>war</artifactId>
+                    <version>4.0</version>
+                    <type>war</type>
+                    <scope>test</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>org.dojotoolkit</groupId>
+                    <artifactId>dojo-war</artifactId>
+                    <version>1.3.0</version>
+                    <type>war</type>
+                    <scope>test</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa</artifactId>
+                    <version>2.0.1</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
@@ -672,62 +582,41 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>org.opensaml</groupId>
-                    <artifactId>xmltooling</artifactId>
-                    <version>1.4.1</version>
+                    <groupId>org.springframework.retry</groupId>
+                    <artifactId>spring-retry</artifactId>
+                    <version>1.1.0.RELEASE</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>com.google.gerrit</groupId>
-                    <artifactId>gerrit-extension-api</artifactId>
-                    <version>2.11</version>
+                    <groupId>uk.ltd.getahead</groupId>
+                    <artifactId>dwr</artifactId>
+                    <version>1.1.1</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>com.google.apis</groupId>
-                    <artifactId>google-api-services-sqladmin</artifactId>
-                    <version>v1beta4-rev5-1.20.0</version>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                    <version>2.7.0</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
                 <dependency>
-                    <groupId>com.google.gwt.google-apis</groupId>
-                    <artifactId>gwt-gears</artifactId>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                    <version>1.4.8</version>
+                    <scope>test</scope>
+                    <optional>true</optional>
+                </dependency>
+                <dependency>
+                    <groupId>commons-fileupload</groupId>
+                    <artifactId>commons-fileupload</artifactId>
                     <version>1.2.1</version>
                     <scope>test</scope>
                     <optional>true</optional>
                 </dependency>
-                <dependency>
-                    <groupId>org.mozilla</groupId>
-                    <artifactId>rhino</artifactId>
-                    <version>1.7.6</version>
-                    <scope>test</scope>
-                    <optional>true</optional>
-                </dependency>
-                <dependency>
-                    <groupId>com.microsoft.windowsazure</groupId>
-                    <artifactId>microsoft-azure-api-media</artifactId>
-                    <version>0.5.0</version>
-                    <scope>test</scope>
-                    <optional>true</optional>
-                </dependency>
-                <dependency>
-                    <groupId>com.microsoft.windowsazure</groupId>
-                    <artifactId>microsoft-azure-api-management-sql</artifactId>
-                    <version>0.5.0</version>
-                    <scope>test</scope>
-                    <optional>true</optional>
-                </dependency>
-                <dependency>
-                    <groupId>com.microsoft.bingads</groupId>
-                    <artifactId>microsoft.bingads</artifactId>
-                    <version>9.3.4</version>
-                    <scope>test</scope>
-                    <optional>true</optional>
-                </dependency>
             </dependencies>
-        </profile-->
+        </profile>
     </profiles>
 </project>

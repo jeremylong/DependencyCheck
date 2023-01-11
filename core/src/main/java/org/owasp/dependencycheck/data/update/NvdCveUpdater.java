@@ -138,6 +138,14 @@ public class NvdCveUpdater implements CachedWebDataSource {
                 }
                 //all dates in the db are now stored in seconds as opposed to previously milliseconds.
                 dbProperties.save(DatabaseProperties.LAST_CHECKED, Long.toString(System.currentTimeMillis() / 1000));
+                if (updatesMade) {
+                    cveDb.persistEcosystemCache();
+                }
+                final int updateCount = cveDb.updateEcosystemCache();
+                LOGGER.debug("Corrected the ecosystem for {} ecoSystemCache entries", updateCount);
+                if (updatesMade || updateCount > 0) {
+                    cveDb.cleanupDatabase();
+                }
             }
         } catch (UpdateException ex) {
             if (ex.getCause() != null && ex.getCause() instanceof DownloadFailedException) {
@@ -182,11 +190,7 @@ public class NvdCveUpdater implements CachedWebDataSource {
     protected void initializeExecutorServices() {
         final int downloadPoolSize;
         final int max = settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 1);
-        if (DOWNLOAD_THREAD_POOL_SIZE > max) {
-            downloadPoolSize = max;
-        } else {
-            downloadPoolSize = DOWNLOAD_THREAD_POOL_SIZE;
-        }
+        downloadPoolSize = Math.min(DOWNLOAD_THREAD_POOL_SIZE, max);
         downloadExecutorService = Executors.newFixedThreadPool(downloadPoolSize);
         processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);
         LOGGER.debug("#download   threads: {}", downloadPoolSize);
@@ -331,11 +335,6 @@ public class NvdCveUpdater implements CachedWebDataSource {
             }
         }
 
-        try {
-            cveDb.cleanupDatabase();
-        } catch (DatabaseException ex) {
-            throw new UpdateException(ex.getMessage(), ex.getCause());
-        }
     }
 
     /**

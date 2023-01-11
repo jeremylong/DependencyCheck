@@ -85,7 +85,7 @@ public final class Settings {
     /**
      * Reference to a utility class used to convert objects to json.
      */
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     //<editor-fold defaultstate="collapsed" desc="KEYS used to access settings">
     /**
@@ -224,6 +224,16 @@ public final class Settings {
          */
         public static final String CPE_URL = "cpe.url";
         /**
+         * The properties key for the URL to retrieve the Known Exploited
+         * Vulnerabilities..
+         */
+        public static final String KEV_URL = "kev.url";
+        /**
+         * The properties key to control the skipping of the check for Known
+         * Exploited Vulnerabilities updates.
+         */
+        public static final String KEV_CHECK_VALID_FOR_HOURS = "kev.check.validforhours";
+        /**
          * Whether or not if using basic auth with a proxy the system setting
          * 'jdk.http.auth.tunneling.disabledSchemes' should be set to an empty
          * string.
@@ -296,6 +306,13 @@ public final class Settings {
          * The properties key for whether the Jar Analyzer is enabled.
          */
         public static final String ANALYZER_JAR_ENABLED = "analyzer.jar.enabled";
+
+        /**
+         * The properties key for whether the Known Exploited Vulnerability
+         * Analyzer is enabled.
+         */
+        public static final String ANALYZER_KNOWN_EXPLOITED_ENABLED = "analyzer.knownexploited.enabled";
+
         /**
          * The properties key for whether experimental analyzers are loaded.
          */
@@ -362,6 +379,14 @@ public final class Settings {
          * The properties key for defining the URL to the RetireJS repository.
          */
         public static final String ANALYZER_RETIREJS_REPO_JS_URL = "analyzer.retirejs.repo.js.url";
+        /**
+         * The properties key for the Nexus search credentials username.
+         */
+        public static final String ANALYZER_RETIREJS_REPO_JS_USER = "analyzer.retirejs.repo.js.username";
+        /**
+         * The properties key for the Nexus search credentials password.
+         */
+        public static final String ANALYZER_RETIREJS_REPO_JS_PASSWORD = "analyzer.retirejs.repo.js.password";
         /**
          * The properties key for defining whether the RetireJS repository will
          * be updated regardless of the autoupdate settings.
@@ -430,6 +455,11 @@ public final class Settings {
          */
         public static final String ANALYZER_AUTOCONF_ENABLED = "analyzer.autoconf.enabled";
         /**
+         * The properties key for whether the maven_install.json analyzer is
+         * enabled.
+         */
+        public static final String ANALYZER_MAVEN_INSTALL_ENABLED = "analyzer.maveninstall.enabled";
+        /**
          * The properties key for whether the pip analyzer is enabled.
          */
         public static final String ANALYZER_PIP_ENABLED = "analyzer.pip.enabled";
@@ -437,6 +467,10 @@ public final class Settings {
          * The properties key for whether the pipfile analyzer is enabled.
          */
         public static final String ANALYZER_PIPFILE_ENABLED = "analyzer.pipfile.enabled";
+        /**
+         * The properties key for whether the Poetry analyzer is enabled.
+         */
+        public static final String ANALYZER_POETRY_ENABLED = "analyzer.poetry.enabled";
         /**
          * The properties key for whether the CMake analyzer is enabled.
          */
@@ -722,12 +756,22 @@ public final class Settings {
          */
         public static final String ANALYZER_OSSINDEX_REQUEST_DELAY = "analyzer.ossindex.request.delay";
         /**
-         * The properties key for only warning about Sonatype OSS Index remote errors instead of failing the request.
+         * The properties key for only warning about Sonatype OSS Index remote
+         * errors instead of failing the request.
          */
         public static final String ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS = "analyzer.ossindex.remote-error.warn-only";
         /**
          * The properties key setting whether or not the JSON and XML reports
          * will be pretty printed.
+         */
+
+        /**
+         * The properties key for whether the Dart analyzer is enabled.
+         */
+        public static final String ANALYZER_DART_ENABLED = "analyzer.dart.enabled";
+
+        /**
+         * The properties key for whether to pretty print the XML/JSON reports.
          */
         public static final String PRETTY_PRINT = "odc.reports.pretty.print";
         /**
@@ -850,7 +894,7 @@ public final class Settings {
      * @param value the property value
      * @return the printable value
      */
-    protected String getPrintableValue(@NotNull String key, String value) {
+    String getPrintableValue(@NotNull String key, String value) {
         String printableValue = null;
         if (value != null) {
             printableValue = isKeyMasked(key) ? "********" : value;
@@ -864,13 +908,12 @@ public final class Settings {
      * {@link #mergeProperties(java.io.File)} to add additional properties after
      * the call to initialize.
      */
-    protected void initMaskedKeys() {
+    void initMaskedKeys() {
         final String[] masked = getArray(Settings.KEYS.MASKED_PROPERTIES);
         if (masked == null) {
             maskedKeys = new ArrayList<>();
         } else {
-            maskedKeys = Arrays.asList(masked)
-                    .stream()
+            maskedKeys = Arrays.stream(masked)
                     .map(v -> Pattern.compile(v).asPredicate())
                     .collect(Collectors.toList());
         }
@@ -1110,7 +1153,7 @@ public final class Settings {
      * @param key the key to lookup within the properties file
      * @return the property from the properties file converted to a File object
      */
-    protected File getDataFile(@NotNull final String key) {
+    File getDataFile(@NotNull final String key) {
         final String file = getString(key);
         LOGGER.debug("Settings.getDataFile() - file: '{}'", file);
         if (file == null) {
@@ -1121,7 +1164,7 @@ public final class Settings {
             final File jarPath = getJarPath();
             LOGGER.debug("Settings.getDataFile() - jar file: '{}'", jarPath.toString());
             final File retVal = new File(jarPath, file.substring(6));
-            LOGGER.debug("Settings.getDataFile() - returning: '{}'", retVal.toString());
+            LOGGER.debug("Settings.getDataFile() - returning: '{}'", retVal);
             return retVal;
         }
         return new File(file);
@@ -1441,7 +1484,7 @@ public final class Settings {
      */
     public File getTempFile(@NotNull final String prefix, @NotNull final String extension) throws IOException {
         final File dir = getTempDirectory();
-        final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID().toString(), extension);
+        final String tempFileName = String.format("%s%s.%s", prefix, UUID.randomUUID(), extension);
         final File tempFile = new File(dir, tempFileName);
         if (tempFile.exists()) {
             return getTempFile(prefix, extension);

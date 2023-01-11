@@ -93,6 +93,10 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      */
     public static final String SHRINKWRAP_JSON = "npm-shrinkwrap.json";
     /**
+     * The name of the directory that contains node modules
+     */
+    public static final String NODE_MODULES_DIRNAME = "node_modules";
+    /**
      * Filter that detects files named "package.json", "package-lock.json", or
      * "npm-shrinkwrap.json".
      */
@@ -244,7 +248,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
         final File nodeModules = new File(baseDir, "node_modules");
         if (!nodeModules.isDirectory()) {
             LOGGER.warn("Analyzing `{}` - however, the node_modules directory does not exist. "
-                    + "Please run `npm install` prior to running dependency-check", dependencyFile.toString());
+                    + "Please run `npm install` prior to running dependency-check", dependencyFile);
             return;
         }
 
@@ -297,12 +301,19 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
 
         // this seems to produce crash sometimes, I need to tests
         // using a local node_module is not supported by npm audit, it crash
-        if (Objects.nonNull(version) && version.startsWith("file:")) {
+        if (Objects.nonNull(version) && (version.startsWith("file:") || version.matches("^[.~]{0,2}/.*"))) {
             LOGGER.warn("dependency skipped: package.json contain an local node_module for {} seems to be "
                     + "located {} npm audit doesn't support locally referenced modules",
-                    name, version.replace("file:", ""));
+                    name, version);
             return true;
         }
+
+        // Don't include package with empty name
+        if ("".equals(name)) {
+            LOGGER.debug("Empty dependency of package-lock v2+ removed");
+            return true;
+        }
+
         return false;
     }
 
@@ -334,21 +345,55 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      */
     private void processDependencies(JsonObject json, File baseDir, File rootFile,
             String parentPackage, Engine engine) throws AnalysisException {
-        if (json.containsKey("dependencies")) {
-            final JsonObject deps = json.getJsonObject("dependencies");
-            final boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
+          final boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
+          final JsonObject deps;
+          final File modulesRoot = new File(rootFile.getParentFile(), "node_modules");
+          final int lockJsonVersion = json.containsKey("lockfileVersion") ? json.getInt("lockfileVersion") : 1;
+          if (lockJsonVersion >= 2) {
+            deps = json.getJsonObject("packages");
+          } else if (json.containsKey("dependencies")) {
+            deps = json.getJsonObject("dependencies");
+          } else {
+            deps = null;
+          }
+
+          if (deps != null) {
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
-                final String name = entry.getKey();
+                final String pathName = entry.getKey();
+                String name = pathName;
+                File base;
+
+                final int indexOfNodeModule = name.lastIndexOf(NODE_MODULES_DIRNAME + "/");
+                if (indexOfNodeModule >= 0) {
+                    name = name.substring(indexOfNodeModule + NODE_MODULES_DIRNAME.length() + 1);
+                    base = Paths.get(baseDir.getPath(), pathName).toFile();
+                } else {
+                    base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
+                    if (!base.isFile()) {
+                        final File test = new File(modulesRoot, name);
+                        if (test.isDirectory()) {
+                            base = test;
+                        }
+                    }
+                }
+
                 final String version;
                 boolean optional = false;
                 boolean isDev = false;
 
-                final File base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
                 final File f = new File(base, PACKAGE_JSON);
                 JsonObject jo = null;
 
                 if (entry.getValue() instanceof JsonObject) {
                     jo = (JsonObject) entry.getValue();
+
+                    // Ignore/skip linked entries (as they don't have "version" and
+                    // later logic will crash)
+                    if (jo.getBoolean("link", false)) {
+                        LOGGER.warn("Skipping `" + name + "` because it is a link dependency");
+                        continue;
+                    }
+
                     version = jo.getString("version");
                     optional = jo.getBoolean("optional", false);
                     isDev = jo.getBoolean("dev", false);
@@ -392,7 +437,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                         throw new AnalysisException("Problem occurred while reading dependency file.", e);
                     }
                 } else {
-                    LOGGER.warn("Unable to find node module: {}", f.toString());
+                    LOGGER.warn("Unable to find node module: {}", f);
                     //TODO - we should use the integrity value instead of calculating the SHA1/MD5
                     child.setSha1sum(Checksum.getSHA1Checksum(String.format("%s:%s", name, version)));
                     child.setSha256sum(Checksum.getSHA256Checksum(String.format("%s:%s", name, version)));

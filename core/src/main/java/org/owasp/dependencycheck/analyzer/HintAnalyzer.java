@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -195,9 +194,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
             }
         }
 
-        final Iterator<Evidence> itr = dependency.getEvidence(EvidenceType.VENDOR).iterator();
-        while (itr.hasNext()) {
-            final Evidence e = itr.next();
+        for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {
             for (VendorDuplicatingHintRule dhr : vendorHints) {
                 if (dhr.getValue().equalsIgnoreCase(e.getValue())) {
                     dependency.addEvidence(EvidenceType.VENDOR, new Evidence(e.getSource() + " (hint)",

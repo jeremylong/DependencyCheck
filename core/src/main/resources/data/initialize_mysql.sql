@@ -19,6 +19,7 @@ DROP PROCEDURE IF EXISTS dependencycheck.cleanup_orphans;
 DROP PROCEDURE IF EXISTS dependencycheck.update_vulnerability;
 DROP PROCEDURE IF EXISTS dependencycheck.insert_software;
 DROP PROCEDURE IF EXISTS dependencycheck.merge_ecosystem;
+DROP PROCEDURE IF EXISTS dependencycheck.merge_knownexpoited;
 DROP TABLE IF EXISTS software;
 DROP TABLE IF EXISTS cpeEntry;
 DROP TABLE IF EXISTS `reference`;
@@ -26,6 +27,7 @@ DROP TABLE IF EXISTS properties;
 DROP TABLE IF EXISTS cweEntry;
 DROP TABLE IF EXISTS vulnerability;
 DROP TABLE IF EXISTS cpeEcosystemCache;
+DROP TABLE IF EXISTS knownExploited;
 
 CREATE TABLE vulnerability (id int auto_increment PRIMARY KEY, cve VARCHAR(20) UNIQUE,
 	description VARCHAR(8000), v2Severity VARCHAR(20), v2ExploitabilityScore DECIMAL(3,1), 
@@ -46,8 +48,8 @@ CREATE TABLE cpeEntry (id INT auto_increment PRIMARY KEY, part CHAR(1), vendor V
 version VARCHAR(255), update_version VARCHAR(255), edition VARCHAR(255), lang VARCHAR(20), sw_edition VARCHAR(255), 
 target_sw VARCHAR(255), target_hw VARCHAR(255), other VARCHAR(255), ecosystem VARCHAR(255));
 
-CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(60), versionEndIncluding VARCHAR(60), 
-                       versionStartExcluding VARCHAR(60), versionStartIncluding VARCHAR(60), vulnerable BOOLEAN
+CREATE TABLE software (cveid INT, cpeEntryId INT, versionEndExcluding VARCHAR(100), versionEndIncluding VARCHAR(100), 
+                       versionStartExcluding VARCHAR(100), versionStartIncluding VARCHAR(100), vulnerable BOOLEAN
     , CONSTRAINT fkSoftwareCve FOREIGN KEY (cveid) REFERENCES vulnerability(id) ON DELETE CASCADE
     , CONSTRAINT fkSoftwareCpeProduct FOREIGN KEY (cpeEntryId) REFERENCES cpeEntry(id));
     
@@ -58,6 +60,18 @@ CREATE TABLE cpeEcosystemCache (vendor VARCHAR(255), product VARCHAR(255), ecosy
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('apache', 'zookeeper', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('tensorflow', 'tensorflow', 'MULTIPLE');
 INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('scikit-learn', 'scikit-learn', 'MULTIPLE');
+INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('unicode', 'international_components_for_unicode', 'MULTIPLE');
+INSERT INTO cpeEcosystemCache (vendor, product, ecosystem) VALUES ('icu-project', 'international_components_for_unicode', 'MULTIPLE');
+
+CREATE TABLE knownExploited (cveID varchar(20) PRIMARY KEY ,
+    vendorProject VARCHAR(255),
+    product VARCHAR(255),
+    vulnerabilityName VARCHAR(500),
+    dateAdded CHAR(10),
+    shortDescription VARCHAR(2000),
+    requiredAction VARCHAR(1000),
+    dueDate CHAR(10),
+    notes VARCHAR(2000));
 
 CREATE INDEX idxCwe ON cweEntry(cveid);
 CREATE INDEX idxVulnerability ON vulnerability(cve);
@@ -191,8 +205,8 @@ CREATE PROCEDURE insert_software (
     IN p_vulnerabilityId INT, IN p_part CHAR(1), IN p_vendor VARCHAR(255), IN p_product VARCHAR(255),
     IN p_version VARCHAR(255), IN p_update_version VARCHAR(255), IN p_edition VARCHAR(255), IN p_lang VARCHAR(20),
     IN p_sw_edition VARCHAR(255), IN p_target_sw VARCHAR(255), IN p_target_hw VARCHAR(255), IN p_other VARCHAR(255), 
-    IN p_ecosystem VARCHAR(255), IN p_versionEndExcluding VARCHAR(50), IN p_versionEndIncluding VARCHAR(50), 
-    IN p_versionStartExcluding VARCHAR(50), IN p_versionStartIncluding VARCHAR(50), IN p_vulnerable BOOLEAN)
+    IN p_ecosystem VARCHAR(255), IN p_versionEndExcluding VARCHAR(100), IN p_versionEndIncluding VARCHAR(100), 
+    IN p_versionStartExcluding VARCHAR(100), IN p_versionStartIncluding VARCHAR(100), IN p_vulnerable BOOLEAN)
 BEGIN
 
     DECLARE cpeId INT DEFAULT 0;
@@ -270,6 +284,31 @@ DELIMITER ;
 
 GRANT EXECUTE ON PROCEDURE dependencycheck.update_ecosystems2 TO 'dcuser';
 
+DELIMITER //
+CREATE PROCEDURE merge_knownexploited
+(IN p_cveID varchar(20),
+ IN p_vendorProject VARCHAR(255),
+ IN p_product VARCHAR(255),
+ IN p_vulnerabilityName VARCHAR(500),
+ IN p_dateAdded CHAR(10),
+ IN p_shortDescription VARCHAR(2000),
+ IN p_requiredAction VARCHAR(1000),
+ IN p_dueDate CHAR(10),
+ IN p_notes VARCHAR(2000))
+BEGIN
+INSERT INTO knownExploited (`cveID`, `vendorProject`, `product`, `vulnerabilityName`,
+            `dateAdded`, `shortDescription`, `requiredAction`, `dueDate`, `notes`) 
+       VALUES (p_cveID, p_vendorProject, p_product, p_vulnerabilityName, p_dateAdded,
+            p_shortDescription, p_requiredAction, p_dueDate, p_notes)
+       ON DUPLICATE KEY UPDATE `vendorProject`=p_vendorProject, `product`=p_product,
+            `vulnerabilityName`=p_vulnerabilityName, `dateAdded`=p_dateAdded,
+            `shortDescription`=p_shortDescription, `requiredAction`=p_requiredAction, 
+            `dueDate`=p_dueDate, `notes`=p_notes;
+END //
+DELIMITER ;
+
+GRANT EXECUTE ON PROCEDURE dependencycheck.merge_knownexpoited TO 'dcuser';
+
 GRANT SELECT, INSERT, UPDATE, DELETE ON dependencycheck.* TO 'dcuser';
 
-INSERT INTO properties(id, value) VALUES ('version', '5.2');
+INSERT INTO properties(id, value) VALUES ('version', '5.4');

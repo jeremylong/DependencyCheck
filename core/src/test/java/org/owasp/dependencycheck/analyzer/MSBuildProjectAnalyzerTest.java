@@ -75,7 +75,7 @@ public class MSBuildProjectAnalyzerTest extends BaseTest {
             analyzer.setEnabled(true);
             analyzer.analyze(toScan, engine);
 
-            assertEquals("3 dependencies should be found", 3, engine.getDependencies().length);
+            assertEquals("4 dependencies should be found", 4, engine.getDependencies().length);
 
             int foundCount = 0;
 
@@ -101,10 +101,17 @@ public class MSBuildProjectAnalyzerTest extends BaseTest {
                     assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("AspNetCore"));
                     assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("AspNetCore.All"));
                     assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("2.0.5"));
+                } else if ("Microsoft.Extensions.Logging".equals(result.getName())) {
+                    foundCount++;
+                    assertTrue(result.getEvidence(EvidenceType.VENDOR).toString().contains("Microsoft"));
+                    assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("Microsoft.Extensions.Logging"));
+                    assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("Extensions"));
+                    assertTrue(result.getEvidence(EvidenceType.PRODUCT).toString().contains("Extensions.Logging"));
+                    assertTrue(result.getEvidence(EvidenceType.VERSION).toString().contains("6.0.0"));
                 }
             }
 
-            assertEquals("3 expected dependencies should be found", 3, foundCount);
+            assertEquals("4 expected dependencies should be found", 4, foundCount);
         }
     }
 }

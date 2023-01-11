@@ -24,7 +24,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -375,10 +374,8 @@ public class PythonDistributionAnalyzer extends AbstractFileTypeAnalyzer {
         } else {
             try (InputStream in = new BufferedInputStream(new FileInputStream(manifest))) {
                 prop.load(in);
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 LOGGER.warn(e.getMessage(), e);
-            } catch (IOException ex) {
-                LOGGER.warn(ex.getMessage(), ex);
             }
         }
         return prop;

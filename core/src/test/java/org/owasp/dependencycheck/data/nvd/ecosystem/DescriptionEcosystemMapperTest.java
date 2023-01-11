@@ -24,7 +24,7 @@ public class DescriptionEcosystemMapperTest {
 
     private static final String POSTFIX = ".ecosystem.txt";
 
-    protected static File directory = new File("./src/test/resources/ecosystem");
+    protected static final File directory = new File("./src/test/resources/ecosystem");
 
     protected static Map<String, File> getEcosystemFiles() throws IOException {
         if (!directory.exists()) {
@@ -46,8 +46,7 @@ public class DescriptionEcosystemMapperTest {
         DescriptionEcosystemMapper mapper = new DescriptionEcosystemMapper();
         Map<String, File> ecosystemFiles = getEcosystemFiles();
         for (Entry<String, File> entry : ecosystemFiles.entrySet()) {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(entry.getValue()), StandardCharsets.UTF_8));
-            try {
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(entry.getValue()), StandardCharsets.UTF_8))) {
                 String description;
                 while ((description = bufferedReader.readLine()) != null) {
                     if (description.length() > 0 && !description.startsWith("#")) {
@@ -59,8 +58,6 @@ public class DescriptionEcosystemMapperTest {
                         }
                     }
                 }
-            } finally {
-                bufferedReader.close();
             }
         }
     }

@@ -35,7 +35,7 @@ formats              | A list of report formats to be generated (HTML, XML, CSV,
 junitFailOnCVSS      | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.     | 0
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail. More information on CVSS scores can be found at the [NVD](https://nvd.nist.gov/vuln-metrics/cvss) | 11
 failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                             | true
-outputDirectory      | The location to write the report(s). This directory will be located in the build directory.                          | build/reports
+outputDirectory      | The location to write the report(s). This directory will be located in the build directory.                          | ${buildDir}/reports
 skipTestGroups       | When set to true (the default) all dependency groups that being with 'test' will be skipped.                         | true
 suppressionFile      | The file path to the XML suppression file \- used to suppress [false positives](../general/suppression.html). The configured value can be a local file path, a URL to a suppression file, or even a reference to a file on the class path (see https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799) | &nbsp;
 suppressionFiles     | A list of file paths to the XML suppression files \- used to suppress [false positives](../general/suppression.html). The configured values can be a local file path, a URL to a suppression file, or even a reference to a file on the class path (see https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799) | &nbsp;
@@ -63,8 +63,8 @@ Please see https://docs.gradle.org/current/userguide/build_environment.html#sec:
 ### Advanced Configuration
 
 The following properties can be configured in the dependencyCheck task. However, they are less frequently changed. One exception
-may be the cvedUrl properties, which can be used to host a mirror of the NVD within an enterprise environment. When mirroring the
-NVD you must mirror the *.json.gz and the *.meta files. Note, if ANY of the cve configuration group are set - they should all be set to ensure things work as expected.
+may be the cve Url properties, which can be used to host a mirror of the NVD within an enterprise environment. When mirroring the
+NVD you must mirror the *.json.gz and the *.meta files. Note, if ANY of the cve Url configurations are set - they should both be set to ensure things work as expected.
 
 Config Group | Property          | Description                                                                                                          | Default Value
 -------------|-------------------|----------------------------------------------------------------------------------------------------------------------|------------------
@@ -72,6 +72,8 @@ cve          | urlModified       | URL for the modified CVE JSON data feed. When
 cve          | urlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                  | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz       |
 cve          | waitTime          | The time in milliseconds to wait between downloads from the NVD.                                                     | 4000                                                                |
 cve          | startYear         | The first year of NVD CVE data to download from the NVD.                                                             | 2002                                                                |
+cve          | user              | The user to authenticate (to a proxy/mirror) for download of CVE datastreams.                                        | &nbsp;                                                              |
+cve          | password          | The password to authenticate (to a proxy/mirror) for download of CVE datastreams.                                    | &nbsp;                                                              |
 data         | directory         | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.                             | &nbsp;                                                              |
 data         | driver            | The name of the database driver. Example: org.h2.Driver.                                                             | &nbsp;                                                              |
 data         | driverPath        | The path to the database driver JAR file; only used if the driver is not in the class path.                          | &nbsp;                                                              |
@@ -101,6 +103,7 @@ analyzers    | experimentalEnabled   | Sets whether the [experimental analyzers]
 analyzers    | archiveEnabled        | Sets whether the Archive Analyzer will be used.                                                                   | true
 analyzers    | zipExtensions         | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
 analyzers    | jarEnabled            | Sets whether Jar Analyzer will be used.                                                                           | true
+analyzers    | dartEnabled           | Sets whether the [experimental](../analyzers/index.html) Dart Analyzer will be used.                              | true
 analyzers    | centralEnabled        | Sets whether Central Analyzer will be used. If this analyzer is being disabled there is a good chance you also want to disable the Nexus Analyzer (see below). | true
 analyzers    | nexusEnabled          | Sets whether Nexus Analyzer will be used (requires Nexus Pro). This analyzer is superceded by the Central Analyzer; however, you can configure this to run against a Nexus Pro installation. | true
 analyzers    | nexusUrl              | Defines the Nexus Server's web service end point (example http://domain.enterprise/service/local/). If not set the Nexus Analyzer will be disabled. | &nbsp;
@@ -108,25 +111,25 @@ analyzers    | nexusUsesProxy        | Whether or not the defined proxy should b
 analyzers    | pyDistributionEnabled | Sets whether the [experimental](../analyzers/index.html) Python Distribution Analyzer will be used. `experimentalEnabled` must be set to true. | true
 analyzers    | pyPackageEnabled      | Sets whether the [experimental](../analyzers/index.html) Python Package Analyzer will be used. `experimentalEnabled` must be set to true. | true
 analyzers    | rubygemsEnabled       | Sets whether the [experimental](../analyzers/index.html) Ruby Gemspec Analyzer will be used. `experimentalEnabled` must be set to true. | true
-analyzers    | opensslEnabled        | Sets whether or not the openssl Analyzer should be used.                                                          | true
-analyzers    | nuspecEnabled         | Sets whether or not the .NET Nuget Nuspec Analyzer will be used.                                                  | true
-analyzers    | nugetconfEnabled      | Sets whether or not the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used. `experimentalEnabled` must be set to true. | true
-analyzers    | assemblyEnabled       | Sets whether or not the .NET Assembly Analyzer should be used.                                                    | true
-analyzers    | msbuildEnabled        | Sets whether or not the MS Build Analyzer should be used.                                                         | true
+analyzers    | opensslEnabled        | Sets whether the openssl Analyzer should be used.                                                          | true
+analyzers    | nuspecEnabled         | Sets whether the .NET Nuget Nuspec Analyzer will be used.                                                  | true
+analyzers    | nugetconfEnabled      | Sets whether the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used. `experimentalEnabled` must be set to true. | true
+analyzers    | assemblyEnabled       | Sets whether the .NET Assembly Analyzer should be used.                                                    | true
+analyzers    | msbuildEnabled        | Sets whether the MS Build Analyzer should be used.                                                         | true
 analyzers    | pathToDotnet          | The path to dotnet core - needed on some systems to analyze .net assemblies.                                      | &nbsp;
-analyzers    | cmakeEnabled          | Sets whether or not the [experimental](../analyzers/index.html) CMake Analyzer should be used. `experimentalEnabled` must be set to true. | true
-analyzers    | autoconfEnabled       | Sets whether or not the [experimental](../analyzers/index.html) autoconf Analyzer should be used. `experimentalEnabled` must be set to true. | true
-analyzers    | composerEnabled       | Sets whether or not the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used. `experimentalEnabled` must be set to true. | true
-analyzers    | cpanEnabled           | Sets whether or not the [experimental](../analyzers/index.html) Perl CPAN File Analyzer should be used. `experimentalEnabled` must be set to true. | true
-analyzers    | nodeEnabled           | Sets whether or not the Node.js Analyzer should be used.                                                          | true
-analyzers    | cocoapodsEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used. `experimentalEnabled` must be set to true. | true
-analyzers    | swiftEnabled          | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used. `experimentalEnabled` must be set to true. | true
-analyzers    | swiftPackageResolvedEnabled | Sets whether or not the [experimental](../analyzers/index.html) Swift Package Resolved Analyzer should be used. `experimentalEnabled` must be set to true. | true
-analyzers    | bundleAuditEnabled    | Sets whether or not the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | cmakeEnabled          | Sets whether the [experimental](../analyzers/index.html) CMake Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | autoconfEnabled       | Sets whether the [experimental](../analyzers/index.html) autoconf Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | composerEnabled       | Sets whether the [experimental](../analyzers/index.html) PHP Composer Lock File Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | cpanEnabled           | Sets whether the [experimental](../analyzers/index.html) Perl CPAN File Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | nodeEnabled           | Sets whether the Node.js Analyzer should be used.                                                          | true
+analyzers    | cocoapodsEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | swiftEnabled          | Sets whether the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | swiftPackageResolvedEnabled | Sets whether the [experimental](../analyzers/index.html) Swift Package Resolved Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | bundleAuditEnabled    | Sets whether the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used. `experimentalEnabled` must be set to true. | true
 analyzers    | pathToBundleAudit     | The path to bundle audit.                                                                                         | &nbsp;
 analyzers    | retiredEnabled        | Sets whether the [retired analyzers](../analyzers/index.html) will be used. If not set to true the analyzers marked as experimental (see below) will not be used | false
-analyzers    | golangDepEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used. `experimentalEnabled` must be set to true. | true
-analyzers    | golangModEnabled      | Sets whether or not the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requires `go` to be installed. `experimentalEnabled` must be set to true. | true
+analyzers    | golangDepEnabled      | Sets whether the [experimental](../analyzers/index.html) Golang Dependency Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | golangModEnabled      | Sets whether the [experimental](../analyzers/index.html) Goland Module Analyzer should be used; requires `go` to be installed. `experimentalEnabled` must be set to true. | true
 analyzers    | pathToGo              | The path to `go`.                                                                                                 | &nbsp;
 
 #### Additional Configuration

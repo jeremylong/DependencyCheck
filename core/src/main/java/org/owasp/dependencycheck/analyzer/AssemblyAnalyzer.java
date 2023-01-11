@@ -232,8 +232,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         if (data.getFileVersion() != null && data.getProductVersion() != null) {
-            final int max = data.getFileVersion().length() > data.getProductVersion().length()
-                    ? data.getProductVersion().length() : data.getFileVersion().length();
+            final int max = Math.min(data.getFileVersion().length(), data.getProductVersion().length());
             int pos;
             for (pos = 0; pos < max; pos++) {
                 if (data.getFileVersion().charAt(pos) != data.getProductVersion().charAt(pos)) {
@@ -469,7 +468,7 @@ public class AssemblyAnalyzer extends AbstractFileTypeAnalyzer {
     private boolean isDotnetPath() {
         final String[] args = new String[2];
         args[0] = "dotnet";
-        args[1] = "--version";
+        args[1] = "--info";
         final ProcessBuilder pb = new ProcessBuilder(args);
         try {
             final Process proc = pb.start();

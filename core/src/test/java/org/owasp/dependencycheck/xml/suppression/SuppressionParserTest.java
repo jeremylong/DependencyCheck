@@ -40,7 +40,7 @@ public class SuppressionParserTest extends BaseTest {
         //File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
         File file = BaseTest.getResourceAsFile(this, "suppressions.xml");
         SuppressionParser instance = new SuppressionParser();
-        List<SuppressionRule> result = instance.parseSuppressionRules(file, null);
+        List<SuppressionRule> result = instance.parseSuppressionRules(file);
         Assert.assertEquals(5, result.size());
     }
 
@@ -53,7 +53,7 @@ public class SuppressionParserTest extends BaseTest {
         //File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
         File file = BaseTest.getResourceAsFile(this, "suppressions_1_1.xml");
         SuppressionParser instance = new SuppressionParser();
-        List<SuppressionRule> result = instance.parseSuppressionRules(file, null);
+        List<SuppressionRule> result = instance.parseSuppressionRules(file);
         Assert.assertEquals(5, result.size());
     }
 
@@ -66,7 +66,7 @@ public class SuppressionParserTest extends BaseTest {
         //File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
         File file = BaseTest.getResourceAsFile(this, "suppressions_1_2.xml");
         SuppressionParser instance = new SuppressionParser();
-        List<SuppressionRule> result = instance.parseSuppressionRules(file, null);
+        List<SuppressionRule> result = instance.parseSuppressionRules(file);
         Assert.assertEquals(4, result.size());
     }
 
@@ -79,7 +79,7 @@ public class SuppressionParserTest extends BaseTest {
         //File file = new File(this.getClass().getClassLoader().getResource("suppressions.xml").getPath());
         File file = BaseTest.getResourceAsFile(this, "suppressions_1_3.xml");
         SuppressionParser instance = new SuppressionParser();
-        List<SuppressionRule> result = instance.parseSuppressionRules(file, null);
+        List<SuppressionRule> result = instance.parseSuppressionRules(file);
         Assert.assertEquals(4, result.size());
     }
 }

@@ -32,6 +32,7 @@ several teams have found them useful in their current state.
 | [CocoaPods](./cocoapods.html) | CocoaPods `.podspec` files | Extracts dependency information from specification file. |
 | [Composer Lock](./composer-lock.html) | PHP [Composer](http://getcomposer.org) Lock files (composer.lock) | Parses PHP [Composer](http://getcomposer.org) lock files for exact versions of dependencies. |
 | [CPAN File](./cpanfile.html) | Perl [cpanfile](https://metacpan.org/pod/distribution/Module-CPANfile/lib/cpanfile.pod) Lock files (composer.lock) | Parses Perl [cpanfile](https://metacpan.org/pod/distribution/Module-CPANfile/lib/cpanfile.pod) files for dependencies. |
+| [Dart](./dart.html) | `pubspec.yaml`, `pubspec.lock` | Extracts dependency information from specification files. |
 | [Go lang mod](./golang-mod.html) | `go.mod`| Uses `go mod` to determine exactly which dependencies are used. |
 | [Go lang dep](./golang-dep.html) | `Gopkg.lock` | Analyzes the lock file directly to parse dependency information. |
 | [PE Analyzer](./pe-analyzer.html) | `PE DLL and EXE` | Analyzes the PE Headers to obtain dependency information. |
