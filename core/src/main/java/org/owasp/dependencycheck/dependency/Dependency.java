@@ -103,6 +103,13 @@ public class Dependency extends EvidenceCollection implements Serializable {
      */
     private final SortedSet<Dependency> relatedDependencies = new TreeSet<>(Dependency.NAME_COMPARATOR);
     /**
+     * The set of dependencies that included this dependency (i.e., this is a
+     * transitive dependency because it was included by X). This is a pair where
+     * the left element is the includedBy and the right element is the type
+     * (e.g. buildEnv, plugins).
+     */
+    private final Set<IncludedByReference> includedBy = new HashSet<>();
+    /**
      * A list of projects that reference this dependency.
      */
     private final Set<String> projectReferences = new HashSet<>();
@@ -782,6 +789,46 @@ public class Dependency extends EvidenceCollection implements Serializable {
      */
     public synchronized void clearRelatedDependencies() {
         relatedDependencies.clear();
+    }
+
+    /**
+     * Get the unmodifiable set of includedBy (the list of parents of this
+     * transitive dependency).
+     *
+     * @return the unmodifiable set of includedBy
+     */
+    public synchronized Set<IncludedByReference> getIncludedBy() {
+        return Collections.unmodifiableSet(new HashSet<>(includedBy));
+    }
+
+    /**
+     * Adds the parent or root of the transitive dependency chain (i.e., this
+     * was included by the parent dependency X).
+     *
+     * @param includedBy a project reference
+     */
+    public synchronized void addIncludedBy(String includedBy) {
+        this.includedBy.add(new IncludedByReference(includedBy, null));
+    }
+
+    /**
+     * Adds the parent or root of the transitive dependency chain (i.e., this
+     * was included by the parent dependency X).
+     *
+     * @param includedBy a project reference
+     * @param type the type of project reference (i.e. 'plugins', 'buildEnv')
+     */
+    public synchronized void addIncludedBy(String includedBy, String type) {
+        this.includedBy.add(new IncludedByReference(includedBy, type));
+    }
+
+    /**
+     * Adds a set of project references.
+     *
+     * @param includedBy a set of project references
+     */
+    public synchronized void addAllIncludedBy(Set<IncludedByReference> includedBy) {
+        this.includedBy.addAll(includedBy);
     }
 
     /**

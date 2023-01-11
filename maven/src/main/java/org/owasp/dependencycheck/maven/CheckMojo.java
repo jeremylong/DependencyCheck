@@ -104,4 +104,19 @@ public class CheckMojo extends BaseDependencyCheckMojo {
         return scanArtifacts(getProject(), engine);
     }
 
+    /**
+     * Scans the plugins of the project.
+     *
+     * @param engine the engine used to perform the scanning
+     * @param exCollection the collection of exceptions that might have occurred
+     * previously
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if a fatal exception occurs
+     */
+    @Override
+    protected ExceptionCollection scanPlugins(final Engine engine, final ExceptionCollection exCollection) throws MojoExecutionException {
+        final ExceptionCollection exCol = scanPlugins(getProject(), engine, exCollection);
+        return exCol;
+    }
+
 }

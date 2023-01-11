@@ -70,6 +70,14 @@
             #end
             ]
             #end
+            #if ($dependency.includedBy.size()>0)
+            ,"includedBy": [
+            #foreach($ref in $dependency.includedBy)
+                #if($foreach.count > 1),#end
+                { "reference":"$enc.json($ref.getReference())"#if($ref.getType()),"type":"$enc.json($ref.getType())"#end }
+            #end
+            ]
+            #end
             #if ($dependency.getRelatedDependencies().size()>0)
             ,"relatedDependencies": [
                 #foreach($related in $dependency.getRelatedDependencies()) #if($foreach.count > 1),#end {
