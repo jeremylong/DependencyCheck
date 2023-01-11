@@ -61,6 +61,11 @@ public class Purge extends Task {
     private boolean failOnError = true;
 
     /**
+     * The URL to hosted suppressions file with base FP suppressions.
+     */
+    private String hostedSuppressionsUrl = null;
+
+    /**
      * Construct a new DependencyCheckTask.
      */
     public Purge() {
@@ -112,10 +117,28 @@ public class Purge extends Task {
     }
 
     /**
-     * Sets the {@link Thread#getContextClassLoader() Thread Context Class Loader} to the one for this class, and
-     * then calls {@link #executeWithContextClassloader()}. This is done because the JCS cache needs to have the
-     * Thread Context Class Loader set to something that can resolve it's classes. Other build tools do this by
-     * default but Ant does not.
+     * Get the value of hostedSuppressionsUrl.
+     *
+     * @return the value of hostedSuppressionsUrl
+     */
+    public String getHostedSuppressionsUrl() {
+        return hostedSuppressionsUrl;
+    }
+
+    /**
+     * Set the value of hostedSuppressionsUrl.
+     *
+     * @param hostedSuppressionsUrl new value of hostedSuppressionsUrl
+     */
+    public void setHostedSuppressionsUrl(final String hostedSuppressionsUrl) {
+        this.hostedSuppressionsUrl = hostedSuppressionsUrl;
+    }
+
+    /**
+     * Sets the {@link Thread#getContextClassLoader() Thread Context Class Loader} to the one for this class,
+     * and then calls {@link #executeWithContextClassloader()}. This is done because the JCS cache needs to have
+     * the Thread Context Class Loader set to something that can resolve it's classes. Other build tools do this
+     * by default but Ant does not.
      *
      * @throws BuildException throws if there is a problem. See {@link #executeWithContextClassloader()} for details
      */
@@ -168,6 +191,7 @@ public class Purge extends Task {
             }
             log(msg, ex, Project.MSG_WARN);
         }
+        settings.setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);
         if (dataDirectory != null) {
             settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         } else {

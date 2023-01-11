@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,8 +32,12 @@ import java.util.regex.Pattern;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.update.HostedSuppressionsDataSource;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.exception.WriteLockException;
+import org.owasp.dependencycheck.utils.WriteLock;
 import org.owasp.dependencycheck.xml.suppression.SuppressionParseException;
 import org.owasp.dependencycheck.xml.suppression.SuppressionParser;
 import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
@@ -171,11 +178,23 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     /**
      * Loads all the base suppression rules files.
      *
-     * @param engine a reference to the ODC engine
+     * @param engine a reference the dependency-check engine
      * @throws SuppressionParseException thrown if the XML cannot be parsed.
      */
-    private void loadSuppressionBaseData(Engine engine) throws SuppressionParseException {
+    private void loadSuppressionBaseData(final Engine engine) throws SuppressionParseException {
         final SuppressionParser parser = new SuppressionParser();
+        loadPackagedSuppressionBaseData(parser, engine);
+        loadHostedSuppressionBaseData(parser, engine);
+    }
+
+    /**
+     * Loads all the base suppression rules packaged with the application.
+     *
+     * @param parser The suppression parser to use
+     * @param engine a reference the dependency-check engine
+     * @throws SuppressionParseException thrown if the XML cannot be parsed.
+     */
+    private void loadPackagedSuppressionBaseData(final SuppressionParser parser, final Engine engine) throws SuppressionParseException {
         final List<SuppressionRule> ruleList;
         try (InputStream in = FileUtils.getResourceAsStream(BASE_SUPPRESSION_FILE)) {
             if (in == null) {
@@ -194,6 +213,110 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                 engine.putObject(SUPPRESSION_OBJECT_KEY, ruleList);
             }
         }
+    }
+
+    /**
+     * Loads all the base suppression rules from the hosted suppression file
+     * generated/updated automatically by the FP Suppression GitHub Action for
+     * approved FP suppression.<br>
+     * Uses local caching as a fall-back in case the hosted location cannot be
+     * accessed, ignore any errors in the loading of the hosted suppression file
+     * emitting only a warning that some False Positives may emerge that have
+     * already been resolved by the dependency-check project.
+     *
+     * @param engine a reference the dependency-check engine
+     * @param parser The suppression parser to use
+     */
+    private void loadHostedSuppressionBaseData(final SuppressionParser parser, final Engine engine) {
+        final File repoFile;
+        boolean repoEmpty = false;
+        final boolean autoupdate = getSettings().getBoolean(Settings.KEYS.AUTO_UPDATE, true);
+        final boolean forceupdate = getSettings().getBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, false);
+
+        try {
+            final String configuredUrl = getSettings().getString(Settings.KEYS.HOSTED_SUPPRESSIONS_URL,
+                    HostedSuppressionsDataSource.DEFAULT_SUPPRESSIONS_URL);
+            final URL url = new URL(configuredUrl);
+            final String fileName = new File(url.getPath()).getName();
+            repoFile = new File(getSettings().getDataDirectory(), fileName);
+            if (!repoFile.isFile() || repoFile.length() <= 1L) {
+                repoEmpty = true;
+                LOGGER.warn("Hosted Suppressions file is empty or missing - attempting to force the update");
+                getSettings().setBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, true);
+            }
+            if ((!autoupdate && forceupdate) || (autoupdate && repoEmpty)) {
+                if (engine == null) {
+                    LOGGER.warn("Engine was null, this should only happen in tests - skipping forced update");
+                } else {
+                    repoEmpty = forceUpdateHostedSuppressions(engine, repoFile);
+                }
+            }
+            if (!repoEmpty) {
+                loadCachedHostedSuppressionsRules(parser, repoFile, engine);
+            } else {
+                LOGGER.warn("Empty Hosted Suppression file after update, results may contain false positives "
+                        + "already resolved by the DependencyCheck project due to failed download of the hosted suppression file");
+            }
+        } catch (IOException | InitializationException ex) {
+            LOGGER.warn("Unable to load hosted suppressions", ex);
+        }
+    }
+
+    /**
+     * Load the hosted suppression file from the web resource
+     *
+     * @param parser The suppressionParser to use for loading
+     * @param repoFile The cached web resource
+     * @param engine a reference the dependency-check engine
+     *
+     * @throws InitializationException When errors occur trying to create a
+     * defensive copy of the web resource before loading
+     */
+    private void loadCachedHostedSuppressionsRules(final SuppressionParser parser, final File repoFile, final Engine engine)
+            throws InitializationException {
+        // take a defensive copy to avoid a risk of corrupted file by a competing parallel new download.
+        final Path defensiveCopy;
+        try (WriteLock lock = new WriteLock(getSettings(), true, repoFile.getName() + ".lock")) {
+            defensiveCopy = Files.createTempFile("dc-basesuppressions", ".xml");
+            LOGGER.debug("copying hosted suppressions file {} to {}", repoFile.toPath(), defensiveCopy);
+            Files.copy(repoFile.toPath(), defensiveCopy, StandardCopyOption.REPLACE_EXISTING);
+        } catch (WriteLockException | IOException ex) {
+            throw new InitializationException("Failed to copy the hosted suppressions file", ex);
+        }
+
+        try (InputStream in = Files.newInputStream(defensiveCopy)) {
+            final List<SuppressionRule> ruleList;
+            ruleList = parser.parseSuppressionRules(in);
+            if (!ruleList.isEmpty()) {
+                if (engine.hasObject(SUPPRESSION_OBJECT_KEY)) {
+                    @SuppressWarnings("unchecked")
+                    final List<SuppressionRule> rules = (List<SuppressionRule>) engine.getObject(SUPPRESSION_OBJECT_KEY);
+                    rules.addAll(ruleList);
+                } else {
+                    engine.putObject(SUPPRESSION_OBJECT_KEY, ruleList);
+                }
+            }
+        } catch (SAXException | IOException ex) {
+            LOGGER.warn("Unable to parse the hosted suppressions data file, results may contain false positives already resolved "
+                    + "by the DependencyCheck project", ex);
+        }
+        try {
+            Files.delete(defensiveCopy);
+        } catch (IOException ex) {
+            LOGGER.warn("Could not delete defensive copy of hosted suppressions file {}", defensiveCopy, ex);
+        }
+    }
+
+    private static boolean forceUpdateHostedSuppressions(final Engine engine, final File repoFile) {
+        final HostedSuppressionsDataSource ds = new HostedSuppressionsDataSource();
+        boolean repoEmpty = true;
+        try {
+            ds.update(engine);
+            repoEmpty = !repoFile.isFile() || repoFile.length() <= 1L;
+        } catch (UpdateException ex) {
+            LOGGER.warn("Failed to update the Hosted Suppression file", ex);
+        }
+        return repoEmpty;
     }
 
     /**

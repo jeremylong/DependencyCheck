@@ -319,7 +319,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.HELP_SHORT, ARGUMENT.HELP, "Print this message."))
                 .addOption(newOption(ARGUMENT.ADVANCED_HELP, "Print the advanced help message."))
                 .addOption(newOption(ARGUMENT.DISABLE_AUTO_UPDATE_SHORT, ARGUMENT.DISABLE_AUTO_UPDATE,
-                        "Disables the automatic updating of the CPE data."))
+                        "Disables the automatic updating of the NVD-CVE, hosted-suppressions and RetireJS data."))
                 .addOption(newOptionWithArg(ARGUMENT.VERBOSE_LOG_SHORT, ARGUMENT.VERBOSE_LOG, "file",
                         "The file path to write verbose logging information."))
                 .addOptionGroup(newOptionGroup(newOptionWithArg(ARGUMENT.SUPPRESSION_FILES, "file",
@@ -496,7 +496,13 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_RETIRE_JS, "Disable the RetireJS Analyzer."))
                 .addOption(newOption(ARGUMENT.ENABLE_NEXUS, "Enable the Nexus Analyzer."))
                 .addOption(newOption(ARGUMENT.ARTIFACTORY_ENABLED, "Whether the Artifactory Analyzer should be enabled."))
-                .addOption(newOption(ARGUMENT.PURGE_NVD, "Purges the local NVD data cache"));
+                .addOption(newOption(ARGUMENT.PURGE_NVD, "Purges the local NVD data cache"))
+                .addOption(newOption(ARGUMENT.HOSTED_SUPPRESSIONS_FORCEUPDATE, "Force the hosted suppressions file to update even"
+                                                                               + " if autoupdate is disabled"))
+                .addOption(newOptionWithArg(ARGUMENT.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, "hours",
+                                            "The number of hours to wait before checking for new updates of the the hosted suppressions file."))
+                .addOption(newOptionWithArg(ARGUMENT.HOSTED_SUPPRESSIONS_URL, "url",
+                                            "The URL for a mirrored hosted suppressions file"));
 
     }
 
@@ -1510,5 +1516,18 @@ public final class CliParser {
          * when generating the JUNIT report format.
          */
         public static final String FAIL_JUNIT_ON_CVSS = "junitFailOnCVSS";
+        /**
+         * The CLI argument to set the number of hours to wait before re-checking hosted suppressions file for updates.
+         */
+        public static final String HOSTED_SUPPRESSIONS_VALID_FOR_HOURS = "hostedSuppressionsValidForHours";
+        /**
+         * The CLI argument to set Whether the hosted suppressions file will update regardless of the `noupdate` argument.
+         */
+        public static final String HOSTED_SUPPRESSIONS_FORCEUPDATE = "hostedSuppressionsForceUpdate";
+        /**
+         * The CLI argument to set the location of a mirrored hosted suppressions
+         * file .
+         */
+        public static final String HOSTED_SUPPRESSIONS_URL = "hostedSuppressionsUrl";
     }
 }
