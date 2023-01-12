@@ -416,7 +416,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "archiveAnalyzerEnabled")
     private Boolean archiveAnalyzerEnabled;
-
+    /**
+     * Whether or not the Known Exploited Vulnerability Analyzer is enabled.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "knownExploitedEnabled")
+    private Boolean knownExploitedEnabled;
+    /**
+     * The URL to the CISA Known Exploited Vulnerabilities JSON datafeed.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "knownExploitedUrl")
+    private String knownExploitedUrl;
     /**
      * Sets whether the Python Distribution Analyzer will be used.
      */
@@ -958,13 +969,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "hostedSuppressionsUrl")
     private String hostedSuppressionsUrl;
     /**
-     * Whether the hosted suppressions file will be updated regardless of the `autoupdate` settings.
+     * Whether the hosted suppressions file will be updated regardless of the
+     * `autoupdate` settings.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "hostedSuppressionsForceUpdate")
     private Boolean hostedSuppressionsForceUpdate;
     /**
-     * Skip excessive hosted suppression file update checks for a designated duration in hours (defaults to 2 hours).
+     * Skip excessive hosted suppression file update checks for a designated
+     * duration in hours (defaults to 2 hours).
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "hostedSuppressionsValidForHours")
@@ -2189,6 +2202,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED, msbuildAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_KNOWN_EXPLOITED_ENABLED, knownExploitedEnabled);
+        settings.setStringIfNotEmpty(Settings.KEYS.KEV_URL, knownExploitedUrl);
         settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);
