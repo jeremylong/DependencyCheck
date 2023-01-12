@@ -78,6 +78,7 @@ centralAnalyzerEnabled              | Sets whether the Central Analyzer will be 
 centralAnalyzerUseCache             | Sets whether the Central Analyer will cache results. Cached results expire after 30 days.                  | true
 dartAnalyzerEnabled                 | Sets whether the [experimental](../analyzers/index.html) Dart Analyzer will be used.                       | true
 knownExploitedEnabled               | Sets whether the Known Exploited Vulnerability update and analyzer are enabled.                            | true
+knownExploitedUrl                   | Sets URL to the CISA Known Exploited Vulnerabilities JSON data feed.                                       | https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
 ossIndexAnalyzerEnabled             | Sets whether the [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be enabled. This analyzer requires an internet connection. | true
 ossindexAnalyzerUseCache            | Sets whether the OSS Index Analyzer will cache results. Cached results expire after 24 hours.              | true
 ossindexAnalyzerUsername            | Sets the username for OSS Index - note an account with OSS Index is not required.                          | &nbsp;

@@ -287,6 +287,10 @@ public class Check extends Update {
      */
     private Boolean knownExploitedEnabled;
     /**
+     * The URL to the known exploited vulnerabilities JSON datafeed.
+     */
+    private String knownExploitedUrl;
+    /**
      * Whether or not the .NET Nuspec Analyzer is enabled.
      */
     private Boolean nuspecAnalyzerEnabled;
@@ -802,6 +806,24 @@ public class Check extends Update {
      */
     public void setKnownExploitedEnabled(Boolean knownExploitedEnabled) {
         this.knownExploitedEnabled = knownExploitedEnabled;
+    }
+
+    /**
+     * Returns the knownExploitedUrl.
+     *
+     * @return the knownExploitedUrl
+     */
+    public String getKnownExploitedUrl() {
+        return knownExploitedUrl;
+    }
+
+    /**
+     * Sets the the knownExploitedUrl.
+     *
+     * @param knownExploitedUrl the URL
+     */
+    public void setKnownExploitedUrl(String knownExploitedUrl) {
+        this.knownExploitedUrl = knownExploitedUrl;
     }
 
     /**
@@ -2139,6 +2161,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARCHIVE_ENABLED, archiveAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_KNOWN_EXPLOITED_ENABLED, knownExploitedEnabled);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.KEV_URL, knownExploitedUrl);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_ASSEMBLY_ENABLED, assemblyAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_MSBUILD_PROJECT_ENABLED, msbuildAnalyzerEnabled);
         getSettings().setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);

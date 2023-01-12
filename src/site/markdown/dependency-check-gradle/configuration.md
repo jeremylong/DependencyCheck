@@ -104,6 +104,7 @@ Config Group | Property              | Description                              
 analyzers    | experimentalEnabled   | Sets whether the [experimental analyzers](../analyzers/index.html) will be used. If not set to true the analyzers marked as experimental (see below) will not be used | false
 analyzers    | archiveEnabled        | Sets whether the Archive Analyzer will be used.                                                                   | true
 analyzers    | knownExploitedEnabled | Sets whether the Known Exploited Vulnerability update and analyzer are enabled.                                   | true
+analyzers    | knownExploitedURL     | Sets URL to the CISA Known Exploited Vulnerabilities JSON data feed.                                              | https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
 analyzers    | zipExtensions         | A comma-separated list of additional file extensions to be treated like a ZIP file, the contents will be extracted and analyzed. | &nbsp;
 analyzers    | jarEnabled            | Sets whether Jar Analyzer will be used.                                                                           | true
 analyzers    | dartEnabled           | Sets whether the [experimental](../analyzers/index.html) Dart Analyzer will be used.                              | true
