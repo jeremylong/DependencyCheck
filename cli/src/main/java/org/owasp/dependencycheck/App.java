@@ -499,7 +499,7 @@ public class App {
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER,
                 cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL_USER));
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD,
-                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL_PASSWORD));                
+                cli.getStringArgument(CliParser.ARGUMENT.RETIREJS_URL_PASSWORD));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE,
                 cli.hasOption(CliParser.ARGUMENT.RETIRE_JS_FORCEUPDATE));
         settings.setBoolean(Settings.KEYS.ANALYZER_JAR_ENABLED,
@@ -511,7 +511,7 @@ public class App {
         settings.setBoolean(Settings.KEYS.ANALYZER_KNOWN_EXPLOITED_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_KEV, Settings.KEYS.ANALYZER_KNOWN_EXPLOITED_ENABLED));
         settings.setStringIfNotNull(Settings.KEYS.KEV_URL,
-                cli.getStringArgument(CliParser.ARGUMENT.KEV_URL));                
+                cli.getStringArgument(CliParser.ARGUMENT.KEV_URL));
         settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED,
                 !cli.hasDisableOption(CliParser.ARGUMENT.DISABLE_PY_DIST, Settings.KEYS.ANALYZER_PYTHON_DISTRIBUTION_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_PYTHON_PACKAGE_ENABLED,
@@ -596,7 +596,7 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_PASSWORD, Settings.KEYS.ANALYZER_OSSINDEX_PASSWORD));
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS,
                 cli.getStringArgument(CliParser.ARGUMENT.OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS,
-                    Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS));
+                        Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS));
         settings.setFloat(Settings.KEYS.JUNIT_FAIL_ON_CVSS,
                 cli.getFloatArgument(CliParser.ARGUMENT.FAIL_JUNIT_ON_CVSS, 0));
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED,
@@ -659,11 +659,11 @@ public class App {
                 cli.getStringArgument(CliParser.ARGUMENT.CVE_PASSWORD, Settings.KEYS.CVE_PASSWORD));
 
         settings.setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_URL,
-                                    cli.getStringArgument(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_URL));
+                cli.getStringArgument(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_URL));
         settings.setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE,
-                                     cli.hasOption(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_FORCEUPDATE));
+                cli.hasOption(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_FORCEUPDATE));
         settings.setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS,
-                                 cli.getIntegerValue(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS));
+                cli.getIntegerValue(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS));
     }
 
     private String getDefaultCveUrlModified(CliParser cli) {
