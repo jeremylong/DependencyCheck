@@ -141,10 +141,11 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                     } else if (StringUtils.endsWith(message, "403")) {
                         throw new AnalysisException("OSS Index access forbidden", ex);
                     } else if (StringUtils.endsWith(message, "429")) {
+                        this.setEnabled(false);
                         if (warnOnly) {
-                            LOG.warn("OSS Index rate limit exceeded", ex);
+                            LOG.warn("OSS Index rate limit exceeded, disabling the analyzer", ex);
                         } else {
-                            throw new AnalysisException("OSS Index rate limit exceeded", ex);
+                            throw new AnalysisException("OSS Index rate limit exceeded, disabling the analyzer", ex);
                         }
                     } else if (warnOnly) {
                         LOG.warn("Error requesting component reports", ex);
