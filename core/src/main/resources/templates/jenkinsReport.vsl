@@ -785,6 +785,8 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
             <br/><br/>
             This report contains data retrieved from the <a href="https://nvd.nist.gov">National Vulnerability Database</a>.
             <br/>
+            This report may contain data retrieved from the <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA Known Exploited Vulnerability Catalog</a>.
+            <br/>
             This report may contain data retrieved from the <a href="https://www.npmjs.com/advisories">NPM Public Advisories</a>.
             <br/>
             This report may contain data retrieved from <a href="https://retirejs.github.io/retire.js/">RetireJS</a>.
