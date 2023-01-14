@@ -2,8 +2,8 @@
 <xs:schema id="analysis"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="qualified"
-           targetNamespace="https://jeremylong.github.io/DependencyCheck/dependency-check.2.5.xsd"
-           xmlns:dc="https://jeremylong.github.io/DependencyCheck/dependency-check.2.5.xsd">
+           targetNamespace="https://jeremylong.github.io/DependencyCheck/dependency-check.3.1.xsd"
+           xmlns:dc="https://jeremylong.github.io/DependencyCheck/dependency-check.3.1.xsd">
     <xs:complexType name="exception">
         <xs:sequence>
             <xs:element name="message" minOccurs="0" maxOccurs="unbounded"/>
@@ -94,14 +94,14 @@
             <xs:element name="integrityImpact" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="availabilityImpact" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="severity" type="xs:string" minOccurs="1" maxOccurs="1"/>
-<xs:element name="version" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
-<xs:element name="exploitabilityScore" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
-<xs:element name="impactScore" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
-<xs:element name="acInsufInfo" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-<xs:element name="obtainAllPrivilege" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-<xs:element name="obtainUserPrivilege" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-<xs:element name="obtainOtherPrivilege" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-<xs:element name="userInteractionRequired" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="version" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="exploitabilityScore" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="impactScore" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="acInsufInfo" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="obtainAllPrivilege" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="obtainUserPrivilege" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="obtainOtherPrivilege" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="userInteractionRequired" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="cvssV3">
@@ -116,9 +116,9 @@
             <xs:element name="integrityImpact" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="availabilityImpact" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="baseSeverity" type="xs:string" minOccurs="1" maxOccurs="1"/>
-<xs:element name="exploitabilityScore" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
-<xs:element name="impactScore" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
-<xs:element name="version" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="exploitabilityScore" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="impactScore" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="version" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="reference">
@@ -147,9 +147,22 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
+    <xs:complexType name="knownExploitedVulnerability">
+        <xs:sequence>
+            <xs:element name="vendorProject" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="product" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="dateAdded" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="requiredAction" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="dueDate" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="notes" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
     <xs:complexType name="vulnerability">
         <xs:sequence>
             <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="knownExploitedVulnerability" type="dc:knownExploitedVulnerability" minOccurs="0" maxOccurs="1"/>
             <xs:element name="severity" type="dc:severity" minOccurs="0" maxOccurs="1"/>
             <xs:element name="cvssV2" type="dc:cvssV2" minOccurs="0" maxOccurs="1"/>
             <xs:element name="cvssV3" type="dc:cvssV3" minOccurs="0" maxOccurs="1"/>
@@ -192,6 +205,21 @@
                 <xs:complexType>
                     <xs:sequence minOccurs="0" maxOccurs="unbounded">
                         <xs:element name="projectReference" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="includedBy" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                        <xs:element name="reference" minOccurs="0" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="type" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -239,7 +267,6 @@
         </xs:sequence>
         <xs:attribute name="isVirtual" type="xs:boolean" use="required"/>
     </xs:complexType>
-
     <xs:element name="analysis">
         <xs:complexType>
             <xs:sequence>
