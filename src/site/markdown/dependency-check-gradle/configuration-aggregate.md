@@ -177,6 +177,7 @@ retirejs     | filters               | Configures the list of regular expessions
 ossIndex     | enabled               | Sets whether [OSS Index Analyzer](../analyzers/oss-index-analyzer.html) will be used. This analyzer requires an internet connection. | true
 ossIndex     | username              | The optional user name to connect to Sonatype's OSS Index.                                                        | &nbsp;
 ossIndex     | password              | The password or API token to connect to Sonatype's OSS Index.                                                     | &nbsp;
+ossIndex     | warnOnlyOnRemoteErrors| Sets whether remote errors from the OSS Index (e.g. BAD GATEWAY, RATE LIMIT EXCEEDED) will result in warnings only instead of failing execution. | false
 slack        | enabled               | Whether or not slack notifications are enabled.                                                                   | false
 slack        | webhookUrl            | The custom incoming webhook URL to receive notifications.                                                         | &nbsp;
 hostedSuppressions | enabled         | The number of hours to wait before checking for new updates of the hosted suppressions file .                     | 2

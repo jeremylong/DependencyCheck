@@ -135,21 +135,23 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                 } catch (TransportException ex) {
                     final String message = ex.getMessage();
                     final boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);
-
+                    this.setEnabled(false);
                     if (StringUtils.endsWith(message, "401")) {
+                        LOG.error("Invalid credentials for the OSS Index, disabling the analyzer");
                         throw new AnalysisException("Invalid credentials provided for OSS Index", ex);
                     } else if (StringUtils.endsWith(message, "403")) {
+                        LOG.error("OSS Index access forbidden, disabling the analyzer");
                         throw new AnalysisException("OSS Index access forbidden", ex);
                     } else if (StringUtils.endsWith(message, "429")) {
                         if (warnOnly) {
-                            LOG.warn("OSS Index rate limit exceeded", ex);
+                            LOG.warn("OSS Index rate limit exceeded, disabling the analyzer", ex);
                         } else {
-                            throw new AnalysisException("OSS Index rate limit exceeded", ex);
+                            throw new AnalysisException("OSS Index rate limit exceeded, disabling the analyzer", ex);
                         }
                     } else if (warnOnly) {
-                        LOG.warn("Error requesting component reports", ex);
+                        LOG.warn("Error requesting component reports, disabling the analyzer", ex);
                     } else {
-                        LOG.debug("Error requesting component reports", ex);
+                        LOG.debug("Error requesting component reports, disabling the analyzer", ex);
                         throw new AnalysisException("Failed to request component-reports", ex);
                     }
                 } catch (Exception e) {
