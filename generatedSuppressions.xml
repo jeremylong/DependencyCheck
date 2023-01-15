@@ -528,3 +528,10 @@
    <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-spring-boot-starter@.*$</packageUrl>
    <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5276
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.hadoop\.thirdparty/hadoop-shaded-guava@.*$</packageUrl>
+   <cpe>cpe:/a:apache:hadoop</cpe>
+</suppress>
