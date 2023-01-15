@@ -498,7 +498,6 @@
   <cpe>cpe:/a:yaml_project:yaml</cpe>
 </suppress>
 <!-- suppressions above this entry will be included in the next release (see #5237 and #5240) -->
-
 <suppress base="true">
    <notes><![CDATA[
    FP per issue #5169
@@ -506,7 +505,6 @@
    <packageUrl regex="true">^pkg:maven/com\.google\.crypto\.tink/apps-webpush@.*$</packageUrl>
    <cpe>cpe:/a:google:google_apps</cpe>
 </suppress>
-
 <suppress base="true">
    <notes><![CDATA[
    FP per issue #5212
@@ -563,3 +561,4 @@
    <packageUrl regex="true">^pkg:maven/com\.google\.flatbuffers/flatbuffers-java@.*$</packageUrl>
    <cpe>cpe:/a:flat_project:flat</cpe>
 </suppress>
+<!-- suppressions above this entry will be included in the 8.0.0 release (see #5304) -->
