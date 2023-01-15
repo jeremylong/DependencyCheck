@@ -2,25 +2,46 @@
 
 [![Black Hat Arsenal](https://raw.githubusercontent.com/toolswatch/badges/master/arsenal/usa/2018.svg?sanitize=true)](http://www.toolswatch.org/2018/05/black-hat-arsenal-usa-2018-the-w0w-lineup/) [![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2015.svg)](https://www.toolswatch.org/2015/06/black-hat-arsenal-usa-2015-speakers-lineup/) [![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2014.svg)](https://www.toolswatch.org/2014/06/black-hat-usa-2014-arsenal-tools-speaker-list/) [![Black Hat Arsenal](https://www.toolswatch.org/badges/arsenal/2013.svg)](https://www.toolswatch.org/2013/06/announcement-blackhat-arsenal-usa-2013-selected-tools/)
 
-Dependency-Check
-================
+# Dependency-Check
 
 Dependency-Check is a Software Composition Analysis (SCA) tool that attempts to detect publicly disclosed vulnerabilities contained within a project's dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.
 
 Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/). Additionally, more information about the architecture and ways to extend dependency-check can be found on the [wiki].
 
-7.0.0 Upgrade Notice
---------------
-If upgrading to 7.0.0 or higher, there were breaking changes. If you get an error indicating you can't connect
-to the database you will need to run the purge command to remove the old database:
+## 8.0.0 Upgrade Notice
+
+8.0.0 contains breaking changes which requires updates to the database. If using
+an externally hosted database the schema will need to be updated. When using the
+embedded H2 database the schema should be upgraded automatically. However, if
+issues arise you may need to purge the database:
+
 - gradle: `./gradlew dependencyCheckPurge`
-- maven: `mvn org.owasp:dependency-check-maven:7.0.0:purge`
+- maven: `mvn org.owasp:dependency-check-maven:8.0.0:purge`
 - cli: `dependency-check.sh --purge`
 
-Homebrew users upgrading to dependency-check 7.0.0 will need to purge their old database.
+## Requirements
 
-Current Releases
--------------
+### Internet Access
+
+OWASP dependency-check requires access to several externally hosted resources.
+For more information see [Internet Access Required](https://jeremylong.github.io/DependencyCheck/data/index.html).
+
+### Build Tools
+
+In order to analyze some technology stacks dependency-check may require other
+development tools to be installed. Some of the analysis listed below may be
+experimental and require the experimental analyzers to be enabled.
+
+1. To analyze .NET Assemblies the dotnet 6 run time or SDK must be installed.
+   - Assemblies targeting other run times can be analyzed - but 6 is required to run the analysis.
+2. If analyzing GoLang projects `go` must be installed.
+3. The analysis of `Elixir` projects requires `mix_audit`.
+4. The analysis of `npm`, `pnpm`, and `yarn` projects requires `npm`, `pnpm`, or `yarn` to be installed.
+   - The analysis performed utilize the respective `audit` feature of each.
+5. The analysis of Ruby is a wrapper around `bundle-audit`, which must be installed.
+
+## Current Releases
+
 ### Jenkins Plugin
 
 For instructions on the use of the Jenkins plugin please see the [OWASP Dependency-Check Plugin page](https://wiki.jenkins-ci.org/display/JENKINS/OWASP+Dependency-Check+Plugin).
@@ -95,8 +116,7 @@ For instructions on the use of the Gradle Plugin, please see the [dependency-che
 
 For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](http://jeremylong.github.io/DependencyCheck/dependency-check-ant).
 
-Development Prerequisites
--------------
+## Development Prerequisites
 
 For installation to pass, you must have the following components installed:
 * Java: `java -version` 1.8
@@ -109,8 +129,8 @@ Tests cases require:
 * [Yarn](https://classic.yarnpkg.com/en/docs/install/)
 * [pnpm](https://pnpm.io/installation)
 
-Development Usage
--------------
+## Development Usage
+
 The following instructions outline how to compile and use the current snapshot. While every intention is to maintain a stable snapshot it is recommended
 that the release versions listed above be used.
 
@@ -286,7 +306,7 @@ Permission to modify and redistribute is granted under the terms of the Apache 2
 
 Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt][notices] file for more information.
 
-Copyright (c) 2012-2022 Jeremy Long. All Rights Reserved.
+Copyright (c) 2012-2023 Jeremy Long. All Rights Reserved.
 
   [wiki]: https://github.com/jeremylong/DependencyCheck/wiki
   [notices]: https://github.com/jeremylong/DependencyCheck/blob/main/NOTICE.txt
