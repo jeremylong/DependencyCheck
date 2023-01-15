@@ -6115,4 +6115,67 @@
         <packageUrl regex="true">^.*$</packageUrl>
         <cve>CVE-2021-4277</cve>
     </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #5169
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/com\.google\.crypto\.tink/apps-webpush@.*$</packageUrl>
+       <cpe>cpe:/a:google:google_apps</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #5212
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/com\.github\.java-json-tools/json-patch@.*$</packageUrl>
+       <cpe>cpe:/a:json-patch_project:json-patch</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #5217
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/net\.pwall\.json/json-pointer@.*$</packageUrl>
+       <cpe>cpe:/a:json-pointer_project:json-pointer</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #5275
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-spring-boot-starter@.*$</packageUrl>
+       <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #5276
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/org\.apache\.hadoop\.thirdparty/hadoop-shaded-guava@.*$</packageUrl>
+       <cpe>cpe:/a:apache:hadoop</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #5278
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/com\.datastax\.oss/native-protocol@.*$</packageUrl>
+       <cpe>cpe:/a:apache:cassandra</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #5280
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel-ftp@.*$</packageUrl>
+       <cpe>cpe:/a:ftp_project:ftp</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #5253
+       ]]></notes>
+       <packageUrl regex="true">^pkg:npm/jsonpointer@.*$</packageUrl>
+       <cpe>cpe:/a:json-pointer_project:json-pointer</cpe>
+    </suppress>
+    <suppress base="true">
+       <notes><![CDATA[
+       FP per issue #5252
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/com\.google\.flatbuffers/flatbuffers-java@.*$</packageUrl>
+       <cpe>cpe:/a:flat_project:flat</cpe>
+    </suppress>
 </suppressions>
