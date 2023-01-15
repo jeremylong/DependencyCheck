@@ -542,3 +542,10 @@
    <packageUrl regex="true">^pkg:maven/com\.datastax\.oss/native-protocol@.*$</packageUrl>
    <cpe>cpe:/a:apache:cassandra</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5280
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel-ftp@.*$</packageUrl>
+   <cpe>cpe:/a:ftp_project:ftp</cpe>
+</suppress>
