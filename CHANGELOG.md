@@ -1,5 +1,35 @@
 # Change Log
 
+## [Version 8.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.0.0) (2023-01-15)
+
+### Added
+
+- Utilize the hosted suppression file to allow for faster remediation of reported False Positives ([#4723](https://github.com/jeremylong/DependencyCheck/issues/4723)).
+- Include the [CISA Known Exploited Vulnerability Catalog](https://www.cisa.gov/known-exploited-vulnerabilities-catalog) ([#4878](https://github.com/jeremylong/DependencyCheck/issues/4878)).
+- The `gradle` and `maven` plugins now have the capability to scan the build plugins ([#4035](https://github.com/jeremylong/DependencyCheck/issues/4035)).
+- The `gradle` and `maven` plugins, for transitive dependencies, will report the root dependency in the project that included the transitive dependency ([#5001](https://github.com/jeremylong/DependencyCheck/pull/5001)).
+- Added `properties.security-severity` to SARIF report for better integration with GitHub Security Code scanning ([#5277](https://github.com/jeremylong/DependencyCheck/pull/5227)).
+- Allow for HTTP auth settings for Retire JS respository ([#5209](https://github.com/jeremylong/DependencyCheck/pull/5209)).
+- New schema for the XML report was added to support some of the above additions ([#5296](https://github.com/jeremylong/DependencyCheck/pull/5296)).
+- Added missing gradle option to only warn on remote errors from the OSS Index Analyzer ([gradle #303](https://github.com/dependency-check/dependency-check-gradle/pull/303)).
+
+### Changed
+
+- **Breaking:** the database schema updated - if using an external database the update scripts must be run!
+- The [exit codes](https://tldp.org/LDP/abs/html/exit-status.html) from the CLI have been changed to be in the range from 0-255 ([#4511](https://github.com/jeremylong/DependencyCheck/pull/4511).
+- The OSS Index Analyzer will automatically disable itself if a transport error occurs - preventing copious errors from being reported ([#5300](https://github.com/jeremylong/DependencyCheck/pull/5300])).
+
+
+### Fixed
+
+- Added an additional check for rejected CVEs to reduce FP ([#5268](https://github.com/jeremylong/DependencyCheck/pull/5268).
+- Corrected the analysis of `node_modules` to prevent NPEs ([#5266](https://github.com/jeremylong/DependencyCheck/pull/5266)).
+- Fixed error when scanning node packages with local dependencies ([#5235](https://github.com/jeremylong/DependencyCheck/pull/5235)).
+- Fixed NPE in the MSBuild Analyzer ([#5293](https://github.com/jeremylong/DependencyCheck/pull/5293)).
+- Several False Positives have been resolved.
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/46?closed=1).
+
 ## [Version 7.4.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v7.4.4) (2023-01-06)
 
 ### Fixed
