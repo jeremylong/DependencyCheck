@@ -535,3 +535,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.hadoop\.thirdparty/hadoop-shaded-guava@.*$</packageUrl>
    <cpe>cpe:/a:apache:hadoop</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5278
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.datastax\.oss/native-protocol@.*$</packageUrl>
+   <cpe>cpe:/a:apache:cassandra</cpe>
+</suppress>
