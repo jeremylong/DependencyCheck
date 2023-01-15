@@ -556,3 +556,10 @@
    <packageUrl regex="true">^pkg:npm/jsonpointer@.*$</packageUrl>
    <cpe>cpe:/a:json-pointer_project:json-pointer</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5252
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.google\.flatbuffers/flatbuffers-java@.*$</packageUrl>
+   <cpe>cpe:/a:flat_project:flat</cpe>
+</suppress>
