@@ -80,6 +80,9 @@ _odc_completions()
             --go
         -h --help
             --hints
+            --hostedSuppressionsForceUpdate
+            --hostedSuppressionsValidForHours <hours>
+            --hostedSuppressionsUrl <url>
             --junitFailOnCVSS <score>
         -l --log
         -n --noupdate
