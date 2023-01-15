@@ -521,3 +521,10 @@
    <packageUrl regex="true">^pkg:maven/net\.pwall\.json/json-pointer@.*$</packageUrl>
    <cpe>cpe:/a:json-pointer_project:json-pointer</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5275
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-spring-boot-starter@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
