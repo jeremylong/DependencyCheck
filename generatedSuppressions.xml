@@ -549,3 +549,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel-ftp@.*$</packageUrl>
    <cpe>cpe:/a:ftp_project:ftp</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5253
+   ]]></notes>
+   <packageUrl regex="true">^pkg:npm/jsonpointer@.*$</packageUrl>
+   <cpe>cpe:/a:json-pointer_project:json-pointer</cpe>
+</suppress>
