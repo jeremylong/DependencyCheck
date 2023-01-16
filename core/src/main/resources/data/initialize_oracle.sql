@@ -238,7 +238,7 @@ EXCEPTION
 END;
 /
 
-GRANT EXECUTE ON merge_knownexpoited TO dcuser;
+GRANT EXECUTE ON merge_knownexploited TO dcuser;
 
 CREATE OR REPLACE PROCEDURE update_vulnerability(p_cveId IN vulnerability.cve%type,
                                       p_description IN vulnerability.description%type,

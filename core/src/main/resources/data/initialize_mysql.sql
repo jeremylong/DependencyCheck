@@ -19,7 +19,7 @@ DROP PROCEDURE IF EXISTS dependencycheck.cleanup_orphans;
 DROP PROCEDURE IF EXISTS dependencycheck.update_vulnerability;
 DROP PROCEDURE IF EXISTS dependencycheck.insert_software;
 DROP PROCEDURE IF EXISTS dependencycheck.merge_ecosystem;
-DROP PROCEDURE IF EXISTS dependencycheck.merge_knownexpoited;
+DROP PROCEDURE IF EXISTS dependencycheck.merge_knownexploited;
 DROP TABLE IF EXISTS software;
 DROP TABLE IF EXISTS cpeEntry;
 DROP TABLE IF EXISTS `reference`;
@@ -307,7 +307,7 @@ INSERT INTO knownExploited (`cveID`, `vendorProject`, `product`, `vulnerabilityN
 END //
 DELIMITER ;
 
-GRANT EXECUTE ON PROCEDURE dependencycheck.merge_knownexpoited TO 'dcuser';
+GRANT EXECUTE ON PROCEDURE dependencycheck.merge_knownexploited TO 'dcuser';
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON dependencycheck.* TO 'dcuser';
 
