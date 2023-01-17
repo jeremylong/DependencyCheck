@@ -562,3 +562,11 @@
    <cpe>cpe:/a:flat_project:flat</cpe>
 </suppress>
 <!-- suppressions above this entry will be included in the 8.0.0 release (see #5304) -->
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5333
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-kickstart-spring-support@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
