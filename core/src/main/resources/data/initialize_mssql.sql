@@ -26,8 +26,8 @@ if exists (SELECT 1 FROM sysobjects WHERE name='insert_software' AND xtype='P')
     drop procedure insert_software;    
 if exists (SELECT 1 FROM sysobjects WHERE name='knownExploited' AND xtype='U')
     drop table knownExploited;
-if exists (SELECT 1 FROM sysobjects WHERE name='merge_knownexpoited' AND xtype='P')
-    drop procedure merge_knownexpoited;    
+if exists (SELECT 1 FROM sysobjects WHERE name='merge_knownexploited' AND xtype='P')
+    drop procedure merge_knownexploited;    
 
 CREATE TABLE vulnerability (id int identity(1,1) PRIMARY KEY, cve VARCHAR(20) UNIQUE,
 	description VARCHAR(8000), v2Severity VARCHAR(20), v2ExploitabilityScore DECIMAL(3,1), 
@@ -235,12 +235,12 @@ IF EXISTS(SELECT * FROM knownExploited WHERE cveID=@cveID)
     SET vendorProject=@vendorProject, product=@product, vulnerabilityName=@vulnerabilityName, 
         dateAdded=@dateAdded, shortDescription=@shortDescription, requiredAction=@requiredAction, 
         dueDate=@dueDate, notes=@notes
-    WHERE cveID=@cveID
+    WHERE cveID=@cveID;
 ELSE
     INSERT INTO knownExploited (vendorProject, product, vulnerabilityName,
         dateAdded, shortDescription, requiredAction, dueDate, notes, cveID) 
     VALUES (@vendorProject, @product, @vulnerabilityName,
-        @dateAdded, @shortDescription, @requiredAction, @dueDate, @notes, @cveID)
+        @dateAdded, @shortDescription, @requiredAction, @dueDate, @notes, @cveID);
 END;
 
 GO
