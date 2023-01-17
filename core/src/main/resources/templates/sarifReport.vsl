@@ -65,8 +65,7 @@ For more information see [How dependency-check works](https://jeremylong.github.
           "cisa": "This report may contain data retrieved from the CISA Known Exploited Vulnerability Catalog: https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
           "npm": "This report may contain data retrieved from the NPM Public Advisories: https://www.npmjs.com/advisories",
           "retirejs": "This report may contain data retrieved from the RetireJS community: https://retirejs.github.io/retire.js/",
-          "ossindex": "This report may contain data retrieved from the Sonatype OSS Index: https://ossindex.sonatype.org",
-          "CISA": "This report may contain data retrieved from the CISA Known Exploited Vulnerabilities Catalog: https://www.cisa.gov/known-exploited-vulnerabilities-catalog"
+          "ossindex": "This report may contain data retrieved from the Sonatype OSS Index: https://ossindex.sonatype.org"
           #foreach($prop in $properties.getMetaData().entrySet())
             ,"$enc.json($prop.key)": "$enc.json($prop.value)"
           #end
