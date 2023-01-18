@@ -1,5 +1,17 @@
 # Change Log
 
+## [Version 8.0.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.0.1) (2023-01-18)
+
+### Fixed
+
+- Fixed Stack Overflow Exception in the gradle plugin ([dependency-check-gradle/#308](https://github.com/dependency-check/dependency-check-gradle/pull/308)).
+- Fixed No Signature of Method Exception in the gradle plugin ([dependency-check-gradle/#305](https://github.com/dependency-check/dependency-check-gradle/pull/305)).
+- Updated DB initialization scripts for externally hosted DBs ([#5314](https://github.com/jeremylong/DependencyCheck/pull/5314) and [#5317](https://github.com/jeremylong/DependencyCheck/pull/5317)).
+  - Postgres users will need to use the updated init script and 8.0.1.
+- Resolved NPE in the NodePackageAnalyzer ([#5339](https://github.com/jeremylong/DependencyCheck/pull/5339)).
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/58?closed=1).
+
 ## [Version 8.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.0.0) (2023-01-15)
 
 ### Added
