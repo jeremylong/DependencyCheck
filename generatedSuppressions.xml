@@ -570,3 +570,10 @@
    <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-kickstart-spring-support@.*$</packageUrl>
    <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5336
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.openrewrite\.recipe/rewrite-jhipster@.*$</packageUrl>
+   <cpe>cpe:/a:jhipster:jhipster</cpe>
+</suppress>
