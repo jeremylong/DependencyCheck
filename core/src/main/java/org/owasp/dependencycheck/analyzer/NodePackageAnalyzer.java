@@ -394,7 +394,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                         continue;
                     }
 
-                    version = jo.getString("version");
+                    version = jo.getString("version", "");
                     optional = jo.getBoolean("optional", false);
                     isDev = jo.getBoolean("dev", false);
                 } else {
