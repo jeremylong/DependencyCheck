@@ -577,3 +577,10 @@
    <packageUrl regex="true">^pkg:maven/org\.openrewrite\.recipe/rewrite-jhipster@.*$</packageUrl>
    <cpe>cpe:/a:jhipster:jhipster</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5361
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/jakarta\.resource/jakarta\.resource-api@.*$</packageUrl>
+   <cpe>cpe:/a:payara:payara</cpe>
+</suppress>
