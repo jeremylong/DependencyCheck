@@ -152,7 +152,7 @@ public class CentralSearch {
         final List<MavenArtifact> result = new ArrayList<>();
         final URL url = new URL(String.format(query, rootURL, sha1));
 
-        LOGGER.debug("Searching Central url {}", url);
+        LOGGER.trace("Searching Central url {}", url);
 
         // Determine if we need to use a proxy. The rules:
         // 1) If the proxy is set, AND the setting is set to true, use the proxy

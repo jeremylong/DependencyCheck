@@ -302,7 +302,7 @@ public class DependencyBundlingAnalyzer extends AbstractDependencyComparingAnaly
                 }
             }
         }
-        LOGGER.debug("IdentifiersMatch={} ({}, {})", matches, dependency1.getFileName(), dependency2.getFileName());
+        LOGGER.trace("IdentifiersMatch={} ({}, {})", matches, dependency1.getFileName(), dependency2.getFileName());
         return matches;
     }
 

@@ -278,10 +278,10 @@ public class CPEAnalyzer extends AbstractAnalyzer {
 
         for (Confidence confidence : Confidence.values()) {
             collectTerms(vendors, dependency.getIterator(EvidenceType.VENDOR, confidence));
-            LOGGER.debug("vendor search: {}", vendors);
+            LOGGER.trace("vendor search: {}", vendors);
             collectTerms(products, dependency.getIterator(EvidenceType.PRODUCT, confidence));
             addMajorVersionToTerms(majorVersions, products);
-            LOGGER.debug("product search: {}", products);
+            LOGGER.trace("product search: {}", products);
             if (!vendors.isEmpty() && !products.isEmpty()) {
                 final List<IndexEntry> entries = searchCPE(vendors, products,
                         dependency.getVendorWeightings(), dependency.getProductWeightings(),
@@ -299,7 +299,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
                     if (verifyEntry(e, dependency, majorVersions)) {
                         final String vendor = e.getVendor();
                         final String product = e.getProduct();
-                        LOGGER.debug("identified vendor/product: {}/{}", vendor, product);
+                        LOGGER.trace("identified vendor/product: {}/{}", vendor, product);
                         identifierAdded |= determineIdentifiers(dependency, vendor, product, confidence);
                     }
                 }
