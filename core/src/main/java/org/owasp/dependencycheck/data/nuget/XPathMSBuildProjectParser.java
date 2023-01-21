@@ -68,11 +68,12 @@ public class XPathMSBuildProjectParser implements MSBuildProjectParser {
                 final Node node = nodeList.item(i);
                 final NamedNodeMap attrs = node.getAttributes();
 
-                final String include = attrs.getNamedItem("Include").getNodeValue();
-                if (include == null) {
+                final Node includeAttr = attrs.getNamedItem("Include");
+                if (includeAttr == null) {
                     // Issue 5144 work-around for NPE on packageReferences other than includes
                     continue;
                 }
+                final String include = includeAttr.getNodeValue();
                 String version = null;
 
                 if (attrs.getNamedItem("Version") != null) {
