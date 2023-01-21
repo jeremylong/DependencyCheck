@@ -69,6 +69,11 @@ jobs:
         id: build
         run: |
             mvn -s settings.xml -pl utils,core,maven -am compile verify -DtestMavenPlugin -DreleaseTesting --no-transfer-progress --batch-mode
+      - name: SARIF Multitool
+        uses: microsoft/sarif-actions@v0.1
+        with:
+          # Command to be sent to SARIF Multitool
+          command: 'validate core/target/test-reports/Report.sarif'
       - name: Archive IT test logs
         id: archive-logs
         if: always()
