@@ -82,7 +82,7 @@ For more information see [How dependency-check works](https://jeremylong.github.
           },
           #end
           "location": {
-            "uri": "$enc.json($dependency.FilePath)"
+            "uri": "file://$enc.json($dependency.FilePath)"
           },
           #if(!$dependency.isVirtual())
           "hashes": {
@@ -130,7 +130,7 @@ For more information see [How dependency-check works](https://jeremylong.github.
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "$enc.json($dependency.FilePath)"
+                  "uri": "file://$enc.json($dependency.FilePath)"
                   ,"index": $depIndex
                 }
               }
