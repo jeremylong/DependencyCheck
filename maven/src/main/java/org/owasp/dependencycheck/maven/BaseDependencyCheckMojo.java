@@ -2686,7 +2686,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 // so attempt to do a resolution for system-scoped too if still nothing found
                 try {
                     tryResolutionOnce(project, allResolvedDeps, buildingRequest);
-                    Artifact result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
+                    final Artifact result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
                     isResolved = result.isResolved();
                     artifactFile = result.getFile();
                     groupId = result.getGroupId();
@@ -2694,7 +2694,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     version = result.getVersion();
                     availableVersions = result.getAvailableVersions();
                 } catch (DependencyNotFoundException | DependencyResolverException e) {
-                    getLog().warn("Error performing last-resort System-scoped dependency resolution: "+e.getMessage());
+                    getLog().warn("Error performing last-resort System-scoped dependency resolution: " + e.getMessage());
                     ignored = e;
                 }
             }
@@ -2709,7 +2709,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 if (exCol == null) {
                     exCol = new ExceptionCollection();
                 }
-                Exception thrown = new DependencyNotFoundException(message.toString());
+                final Exception thrown = new DependencyNotFoundException(message.toString());
                 if (ignored != null) {
                     thrown.addSuppressed(ignored);
                 }
