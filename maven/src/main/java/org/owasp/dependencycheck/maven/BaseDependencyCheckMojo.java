@@ -2680,6 +2680,24 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     }
                 }
             }
+            Throwable ignored = null;
+            if (!isResolved) {
+                // Issue #4969 Tycho appears to add System-scoped libraries in reactor projects in unresolved state
+                // so attempt to do a resolution for system-scoped too if still nothing found
+                try {
+                    tryResolutionOnce(project, allResolvedDeps, buildingRequest);
+                    Artifact result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
+                    isResolved = result.isResolved();
+                    artifactFile = result.getFile();
+                    groupId = result.getGroupId();
+                    artifactId = result.getArtifactId();
+                    version = result.getVersion();
+                    availableVersions = result.getAvailableVersions();
+                } catch (DependencyNotFoundException | DependencyResolverException e) {
+                    getLog().warn("Error performing last-resort System-scoped dependency resolution: "+e.getMessage());
+                    ignored = e;
+                }
+            }
             if (!isResolved) {
                 final StringBuilder message = new StringBuilder("Unable to resolve system scoped dependency: ");
                 if (artifactFile != null) {
@@ -2691,7 +2709,11 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 if (exCol == null) {
                     exCol = new ExceptionCollection();
                 }
-                exCol.addException(new DependencyNotFoundException(message.toString()));
+                Exception thrown = new DependencyNotFoundException(message.toString());
+                if (ignored != null) {
+                    thrown.addSuppressed(ignored);
+                }
+                exCol.addException(thrown);
             }
         } else {
             final Artifact dependencyArtifact = dependencyNode.getArtifact();
@@ -2704,24 +2726,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 result = dependencyArtifact;
             } else {
                 try {
-                    if (allResolvedDeps.isEmpty()) { // no (partially successful) resolution attempt done
-                        try {
-                            final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
-                            final List<org.apache.maven.model.Dependency> managedDependencies = project
-                                    .getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
-                            final Iterable<ArtifactResult> allDeps = dependencyResolver
-                                    .resolveDependencies(buildingRequest, dependencies, managedDependencies, null);
-                            allDeps.forEach(allResolvedDeps::add);
-                        } catch (DependencyResolverException dre) {
-                            if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
-                                final List<ArtifactResult> successResults = Mshared998Util
-                                        .getResolutionResults((org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
-                                allResolvedDeps.addAll(successResults);
-                            } else {
-                                throw dre;
-                            }
-                        }
-                    }
+                    tryResolutionOnce(project, allResolvedDeps, buildingRequest);
                     result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
                 } catch (DependencyNotFoundException | DependencyResolverException ex) {
                     getLog().debug(String.format("Aggregate : %s", aggregate));
@@ -2781,6 +2786,41 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
             }
         }
         return exCol;
+    }
+
+    /**
+     * Try resolution of artifacts once, allowing for DependencyResolutionException due to reactor-dependencies not
+     * being resolvable.
+     * <br>
+     * The resolution is attempted only if allResolvedDeps is still empty. The assumption is that for any given project
+     * at least one of the dependencies will successfully resolve. If not, resolution will be attempted once for every
+     * dependency (as allResolvedDeps remains empty).
+     *
+     * @param project The project to dependencies for
+     * @param allResolvedDeps The collection of successfully resolved dependencies, will be filled with the successfully
+     *                        resolved dependencies, even in case of resolution failures.
+     * @param buildingRequest The buildingRequest to hand to Maven's DependencyResolver.
+     * @throws DependencyResolverException For any DependencyResolverException other than an Eclipse Aether DependencyResolutionException
+     */
+    private void tryResolutionOnce(MavenProject project, List<ArtifactResult> allResolvedDeps, ProjectBuildingRequest buildingRequest) throws DependencyResolverException {
+        if (allResolvedDeps.isEmpty()) { // no (partially successful) resolution attempt done
+            try {
+                final List<org.apache.maven.model.Dependency> dependencies = project.getDependencies();
+                final List<org.apache.maven.model.Dependency> managedDependencies = project
+                        .getDependencyManagement() == null ? null : project.getDependencyManagement().getDependencies();
+                final Iterable<ArtifactResult> allDeps = dependencyResolver
+                        .resolveDependencies(buildingRequest, dependencies, managedDependencies, null);
+                allDeps.forEach(allResolvedDeps::add);
+            } catch (DependencyResolverException dre) {
+                if (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
+                    final List<ArtifactResult> successResults = Mshared998Util
+                            .getResolutionResults((org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
+                    allResolvedDeps.addAll(successResults);
+                } else {
+                    throw dre;
+                }
+            }
+        }
     }
     //CSON: ParameterNumber
 
