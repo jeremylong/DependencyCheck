@@ -6184,5 +6184,6 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/me\.dinowernli/java\-grpc\-prometheus@.*$</packageUrl>
         <cpe>cpe:/a:grpc:grpc</cpe>
+        <cpe>cpe:/a:prometheus:prometheus</cpe>
     </suppress>
 </suppressions>
