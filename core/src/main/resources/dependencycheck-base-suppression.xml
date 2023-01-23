@@ -6178,4 +6178,12 @@
        <packageUrl regex="true">^pkg:maven/com\.google\.flatbuffers/flatbuffers-java@.*$</packageUrl>
        <cpe>cpe:/a:flat_project:flat</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issues #5321, #5322, #5323, #5324
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/me\.dinowernli/java\-grpc\-prometheus@.*$</packageUrl>
+        <cpe>cpe:/a:grpc:grpc</cpe>
+        <cpe>cpe:/a:prometheus:prometheus</cpe>
+    </suppress>
 </suppressions>
