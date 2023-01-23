@@ -31,6 +31,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -439,7 +441,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 throw new AnalysisException(msg);
             }
             BufferedInputStream in = null;
-            ZipArchiveInputStream zin = null;
+            //ZipArchiveInputStream zin = null;
+            ZipInputStream zin = null;
             TarArchiveInputStream tin = null;
             GzipCompressorInputStream gin = null;
             BZip2CompressorInputStream bzin = null;
@@ -449,7 +452,8 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 if (KNOWN_ZIP_EXT.contains(archiveExt) || ADDITIONAL_ZIP_EXT.contains(archiveExt)) {
                     in = new BufferedInputStream(fis);
                     ensureReadableJar(archiveExt, in);
-                    zin = new ZipArchiveInputStream(in);
+                    //zin = new ZipArchiveInputStream(in);
+                    zin = new ZipInputStream(in);
                     extractArchive(zin, destination, engine);
                 } else if ("tar".equals(archiveExt)) {
                     in = new BufferedInputStream(fis);
@@ -494,11 +498,13 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                     extractArchive(cain, destination, engine);
                 }
             } catch (ArchiveExtractionException ex) {
-                LOGGER.warn("Exception extracting archive '{}'.", archive.getName());
+                LOGGER.error("Exception extracting archive '{}'.", archive.getName());
                 LOGGER.debug("", ex);
+                throw new AnalysisException(ex.getMessage(), ex);
             } catch (IOException ex) {
-                LOGGER.warn("Exception reading archive '{}'.", archive.getName());
+                LOGGER.error("Exception reading archive '{}'.", archive.getName());
                 LOGGER.debug("", ex);
+                throw new AnalysisException(ex.getMessage(), ex);
             } finally {
                 //overly verbose and not needed... but keeping it anyway due to
                 //having issue with file handles being left open
@@ -568,6 +574,38 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
         }
     }
 
+    private void extractArchive(ZipInputStream input, File destination, Engine engine) throws ArchiveExtractionException {
+        ZipEntry entry;
+        try {
+            //final String destPath = destination.getCanonicalPath();
+            final Path d = destination.toPath();
+            while ((entry = input.getNextEntry()) != null) {
+                //final File file = new File(destination, entry.getName());
+                final Path f = d.resolve(entry.getName()).normalize();
+                if (!f.startsWith(d)) {
+                    LOGGER.debug("ZipSlip detected\n-Destination: " + d + "\n-Path: " + f);
+                    final String msg = String.format(
+                            "Archive contains a file (%s) that would be extracted outside of the target directory.",
+                            entry.getName());
+                    throw new ArchiveExtractionException(msg);
+                }
+                final File file = f.toFile();
+                if (entry.isDirectory()) {
+                    if (!file.exists() && !file.mkdirs()) {
+                        final String msg = String.format("Unable to create directory '%s'.", file.getAbsolutePath());
+                        throw new AnalysisException(msg);
+                    }
+                } else if (engine.accept(file)) {
+                    extractAcceptedFile(input, file);
+                }
+            }
+        } catch (IOException | AnalysisException ex) {
+            throw new ArchiveExtractionException(ex);
+        } finally {
+            FileUtils.close(input);
+        }
+    }
+
     /**
      * Extracts files from an archive.
      *
@@ -606,6 +644,33 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
             throw new ArchiveExtractionException(ex);
         } finally {
             FileUtils.close(input);
+        }
+    }
+
+    /**
+     * Extracts a file from an archive.
+     *
+     * @param input the archives input stream
+     * @param file the file to extract
+     * @throws AnalysisException thrown if there is an error
+     */
+    private static void extractAcceptedFile(ZipInputStream input, File file) throws AnalysisException {
+        LOGGER.debug("Extracting '{}'", file.getPath());
+        final File parent = file.getParentFile();
+        if (!parent.isDirectory() && !parent.mkdirs()) {
+            final String msg = String.format("Unable to build directory '%s'.", parent.getAbsolutePath());
+            throw new AnalysisException(msg);
+        }
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            IOUtils.copy(input, fos);
+        } catch (FileNotFoundException ex) {
+            LOGGER.debug("", ex);
+            final String msg = String.format("Unable to find file '%s'.", file.getName());
+            throw new AnalysisException(msg, ex);
+        } catch (IOException ex) {
+            LOGGER.debug("", ex);
+            final String msg = String.format("IO Exception while parsing file '%s'.", file.getName());
+            throw new AnalysisException(msg, ex);
         }
     }
 
