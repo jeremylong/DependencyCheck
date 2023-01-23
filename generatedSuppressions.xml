@@ -591,3 +591,10 @@
    <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
    <cpe>cpe:/a:voyager_project:voyager</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5372
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
+   <cpe>cpe:/a:smiley_project:smiley</cpe>
+</suppress>
