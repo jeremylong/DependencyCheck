@@ -584,3 +584,10 @@
    <packageUrl regex="true">^pkg:maven/jakarta\.resource/jakarta\.resource-api@.*$</packageUrl>
    <cpe>cpe:/a:payara:payara</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5373
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
+   <cpe>cpe:/a:voyager_project:voyager</cpe>
+</suppress>
