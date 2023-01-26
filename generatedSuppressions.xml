@@ -598,3 +598,10 @@
    <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
    <cpe>cpe:/a:smiley_project:smiley</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5380
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/dev\.ludovic\.netlib/lapack@.*$</packageUrl>
+   <cpe>cpe:/a:lapack_project:lapack</cpe>
+</suppress>
