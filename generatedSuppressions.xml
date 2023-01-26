@@ -605,3 +605,10 @@
    <packageUrl regex="true">^pkg:maven/dev\.ludovic\.netlib/lapack@.*$</packageUrl>
    <cpe>cpe:/a:lapack_project:lapack</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5375
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.jwt/microprofile-jwt-auth-api@.*$</packageUrl>
+   <cpe>cpe:/a:payara:payara</cpe>
+</suppress>
