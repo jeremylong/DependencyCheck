@@ -187,13 +187,16 @@ jobs:
           body: |
             ### Fixed
 
-            - Fixed Stack Overflow Exception in the gradle plugin ([dependency-check-gradle/#308](https://github.com/dependency-check/dependency-check-gradle/pull/308)).
-            - Fixed No Signature of Method Exception in the gradle plugin ([dependency-check-gradle/#305](https://github.com/dependency-check/dependency-check-gradle/pull/305)).
-            - Updated DB initialization scripts for externally hosted DBs ([#5314](https://github.com/jeremylong/DependencyCheck/pull/5314) and [#5317](https://github.com/jeremylong/DependencyCheck/pull/5317)).
-              - Postgres users will need to use the updated init script and 8.0.1.
-            - Resolved NPE in the NodePackageAnalyzer ([#5339](https://github.com/jeremylong/DependencyCheck/pull/5339)).
+            - Resolved bug causing an issue with some Maven Extensions ([#5366](https://github.com/jeremylong/DependencyCheck/pull/5366)).
+            - ArchiveAnalyzer will now correctly throw an exception if it cannot open an Archive ([#5371](https://github.com/jeremylong/DependencyCheck/pull/5371)).
+            - Updated CSV report so that it no longer has a duplicate `description` column ([#5364](https://github.com/jeremylong/DependencyCheck/pull/5364)).
+            - Moved several logging statements to trace which should drastically reduce the log size ([#5350](https://github.com/jeremylong/DependencyCheck/pull/5350)).
+            - Fixed bug with RetireJS' `--retirejsFilterNonVulnerable` and `--retirejsFilter` when used with the CLI ([#5351](https://github.com/jeremylong/DependencyCheck/pull/5351)).
+            - Fixed the `sarif` report format and added validation ([#5345](https://github.com/jeremylong/DependencyCheck/pull/5345) and ([#5363](https://github.com/jeremylong/DependencyCheck/pull/5363))
+            - Fixed `MalformedPackageException` in the gradle plugin ([dependency-check-gradle/#320](https://github.com/dependency-check/dependency-check-gradle/pull/320)).
+            - Fixed `MissingMethodException` in the gradle plugin ([dependency-check-gradle/#316](https://github.com/dependency-check/dependency-check-gradle/pull/316)).
 
-            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/58?closed=1).
+            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/59?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli

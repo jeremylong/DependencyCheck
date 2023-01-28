@@ -1,5 +1,20 @@
 # Change Log
 
+## [Version 8.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.0.1) (2023-01-26)
+
+### Fixed
+
+- Resolved bug causing an issue with some Maven Extensions ([#5366](https://github.com/jeremylong/DependencyCheck/pull/5366)).
+- ArchiveAnalyzer will now correctly throw an exception if it cannot open an Archive ([#5371](https://github.com/jeremylong/DependencyCheck/pull/5371)).
+- Updated CSV report so that it no longer has a duplicate `description` column ([#5364](https://github.com/jeremylong/DependencyCheck/pull/5364)).
+- Moved several logging statements to trace which should drastically reduce the log size ([#5350](https://github.com/jeremylong/DependencyCheck/pull/5350)).
+- Fixed bug with RetireJS' `--retirejsFilterNonVulnerable` and `--retirejsFilter` when used with the CLI ([#5351](https://github.com/jeremylong/DependencyCheck/pull/5351)).
+- Fixed the `sarif` report format and added validation ([#5345](https://github.com/jeremylong/DependencyCheck/pull/5345) and ([#5363](https://github.com/jeremylong/DependencyCheck/pull/5363))
+- Fixed `MalformedPackageException` in the gradle plugin ([dependency-check-gradle/#320](https://github.com/dependency-check/dependency-check-gradle/pull/320)).
+- Fixed `MissingMethodException` in the gradle plugin ([dependency-check-gradle/#316](https://github.com/dependency-check/dependency-check-gradle/pull/316)).
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/59?closed=1).
+
 ## [Version 8.0.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.0.1) (2023-01-18)
 
 ### Fixed
