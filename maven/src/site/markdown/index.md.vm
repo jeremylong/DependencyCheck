@@ -111,7 +111,7 @@ Create the dependency-check-report.html and fail the build for CVSS greater than
 ```
 
 $H$H$H Example 4:
-Create the dependency-check-report.html and skip artifacts not bundled in distribution (Provided and Runtime scope).
+Create the dependency-check-report.html and skip artifacts not bundled in distribution (i.e., the provided scope).
 
 ```xml
 <project>
