@@ -317,7 +317,29 @@
 <a class="jxr_linenumber" name="L309" href="#L309">309</a>         analyzer.analyze(packageLockJson, engine);
 <a class="jxr_linenumber" name="L310" href="#L310">310</a>         assertEquals(<span class="jxr_string">"Expected 1 dependencies"</span>, 6, engine.getDependencies().length);
 <a class="jxr_linenumber" name="L311" href="#L311">311</a>     }
-<a class="jxr_linenumber" name="L312" href="#L312">312</a> }
+<a class="jxr_linenumber" name="L312" href="#L312">312</a> 
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L314" href="#L314">314</a> <em class="jxr_javadoccomment">     * Test of analysis of package with a local package as a dependency.</em>
+<a class="jxr_linenumber" name="L315" href="#L315">315</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L316" href="#L316">316</a> <em class="jxr_javadoccomment">     * This test crashes with an NPE if issue #1947 isn't resolved.</em>
+<a class="jxr_linenumber" name="L317" href="#L317">317</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L318" href="#L318">318</a> <em class="jxr_javadoccomment">     * @throws AnalysisException if there was a problem with the analysis</em>
+<a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>     @Test
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testLocalPackageDependency() <strong class="jxr_keyword">throws</strong> AnalysisException, InvalidSettingException {
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>         Assume.assumeThat(getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED), is(<strong class="jxr_keyword">true</strong>));
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>         <strong class="jxr_keyword">final</strong> Dependency packageJson = <strong class="jxr_keyword">new</strong> Dependency(BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>,
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>                 <span class="jxr_string">"nodejs/local_package/package.json"</span>));
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">final</strong> Dependency packageLockJson = <strong class="jxr_keyword">new</strong> Dependency(BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>,
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>                 <span class="jxr_string">"nodejs/local_package/package-lock.json"</span>));
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>         engine.addDependency(packageJson);
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>         engine.addDependency(packageLockJson);
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>         analyzer.analyze(packageJson, engine);
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>         assertEquals(<span class="jxr_string">"Expected 1 dependencies"</span>, 1, engine.getDependencies().length);
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>         analyzer.analyze(packageLockJson, engine);
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>         assertEquals(<span class="jxr_string">"Expected 2 dependencies"</span>, 2, engine.getDependencies().length);
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>     }
+<a class="jxr_linenumber" name="L334" href="#L334">334</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

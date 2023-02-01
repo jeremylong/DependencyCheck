@@ -238,7 +238,7 @@
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>                 } <strong class="jxr_keyword">finally</strong> {
 <a class="jxr_linenumber" name="L231" href="#L231">231</a>                     conn = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L232" href="#L232">232</a>                 }
-<a class="jxr_linenumber" name="L233" href="#L233">233</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/utils/ResourceNotFoundException.html">ResourceNotFoundException</a>(<span class="jxr_string">"Requested resource does not exists - received a 404"</span>);
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/utils/ResourceNotFoundException.html">ResourceNotFoundException</a>(<span class="jxr_string">"Requested resource does not exist - received a 404"</span>);
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (status == 429) {
 <a class="jxr_linenumber" name="L235" href="#L235">235</a>                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L236" href="#L236">236</a>                     conn.disconnect();

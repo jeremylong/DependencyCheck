@@ -10,6 +10,7 @@ org.owasp.dependencycheck.data.cpe
 org.owasp.dependencycheck.data.cwe
 org.owasp.dependencycheck.data.elixir
 org.owasp.dependencycheck.data.golang
+org.owasp.dependencycheck.data.knownexploited.json
 org.owasp.dependencycheck.data.lucene
 org.owasp.dependencycheck.data.nexus
 org.owasp.dependencycheck.data.nodeaudit
@@ -19,6 +20,7 @@ org.owasp.dependencycheck.data.nvd.json
 org.owasp.dependencycheck.data.nvdcve
 org.owasp.dependencycheck.data.ossindex
 org.owasp.dependencycheck.data.update
+org.owasp.dependencycheck.data.update.cisa
 org.owasp.dependencycheck.data.update.cpe
 org.owasp.dependencycheck.data.update.exception
 org.owasp.dependencycheck.data.update.nvd

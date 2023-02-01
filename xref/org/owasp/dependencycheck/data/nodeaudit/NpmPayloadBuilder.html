@@ -117,13 +117,13 @@
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> 
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>         <strong class="jxr_keyword">if</strong> (dependencies != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>             dependencies.forEach((key, value) -&gt; {
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> indexOfNodeModule = key.lastIndexOf(NodePackageAnalyzer.NODE_MODULES_DIRNAME);
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> indexOfNodeModule = key.lastIndexOf(NodePackageAnalyzer.NODE_MODULES_DIRNAME + <span class="jxr_string">"/"</span>);
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>                 <strong class="jxr_keyword">if</strong> (indexOfNodeModule &gt;= 0) {
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>                     key = key.substring(indexOfNodeModule + NodePackageAnalyzer.NODE_MODULES_DIRNAME.length() + 1);
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>                 }
 <a class="jxr_linenumber" name="L116" href="#L116">116</a> 
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>                 <strong class="jxr_keyword">final</strong> JsonObject dep = ((JsonObject) value);
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>                 <strong class="jxr_keyword">final</strong> String version = dep.getString(<span class="jxr_string">"version"</span>);
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>                 <strong class="jxr_keyword">final</strong> String version = dep.getString(<span class="jxr_string">"version"</span>, <span class="jxr_string">""</span>);
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isDev = dep.getBoolean(<span class="jxr_string">"dev"</span>, false);
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>                 <strong class="jxr_keyword">if</strong> (skipDevDependencies &amp;&amp; isDev) {
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>                     <strong class="jxr_keyword">return</strong>;

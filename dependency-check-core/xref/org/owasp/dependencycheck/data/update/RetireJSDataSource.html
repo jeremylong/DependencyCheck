@@ -144,7 +144,7 @@
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>         <strong class="jxr_keyword">try</strong> (WriteLock lock = <strong class="jxr_keyword">new</strong> WriteLock(settings, <strong class="jxr_keyword">true</strong>, repoFile.getName() + <span class="jxr_string">".lock"</span>)) {
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>             LOGGER.debug(<span class="jxr_string">"RetireJS Repo URL: {}"</span>, repoUrl.toExternalForm());
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>             <strong class="jxr_keyword">final</strong> Downloader downloader = <strong class="jxr_keyword">new</strong> Downloader(settings);
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>             downloader.fetchFile(repoUrl, repoFile);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>             downloader.fetchFile(repoUrl, repoFile, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD);
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>         } <strong class="jxr_keyword">catch</strong> (IOException | TooManyRequestsException | ResourceNotFoundException | WriteLockException ex) {
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/data/update/exception/UpdateException.html">UpdateException</a>(<span class="jxr_string">"Failed to initialize the RetireJS repo"</span>, ex);
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>         }

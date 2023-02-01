@@ -206,7 +206,7 @@
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>                 engine.writeReports(<span class="jxr_string">"Test Report"</span>, <span class="jxr_string">"org.owasp"</span>, <span class="jxr_string">"dependency-check-core"</span>, <span class="jxr_string">"1.4.8"</span>, writeSarifTo, <span class="jxr_string">"SARIF"</span>, exceptions);
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>             }
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>             <em class="jxr_comment">//Test XML</em>
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>             InputStream xsdStream = ReportGenerator.<strong class="jxr_keyword">class</strong>.getClassLoader().getResourceAsStream(<span class="jxr_string">"schema/dependency-check.2.5.xsd"</span>);
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>             InputStream xsdStream = ReportGenerator.<strong class="jxr_keyword">class</strong>.getClassLoader().getResourceAsStream(<span class="jxr_string">"schema/dependency-check.3.1.xsd"</span>);
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>             StreamSource xsdSource = <strong class="jxr_keyword">new</strong> StreamSource(xsdStream);
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>             StreamSource xmlSource = <strong class="jxr_keyword">new</strong> StreamSource(writeTo);
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);

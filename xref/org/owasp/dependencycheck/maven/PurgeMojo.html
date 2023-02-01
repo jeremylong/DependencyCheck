@@ -112,7 +112,21 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> scanDependencies(<a href="../../../../org/owasp/dependencycheck/Engine.html">Engine</a> engine) <strong class="jxr_keyword">throws</strong> MojoExecutionException {
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException(<span class="jxr_string">"Operation not supported"</span>);
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>     }
-<a class="jxr_linenumber" name="L107" href="#L107">107</a> }
+<a class="jxr_linenumber" name="L107" href="#L107">107</a> 
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L109" href="#L109">109</a> <em class="jxr_javadoccomment">     * Throws an exception if called. The purge mojo does not scan dependencies.</em>
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> <em class="jxr_javadoccomment">     * @param engine the engine used to scan</em>
+<a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     * @param exCollection the collection of exceptions that might have occurred</em>
+<a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     * previously</em>
+<a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">     * @return a collection of exceptions</em>
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">     * @throws MojoExecutionException thrown if there is an exception</em>
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>     @Override
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> scanPlugins(<strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/Engine.html">Engine</a> engine, <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> exCollection) <strong class="jxr_keyword">throws</strong> MojoExecutionException {
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> UnsupportedOperationException(<span class="jxr_string">"Operation not supported"</span>);
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>     }
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

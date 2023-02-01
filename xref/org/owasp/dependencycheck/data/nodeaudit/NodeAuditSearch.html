@@ -155,12 +155,12 @@
 <a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">private</strong> List&lt;Advisory&gt; submitPackage(JsonObject packageJson, String key, <strong class="jxr_keyword">int</strong> count) <strong class="jxr_keyword">throws</strong> SearchException, IOException {
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>             <strong class="jxr_keyword">if</strong> (LOGGER.isDebugEnabled()) {
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>                 LOGGER.debug(<span class="jxr_string">"----------------------------------------"</span>);
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>                 LOGGER.debug(<span class="jxr_string">"Node Audit Payload:"</span>);
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>                 LOGGER.debug(packageJson.toString());
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>                 LOGGER.debug(<span class="jxr_string">"----------------------------------------"</span>);
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>                 LOGGER.debug(<span class="jxr_string">"----------------------------------------"</span>);
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>             <strong class="jxr_keyword">if</strong> (LOGGER.isTraceEnabled()) {
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>                 LOGGER.trace(<span class="jxr_string">"----------------------------------------"</span>);
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>                 LOGGER.trace(<span class="jxr_string">"Node Audit Payload:"</span>);
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>                 LOGGER.trace(packageJson.toString());
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>                 LOGGER.trace(<span class="jxr_string">"----------------------------------------"</span>);
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>                 LOGGER.trace(<span class="jxr_string">"----------------------------------------"</span>);
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>             }
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>             <strong class="jxr_keyword">final</strong> byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../org/owasp/dependencycheck/utils/URLConnectionFactory.html">URLConnectionFactory</a> factory = <strong class="jxr_keyword">new</strong> <a href="../../../../../org/owasp/dependencycheck/utils/URLConnectionFactory.html">URLConnectionFactory</a>(settings);

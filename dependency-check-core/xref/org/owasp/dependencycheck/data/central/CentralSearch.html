@@ -160,7 +160,7 @@
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">final</strong> List&lt;MavenArtifact&gt; result = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">final</strong> URL url = <strong class="jxr_keyword">new</strong> URL(String.format(query, rootURL, sha1));
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> 
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>         LOGGER.debug(<span class="jxr_string">"Searching Central url {}"</span>, url);
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         LOGGER.trace(<span class="jxr_string">"Searching Central url {}"</span>, url);
 <a class="jxr_linenumber" name="L156" href="#L156">156</a> 
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         <em class="jxr_comment">// Determine if we need to use a proxy. The rules:</em>
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>         <em class="jxr_comment">// 1) If the proxy is set, AND the setting is set to true, use the proxy</em>
