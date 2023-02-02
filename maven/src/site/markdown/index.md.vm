@@ -126,7 +126,6 @@ Create the dependency-check-report.html and skip artifacts not bundled in distri
                 <version>${project.version}</version>
                 <configuration>
                     <skipProvidedScope>true</skipProvidedScope>
-                    <skipRuntimeScope>true</skipRuntimeScope>
                 </configuration>
                 <executions>
                     <execution>
