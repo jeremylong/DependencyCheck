@@ -2905,6 +2905,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #5414
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin/sso-kit-starter@.*$</packageUrl>
+        <cpe>cpe:/a:vaadin:flow</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #2191
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.webjars\.(bower|bowergithub|npm).*$</packageUrl>
