@@ -1283,8 +1283,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 pluginCoordinate.setArtifactId(resolved.getArtifactId());
                 pluginCoordinate.setVersion(resolved.getVersion());
 
-                //TOOD - convert this to a packageURl instead of GAV
-                final String parent = resolved.getGroupId() + ":" + resolved.getArtifactId() + ":" + resolved.getVersion();
+                final String parent = buildReference(resolved.getGroupId(), resolved.getArtifactId(), resolved.getVersion());
                 for (Artifact artifact : resolveArtifactDependencies(pluginCoordinate, project)) {
                     exCol = addPluginToDependencies(project, engine, artifact, parent, exCol);
                 }
@@ -2789,18 +2788,23 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Try resolution of artifacts once, allowing for DependencyResolutionException due to reactor-dependencies not
-     * being resolvable.
+     * Try resolution of artifacts once, allowing for
+     * DependencyResolutionException due to reactor-dependencies not being
+     * resolvable.
      * <br>
-     * The resolution is attempted only if allResolvedDeps is still empty. The assumption is that for any given project
-     * at least one of the dependencies will successfully resolve. If not, resolution will be attempted once for every
-     * dependency (as allResolvedDeps remains empty).
+     * The resolution is attempted only if allResolvedDeps is still empty. The
+     * assumption is that for any given project at least one of the dependencies
+     * will successfully resolve. If not, resolution will be attempted once for
+     * every dependency (as allResolvedDeps remains empty).
      *
      * @param project The project to dependencies for
-     * @param allResolvedDeps The collection of successfully resolved dependencies, will be filled with the successfully
-     *                        resolved dependencies, even in case of resolution failures.
-     * @param buildingRequest The buildingRequest to hand to Maven's DependencyResolver.
-     * @throws DependencyResolverException For any DependencyResolverException other than an Eclipse Aether DependencyResolutionException
+     * @param allResolvedDeps The collection of successfully resolved
+     * dependencies, will be filled with the successfully resolved dependencies,
+     * even in case of resolution failures.
+     * @param buildingRequest The buildingRequest to hand to Maven's
+     * DependencyResolver.
+     * @throws DependencyResolverException For any DependencyResolverException
+     * other than an Eclipse Aether DependencyResolutionException
      */
     private void tryResolutionOnce(MavenProject project, List<ArtifactResult> allResolvedDeps, ProjectBuildingRequest buildingRequest) throws DependencyResolverException {
         if (allResolvedDeps.isEmpty()) { // no (partially successful) resolution attempt done

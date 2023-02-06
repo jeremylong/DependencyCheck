@@ -593,12 +593,12 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         }
         boolean foundSomething = false;
         boolean addAsIdentifier = true;
-        String groupid = pom.getGroupId();
-        String parentGroupId = pom.getParentGroupId();
-        String artifactid = pom.getArtifactId();
-        String parentArtifactId = pom.getParentArtifactId();
-        String version = pom.getVersion();
-        String parentVersion = pom.getParentVersion();
+        String groupid = intepolationFailCheck(pom.getGroupId());
+        String parentGroupId = intepolationFailCheck(pom.getParentGroupId());
+        String artifactid = intepolationFailCheck(pom.getArtifactId());
+        String parentArtifactId = intepolationFailCheck(pom.getParentArtifactId());
+        String version = intepolationFailCheck(pom.getVersion());
+        String parentVersion = intepolationFailCheck(pom.getParentVersion());
 
         if (("org.sonatype.oss".equals(parentGroupId) && "oss-parent".equals(parentArtifactId))
                 || ("org.springframework.boot".equals(parentGroupId) && "spring-boot-starter-parent".equals(parentArtifactId))) {
@@ -1286,6 +1286,19 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
         return !key.matches(".*(version|title|vendor|name|license|description).*")
                 && value.matches("^[a-zA-Z_][a-zA-Z0-9_\\$]*\\.([a-zA-Z_][a-zA-Z0-9_\\$]*\\.)*([a-zA-Z_][a-zA-Z0-9_\\$]*)$");
 
+    }
+
+    /**
+     * Returns null if the value starts with `${` and ends with `}`.
+     *
+     * @param value the value to check
+     * @return the correct value which may be null
+     */
+    private static String intepolationFailCheck(String value) {
+        if (value != null && value.contains("${")) {
+            return null;
+        }
+        return value;
     }
 
     /**
