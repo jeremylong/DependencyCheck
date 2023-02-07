@@ -619,3 +619,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.hadoop\.thirdparty/hadoop-shaded-protobuf_3_7@.*$</packageUrl>
    <cpe>cpe:/a:apache:hadoop</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5325
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.enterprisedt/edtFTPj@.*$</packageUrl>
+   <cpe>cpe:/a:ftp_project:ftp</cpe>
+</suppress>
