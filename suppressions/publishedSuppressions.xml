@@ -499,7 +499,6 @@
   <cpe>cpe:/a:yaml_project:yaml</cpe>
 </suppress>
 <!-- suppressions above this entry will be included in the next release (see #5237 and #5240) -->
-
 <suppress base="true">
    <notes><![CDATA[
    FP per issue #5169
@@ -507,7 +506,6 @@
    <packageUrl regex="true">^pkg:maven/com\.google\.crypto\.tink/apps-webpush@.*$</packageUrl>
    <cpe>cpe:/a:google:google_apps</cpe>
 </suppress>
-
 <suppress base="true">
    <notes><![CDATA[
    FP per issue #5212
@@ -521,5 +519,112 @@
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/net\.pwall\.json/json-pointer@.*$</packageUrl>
    <cpe>cpe:/a:json-pointer_project:json-pointer</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5275
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-spring-boot-starter@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5276
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.hadoop\.thirdparty/hadoop-shaded-guava@.*$</packageUrl>
+   <cpe>cpe:/a:apache:hadoop</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5278
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.datastax\.oss/native-protocol@.*$</packageUrl>
+   <cpe>cpe:/a:apache:cassandra</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5280
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel-ftp@.*$</packageUrl>
+   <cpe>cpe:/a:ftp_project:ftp</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5253
+   ]]></notes>
+   <packageUrl regex="true">^pkg:npm/jsonpointer@.*$</packageUrl>
+   <cpe>cpe:/a:json-pointer_project:json-pointer</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5252
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.google\.flatbuffers/flatbuffers-java@.*$</packageUrl>
+   <cpe>cpe:/a:flat_project:flat</cpe>
+</suppress>
+<!-- suppressions above this entry will be included in the 8.0.0 release (see #5304) -->
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5333
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-kickstart-spring-support@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5336
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.openrewrite\.recipe/rewrite-jhipster@.*$</packageUrl>
+   <cpe>cpe:/a:jhipster:jhipster</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5361
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/jakarta\.resource/jakarta\.resource-api@.*$</packageUrl>
+   <cpe>cpe:/a:payara:payara</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5373
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
+   <cpe>cpe:/a:voyager_project:voyager</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5372
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
+   <cpe>cpe:/a:smiley_project:smiley</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5380
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/dev\.ludovic\.netlib/lapack@.*$</packageUrl>
+   <cpe>cpe:/a:lapack_project:lapack</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5375
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.jwt/microprofile-jwt-auth-api@.*$</packageUrl>
+   <cpe>cpe:/a:payara:payara</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5368
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.hadoop\.thirdparty/hadoop-shaded-protobuf_3_7@.*$</packageUrl>
+   <cpe>cpe:/a:apache:hadoop</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5325
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.enterprisedt/edtFTPj@.*$</packageUrl>
+   <cpe>cpe:/a:ftp_project:ftp</cpe>
 </suppress>
 </suppressions>
