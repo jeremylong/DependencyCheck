@@ -2336,34 +2336,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        Aether false positive.
-        ]]></notes>
-        <gav regex="true">org\.eclipse\.aether:aether.*</gav>
-        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per #1673
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.glassfish.*$</packageUrl>
-        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per #3829 the eclipse Microprofile projects are not the eclipse IDE
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile.*$</packageUrl>
-        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per issue #4310
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty/.*$</packageUrl>
-        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         FP per #3829 the eclipse Microprofile config file provider project is not the Jenkins config file provider plugin
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.config/.*@.*$</packageUrl>
@@ -4460,10 +4432,10 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        several python-* PyPI packages hit a FP CPE match #3233 & #3017
+        several python-* PyPI packages hit a FP CPE match #3233 & #3017 & #5335
         as Python itself is not a PyPI package suppress it with a broad regex
         ]]></notes>
-        <packageUrl regex="true">^pkg:pypi/python\-.*$</packageUrl>
+        <packageUrl regex="true">^pkg:pypi/.*python\-.*$</packageUrl>
         <cpe>cpe:/a:python:python</cpe>
         <cpe>cpe:/a:python_software_foundation:python</cpe>
     </suppress>
@@ -4657,7 +4629,6 @@
         FP per issue #4129
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/jakarta\.ws\.rs/jakarta\.ws\.rs-api@.*$</packageUrl>
-        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
         <cpe>cpe:/a:oracle:java_se</cpe>
         <cpe>cpe:/a:oracle:web_services</cpe>
     </suppress>
@@ -4680,7 +4651,6 @@
         FP per issue #4135
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/org\.eclipse/yasson@.*$</packageUrl>
-        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
         <cpe>cpe:/a:oracle:projects</cpe>
     </suppress>
     <suppress base="true">
@@ -4798,13 +4768,6 @@
         ]]></notes>
         <packageUrl regex="true">^pkg:maven/com\.hazelcast/hazelcast@(?!5\.1-BETA-1).*$</packageUrl>
         <cve>CVE-2022-0265</cve>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
-        FP per issue #4327
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/javax\.ws\.rs/javax\.ws\.rs-api@.*$</packageUrl>
-        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
@@ -6004,13 +5967,6 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
-        FP per issue #4653
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.eclipse\.angus/.*@.*$</packageUrl>
-        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
-    </suppress>
-    <suppress base="true">
-        <notes><![CDATA[
         FP per issue #5121 - fix for commons
         ]]></notes>
         <packageUrl regex="true">^(?!pkg:maven/commons-net/commons-net).*$</packageUrl>
@@ -6192,5 +6148,36 @@
         <packageUrl regex="true">^pkg:maven/me\.dinowernli/java\-grpc\-prometheus@.*$</packageUrl>
         <cpe>cpe:/a:grpc:grpc</cpe>
         <cpe>cpe:/a:prometheus:prometheus</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5370
+        colon before version is needed to avoid also matching cpe:/a:redhat:wildfly_openssl
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.wildfly\.openssl/.*$</packageUrl>
+        <cpe>cpe:/a:redhat:wildfly:</cpe>
+        <cpe>cpe:/a:wildfly:wildfly:</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5367
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.graphql\-java\-kickstart/.*$</packageUrl>
+        <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5334
+        ]]></notes>
+        <packageUrl regex="true">^pkg:pypi/.*docker.*$</packageUrl>
+        <cpe>cpe:/a:docker:docker</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per #1673 #3829 #4129 #4135 #4310 #4327 #4653 #5290 #5287
+        Broadly suppress eclipse_ide for anything outside of the org.eclipse.platform groupIds
+        ]]></notes>
+        <packageUrl regex="true">^(?!pkg:maven/org.eclipse.platform).+$</packageUrl>
+        <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
     </suppress>
 </suppressions>
