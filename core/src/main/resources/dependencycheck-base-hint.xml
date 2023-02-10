@@ -466,4 +466,18 @@
             <evidence type="product" source="hint analyzer" name="product" value="parquet-mr" confidence="HIGH"/>
         </add>
     </hint>
+        <hint>
+        <!-- false negative per issue #1387 -->
+        <given>
+            <evidence type="product" source="composer.lock" name="product" value="yii2"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="yiiframework" confidence="HIGH"/>
+            <evidence type="product" source="hint analyzer" name="product" value="yiiframework" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="framework" confidence="HIGH"/>
+            <evidence type="product" source="hint analyzer" name="product" value="framework" confidence="HIGH"/>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="yii" confidence="HIGH"/>
+            <evidence type="product" source="hint analyzer" name="product" value="yii" confidence="HIGH"/>
+        </add>
+    </hint>
 </hints>
