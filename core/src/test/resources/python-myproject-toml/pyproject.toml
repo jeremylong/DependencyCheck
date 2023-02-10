@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "s3-metadata-tagger"
+version = "1.0.1"
+description = "A package to add metadata tags to objects saved in s3"
+readme = "README.md"
+requires-python = ">=3.7"
+keywords = ["aws", "s3", "metadata"]
+license = { file="LICENSE" }
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Multimedia",
+]
+dependencies = [
+    "autopep8",
+    "boto3",
+    "boto3-stubs",
+    "botocore",
+    "botocore-stubs",
+    "mypy-boto3-s3",
+    "pycodestyle",
+    "typing_extensions",
+]
+
+[project.optional-dependencies]
+pdf = ["PyPDF2"]
+picture = ["Pillow", "types-Pillow"]
+
+[project.urls]
+"Homepage" = "https://github.com/DDS-GmbH/s3-metadata-tagger-lib/"
+"Bug Tracker" = "https://github.com/DDS-GmbH/s3-metadata-tagger-lib/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+metadata_tagger = ["py.typed"]

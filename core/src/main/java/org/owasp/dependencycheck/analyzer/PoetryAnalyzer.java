@@ -35,10 +35,9 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 
 import com.moandjiezana.toml.Toml;
-import org.apache.commons.lang3.StringUtils;
+import java.io.File;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
-import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.slf4j.Logger;
@@ -69,12 +68,15 @@ public class PoetryAnalyzer extends AbstractFileTypeAnalyzer {
      * Lock file name.
      */
     private static final String POETRY_LOCK = "poetry.lock";
-
+    /**
+     * Poetry project file.
+     */
+    private static final String PYPROJECT_TOML = "pyproject.toml";
     /**
      * The file filter for poetry.lock
      */
     private static final FileFilter POETRY_LOCK_FILTER = FileFilterBuilder.newInstance()
-            .addFilenames(POETRY_LOCK)
+            .addFilenames(POETRY_LOCK, PYPROJECT_TOML)
             .build();
 
     /**
@@ -145,6 +147,13 @@ public class PoetryAnalyzer extends AbstractFileTypeAnalyzer {
         //do not report on the build file itself
         engine.removeDependency(dependency);
 
+        if (PYPROJECT_TOML.equals(dependency.getActualFile().getName())) {
+            final File parentPath = dependency.getActualFile().getParentFile();
+            ensureLock(parentPath);
+            //exit as we can't analyze pyproject.toml - insufficient version information
+            return;
+        }
+
         final Toml result = new Toml().read(dependency.getActualFile());
         final List<Toml> projectsLocks = result.getTables("package");
         if (projectsLocks == null) {
@@ -161,12 +170,12 @@ public class PoetryAnalyzer extends AbstractFileTypeAnalyzer {
             d.setVersion(version);
 
             try {
-              final PackageURL purl = PackageURLBuilder.aPackageURL()
-                      .withType("pypi")
-                      .withName(name)
-                      .withVersion(version)
-                      .build();
-              d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
+                final PackageURL purl = PackageURLBuilder.aPackageURL()
+                        .withType("pypi")
+                        .withName(name)
+                        .withVersion(version)
+                        .build();
+                d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
             } catch (MalformedPackageURLException ex) {
                 LOGGER.debug("Unable to build package url for pypi", ex);
                 d.addSoftwareIdentifier(new GenericIdentifier("pypi:" + name + "@" + version, Confidence.HIGH));
@@ -184,5 +193,15 @@ public class PoetryAnalyzer extends AbstractFileTypeAnalyzer {
             d.addEvidence(EvidenceType.VENDOR, POETRY_LOCK, "vendor", name, Confidence.HIGHEST);
             engine.addDependency(d);
         });
+    }
+
+    private void ensureLock(File parent) throws AnalysisException {
+        final File lock = new File(parent, POETRY_LOCK);
+        final File requirements = new File(parent, "requirements.txt");
+        final boolean found = lock.isFile() || requirements.isFile();
+        if (!found) {
+            throw new AnalysisException("Python `pyproject.toml` found and there "
+                    + "is not a `poetry.lock` or `requirements.txt` - analysis will be incomplete");
+        }
     }
 }

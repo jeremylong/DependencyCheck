@@ -72,4 +72,11 @@ public class PoetryAnalyzerTest extends BaseTest {
         }
         assertTrue("Expeced to find PyYAML", found);
     }
+
+    @Test(expected = AnalysisException.class)
+    public void testPyprojectToml() throws AnalysisException {
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "python-myproject-toml/pyproject.toml"));
+        //causes an exception.
+        analyzer.analyze(result, engine);
+    }
 }
