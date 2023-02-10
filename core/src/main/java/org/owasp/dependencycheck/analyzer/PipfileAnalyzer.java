@@ -44,7 +44,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Used to analyze Pipfile dependency files named Pipfile.
+ * Used to analyze dependencies defined in Pipfile. This analyzer works in
+ * tandem with the `PipfilelockAnalyzer` - and both analyzers use the same key
+ * to enable/disable the analyzers. The PipfilelockAnalyzer will be used over
+ * the Pipfile if the lock file exists.
+ *
  *
  * @author fcano
  */
@@ -55,12 +59,15 @@ public class PipfileAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PythonPackageAnalyzer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PipfileAnalyzer.class);
     /**
      * "Pipfile" file.
      */
-    private static final String REQUIREMENTS = "Pipfile";
-
+    private static final String PIPFILE = "Pipfile";
+    /**
+     * "Pipfile.lock" file.
+     */
+    private static final String LOCKFILE = "Pipfile.lock";
     /**
      * The name of the analyzer.
      */
@@ -79,7 +86,7 @@ public class PipfileAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * The file filter used to determine which files this analyzer supports.
      */
-    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(REQUIREMENTS).build();
+    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(PIPFILE).build();
 
     /**
      * Returns the FileFilter
@@ -124,51 +131,54 @@ public class PipfileAnalyzer extends AbstractFileTypeAnalyzer {
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-        LOGGER.debug("Checking file {}", dependency.getActualFilePath());
-
-        if (REQUIREMENTS.equals(dependency.getFileName())) {
-            engine.removeDependency(dependency);
+        engine.removeDependency(dependency);
+        final File lock = new File(dependency.getActualFile().getParentFile(), LOCKFILE);
+        if (lock.isFile()) {
+            LOGGER.debug("Skipping {} because a lock file was identified", dependency.getActualFilePath());
+            return;
+        } else {
+            LOGGER.debug("Checking file {}", dependency.getActualFilePath());
         }
+
         final File dependencyFile = dependency.getActualFile();
         if (!dependencyFile.isFile() || dependencyFile.length() == 0) {
             return;
         }
 
         final File actualFile = dependency.getActualFile();
-        if (actualFile.getName().equals(REQUIREMENTS)) {
-            final String contents = getFileContents(actualFile);
-            if (!contents.isEmpty()) {
-                final Matcher matcher = PACKAGE_VERSION.matcher(contents);
-                while (matcher.find()) {
-                    final String identifiedPackage = matcher.group(1);
-                    final String identifiedVersion = matcher.group(2);
-                    LOGGER.debug(String.format("package, version: %s %s", identifiedPackage, identifiedVersion));
-                    final Dependency d = new Dependency(dependency.getActualFile(), true);
-                    d.setName(identifiedPackage);
-                    d.setVersion(identifiedVersion);
-                    try {
-                        final PackageURL purl = PackageURLBuilder.aPackageURL()
-                                .withType("pypi")
-                                .withName(identifiedPackage)
-                                .withVersion(identifiedVersion)
-                                .build();
-                        d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
-                    } catch (MalformedPackageURLException ex) {
-                        LOGGER.debug("Unable to build package url for pypi", ex);
-                        d.addSoftwareIdentifier(new GenericIdentifier("pypi:" + identifiedPackage + "@" + identifiedVersion, Confidence.HIGH));
-                    }
-                    d.setPackagePath(String.format("%s:%s", identifiedPackage, identifiedVersion));
-                    d.setEcosystem(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM);
-                    final String filePath = String.format("%s:%s/%s", dependency.getFilePath(), identifiedPackage, identifiedVersion);
-                    d.setFilePath(filePath);
-                    d.setSha1sum(Checksum.getSHA1Checksum(filePath));
-                    d.setSha256sum(Checksum.getSHA256Checksum(filePath));
-                    d.setMd5sum(Checksum.getMD5Checksum(filePath));
-                    d.addEvidence(EvidenceType.VENDOR, REQUIREMENTS, "vendor", identifiedPackage, Confidence.HIGHEST);
-                    d.addEvidence(EvidenceType.PRODUCT, REQUIREMENTS, "product", identifiedPackage, Confidence.HIGHEST);
-                    d.addEvidence(EvidenceType.VERSION, REQUIREMENTS, "version", identifiedVersion, Confidence.HIGHEST);
-                    engine.addDependency(d);
+
+        final String contents = getFileContents(actualFile);
+        if (!contents.isEmpty()) {
+            final Matcher matcher = PACKAGE_VERSION.matcher(contents);
+            while (matcher.find()) {
+                final String identifiedPackage = matcher.group(1);
+                final String identifiedVersion = matcher.group(2);
+                LOGGER.debug(String.format("package, version: %s %s", identifiedPackage, identifiedVersion));
+                final Dependency d = new Dependency(dependency.getActualFile(), true);
+                d.setName(identifiedPackage);
+                d.setVersion(identifiedVersion);
+                try {
+                    final PackageURL purl = PackageURLBuilder.aPackageURL()
+                            .withType("pypi")
+                            .withName(identifiedPackage)
+                            .withVersion(identifiedVersion)
+                            .build();
+                    d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));
+                } catch (MalformedPackageURLException ex) {
+                    LOGGER.debug("Unable to build package url for pypi", ex);
+                    d.addSoftwareIdentifier(new GenericIdentifier("pypi:" + identifiedPackage + "@" + identifiedVersion, Confidence.HIGH));
                 }
+                d.setPackagePath(String.format("%s:%s", identifiedPackage, identifiedVersion));
+                d.setEcosystem(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM);
+                final String filePath = String.format("%s:%s/%s", dependency.getFilePath(), identifiedPackage, identifiedVersion);
+                d.setFilePath(filePath);
+                d.setSha1sum(Checksum.getSHA1Checksum(filePath));
+                d.setSha256sum(Checksum.getSHA256Checksum(filePath));
+                d.setMd5sum(Checksum.getMD5Checksum(filePath));
+                d.addEvidence(EvidenceType.VENDOR, PIPFILE, "vendor", identifiedPackage, Confidence.HIGHEST);
+                d.addEvidence(EvidenceType.PRODUCT, PIPFILE, "product", identifiedPackage, Confidence.HIGHEST);
+                d.addEvidence(EvidenceType.VERSION, PIPFILE, "version", identifiedVersion, Confidence.HIGHEST);
+                engine.addDependency(d);
             }
         }
     }
