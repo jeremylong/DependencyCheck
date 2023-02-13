@@ -1,6 +1,23 @@
 # Change Log
 
-## [Version 8.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.0.1) (2023-01-26)
+## [Version 8.1.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.1.0) (2023-01-26)
+
+### Added
+
+- `Pipefile.lock` files are now supported ([#5404](https://github.com/jeremylong/DependencyCheck/pull/5404)).
+- Python projects with only a `pyproject.toml` but no lock file or requirements will report an error as ODC is unable to analyze the project ([#5409](https://github.com/jeremylong/DependencyCheck/pull/5409)).
+
+### Fixed
+
+- Some maven projects caused false positives due to bad string interpolation ([#5421](https://github.com/jeremylong/DependencyCheck/pull/5421)).
+- Error message from Assembly Analyzer has been updated to emphasize dotnet 6 is required for analysis ([#5408](https://github.com/jeremylong/DependencyCheck/pull/5408)).
+- Correct issue where database defrag occurs even when no updates were performed ([#5441](https://github.com/jeremylong/DependencyCheck/pull/5441)).
+- Fixed several False Positives and one False Negative.
+- Fixed the `format` configuration more flexible in the gradle plugin ([dependency-check-gradle/#324](https://github.com/dependency-check/dependency-check-gradle/pull/324)).
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/60?closed=1).
+
+## [Version 8.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.0.2) (2023-01-26)
 
 ### Fixed
 
