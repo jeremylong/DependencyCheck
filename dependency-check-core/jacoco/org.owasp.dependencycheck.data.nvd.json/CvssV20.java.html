@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CvssV20.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvd.json</a> &gt; <span class="el_source">CvssV20.java</span></div><h1>CvssV20.java</h1><pre class="source lang-java linenums">
+package org.owasp.dependencycheck.data.nvd.json;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import javax.annotation.Generated;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+
+/**
+ * JSON Schema for Common Vulnerability Scoring System version 2.0
+ * &lt;p&gt;
+ * 
+ * 
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+    &quot;accessVector&quot;,
+    &quot;accessComplexity&quot;,
+    &quot;authentication&quot;,
+    &quot;confidentialityImpact&quot;,
+    &quot;integrityImpact&quot;,
+    &quot;availabilityImpact&quot;,
+    &quot;baseScore&quot;
+})
+@Generated(&quot;jsonschema2pojo&quot;)
+<span class="nc" id="L35">public class CvssV20 {</span>
+
+    @JsonProperty(&quot;accessVector&quot;)
+    private CvssV20 .AccessVectorType accessVector;
+    @JsonProperty(&quot;accessComplexity&quot;)
+    private CvssV20 .AccessComplexityType accessComplexity;
+    @JsonProperty(&quot;authentication&quot;)
+    private CvssV20 .AuthenticationType authentication;
+    @JsonProperty(&quot;confidentialityImpact&quot;)
+    private CvssV20 .CiaType confidentialityImpact;
+    @JsonProperty(&quot;integrityImpact&quot;)
+    private CvssV20 .CiaType integrityImpact;
+    @JsonProperty(&quot;availabilityImpact&quot;)
+    private CvssV20 .CiaType availabilityImpact;
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;baseScore&quot;)
+    private Double baseScore;
+<span class="nc" id="L56">    @JsonIgnore</span>
+    private Map&lt;String, Object&gt; additionalProperties = new LinkedHashMap&lt;String, Object&gt;();
+
+    @JsonProperty(&quot;accessVector&quot;)
+    public CvssV20 .AccessVectorType getAccessVector() {
+<span class="nc" id="L61">        return accessVector;</span>
+    }
+
+    @JsonProperty(&quot;accessVector&quot;)
+    public void setAccessVector(CvssV20 .AccessVectorType accessVector) {
+<span class="nc" id="L66">        this.accessVector = accessVector;</span>
+<span class="nc" id="L67">    }</span>
+
+    @JsonProperty(&quot;accessComplexity&quot;)
+    public CvssV20 .AccessComplexityType getAccessComplexity() {
+<span class="nc" id="L71">        return accessComplexity;</span>
+    }
+
+    @JsonProperty(&quot;accessComplexity&quot;)
+    public void setAccessComplexity(CvssV20 .AccessComplexityType accessComplexity) {
+<span class="nc" id="L76">        this.accessComplexity = accessComplexity;</span>
+<span class="nc" id="L77">    }</span>
+
+    @JsonProperty(&quot;authentication&quot;)
+    public CvssV20 .AuthenticationType getAuthentication() {
+<span class="nc" id="L81">        return authentication;</span>
+    }
+
+    @JsonProperty(&quot;authentication&quot;)
+    public void setAuthentication(CvssV20 .AuthenticationType authentication) {
+<span class="nc" id="L86">        this.authentication = authentication;</span>
+<span class="nc" id="L87">    }</span>
+
+    @JsonProperty(&quot;confidentialityImpact&quot;)
+    public CvssV20 .CiaType getConfidentialityImpact() {
+<span class="nc" id="L91">        return confidentialityImpact;</span>
+    }
+
+    @JsonProperty(&quot;confidentialityImpact&quot;)
+    public void setConfidentialityImpact(CvssV20 .CiaType confidentialityImpact) {
+<span class="nc" id="L96">        this.confidentialityImpact = confidentialityImpact;</span>
+<span class="nc" id="L97">    }</span>
+
+    @JsonProperty(&quot;integrityImpact&quot;)
+    public CvssV20 .CiaType getIntegrityImpact() {
+<span class="nc" id="L101">        return integrityImpact;</span>
+    }
+
+    @JsonProperty(&quot;integrityImpact&quot;)
+    public void setIntegrityImpact(CvssV20 .CiaType integrityImpact) {
+<span class="nc" id="L106">        this.integrityImpact = integrityImpact;</span>
+<span class="nc" id="L107">    }</span>
+
+    @JsonProperty(&quot;availabilityImpact&quot;)
+    public CvssV20 .CiaType getAvailabilityImpact() {
+<span class="nc" id="L111">        return availabilityImpact;</span>
+    }
+
+    @JsonProperty(&quot;availabilityImpact&quot;)
+    public void setAvailabilityImpact(CvssV20 .CiaType availabilityImpact) {
+<span class="nc" id="L116">        this.availabilityImpact = availabilityImpact;</span>
+<span class="nc" id="L117">    }</span>
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;baseScore&quot;)
+    public Double getBaseScore() {
+<span class="nc" id="L126">        return baseScore;</span>
+    }
+
+    /**
+     * 
+     * (Required)
+     * 
+     */
+    @JsonProperty(&quot;baseScore&quot;)
+    public void setBaseScore(Double baseScore) {
+<span class="nc" id="L136">        this.baseScore = baseScore;</span>
+<span class="nc" id="L137">    }</span>
+
+    @JsonAnyGetter
+    public Map&lt;String, Object&gt; getAdditionalProperties() {
+<span class="nc" id="L141">        return this.additionalProperties;</span>
+    }
+
+    @JsonAnySetter
+    public void setAdditionalProperty(String name, Object value) {
+<span class="nc" id="L146">        this.additionalProperties.put(name, value);</span>
+<span class="nc" id="L147">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L151">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L152">        sb.append(CvssV20 .class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');</span>
+<span class="nc" id="L153">        sb.append(&quot;accessVector&quot;);</span>
+<span class="nc" id="L154">        sb.append('=');</span>
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        sb.append(((this.accessVector == null)?&quot;&lt;null&gt;&quot;:this.accessVector));</span>
+<span class="nc" id="L156">        sb.append(',');</span>
+<span class="nc" id="L157">        sb.append(&quot;accessComplexity&quot;);</span>
+<span class="nc" id="L158">        sb.append('=');</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        sb.append(((this.accessComplexity == null)?&quot;&lt;null&gt;&quot;:this.accessComplexity));</span>
+<span class="nc" id="L160">        sb.append(',');</span>
+<span class="nc" id="L161">        sb.append(&quot;authentication&quot;);</span>
+<span class="nc" id="L162">        sb.append('=');</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        sb.append(((this.authentication == null)?&quot;&lt;null&gt;&quot;:this.authentication));</span>
+<span class="nc" id="L164">        sb.append(',');</span>
+<span class="nc" id="L165">        sb.append(&quot;confidentialityImpact&quot;);</span>
+<span class="nc" id="L166">        sb.append('=');</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">        sb.append(((this.confidentialityImpact == null)?&quot;&lt;null&gt;&quot;:this.confidentialityImpact));</span>
+<span class="nc" id="L168">        sb.append(',');</span>
+<span class="nc" id="L169">        sb.append(&quot;integrityImpact&quot;);</span>
+<span class="nc" id="L170">        sb.append('=');</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        sb.append(((this.integrityImpact == null)?&quot;&lt;null&gt;&quot;:this.integrityImpact));</span>
+<span class="nc" id="L172">        sb.append(',');</span>
+<span class="nc" id="L173">        sb.append(&quot;availabilityImpact&quot;);</span>
+<span class="nc" id="L174">        sb.append('=');</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        sb.append(((this.availabilityImpact == null)?&quot;&lt;null&gt;&quot;:this.availabilityImpact));</span>
+<span class="nc" id="L176">        sb.append(',');</span>
+<span class="nc" id="L177">        sb.append(&quot;baseScore&quot;);</span>
+<span class="nc" id="L178">        sb.append('=');</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        sb.append(((this.baseScore == null)?&quot;&lt;null&gt;&quot;:this.baseScore));</span>
+<span class="nc" id="L180">        sb.append(',');</span>
+<span class="nc" id="L181">        sb.append(&quot;additionalProperties&quot;);</span>
+<span class="nc" id="L182">        sb.append('=');</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">        sb.append(((this.additionalProperties == null)?&quot;&lt;null&gt;&quot;:this.additionalProperties));</span>
+<span class="nc" id="L184">        sb.append(',');</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        if (sb.charAt((sb.length()- 1)) == ',') {</span>
+<span class="nc" id="L186">            sb.setCharAt((sb.length()- 1), ']');</span>
+        } else {
+<span class="nc" id="L188">            sb.append(']');</span>
+        }
+<span class="nc" id="L190">        return sb.toString();</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L195">        int result = 1;</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        result = ((result* 31)+((this.accessComplexity == null)? 0 :this.accessComplexity.hashCode()));</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        result = ((result* 31)+((this.confidentialityImpact == null)? 0 :this.confidentialityImpact.hashCode()));</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        result = ((result* 31)+((this.availabilityImpact == null)? 0 :this.availabilityImpact.hashCode()));</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        result = ((result* 31)+((this.integrityImpact == null)? 0 :this.integrityImpact.hashCode()));</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">        result = ((result* 31)+((this.baseScore == null)? 0 :this.baseScore.hashCode()));</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        result = ((result* 31)+((this.accessVector == null)? 0 :this.accessVector.hashCode()));</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        result = ((result* 31)+((this.authentication == null)? 0 :this.authentication.hashCode()));</span>
+<span class="nc" id="L204">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(Object other) {
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        if (other == this) {</span>
+<span class="nc" id="L210">            return true;</span>
+        }
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        if ((other instanceof CvssV20) == false) {</span>
+<span class="nc" id="L213">            return false;</span>
+        }
+<span class="nc" id="L215">        CvssV20 rhs = ((CvssV20) other);</span>
+<span class="nc bnc" id="L216" title="All 48 branches missed.">        return (((((((((this.accessComplexity == rhs.accessComplexity)||((this.accessComplexity!= null)&amp;&amp;this.accessComplexity.equals(rhs.accessComplexity)))&amp;&amp;((this.confidentialityImpact == rhs.confidentialityImpact)||((this.confidentialityImpact!= null)&amp;&amp;this.confidentialityImpact.equals(rhs.confidentialityImpact))))&amp;&amp;((this.availabilityImpact == rhs.availabilityImpact)||((this.availabilityImpact!= null)&amp;&amp;this.availabilityImpact.equals(rhs.availabilityImpact))))&amp;&amp;((this.integrityImpact == rhs.integrityImpact)||((this.integrityImpact!= null)&amp;&amp;this.integrityImpact.equals(rhs.integrityImpact))))&amp;&amp;((this.baseScore == rhs.baseScore)||((this.baseScore!= null)&amp;&amp;this.baseScore.equals(rhs.baseScore))))&amp;&amp;((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&amp;&amp;this.additionalProperties.equals(rhs.additionalProperties))))&amp;&amp;((this.accessVector == rhs.accessVector)||((this.accessVector!= null)&amp;&amp;this.accessVector.equals(rhs.accessVector))))&amp;&amp;((this.authentication == rhs.authentication)||((this.authentication!= null)&amp;&amp;this.authentication.equals(rhs.authentication))));</span>
+    }
+
+<span class="nc" id="L219">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum AccessComplexityType {
+
+<span class="nc" id="L222">        HIGH(&quot;HIGH&quot;),</span>
+<span class="nc" id="L223">        MEDIUM(&quot;MEDIUM&quot;),</span>
+<span class="nc" id="L224">        LOW(&quot;LOW&quot;);</span>
+        private final String value;
+<span class="nc" id="L226">        private final static Map&lt;String, CvssV20 .AccessComplexityType&gt; CONSTANTS = new HashMap&lt;String, CvssV20 .AccessComplexityType&gt;();</span>
+
+        static {
+<span class="nc bnc" id="L229" title="All 2 branches missed.">            for (CvssV20 .AccessComplexityType c: values()) {</span>
+<span class="nc" id="L230">                CONSTANTS.put(c.value, c);</span>
+            }
+<span class="nc" id="L232">        }</span>
+
+<span class="nc" id="L234">        AccessComplexityType(String value) {</span>
+<span class="nc" id="L235">            this.value = value;</span>
+<span class="nc" id="L236">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L240">            return this.value;</span>
+        }
+
+        @JsonValue
+        public String value() {
+<span class="nc" id="L245">            return this.value;</span>
+        }
+
+        @JsonCreator
+        public static CvssV20 .AccessComplexityType fromValue(String value) {
+<span class="nc" id="L250">            CvssV20 .AccessComplexityType constant = CONSTANTS.get(value);</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L252">                throw new IllegalArgumentException(value);</span>
+            } else {
+<span class="nc" id="L254">                return constant;</span>
+            }
+        }
+
+    }
+
+<span class="nc" id="L260">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum AccessVectorType {
+
+<span class="nc" id="L263">        NETWORK(&quot;NETWORK&quot;),</span>
+<span class="nc" id="L264">        ADJACENT_NETWORK(&quot;ADJACENT_NETWORK&quot;),</span>
+<span class="nc" id="L265">        LOCAL(&quot;LOCAL&quot;);</span>
+        private final String value;
+<span class="nc" id="L267">        private final static Map&lt;String, CvssV20 .AccessVectorType&gt; CONSTANTS = new HashMap&lt;String, CvssV20 .AccessVectorType&gt;();</span>
+
+        static {
+<span class="nc bnc" id="L270" title="All 2 branches missed.">            for (CvssV20 .AccessVectorType c: values()) {</span>
+<span class="nc" id="L271">                CONSTANTS.put(c.value, c);</span>
+            }
+<span class="nc" id="L273">        }</span>
+
+<span class="nc" id="L275">        AccessVectorType(String value) {</span>
+<span class="nc" id="L276">            this.value = value;</span>
+<span class="nc" id="L277">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L281">            return this.value;</span>
+        }
+
+        @JsonValue
+        public String value() {
+<span class="nc" id="L286">            return this.value;</span>
+        }
+
+        @JsonCreator
+        public static CvssV20 .AccessVectorType fromValue(String value) {
+<span class="nc" id="L291">            CvssV20 .AccessVectorType constant = CONSTANTS.get(value);</span>
+<span class="nc bnc" id="L292" title="All 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L293">                throw new IllegalArgumentException(value);</span>
+            } else {
+<span class="nc" id="L295">                return constant;</span>
+            }
+        }
+
+    }
+
+<span class="nc" id="L301">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum AuthenticationType {
+
+<span class="nc" id="L304">        MULTIPLE(&quot;MULTIPLE&quot;),</span>
+<span class="nc" id="L305">        SINGLE(&quot;SINGLE&quot;),</span>
+<span class="nc" id="L306">        NONE(&quot;NONE&quot;);</span>
+        private final String value;
+<span class="nc" id="L308">        private final static Map&lt;String, CvssV20 .AuthenticationType&gt; CONSTANTS = new HashMap&lt;String, CvssV20 .AuthenticationType&gt;();</span>
+
+        static {
+<span class="nc bnc" id="L311" title="All 2 branches missed.">            for (CvssV20 .AuthenticationType c: values()) {</span>
+<span class="nc" id="L312">                CONSTANTS.put(c.value, c);</span>
+            }
+<span class="nc" id="L314">        }</span>
+
+<span class="nc" id="L316">        AuthenticationType(String value) {</span>
+<span class="nc" id="L317">            this.value = value;</span>
+<span class="nc" id="L318">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L322">            return this.value;</span>
+        }
+
+        @JsonValue
+        public String value() {
+<span class="nc" id="L327">            return this.value;</span>
+        }
+
+        @JsonCreator
+        public static CvssV20 .AuthenticationType fromValue(String value) {
+<span class="nc" id="L332">            CvssV20 .AuthenticationType constant = CONSTANTS.get(value);</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L334">                throw new IllegalArgumentException(value);</span>
+            } else {
+<span class="nc" id="L336">                return constant;</span>
+            }
+        }
+
+    }
+
+<span class="nc" id="L342">    @Generated(&quot;jsonschema2pojo&quot;)</span>
+    public enum CiaType {
+
+<span class="nc" id="L345">        NONE(&quot;NONE&quot;),</span>
+<span class="nc" id="L346">        PARTIAL(&quot;PARTIAL&quot;),</span>
+<span class="nc" id="L347">        COMPLETE(&quot;COMPLETE&quot;);</span>
+        private final String value;
+<span class="nc" id="L349">        private final static Map&lt;String, CvssV20 .CiaType&gt; CONSTANTS = new HashMap&lt;String, CvssV20 .CiaType&gt;();</span>
+
+        static {
+<span class="nc bnc" id="L352" title="All 2 branches missed.">            for (CvssV20 .CiaType c: values()) {</span>
+<span class="nc" id="L353">                CONSTANTS.put(c.value, c);</span>
+            }
+<span class="nc" id="L355">        }</span>
+
+<span class="nc" id="L357">        CiaType(String value) {</span>
+<span class="nc" id="L358">            this.value = value;</span>
+<span class="nc" id="L359">        }</span>
+
+        @Override
+        public String toString() {
+<span class="nc" id="L363">            return this.value;</span>
+        }
+
+        @JsonValue
+        public String value() {
+<span class="nc" id="L368">            return this.value;</span>
+        }
+
+        @JsonCreator
+        public static CvssV20 .CiaType fromValue(String value) {
+<span class="nc" id="L373">            CvssV20 .CiaType constant = CONSTANTS.get(value);</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">            if (constant == null) {</span>
+<span class="nc" id="L375">                throw new IllegalArgumentException(value);</span>
+            } else {
+<span class="nc" id="L377">                return constant;</span>
+            }
+        }
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

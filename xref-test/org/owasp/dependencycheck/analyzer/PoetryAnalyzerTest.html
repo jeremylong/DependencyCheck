@@ -80,7 +80,14 @@
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          }
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>          assertTrue(<span class="jxr_string">"Expeced to find PyYAML"</span>, found);
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      }
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>  }
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      @Test(expected = AnalysisException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testPyprojectToml() <strong class="jxr_keyword">throws</strong> AnalysisException {
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> Dependency result = <strong class="jxr_keyword">new</strong> Dependency(BaseTest.getResourceAsFile(<strong class="jxr_keyword">this</strong>, <span class="jxr_string">"python-myproject-toml/pyproject.toml"</span>));
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          <em class="jxr_comment">//causes an exception.</em>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          analyzer.analyze(result, engine);
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>      }
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

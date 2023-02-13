@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExtractionUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">ExtractionUtil.java</span></div><h1>ExtractionUtil.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.io.IOUtils;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Set of utilities to extract files from archives.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+public final class ExtractionUtil {
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L54">    private static final Logger LOGGER = LoggerFactory.getLogger(ExtractionUtil.class);</span>
+
+    /**
+     * Private constructor for a utility class.
+     */
+    private ExtractionUtil() {
+    }
+
+    /**
+     * Extracts the contents of an archive into the specified directory.
+     *
+     * @param archive an archive file such as a WAR or EAR
+     * @param extractTo a directory to extract the contents to
+     * @throws ExtractionException thrown if an exception occurs while
+     * extracting the files
+     */
+    public static void extractFiles(File archive, File extractTo) throws ExtractionException {
+<span class="nc" id="L71">        extractFiles(archive, extractTo, null);</span>
+<span class="nc" id="L72">    }</span>
+
+    /**
+     * Extracts the contents of an archive into the specified directory. The
+     * files are only extracted if they are supported by the analyzers loaded
+     * into the specified engine. If the engine is specified as null then all
+     * files are extracted.
+     *
+     * @param archive an archive file such as a WAR or EAR
+     * @param extractTo a directory to extract the contents to
+     * @param engine the scanning engine
+     * @throws ExtractionException thrown if there is an error extracting the
+     * files
+     */
+    public static void extractFiles(File archive, File extractTo, Engine engine) throws ExtractionException {
+<span class="pc bpc" id="L87" title="2 of 4 branches missed.">        if (archive == null || extractTo == null) {</span>
+<span class="nc" id="L88">            return;</span>
+        }
+        final String destPath;
+        try {
+<span class="fc" id="L92">            destPath = extractTo.getCanonicalPath();</span>
+<span class="nc" id="L93">        } catch (IOException ex) {</span>
+<span class="nc" id="L94">            throw new ExtractionException(&quot;Unable to extract files to destination path&quot;, ex);</span>
+<span class="fc" id="L95">        }</span>
+        ZipEntry entry;
+<span class="fc" id="L97">        try (FileInputStream fis = new FileInputStream(archive);</span>
+<span class="fc" id="L98">                BufferedInputStream bis = new BufferedInputStream(fis);</span>
+<span class="fc" id="L99">                ZipInputStream zis = new ZipInputStream(bis)) {</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">            while ((entry = zis.getNextEntry()) != null) {</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                if (entry.isDirectory()) {</span>
+<span class="nc" id="L102">                    final File d = new File(extractTo, entry.getName());</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">                    if (!d.getCanonicalPath().startsWith(destPath)) {</span>
+<span class="nc" id="L104">                        final String msg = String.format(</span>
+                                &quot;Archive (%s) contains a path that would be extracted outside of the target directory.&quot;,
+<span class="nc" id="L106">                                archive.getAbsolutePath());</span>
+<span class="nc" id="L107">                        throw new ExtractionException(msg);</span>
+                    }
+<span class="nc bnc" id="L109" title="All 4 branches missed.">                    if (!d.exists() &amp;&amp; !d.mkdirs()) {</span>
+<span class="nc" id="L110">                        final String msg = String.format(&quot;Unable to create '%s'.&quot;, d.getAbsolutePath());</span>
+<span class="nc" id="L111">                        throw new ExtractionException(msg);</span>
+                    }
+<span class="nc" id="L113">                } else {</span>
+<span class="fc" id="L114">                    final File file = new File(extractTo, entry.getName());</span>
+<span class="pc bpc" id="L115" title="3 of 4 branches missed.">                    if (engine == null || engine.accept(file)) {</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">                        if (!file.getCanonicalPath().startsWith(destPath)) {</span>
+<span class="fc" id="L117">                            final String msg = String.format(</span>
+                                    &quot;Archive (%s) contains a file that would be extracted outside of the target directory.&quot;,
+<span class="fc" id="L119">                                    archive.getAbsolutePath());</span>
+<span class="fc" id="L120">                            throw new ExtractionException(msg);</span>
+                        }
+<span class="nc" id="L122">                        try (FileOutputStream fos = new FileOutputStream(file)) {</span>
+<span class="nc" id="L123">                            IOUtils.copy(zis, fos);</span>
+<span class="nc" id="L124">                        } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L125">                            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L126">                            final String msg = String.format(&quot;Unable to find file '%s'.&quot;, file.getName());</span>
+<span class="nc" id="L127">                            throw new ExtractionException(msg, ex);</span>
+<span class="nc" id="L128">                        } catch (IOException ex) {</span>
+<span class="nc" id="L129">                            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L130">                            final String msg = String.format(&quot;IO Exception while parsing file '%s'.&quot;, file.getName());</span>
+<span class="nc" id="L131">                            throw new ExtractionException(msg, ex);</span>
+<span class="nc" id="L132">                        }</span>
+                    }
+<span class="nc" id="L134">                }</span>
+            }
+<span class="fc" id="L136">        } catch (IOException ex) {</span>
+<span class="fc" id="L137">            final String msg = String.format(&quot;Exception reading archive '%s'.&quot;, archive.getName());</span>
+<span class="fc" id="L138">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L139">            throw new ExtractionException(msg, ex);</span>
+<span class="nc" id="L140">        }</span>
+<span class="nc" id="L141">    }</span>
+
+    /**
+     * Extracts the contents of an archive into the specified directory. The
+     * files are only extracted if they are supported by the analyzers loaded
+     * into the specified engine. If the engine is specified as null then all
+     * files are extracted.
+     *
+     * @param archive an archive file such as a WAR or EAR
+     * @param extractTo a directory to extract the contents to
+     * @throws ExtractionException thrown if there is an error extracting the
+     * files
+     */
+    public static void extractFiles(InputStream archive, File extractTo) throws ExtractionException {
+<span class="pc bpc" id="L155" title="2 of 4 branches missed.">        if (archive == null || extractTo == null) {</span>
+<span class="nc" id="L156">            return;</span>
+        }
+        final String destPath;
+        try {
+<span class="fc" id="L160">            destPath = extractTo.getCanonicalPath();</span>
+<span class="nc" id="L161">        } catch (IOException ex) {</span>
+<span class="nc" id="L162">            throw new ExtractionException(&quot;Unable to extract files to destination path&quot;, ex);</span>
+<span class="fc" id="L163">        }</span>
+        ZipEntry entry;
+<span class="fc" id="L165">        try (BufferedInputStream bis = new BufferedInputStream(archive);</span>
+<span class="fc" id="L166">                ZipInputStream zis = new ZipInputStream(bis)) {</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">            while ((entry = zis.getNextEntry()) != null) {</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">                if (entry.isDirectory()) {</span>
+<span class="nc" id="L169">                    final File d = new File(extractTo, entry.getName());</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">                    if (!d.getCanonicalPath().startsWith(destPath)) {</span>
+<span class="nc" id="L171">                        throw new ExtractionException(&quot;Archive contains a path that would be extracted outside of the target directory.&quot;);</span>
+                    }
+<span class="nc bnc" id="L173" title="All 4 branches missed.">                    if (!d.exists() &amp;&amp; !d.mkdirs()) {</span>
+<span class="nc" id="L174">                        final String msg = String.format(&quot;Unable to create '%s'.&quot;, d.getAbsolutePath());</span>
+<span class="nc" id="L175">                        throw new ExtractionException(msg);</span>
+                    }
+<span class="nc" id="L177">                } else {</span>
+<span class="fc" id="L178">                    final File file = new File(extractTo, entry.getName());</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">                    if (!file.getCanonicalPath().startsWith(destPath)) {</span>
+<span class="nc" id="L180">                        LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + destPath + &quot;\n-Path: &quot; + file);</span>
+<span class="nc" id="L181">                        throw new ExtractionException(&quot;Archive contains a file that would be extracted outside of the target directory.&quot;);</span>
+                    }
+<span class="fc" id="L183">                    try (FileOutputStream fos = new FileOutputStream(file)) {</span>
+<span class="fc" id="L184">                        IOUtils.copy(zis, fos);</span>
+<span class="nc" id="L185">                    } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L186">                        LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L187">                        final String msg = String.format(&quot;Unable to find file '%s'.&quot;, file.getName());</span>
+<span class="nc" id="L188">                        throw new ExtractionException(msg, ex);</span>
+<span class="nc" id="L189">                    } catch (IOException ex) {</span>
+<span class="nc" id="L190">                        LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L191">                        final String msg = String.format(&quot;IO Exception while parsing file '%s'.&quot;, file.getName());</span>
+<span class="nc" id="L192">                        throw new ExtractionException(msg, ex);</span>
+<span class="fc" id="L193">                    }</span>
+<span class="fc" id="L194">                }</span>
+            }
+<span class="nc" id="L196">        } catch (IOException ex) {</span>
+<span class="nc" id="L197">            throw new ExtractionException(&quot;Exception reading archive&quot;, ex);</span>
+<span class="fc" id="L198">        }</span>
+<span class="fc" id="L199">    }</span>
+
+    /**
+     * Extracts the contents of an archive into the specified directory.
+     *
+     * @param archive an archive file such as a WAR or EAR
+     * @param destination a directory to extract the contents to
+     * @param filter determines which files get extracted
+     * @throws ExtractionException thrown if the archive is not found
+     */
+    public static void extractFilesUsingFilter(File archive, File destination, FilenameFilter filter) throws ExtractionException {
+<span class="pc bpc" id="L210" title="2 of 4 branches missed.">        if (archive == null || destination == null) {</span>
+<span class="nc" id="L211">            return;</span>
+        }
+
+<span class="fc" id="L214">        try (FileInputStream fis = new FileInputStream(archive)) {</span>
+<span class="fc" id="L215">            extractArchive(new ZipArchiveInputStream(new BufferedInputStream(fis)), destination, filter);</span>
+<span class="nc" id="L216">        } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L217">            final String msg = String.format(&quot;Error extracting file `%s` with filter: %s&quot;, archive.getAbsolutePath(), ex.getMessage());</span>
+<span class="nc" id="L218">            LOGGER.debug(msg, ex);</span>
+<span class="nc" id="L219">            throw new ExtractionException(msg);</span>
+<span class="nc" id="L220">        } catch (IOException | ArchiveExtractionException ex) {</span>
+<span class="nc" id="L221">            LOGGER.warn(&quot;Exception extracting archive '{}'.&quot;, archive.getAbsolutePath());</span>
+<span class="nc" id="L222">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L223">            throw new ExtractionException(&quot;Unable to extract from archive&quot;, ex);</span>
+<span class="fc" id="L224">        }</span>
+<span class="fc" id="L225">    }</span>
+
+    /**
+     * Extracts files from an archive.
+     *
+     * @param input the archive to extract files from
+     * @param destination the location to write the files too
+     * @param filter determines which files get extracted
+     * @throws ArchiveExtractionException thrown if there is an exception
+     * extracting files from the archive
+     */
+    private static void extractArchive(ArchiveInputStream input,
+            File destination, FilenameFilter filter)
+            throws ArchiveExtractionException {
+        ArchiveEntry entry;
+        try {
+<span class="fc" id="L241">            final String destPath = destination.getCanonicalPath();</span>
+
+<span class="fc bfc" id="L243" title="All 2 branches covered.">            while ((entry = input.getNextEntry()) != null) {</span>
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">                if (entry.isDirectory()) {</span>
+<span class="nc" id="L245">                    final File dir = new File(destination, entry.getName());</span>
+<span class="nc bnc" id="L246" title="All 2 branches missed.">                    if (!dir.getCanonicalPath().startsWith(destPath)) {</span>
+<span class="nc" id="L247">                        final String msg = String.format(</span>
+                                &quot;Archive contains a path (%s) that would be extracted outside of the target directory.&quot;,
+<span class="nc" id="L249">                                dir.getAbsolutePath());</span>
+<span class="nc" id="L250">                        throw new AnalysisException(msg);</span>
+                    }
+<span class="nc bnc" id="L252" title="All 4 branches missed.">                    if (!dir.exists() &amp;&amp; !dir.mkdirs()) {</span>
+<span class="nc" id="L253">                        final String msg = String.format(</span>
+                                &quot;Unable to create directory '%s'.&quot;,
+<span class="nc" id="L255">                                dir.getAbsolutePath());</span>
+<span class="nc" id="L256">                        throw new AnalysisException(msg);</span>
+                    }
+<span class="nc" id="L258">                } else {</span>
+<span class="fc" id="L259">                    extractFile(input, destination, filter, entry);</span>
+                }
+            }
+<span class="nc" id="L262">        } catch (IOException | AnalysisException ex) {</span>
+<span class="nc" id="L263">            throw new ArchiveExtractionException(ex);</span>
+        } finally {
+<span class="fc" id="L265">            FileUtils.close(input);</span>
+        }
+<span class="fc" id="L267">    }</span>
+
+    /**
+     * Extracts a file from an archive (input stream) and correctly builds the
+     * directory structure.
+     *
+     * @param input the archive input stream
+     * @param destination where to write the file
+     * @param filter the file filter to apply to the files being extracted
+     * @param entry the entry from the archive to extract
+     * @throws ExtractionException thrown if there is an error reading from the
+     * archive stream
+     */
+    private static void extractFile(ArchiveInputStream input, File destination,
+            FilenameFilter filter, ArchiveEntry entry) throws ExtractionException {
+<span class="fc" id="L282">        final File file = new File(destination, entry.getName());</span>
+        try {
+<span class="fc bfc" id="L284" title="All 2 branches covered.">            if (filter.accept(file.getParentFile(), file.getName())) {</span>
+<span class="fc" id="L285">                final String destPath = destination.getCanonicalPath();</span>
+<span class="pc bpc" id="L286" title="1 of 2 branches missed.">                if (!file.getCanonicalPath().startsWith(destPath)) {</span>
+<span class="nc" id="L287">                    LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + destPath + &quot;\n-Path: &quot; + file);</span>
+<span class="nc" id="L288">                    final String msg = String.format(</span>
+                            &quot;Archive contains a file (%s) that would be extracted outside of the target directory.&quot;,
+<span class="nc" id="L290">                            file.getAbsolutePath());</span>
+<span class="nc" id="L291">                    throw new ExtractionException(msg);</span>
+                }
+<span class="fc" id="L293">                LOGGER.debug(&quot;Extracting '{}'&quot;, file.getPath());</span>
+<span class="fc" id="L294">                createParentFile(file);</span>
+
+<span class="fc" id="L296">                try (FileOutputStream fos = new FileOutputStream(file)) {</span>
+<span class="fc" id="L297">                    IOUtils.copy(input, fos);</span>
+<span class="nc" id="L298">                } catch (FileNotFoundException ex) {</span>
+<span class="nc" id="L299">                    LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L300">                    final String msg = String.format(&quot;Unable to find file '%s'.&quot;, file.getName());</span>
+<span class="nc" id="L301">                    throw new ExtractionException(msg, ex);</span>
+<span class="fc" id="L302">                }</span>
+            }
+<span class="nc" id="L304">        } catch (IOException ex) {</span>
+<span class="nc" id="L305">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L306">            final String msg = String.format(&quot;IO Exception while parsing file '%s'.&quot;, file.getName());</span>
+<span class="nc" id="L307">            throw new ExtractionException(msg, ex);</span>
+<span class="fc" id="L308">        }</span>
+<span class="fc" id="L309">    }</span>
+
+    /**
+     * Ensures the parent path is correctly created on disk so that the file can
+     * be extracted to the correct location.
+     *
+     * @param file the file path
+     * @throws ExtractionException thrown if the parent paths could not be
+     * created
+     */
+    private static void createParentFile(final File file) throws ExtractionException {
+<span class="fc" id="L320">        final File parent = file.getParentFile();</span>
+<span class="pc bpc" id="L321" title="2 of 4 branches missed.">        if (!parent.isDirectory() &amp;&amp; !parent.mkdirs()) {</span>
+<span class="nc" id="L322">            final String msg = String.format(</span>
+                    &quot;Unable to build directory '%s'.&quot;,
+<span class="nc" id="L324">                    parent.getAbsolutePath());</span>
+<span class="nc" id="L325">            throw new ExtractionException(msg);</span>
+        }
+<span class="fc" id="L327">    }</span>
+
+    /**
+     * Extracts the file contained in a gzip archive. The extracted file is
+     * placed in the exact same path as the file specified.
+     *
+     * @param file the archive file
+     * @throws FileNotFoundException thrown if the file does not exist
+     * @throws IOException thrown if there is an error extracting the file.
+     */
+    public static void extractGzip(File file) throws FileNotFoundException, IOException {
+<span class="nc" id="L338">        final String originalPath = file.getPath();</span>
+<span class="nc" id="L339">        final File gzip = new File(originalPath + &quot;.gz&quot;);</span>
+<span class="nc bnc" id="L340" title="All 4 branches missed.">        if (gzip.isFile() &amp;&amp; !gzip.delete()) {</span>
+<span class="nc" id="L341">            LOGGER.debug(&quot;Failed to delete initial temporary file when extracting 'gz' {}&quot;, gzip);</span>
+<span class="nc" id="L342">            gzip.deleteOnExit();</span>
+        }
+<span class="nc bnc" id="L344" title="All 2 branches missed.">        if (!file.renameTo(gzip)) {</span>
+<span class="nc" id="L345">            throw new IOException(&quot;Unable to rename '&quot; + file.getPath() + &quot;'&quot;);</span>
+        }
+<span class="nc" id="L347">        final File newFile = new File(originalPath);</span>
+<span class="nc" id="L348">        try (FileInputStream fis = new FileInputStream(gzip);</span>
+<span class="nc" id="L349">                GZIPInputStream cin = new GZIPInputStream(fis);</span>
+<span class="nc" id="L350">                FileOutputStream out = new FileOutputStream(newFile)) {</span>
+<span class="nc" id="L351">            IOUtils.copy(cin, out);</span>
+        } finally {
+<span class="nc bnc" id="L353" title="All 4 branches missed.">            if (gzip.isFile() &amp;&amp; !org.apache.commons.io.FileUtils.deleteQuietly(gzip)) {</span>
+<span class="nc" id="L354">                LOGGER.debug(&quot;Failed to delete temporary file when extracting 'gz' {}&quot;, gzip);</span>
+<span class="nc" id="L355">                gzip.deleteOnExit();</span>
+            }
+        }
+<span class="nc" id="L358">    }</span>
+
+    /**
+     * Extracts the file contained in a Zip archive. The extracted file is
+     * placed in the exact same path as the file specified.
+     *
+     * @param file the archive file
+     * @throws FileNotFoundException thrown if the file does not exist
+     * @throws IOException thrown if there is an error extracting the file.
+     */
+    public static void extractZip(File file) throws FileNotFoundException, IOException {
+<span class="nc" id="L369">        final String originalPath = file.getPath();</span>
+<span class="nc" id="L370">        final File zip = new File(originalPath + &quot;.zip&quot;);</span>
+<span class="nc bnc" id="L371" title="All 4 branches missed.">        if (zip.isFile() &amp;&amp; !zip.delete()) {</span>
+<span class="nc" id="L372">            LOGGER.debug(&quot;Failed to delete initial temporary file when extracting 'zip' {}&quot;, zip);</span>
+<span class="nc" id="L373">            zip.deleteOnExit();</span>
+        }
+<span class="nc bnc" id="L375" title="All 2 branches missed.">        if (!file.renameTo(zip)) {</span>
+<span class="nc" id="L376">            throw new IOException(&quot;Unable to rename '&quot; + file.getPath() + &quot;'&quot;);</span>
+        }
+<span class="nc" id="L378">        final File newFile = new File(originalPath);</span>
+<span class="nc" id="L379">        try (FileInputStream fis = new FileInputStream(zip);</span>
+<span class="nc" id="L380">                ZipInputStream cin = new ZipInputStream(fis);</span>
+<span class="nc" id="L381">                FileOutputStream out = new FileOutputStream(newFile)) {</span>
+<span class="nc" id="L382">            cin.getNextEntry();</span>
+<span class="nc" id="L383">            IOUtils.copy(cin, out);</span>
+        } finally {
+<span class="nc bnc" id="L385" title="All 4 branches missed.">            if (zip.isFile() &amp;&amp; !org.apache.commons.io.FileUtils.deleteQuietly(zip)) {</span>
+<span class="nc" id="L386">                LOGGER.debug(&quot;Failed to delete temporary file when extracting 'zip' {}&quot;, zip);</span>
+<span class="nc" id="L387">                zip.deleteOnExit();</span>
+            }
+        }
+<span class="nc" id="L390">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HostedSuppressionsDataSource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.update</a> &gt; <span class="el_source">HostedSuppressionsDataSource.java</span></div><h1>HostedSuppressionsDataSource.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2022 Hans Aikema. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.update;
+
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.exception.WriteLockException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
+import org.owasp.dependencycheck.utils.WriteLock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+
+<span class="fc" id="L37">public class HostedSuppressionsDataSource  implements CachedWebDataSource {</span>
+
+    /**
+     * Static logger.
+     */
+<span class="fc" id="L42">    private static final Logger LOGGER = LoggerFactory.getLogger(HostedSuppressionsDataSource.class);</span>
+
+    /**
+     * The configured settings.
+     */
+    private Settings settings;
+
+    /**
+     * The default URL to the Hosted Suppressions file.
+     */
+    public static final String DEFAULT_SUPPRESSIONS_URL = &quot;https://jeremylong.github.io/DependencyCheck/suppressions/publishedSuppressions.xml&quot;;
+
+    /**
+     * Downloads the current Hosted suppressions file.
+     *
+     * @param engine a reference to the ODC Engine
+     * @return returns false as no updates are made to the database, just web resources cached locally
+     * @throws UpdateException thrown if the update encountered fatal errors
+     */
+    @Override
+    public boolean update(Engine engine) throws UpdateException {
+<span class="fc" id="L63">        this.settings = engine.getSettings();</span>
+<span class="fc" id="L64">        final String configuredUrl = settings.getString(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, DEFAULT_SUPPRESSIONS_URL);</span>
+<span class="fc" id="L65">        final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
+<span class="fc" id="L66">        final boolean forceupdate = settings.getBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, false);</span>
+<span class="fc" id="L67">        final boolean cpeSuppressionEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_CPE_SUPPRESSION_ENABLED, true);</span>
+<span class="fc" id="L68">        final boolean vulnSuppressionEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_VULNERABILITY_SUPPRESSION_ENABLED, true);</span>
+<span class="pc bpc" id="L69" title="3 of 4 branches missed.">        final boolean enabled = cpeSuppressionEnabled || vulnSuppressionEnabled;</span>
+        try {
+<span class="fc" id="L71">            final URL url = new URL(configuredUrl);</span>
+<span class="fc" id="L72">            final File filepath = new File(url.getPath());</span>
+<span class="fc" id="L73">            final File repoFile = new File(settings.getDataDirectory(), filepath.getName());</span>
+<span class="pc bpc" id="L74" title="4 of 8 branches missed.">            final boolean proceed = enabled &amp;&amp; (forceupdate || (autoupdate &amp;&amp; shouldUpdate(repoFile)));</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            if (proceed) {</span>
+<span class="fc" id="L76">                LOGGER.debug(&quot;Begin Hosted Suppressions file update&quot;);</span>
+<span class="fc" id="L77">                fetchHostedSuppressions(settings, url, repoFile);</span>
+            }
+<span class="nc" id="L79">        } catch (UpdateException ex) {</span>
+            // only emit a warning, DependencyCheck will continue without taking the latest hosted suppressions into account.
+<span class="nc" id="L81">            LOGGER.warn(&quot;Failed to update hosted suppressions file, results may contain false positives already resolved by the &quot;</span>
+                        + &quot;DependencyCheck project&quot;, ex);
+<span class="nc" id="L83">        } catch (MalformedURLException ex) {</span>
+<span class="nc" id="L84">            throw new UpdateException(String.format(&quot;Invalid URL for Hosted Suppressions file (%s)&quot;, configuredUrl), ex);</span>
+<span class="nc" id="L85">        } catch (IOException ex) {</span>
+<span class="nc" id="L86">            throw new UpdateException(&quot;Unable to get the data directory&quot;, ex);</span>
+<span class="pc" id="L87">        }</span>
+<span class="fc" id="L88">        return false;</span>
+    }
+
+    /**
+     * Determines if the we should update the Hosted Suppressions file.
+     *
+     * @param repo the Hosted Suppressions file.
+     * @return &lt;code&gt;true&lt;/code&gt; if an update to the Hosted Suppressions file should
+     * be performed; otherwise &lt;code&gt;false&lt;/code&gt;
+     * @throws NumberFormatException thrown if an invalid value is contained in
+     * the database properties
+     */
+    protected boolean shouldUpdate(File repo) throws NumberFormatException {
+<span class="nc" id="L101">        boolean proceed = true;</span>
+<span class="nc bnc" id="L102" title="All 4 branches missed.">        if (repo != null &amp;&amp; repo.isFile()) {</span>
+<span class="nc" id="L103">            final int validForHours = settings.getInt(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, 2);</span>
+<span class="nc" id="L104">            final long lastUpdatedOn = repo.lastModified();</span>
+<span class="nc" id="L105">            final long now = System.currentTimeMillis();</span>
+<span class="nc" id="L106">            LOGGER.debug(&quot;Last updated: {}&quot;, lastUpdatedOn);</span>
+<span class="nc" id="L107">            LOGGER.debug(&quot;Now: {}&quot;, now);</span>
+<span class="nc" id="L108">            final long msValid = validForHours * 60L * 60L * 1000L;</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">            proceed = (now - lastUpdatedOn) &gt; msValid;</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">            if (!proceed) {</span>
+<span class="nc" id="L111">                LOGGER.info(&quot;Skipping Hosted Suppressions file update since last update was within {} hours.&quot;, validForHours);</span>
+            }
+        }
+<span class="nc" id="L114">        return proceed;</span>
+    }
+
+    /**
+     * Fetches the hosted suppressions file
+     *
+     * @param settings a reference to the dependency-check settings
+     * @param repoUrl the URL to the hosted suppressions file to use
+     * @param repoFile the local file where the hosted suppressions file is to be placed
+     * @throws UpdateException thrown if there is an exception during
+     * initialization
+     */
+    @SuppressWarnings(&quot;try&quot;)
+    private void fetchHostedSuppressions(Settings settings, URL repoUrl, File repoFile) throws UpdateException {
+<span class="fc" id="L128">        try (WriteLock ignored = new WriteLock(settings, true, repoFile.getName() + &quot;.lock&quot;)) {</span>
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">            if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L130">                LOGGER.debug(&quot;Hosted Suppressions URL: {}&quot;, repoUrl.toExternalForm());</span>
+            }
+<span class="fc" id="L132">            final Downloader downloader = new Downloader(settings);</span>
+<span class="fc" id="L133">            downloader.fetchFile(repoUrl, repoFile);</span>
+<span class="nc" id="L134">        } catch (IOException | TooManyRequestsException | ResourceNotFoundException | WriteLockException ex) {</span>
+<span class="nc" id="L135">            throw new UpdateException(&quot;Failed to update the hosted suppressions file&quot;, ex);</span>
+<span class="fc" id="L136">        }</span>
+<span class="fc" id="L137">    }</span>
+
+    @Override
+    @SuppressWarnings(&quot;try&quot;)
+    public boolean purge(Engine engine) {
+<span class="nc" id="L142">        this.settings = engine.getSettings();</span>
+<span class="nc" id="L143">        boolean result = true;</span>
+        try {
+<span class="nc" id="L145">            final URL repoUrl = new URL(settings.getString(Settings.KEYS.HOSTED_SUPPRESSIONS_URL,</span>
+                                                                       DEFAULT_SUPPRESSIONS_URL));
+<span class="nc" id="L147">            final String filename = new File(repoUrl.getPath()).getName();</span>
+<span class="nc" id="L148">            final File repo = new File(settings.getDataDirectory(), filename);</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">            if (repo.exists()) {</span>
+<span class="nc" id="L150">                try (WriteLock ignored = new WriteLock(settings, true, filename + &quot;.lock&quot;)) {</span>
+<span class="nc" id="L151">                    result = deleteCachedFile(repo);</span>
+                }
+            }
+<span class="nc" id="L154">        } catch (WriteLockException | IOException ex) {</span>
+<span class="nc" id="L155">            LOGGER.error(&quot;Unable to delete the Hosted suppression file - invalid configuration&quot;);</span>
+<span class="nc" id="L156">            result = false;</span>
+<span class="nc" id="L157">        }</span>
+<span class="nc" id="L158">        return result;</span>
+    }
+
+    private boolean deleteCachedFile(final File repo) {
+<span class="nc" id="L162">        boolean deleted = true;</span>
+        try {
+<span class="nc" id="L164">            Files.delete(repo.toPath());</span>
+<span class="nc" id="L165">            LOGGER.info(&quot;Hosted suppression file removed successfully&quot;);</span>
+<span class="nc" id="L166">        } catch (IOException ex) {</span>
+<span class="nc" id="L167">            LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, repo.getAbsolutePath(), ex);</span>
+<span class="nc" id="L168">            deleted = false;</span>
+<span class="nc" id="L169">        }</span>
+<span class="nc" id="L170">        return deleted;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

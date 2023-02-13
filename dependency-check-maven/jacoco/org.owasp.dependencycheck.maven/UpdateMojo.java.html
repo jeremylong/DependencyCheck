@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UpdateMojo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.maven</a> &gt; <span class="el_source">UpdateMojo.java</span></div><h1>UpdateMojo.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-maven.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.maven;
+
+import java.util.Locale;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.Settings;
+
+/**
+ * Maven Plugin that updates the local cache of the NVD data from NIST.
+ *
+ * @author Jeremy Long
+ */
+@Mojo(
+        name = &quot;update-only&quot;,
+        requiresProject = false,
+        defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
+        threadSafe = true,
+        requiresDependencyResolution = ResolutionScope.NONE,
+        requiresOnline = true,
+        aggregator = true
+)
+<span class="fc" id="L47">public class UpdateMojo extends BaseDependencyCheckMojo {</span>
+
+    /**
+     * Returns false; this mojo cannot generate a report.
+     *
+     * @return &lt;code&gt;false&lt;/code&gt;
+     */
+    @Override
+    public boolean canGenerateReport() {
+<span class="nc" id="L56">        return false;</span>
+    }
+
+    /**
+     * Executes the dependency-check engine on the project's dependencies and
+     * generates the report.
+     *
+     * @throws MojoExecutionException thrown if there is an exception executing
+     * the goal
+     * @throws MojoFailureException thrown if dependency-check is configured to
+     * fail the build
+     */
+    @Override
+    protected void runCheck() throws MojoExecutionException, MojoFailureException {
+<span class="fc" id="L70">        try (Engine engine = initializeEngine()) {</span>
+            try {
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">                if (!engine.getSettings().getBoolean(Settings.KEYS.AUTO_UPDATE)) {</span>
+<span class="nc" id="L73">                    engine.getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
+                }
+<span class="nc" id="L75">            } catch (InvalidSettingException ex) {</span>
+<span class="nc" id="L76">                engine.getSettings().setBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
+<span class="fc" id="L77">            }</span>
+<span class="fc" id="L78">            engine.doUpdates();</span>
+<span class="nc" id="L79">        } catch (DatabaseException ex) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (getLog().isDebugEnabled()) {</span>
+<span class="nc" id="L81">                getLog().debug(&quot;Database connection error&quot;, ex);</span>
+            }
+<span class="nc" id="L83">            final String msg = &quot;An exception occurred connecting to the local database. Please see the log file for more details.&quot;;</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
+<span class="nc" id="L85">                throw new MojoExecutionException(msg, ex);</span>
+            }
+<span class="nc" id="L87">            getLog().error(msg);</span>
+<span class="nc" id="L88">        } catch (UpdateException ex) {</span>
+<span class="nc" id="L89">            final String msg = &quot;An exception occurred while downloading updates. Please see the log file for more details.&quot;;</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
+<span class="nc" id="L91">                throw new MojoExecutionException(msg, ex);</span>
+            }
+<span class="nc" id="L93">            getLog().error(msg);</span>
+        } finally {
+<span class="fc" id="L95">            getSettings().cleanup();</span>
+        }
+<span class="fc" id="L97">    }</span>
+
+    /**
+     * Returns the report name.
+     *
+     * @param locale the location
+     * @return the report name
+     */
+    @Override
+    public String getName(Locale locale) {
+<span class="nc" id="L107">        return &quot;dependency-check-update&quot;;</span>
+    }
+
+    /**
+     * Gets the description of the Dependency-Check report to be displayed in
+     * the Maven Generated Reports page.
+     *
+     * @param locale The Locale to get the description for
+     * @return the description
+     */
+    @Override
+    public String getDescription(Locale locale) {
+<span class="nc" id="L119">        return &quot;Updates the local cache of the NVD data from NIST.&quot;;</span>
+    }
+
+    /**
+     * Throws an exception if called. The update mojo does not scan
+     * dependencies.
+     *
+     * @param engine the engine used to scan
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if there is an exception
+     */
+    @Override
+    protected ExceptionCollection scanDependencies(Engine engine) throws MojoExecutionException {
+<span class="nc" id="L132">        throw new UnsupportedOperationException(&quot;Operation not supported&quot;);</span>
+    }
+
+    /**
+     * Throws an exception if called. The purge mojo does not scan dependencies.
+     *
+     * @param engine the engine used to scan
+     * @param exCollection the collection of exceptions that might have occurred
+     * previously
+     * @return a collection of exceptions
+     * @throws MojoExecutionException thrown if there is an exception
+     */
+    @Override
+    protected ExceptionCollection scanPlugins(final Engine engine, final ExceptionCollection exCollection) throws MojoExecutionException {
+<span class="nc" id="L146">        throw new UnsupportedOperationException(&quot;Operation not supported&quot;);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GoModJsonParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.golang</a> &gt; <span class="el_source">GoModJsonParser.java</span></div><h1>GoModJsonParser.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.golang;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.concurrent.ThreadSafe;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonReaderFactory;
+import javax.json.stream.JsonParsingException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.utils.JsonArrayFixingInputStream;
+
+/**
+ * Parses json output from `go list -json -m all`.
+ *
+ * @author Matthijs van den Bos
+ */
+@ThreadSafe
+public final class GoModJsonParser {
+
+    /**
+     * The LOGGER
+     */
+<span class="fc" id="L51">    private static final Logger LOGGER = LoggerFactory.getLogger(GoModJsonParser.class);</span>
+
+    private GoModJsonParser() {
+    }
+
+    /**
+     * Process the input stream to create the list of dependencies.
+     *
+     * @param inputStream the InputStream to parse
+     * @return the list of dependencies
+     * @throws AnalysisException thrown when there is an error parsing the
+     * results of `go mod`
+     */
+    public static List&lt;GoModDependency&gt; process(InputStream inputStream) throws AnalysisException {
+<span class="fc" id="L65">        LOGGER.debug(&quot;Beginning go.mod processing&quot;);</span>
+
+<span class="fc" id="L67">        final List&lt;GoModDependency&gt; goModDependencies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L68">        try (JsonArrayFixingInputStream jsonStream = new JsonArrayFixingInputStream(inputStream)) {</span>
+<span class="fc" id="L69">            final JsonReaderFactory factory = Json.createReaderFactory(null);</span>
+<span class="fc" id="L70">            try (JsonReader reader = factory.createReader(jsonStream, java.nio.charset.StandardCharsets.UTF_8)) {</span>
+<span class="fc" id="L71">                final JsonArray modules = reader.readArray();</span>
+<span class="fc" id="L72">                modules.getValuesAs(JsonObject.class).forEach((module) -&gt; {</span>
+<span class="fc" id="L73">                    final String path = module.getString(&quot;Path&quot;);</span>
+<span class="fc" id="L74">                    String version = module.getString(&quot;Version&quot;, null);</span>
+<span class="pc bpc" id="L75" title="1 of 4 branches missed.">                    if (version != null &amp;&amp; version.startsWith(&quot;v&quot;)) {</span>
+<span class="fc" id="L76">                        version = version.substring(1);</span>
+                    }
+<span class="fc" id="L78">                    String dir = null;</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                    if (module.getJsonString(&quot;Dir&quot;) != null) {</span>
+<span class="fc" id="L80">                        dir = module.getString(&quot;Dir&quot;);</span>
+                    }
+<span class="fc" id="L82">                    goModDependencies.add(new GoModDependency(path, version, dir));</span>
+<span class="fc" id="L83">                });</span>
+            }
+<span class="nc" id="L85">        } catch (JsonParsingException jsonpe) {</span>
+<span class="nc" id="L86">            throw new AnalysisException(&quot;Error parsing output from `go list -json -m all`&quot;, jsonpe);</span>
+<span class="nc" id="L87">        } catch (JsonException jsone) {</span>
+<span class="nc" id="L88">            throw new AnalysisException(&quot;Error reading output from `go list -json -m all`&quot;, jsone);</span>
+<span class="nc" id="L89">        } catch (IllegalStateException ise) {</span>
+<span class="nc" id="L90">            throw new AnalysisException(&quot;Illegal state in go mod stream&quot;, ise);</span>
+<span class="nc" id="L91">        } catch (ClassCastException cce) {</span>
+<span class="nc" id="L92">            throw new AnalysisException(&quot;JSON not exactly matching output of `go list -json -m all`&quot;, cce);</span>
+<span class="nc" id="L93">        } catch (IOException ex) {</span>
+<span class="nc" id="L94">            throw new AnalysisException(&quot;Error reading output of `go list -json -m all`&quot;, ex);</span>
+<span class="fc" id="L95">        }</span>
+<span class="fc" id="L96">        return goModDependencies;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

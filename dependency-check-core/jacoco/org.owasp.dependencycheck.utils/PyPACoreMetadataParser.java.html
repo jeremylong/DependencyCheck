@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PyPACoreMetadataParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">PyPACoreMetadataParser.java</span></div><h1>PyPACoreMetadataParser.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Properties;
+
+/**
+ * A utility class to handle Python Packaging Authority (PyPA) core metadata files. It was created based on the
+ * &lt;a href=&quot;https://packaging.python.org/en/latest/specifications/core-metadata/&quot;&gt;specification by PyPA&lt;/a&gt; for
+ * version 2.2
+ *
+ * @author Hans Aikema
+ */
+public final class PyPACoreMetadataParser {
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L45">    private static final Logger LOGGER = LoggerFactory.getLogger(PyPACoreMetadataParser.class);</span>
+
+    /**
+     * The largest major version considered by this parser
+     */
+    private static final int SUPPORTED_MAJOR_UPPERBOUND = 2;
+
+    /**
+     * The largest version of the specification considered during coding of this parser
+     */
+<span class="fc" id="L55">    private static final BigDecimal MAX_SUPPORTED_VERSION = BigDecimal.valueOf(22, 1);</span>
+
+    private PyPACoreMetadataParser() {
+        // hide constructor for utility class
+    }
+    /**
+     * Loads all key/value pairs from PyPA metadata specifications¶.
+     *
+     * @param file
+     *         The Wheel metadata of a Python package as a File
+     *
+     * @return The metadata properties read from the file
+     */
+    public static Properties getProperties(File file) throws AnalysisException {
+<span class="fc" id="L69">        try (BufferedReader utf8Reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {</span>
+<span class="fc" id="L70">            return getProperties(utf8Reader);</span>
+<span class="nc" id="L71">        } catch (IOException | IllegalArgumentException e) {</span>
+<span class="nc" id="L72">            throw new AnalysisException(&quot;Error parsing PyPA core-metadata file&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Loads all key/value pairs from PyPA metadata specifications¶.
+     *
+     * @param utf8Reader
+     *         The Wheel metadata of a Python package as a BufferedReader
+     *
+     * @return The metadata properties read from the utf8Reader
+     * @throws java.io.IOException thrown if there is error reading the properties
+     */
+    public static Properties getProperties(final BufferedReader utf8Reader) throws IOException {
+<span class="fc" id="L86">        final Properties result = new Properties();</span>
+<span class="fc" id="L87">        String line = utf8Reader.readLine();</span>
+<span class="fc" id="L88">        StringBuilder singleHeader = null;</span>
+<span class="fc" id="L89">        boolean inDescription = false;</span>
+<span class="fc bfc" id="L90" title="All 4 branches covered.">        while (line != null &amp;&amp; !line.isEmpty()) {</span>
+<span class="fc bfc" id="L91" title="All 4 branches covered.">            if (inDescription &amp;&amp; line.startsWith(&quot;       |&quot;)) {</span>
+<span class="fc" id="L92">                singleHeader.append('\n').append(line.substring(8));</span>
+<span class="fc bfc" id="L93" title="All 4 branches covered.">            } else if (singleHeader != null &amp;&amp; line.startsWith(&quot; &quot;)) {</span>
+<span class="fc" id="L94">                singleHeader.append(line.substring(1));</span>
+            } else {
+<span class="fc bfc" id="L96" title="All 2 branches covered.">                if (singleHeader != null) {</span>
+<span class="fc" id="L97">                    parseAndAddHeader(result, singleHeader);</span>
+                }
+<span class="fc" id="L99">                singleHeader = new StringBuilder(line);</span>
+<span class="fc" id="L100">                inDescription = line.startsWith(&quot;Description:&quot;);</span>
+            }
+<span class="fc" id="L102">            line = utf8Reader.readLine();</span>
+        }
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if (singleHeader != null) {</span>
+<span class="fc" id="L105">            parseAndAddHeader(result, singleHeader);</span>
+        }
+        // ignore a body if any (description is allowed to be the message body)
+<span class="fc" id="L108">        return result;</span>
+    }
+
+    /**
+     * Add a single metadata keyvalue pair to the metadata. When the given metadataHeader cannot be parsed as a '{@code key: value}'
+     * line a warning is emitted and the line is ignored.
+     *
+     * @param metadata
+     *         The collected metadata to which the new metadataHeader must be added
+     * @param metadataHeader
+     *         A single uncollapsed header line of the metadata
+     *
+     * @throws IllegalArgumentException
+     *         When the given metadataHeader has a key {@code Metadata-Version} and the value holds a major version that is larger
+     *         than the highest supported metadata version. As defined by the specification: &lt;blockquote&gt;Automated tools consuming
+     *         metadata SHOULD warn if metadata_version is greater than the highest version they support, and MUST fail if
+     *         metadata_version has a greater major version than the highest version they support (as described in PEP 440, the
+     *         major version is the value before the first dot).&lt;/blockquote&gt;
+     */
+    private static void parseAndAddHeader(final Properties metadata, final StringBuilder metadataHeader) {
+<span class="fc" id="L128">        final String[] keyValue = StringUtils.split(metadataHeader.toString(), &quot;:&quot;, 2);</span>
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if (keyValue.length != 2) {</span>
+<span class="nc" id="L130">            LOGGER.warn(&quot;Invalid mailheader format encountered in Wheel Metadata, not a \&quot;key: value\&quot; string&quot;);</span>
+<span class="nc" id="L131">            return;</span>
+        }
+<span class="fc" id="L133">        final String key = keyValue[0];</span>
+<span class="fc" id="L134">        final String value = keyValue[1].trim();</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if (&quot;Metadata-Version&quot;.equals(key)) {</span>
+<span class="fc" id="L136">            final int majorVersion = Integer.parseInt(value.substring(0, value.indexOf('.')), 10);</span>
+<span class="fc" id="L137">            final BigDecimal version = new BigDecimal(value);</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if (majorVersion &gt; SUPPORTED_MAJOR_UPPERBOUND) {</span>
+<span class="fc" id="L139">                throw new IllegalArgumentException(String.format(</span>
+                        &quot;Unsupported PyPA Wheel metadata. Metadata-Version &quot; + &quot;is '%s', largest supported major is %d&quot;, value,
+<span class="fc" id="L141">                        SUPPORTED_MAJOR_UPPERBOUND));</span>
+<span class="pc bpc" id="L142" title="1 of 4 branches missed.">            } else if (version.compareTo(MAX_SUPPORTED_VERSION) &gt; 0 &amp;&amp; LOGGER.isWarnEnabled()) {</span>
+<span class="fc" id="L143">                LOGGER.warn(String.format(&quot;Wheel metadata Metadata-Version (%s) has a larger minor version than the highest known &quot;</span>
+                                          + &quot;supported Metadata specification (%s) continuing with best effort&quot;, value,
+                                          MAX_SUPPORTED_VERSION));
+            }
+        }
+<span class="fc" id="L148">        metadata.setProperty(key, value);</span>
+<span class="fc" id="L149">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

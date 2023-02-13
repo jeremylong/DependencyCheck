@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CollectingRootDependencyGraphVisitor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.maven</a> &gt; <span class="el_source">CollectingRootDependencyGraphVisitor.java</span></div><h1>CollectingRootDependencyGraphVisitor.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-maven.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2022 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.maven;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
+
+/**
+ *
+ * @author Jeremy Long
+ */
+<span class="fc" id="L32">public class CollectingRootDependencyGraphVisitor implements DependencyNodeVisitor {</span>
+
+    /**
+     * The map of nodes collected by root nodes.
+     */
+<span class="fc" id="L37">    private final Map&lt;DependencyNode, List&lt;DependencyNode&gt;&gt; nodes = new HashMap&lt;&gt;();</span>
+    /**
+     * A reference to the root node of the dependency tree.
+     */
+    private DependencyNode root;
+    /**
+     * Track the depth of the dependency tree.
+     */
+<span class="fc" id="L45">    private int depth = 0;</span>
+
+    @Override
+    public boolean visit(DependencyNode node) {
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (depth == 0) {</span>
+<span class="fc" id="L50">            root = node;</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">            if (!nodes.containsKey(root)) {</span>
+<span class="fc" id="L52">                nodes.put(root, new ArrayList&lt;&gt;());</span>
+            }
+        } else {
+            // collect node
+<span class="fc" id="L56">            nodes.get(root).add(node);</span>
+        }
+<span class="fc" id="L58">        depth += 1;</span>
+<span class="fc" id="L59">        return true;</span>
+    }
+
+    @Override
+    public boolean endVisit(DependencyNode node) {
+<span class="fc" id="L64">        depth -= 1;</span>
+<span class="fc" id="L65">        return true;</span>
+    }
+
+    public Map&lt;DependencyNode, List&lt;DependencyNode&gt;&gt; getNodes() {
+<span class="fc" id="L69">        return Collections.unmodifiableMap(nodes);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

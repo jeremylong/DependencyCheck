@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NvdCveAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">NvdCveAnalyzer.java</span></div><h1>NvdCveAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2012 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.analyzer.exception.LambdaExceptionWrapper;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.Vulnerability;
+import org.owasp.dependencycheck.dependency.Vulnerability.Source;
+import org.owasp.dependencycheck.dependency.VulnerableSoftware;
+import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
+import org.owasp.dependencycheck.utils.Settings;
+
+/**
+ * NvdCveAnalyzer is a utility class that takes a project dependency and
+ * attempts to discern if there is an associated CVEs. It uses the the
+ * identifiers found by other analyzers to lookup the CVE data.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+<span class="fc" id="L45">public class NvdCveAnalyzer extends AbstractAnalyzer {</span>
+
+    /**
+     * Analyzes a dependency and attempts to determine if there are any CPE
+     * identifiers for this dependency.
+     *
+     * @param dependency The Dependency to analyze
+     * @param engine The analysis engine
+     * @throws AnalysisException thrown if there is an issue analyzing the
+     * dependency
+     */
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="fc" id="L58">        final CveDB cveDB = engine.getDatabase();</span>
+        try {
+<span class="fc" id="L60">            dependency.getVulnerableSoftwareIdentifiers().stream()</span>
+<span class="fc" id="L61">                    .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
+<span class="fc" id="L62">                    .map(i -&gt; (CpeIdentifier) i)</span>
+<span class="fc" id="L63">                    .forEach(i -&gt; {</span>
+                        try {
+<span class="fc" id="L65">                            final List&lt;Vulnerability&gt; vulns = filterEcosystem(dependency.getEcosystem(), cveDB.getVulnerabilities(i.getCpe()));</span>
+
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                            if (Ecosystem.NODEJS.equals(dependency.getEcosystem())) {</span>
+<span class="fc" id="L68">                                replaceOrAddVulnerability(dependency, vulns);</span>
+                            } else {
+<span class="fc" id="L70">                                dependency.addVulnerabilities(vulns);</span>
+                            }
+<span class="nc" id="L72">                        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L73">                            throw new LambdaExceptionWrapper(new AnalysisException(ex));</span>
+<span class="fc" id="L74">                        }</span>
+<span class="fc" id="L75">                    });</span>
+<span class="fc" id="L76">            dependency.getSuppressedIdentifiers().stream()</span>
+<span class="pc" id="L77">                    .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
+<span class="pc" id="L78">                    .map(i -&gt; (CpeIdentifier) i)</span>
+<span class="fc" id="L79">                    .forEach(i -&gt; {</span>
+                        try {
+<span class="nc" id="L81">                            final List&lt;Vulnerability&gt; vulns = cveDB.getVulnerabilities(i.getCpe());</span>
+<span class="nc" id="L82">                            dependency.addSuppressedVulnerabilities(vulns);</span>
+<span class="nc" id="L83">                        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L84">                            throw new LambdaExceptionWrapper(new AnalysisException(ex));</span>
+<span class="nc" id="L85">                        }</span>
+<span class="nc" id="L86">                    });</span>
+<span class="nc" id="L87">        } catch (LambdaExceptionWrapper ex) {</span>
+<span class="nc" id="L88">            throw (AnalysisException) ex.getCause();</span>
+<span class="fc" id="L89">        }</span>
+<span class="fc" id="L90">    }</span>
+
+    /**
+     * Returns the name of this analyzer.
+     *
+     * @return the name of this analyzer.
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L99">        return &quot;NVD CVE Analyzer&quot;;</span>
+    }
+
+    /**
+     * Returns the analysis phase that this analyzer should run in.
+     *
+     * @return the analysis phase that this analyzer should run in.
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L109">        return AnalysisPhase.FINDING_ANALYSIS;</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * Returns the setting key to determine if the analyzer is enabled.&lt;/p&gt;
+     *
+     * @return the key for the analyzer's enabled property
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L120">        return Settings.KEYS.ANALYZER_NVD_CVE_ENABLED;</span>
+    }
+
+    /**
+     * Evaluates if the vulnerability is already present; if it is the
+     * vulnerability is not added.
+     *
+     * @param dependency a reference to the dependency being analyzed
+     * @param vulns the vulnerability to add
+     */
+    private void replaceOrAddVulnerability(Dependency dependency, List&lt;Vulnerability&gt; vulns) {
+<span class="pc" id="L131">        vulns.forEach(v -&gt; v.getReferences().forEach(ref -&gt; dependency.getVulnerabilities().forEach(existing -&gt; {</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                if (existing.getSource() == Source.NPM</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                        &amp;&amp; ref.getName() != null</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">                        &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + existing.getName())) {</span>
+<span class="nc" id="L135">                    dependency.removeVulnerability(existing);</span>
+                }
+<span class="nc" id="L137">            })));</span>
+<span class="fc" id="L138">        dependency.addVulnerabilities(vulns);</span>
+<span class="fc" id="L139">    }</span>
+
+    /**
+     * Filters the list of vulnerabilities for the given ecosystem compared to
+     * the target software from the NVD.
+     *
+     * @param ecosystem the dependency's ecosystem
+     * @param vulnerabilities the list of vulnerabilities to filter
+     * @return the filtered list of vulnerabilities
+     */
+    private synchronized List&lt;Vulnerability&gt; filterEcosystem(String ecosystem, List&lt;Vulnerability&gt; vulnerabilities) {
+<span class="fc" id="L150">        final List&lt;Vulnerability&gt; remove = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L151">        vulnerabilities.forEach((v) -&gt; {</span>
+<span class="fc" id="L152">            boolean found = false;</span>
+<span class="fc" id="L153">            final List&lt;VulnerableSoftware&gt; removeSoftare = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">            for (VulnerableSoftware s : v.getVulnerableSoftware()) {</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">                if (ecosystemMatchesTargetSoftware(ecosystem, s.getTargetSw())) {</span>
+<span class="fc" id="L156">                    found = true;</span>
+                } else {
+<span class="nc" id="L158">                    removeSoftare.add(s);</span>
+                }
+<span class="fc" id="L160">            }</span>
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            if (found) {</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">                if (!removeSoftare.isEmpty()) {</span>
+<span class="nc" id="L163">                    removeSoftare.forEach(v.getVulnerableSoftware()::remove);</span>
+                }
+            } else {
+<span class="nc" id="L166">                remove.add(v);</span>
+            }
+<span class="fc" id="L168">        });</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (!remove.isEmpty()) {</span>
+<span class="nc" id="L170">            vulnerabilities.removeAll(remove);</span>
+        }
+<span class="fc" id="L172">        return vulnerabilities;</span>
+    }
+
+    /**
+     * Determines if the target software matches the given ecosystem. Currently,
+     * this is very Node JS specific and broadly returns matches for everything
+     * else.
+     *
+     * @param ecosystem the ecosystem to match against
+     * @param targetSoftware the target software from the NVD
+     * @return &lt;code&gt;true&lt;/code&gt; if there is a match; otherwise
+     * &lt;code&gt;false&lt;/code&gt;
+     */
+    private boolean ecosystemMatchesTargetSoftware(String ecosystem, String targetSoftware) {
+<span class="pc bpc" id="L186" title="3 of 4 branches missed.">        if (&quot;*&quot;.equals(targetSoftware) || &quot;-&quot;.equals(targetSoftware)) {</span>
+<span class="fc" id="L187">            return true;</span>
+        }
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        if (Ecosystem.NODEJS.equals(ecosystem)) {</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">            switch (targetSoftware.toLowerCase()) {</span>
+                case &quot;nodejs&quot;:
+                case &quot;node.js&quot;:
+                case &quot;node_js&quot;:
+                case &quot;npm&quot;:
+                case &quot;node-js&quot;:
+<span class="nc" id="L196">                    return true;</span>
+                default:
+<span class="nc" id="L198">                    return false;</span>
+            }
+        }
+<span class="nc" id="L201">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

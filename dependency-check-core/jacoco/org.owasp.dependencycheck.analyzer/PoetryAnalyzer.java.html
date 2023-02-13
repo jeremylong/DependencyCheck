@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PoetryAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">PoetryAnalyzer.java</span></div><h1>PoetryAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2019 Nima Yahyazadeh. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import java.io.FileFilter;
+import java.util.List;
+
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+
+import com.moandjiezana.toml.Toml;
+import java.io.File;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Poetry dependency analyzer.
+ *
+ * @author Ferdinand Niedermann
+ * @author Jeremy Long
+ */
+@ThreadSafe
+@Experimental
+<span class="fc" id="L54">public class PoetryAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L59">    private static final Logger LOGGER = LoggerFactory.getLogger(PoetryAnalyzer.class);</span>
+
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.PYTHON;
+
+    /**
+     * Lock file name.
+     */
+    private static final String POETRY_LOCK = &quot;poetry.lock&quot;;
+    /**
+     * Poetry project file.
+     */
+    private static final String PYPROJECT_TOML = &quot;pyproject.toml&quot;;
+    /**
+     * The file filter for poetry.lock
+     */
+<span class="fc" id="L78">    private static final FileFilter POETRY_LOCK_FILTER = FileFilterBuilder.newInstance()</span>
+<span class="fc" id="L79">            .addFilenames(POETRY_LOCK, PYPROJECT_TOML)</span>
+<span class="fc" id="L80">            .build();</span>
+
+    /**
+     * Returns the name of the Poetry Analyzer.
+     *
+     * @return the name of the analyzer
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L89">        return &quot;Poetry Analyzer&quot;;</span>
+    }
+
+    /**
+     * Tell that we are used for information collection.
+     *
+     * @return INFORMATION_COLLECTION
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L99">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
+    }
+
+    /**
+     * Returns the key name for the analyzers enabled setting.
+     *
+     * @return the key name for the analyzers enabled setting
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L109">        return Settings.KEYS.ANALYZER_POETRY_ENABLED;</span>
+    }
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L119">        return POETRY_LOCK_FILTER;</span>
+    }
+
+    /**
+     * No-op initializer implementation.
+     *
+     * @param engine a reference to the dependency-check engine
+     *
+     * @throws InitializationException never thrown
+     */
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        // Nothing to do here.
+<span class="fc" id="L132">    }</span>
+
+    /**
+     * Analyzes poetry packages and adds evidence to the dependency.
+     *
+     * @param dependency the dependency being analyzed
+     * @param engine the engine being used to perform the scan
+     *
+     * @throws AnalysisException thrown if there is an unrecoverable error
+     * analyzing the dependency
+     */
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="fc" id="L145">        LOGGER.debug(&quot;Checking file {}&quot;, dependency.getActualFilePath());</span>
+
+        //do not report on the build file itself
+<span class="fc" id="L148">        engine.removeDependency(dependency);</span>
+
+<span class="fc bfc" id="L150" title="All 2 branches covered.">        if (PYPROJECT_TOML.equals(dependency.getActualFile().getName())) {</span>
+<span class="fc" id="L151">            final File parentPath = dependency.getActualFile().getParentFile();</span>
+<span class="nc" id="L152">            ensureLock(parentPath);</span>
+            //exit as we can't analyze pyproject.toml - insufficient version information
+<span class="nc" id="L154">            return;</span>
+        }
+
+<span class="fc" id="L157">        final Toml result = new Toml().read(dependency.getActualFile());</span>
+<span class="fc" id="L158">        final List&lt;Toml&gt; projectsLocks = result.getTables(&quot;package&quot;);</span>
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">        if (projectsLocks == null) {</span>
+<span class="nc" id="L160">            return;</span>
+        }
+<span class="fc" id="L162">        projectsLocks.forEach((project) -&gt; {</span>
+<span class="fc" id="L163">            final String name = project.getString(&quot;name&quot;);</span>
+<span class="fc" id="L164">            final String version = project.getString(&quot;version&quot;);</span>
+
+<span class="fc" id="L166">            LOGGER.debug(String.format(&quot;package, version: %s %s&quot;, name, version));</span>
+
+<span class="fc" id="L168">            final Dependency d = new Dependency(dependency.getActualFile(), true);</span>
+<span class="fc" id="L169">            d.setName(name);</span>
+<span class="fc" id="L170">            d.setVersion(version);</span>
+
+            try {
+<span class="fc" id="L173">                final PackageURL purl = PackageURLBuilder.aPackageURL()</span>
+<span class="fc" id="L174">                        .withType(&quot;pypi&quot;)</span>
+<span class="fc" id="L175">                        .withName(name)</span>
+<span class="fc" id="L176">                        .withVersion(version)</span>
+<span class="fc" id="L177">                        .build();</span>
+<span class="fc" id="L178">                d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L179">            } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L180">                LOGGER.debug(&quot;Unable to build package url for pypi&quot;, ex);</span>
+<span class="nc" id="L181">                d.addSoftwareIdentifier(new GenericIdentifier(&quot;pypi:&quot; + name + &quot;@&quot; + version, Confidence.HIGH));</span>
+<span class="fc" id="L182">            }</span>
+
+<span class="fc" id="L184">            d.setPackagePath(String.format(&quot;%s:%s&quot;, name, version));</span>
+<span class="fc" id="L185">            d.setEcosystem(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L186">            final String filePath = String.format(&quot;%s:%s/%s&quot;, dependency.getFilePath(), name, version);</span>
+<span class="fc" id="L187">            d.setFilePath(filePath);</span>
+<span class="fc" id="L188">            d.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
+<span class="fc" id="L189">            d.setSha256sum(Checksum.getSHA256Checksum(filePath));</span>
+<span class="fc" id="L190">            d.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
+<span class="fc" id="L191">            d.addEvidence(EvidenceType.PRODUCT, POETRY_LOCK, &quot;product&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L192">            d.addEvidence(EvidenceType.VERSION, POETRY_LOCK, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+<span class="fc" id="L193">            d.addEvidence(EvidenceType.VENDOR, POETRY_LOCK, &quot;vendor&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L194">            engine.addDependency(d);</span>
+<span class="fc" id="L195">        });</span>
+<span class="fc" id="L196">    }</span>
+
+    private void ensureLock(File parent) throws AnalysisException {
+<span class="fc" id="L199">        final File lock = new File(parent, POETRY_LOCK);</span>
+<span class="fc" id="L200">        final File requirements = new File(parent, &quot;requirements.txt&quot;);</span>
+<span class="pc bpc" id="L201" title="2 of 4 branches missed.">        final boolean found = lock.isFile() || requirements.isFile();</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        if (!found) {</span>
+<span class="fc" id="L203">            throw new AnalysisException(&quot;Python `pyproject.toml` found and there &quot;</span>
+                    + &quot;is not a `poetry.lock` or `requirements.txt` - analysis will be incomplete&quot;);
+        }
+<span class="nc" id="L206">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

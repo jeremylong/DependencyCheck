@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProcessReader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils.processing</a> &gt; <span class="el_source">ProcessReader.java</span></div><h1>ProcessReader.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-utils.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils.processing;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.io.IOUtils;
+
+/**
+ * Utility to read the output from a `Process` and places the output into
+ * provide storage containers.
+ *
+ * @author Jeremy Long
+ */
+public class ProcessReader implements AutoCloseable {
+
+    /**
+     * A reference to the process that will be read.
+     */
+    private final Process process;
+    /**
+     * Reader for the error stream.
+     */
+<span class="nc" id="L42">    private Gobbler errorGobbler = null;</span>
+    /**
+     * Reader for the input stream.
+     */
+<span class="nc" id="L46">    private Gobbler inputGobbler = null;</span>
+    /**
+     * Processor for the input stream.
+     */
+<span class="nc" id="L50">    private Processor&lt;InputStream&gt; processor = null;</span>
+    /**
+     * A list of threads that were started.
+     */
+<span class="nc" id="L54">    private final List&lt;Thread&gt; threads = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * Creates a new reader for the given process. The output from the process
+     * is written to the provided stores.
+     *
+     * @param process the process to read from
+     */
+    public ProcessReader(Process process) {
+<span class="nc" id="L63">        this(process, null);</span>
+<span class="nc" id="L64">    }</span>
+
+    /**
+     * Creates a new reader for the given process. The output from the process
+     * is written to the provided stores.
+     *
+     * @param process the process to read from
+     * @param processor used to process the input stream from the process
+     */
+<span class="nc" id="L73">    public ProcessReader(Process process, Processor&lt;InputStream&gt; processor) {</span>
+<span class="nc" id="L74">        this.process = process;</span>
+<span class="nc" id="L75">        this.processor = processor;</span>
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * Returns the error stream output from the process.
+     *
+     * @return the error stream output
+     */
+    public String getError() {
+<span class="nc" id="L84">        return errorGobbler.getText();</span>
+    }
+
+    /**
+     * Returns the output from standard out from the process.
+     *
+     * @return the output from standard out from the process
+     */
+    public String getOutput() {
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        return inputGobbler != null ? inputGobbler.getText() : null;</span>
+    }
+
+    /**
+     * Reads the standard output and standard error from the process and waits
+     * for the process to complete.
+     *
+     * @throws InterruptedException thrown if the processing threads are
+     * interrupted
+     * @throws IOException thrown if there is an error reading from the process
+     */
+    public void readAll() throws InterruptedException, IOException {
+<span class="nc" id="L105">        start();</span>
+<span class="nc" id="L106">        close();</span>
+<span class="nc" id="L107">    }</span>
+
+    /**
+     * Starts the processing of the `process`.
+     */
+    private void start() {
+<span class="nc" id="L113">        errorGobbler = new Gobbler(process.getErrorStream());</span>
+<span class="nc" id="L114">        startProcessor(errorGobbler);</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">        if (processor == null) {</span>
+<span class="nc" id="L116">            inputGobbler = new Gobbler(process.getInputStream());</span>
+<span class="nc" id="L117">            startProcessor(inputGobbler);</span>
+        } else {
+<span class="nc" id="L119">            processor.setInput(process.getInputStream());</span>
+<span class="nc" id="L120">            startProcessor(processor);</span>
+        }
+<span class="nc" id="L122">    }</span>
+
+    /**
+     * Starts the process in its own thread and collects the threads so `join`
+     * can be called later to ensure the thread finishes.
+     *
+     * @param p a reference to the processor to start.
+     */
+    private void startProcessor(Processor p) {
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        if (p != null) {</span>
+<span class="nc" id="L132">            final Thread t = new Thread(p);</span>
+<span class="nc" id="L133">            threads.add(t);</span>
+<span class="nc" id="L134">            t.start();</span>
+        }
+<span class="nc" id="L136">    }</span>
+
+    /**
+     * Waits for the process and related threads to complete.
+     *
+     * @throws InterruptedException thrown if the processing threads are
+     * interrupted
+     * @throws IOException thrown if there was an error reading from the process
+     */
+    @Override
+    public void close() throws InterruptedException, IOException {
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (process.isAlive()) {</span>
+<span class="nc" id="L148">            process.waitFor();</span>
+        }
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        if (threads.size() &gt; 0) {</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">            for (Thread thread : threads) {</span>
+<span class="nc" id="L152">                thread.join();</span>
+<span class="nc" id="L153">            }</span>
+<span class="nc" id="L154">            threads.clear();</span>
+        }
+<span class="nc" id="L156">        errorGobbler.close();</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (inputGobbler != null) {</span>
+<span class="nc" id="L158">            inputGobbler.close();</span>
+        }
+<span class="nc" id="L160">    }</span>
+
+    static class Gobbler extends Processor&lt;InputStream&gt; {
+
+        /**
+         * A store for an exception - if one is thrown during processing.
+         */
+        private IOException exception;
+        /**
+         * A store for the text read from the input stream.
+         */
+        private String text;
+
+        Gobbler(InputStream inputStream) {
+<span class="nc" id="L174">            super(inputStream);</span>
+<span class="nc" id="L175">        }</span>
+
+        @Override
+        public void run() {
+            try {
+<span class="nc" id="L180">                final InputStream inputStream = getInput();</span>
+<span class="nc" id="L181">                text = IOUtils.toString(inputStream, StandardCharsets.UTF_8.name());</span>
+
+<span class="nc" id="L183">            } catch (IOException ex) {</span>
+<span class="nc" id="L184">                exception = ex;</span>
+<span class="nc" id="L185">            }</span>
+<span class="nc" id="L186">        }</span>
+
+        public String getText() {
+<span class="nc" id="L189">            return text;</span>
+        }
+
+        @Override
+        public void close() throws IOException {
+<span class="nc bnc" id="L194" title="All 2 branches missed.">            if (exception != null) {</span>
+<span class="nc" id="L195">                throw exception;</span>
+            }
+<span class="nc" id="L197">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

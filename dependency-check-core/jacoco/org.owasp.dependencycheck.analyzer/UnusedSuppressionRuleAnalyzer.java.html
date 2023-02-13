@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UnusedSuppressionRuleAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">UnusedSuppressionRuleAnalyzer.java</span></div><h1>UnusedSuppressionRuleAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2022 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import java.util.List;
+import org.owasp.dependencycheck.Engine;
+import static org.owasp.dependencycheck.analyzer.AbstractSuppressionAnalyzer.SUPPRESSION_OBJECT_KEY;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.xml.suppression.SuppressionRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Log the unused suppression rules.
+ *
+ * @author Jeremy Long
+ */
+<span class="fc" id="L35">public class UnusedSuppressionRuleAnalyzer extends AbstractAnalyzer {</span>
+
+    /**
+     * The Logger for use throughout the class.
+     */
+<span class="fc" id="L40">    private static final Logger LOGGER = LoggerFactory.getLogger(UnusedSuppressionRuleAnalyzer.class);</span>
+    /**
+     * A flag indicating whether or not the unused vulnerabilities have already
+     * been reported.
+     */
+<span class="fc" id="L45">    private boolean reported = false;</span>
+
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (!reported) {</span>
+<span class="fc" id="L50">            logUnusedRules(engine);</span>
+<span class="fc" id="L51">            reported = true;</span>
+        }
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Logs unused suppression RULES.
+     *
+     * @param engine a reference to the ODC engine
+     */
+    private void logUnusedRules(Engine engine) {
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (engine.hasObject(SUPPRESSION_OBJECT_KEY)) {</span>
+            @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L63">            final List&lt;SuppressionRule&gt; rules = (List&lt;SuppressionRule&gt;) engine.getObject(SUPPRESSION_OBJECT_KEY);</span>
+<span class="fc" id="L64">            rules.forEach((rule) -&gt; {</span>
+<span class="pc bpc" id="L65" title="1 of 4 branches missed.">                if (!rule.isMatched() &amp;&amp; !rule.isBase()) {</span>
+<span class="fc" id="L66">                    LOGGER.info(&quot;Suppression Rule had zero matches: {}&quot;, rule.toString());</span>
+                }
+<span class="fc" id="L68">            });</span>
+        }
+<span class="fc" id="L70">    }</span>
+
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+        //technically incorrect - but we will reuse the enabled key for this analyzer
+<span class="fc" id="L75">        return Settings.KEYS.ANALYZER_VULNERABILITY_SUPPRESSION_ENABLED;</span>
+    }
+
+    @Override
+    public String getName() {
+<span class="fc" id="L80">        return &quot;Unused Suppression Rule Analyzer&quot;;</span>
+    }
+
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L85">        return AnalysisPhase.FINAL;</span>
+    }
+
+    @Override
+    public boolean supportsParallelProcessing() {
+<span class="fc" id="L90">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

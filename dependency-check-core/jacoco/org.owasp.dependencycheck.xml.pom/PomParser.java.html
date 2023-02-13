@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PomParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.pom</a> &gt; <span class="el_source">PomParser.java</span></div><h1>PomParser.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.xml.pom;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.input.BOMInputStream;
+import org.owasp.dependencycheck.utils.XmlUtils;
+import org.owasp.dependencycheck.xml.XmlInputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+/**
+ * A parser for pom.xml files.
+ *
+ * @author Jeremy Long
+ */
+@ThreadSafe
+<span class="fc" id="L47">public class PomParser {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L52">    private static final Logger LOGGER = LoggerFactory.getLogger(PomParser.class);</span>
+
+    /**
+     * Parses the given xml file and returns a Model object containing only the
+     * fields dependency-check requires. An attempt is made to remove any
+     * doctype definitions.
+     *
+     * @param file a pom.xml
+     * @return a Model object containing only the fields dependency-check
+     * requires
+     * @throws PomParseException thrown if the xml file cannot be parsed
+     */
+    public Model parse(File file) throws PomParseException {
+<span class="fc" id="L65">        try (FileInputStream fis = new FileInputStream(file)) {</span>
+<span class="fc" id="L66">            return parse(fis);</span>
+<span class="fc" id="L67">        } catch (IOException ex) {</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">            if (ex instanceof PomParseException) {</span>
+<span class="fc" id="L69">                throw (PomParseException) ex;</span>
+            }
+<span class="nc" id="L71">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L72">            throw new PomParseException(String.format(&quot;Unable to parse pom '%s'&quot;, file), ex);</span>
+        }
+    }
+
+    /**
+     * Parses the given xml file and returns a Model object containing only the
+     * fields dependency-check requires. No attempt is made to remove doctype
+     * definitions.
+     *
+     * @param file a pom.xml
+     * @return a Model object containing only the fields dependency-check
+     * requires
+     * @throws PomParseException thrown if the xml file cannot be parsed
+     */
+    public Model parseWithoutDocTypeCleanup(File file) throws PomParseException {
+<span class="fc" id="L87">        try (FileInputStream fis = new FileInputStream(file)) {</span>
+<span class="fc" id="L88">            return parseWithoutDocTypeCleanup(fis);</span>
+<span class="fc" id="L89">        } catch (IOException ex) {</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">            if (ex instanceof PomParseException) {</span>
+<span class="fc" id="L91">                throw (PomParseException) ex;</span>
+            }
+<span class="nc" id="L93">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L94">            throw new PomParseException(String.format(&quot;Unable to parse pom '%s'&quot;, file), ex);</span>
+        }
+    }
+
+    /**
+     * Parses the given XML file and returns a Model object containing only the
+     * fields dependency-check requires. An attempt is made to remove any
+     * doctype definitions.
+     *
+     * @param inputStream an InputStream containing suppression rues
+     * @return a list of suppression rules
+     * @throws PomParseException if the XML cannot be parsed
+     */
+    public Model parse(InputStream inputStream) throws PomParseException {
+        try {
+<span class="fc" id="L109">            final PomHandler handler = new PomHandler();</span>
+<span class="fc" id="L110">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();</span>
+<span class="fc" id="L111">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
+<span class="fc" id="L112">            xmlReader.setContentHandler(handler);</span>
+
+<span class="fc" id="L114">            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(new PomProjectInputStream(inputStream)));</span>
+<span class="fc" id="L115">            final ByteOrderMark bom = bomStream.getBOM();</span>
+<span class="fc" id="L116">            final String defaultEncoding = StandardCharsets.UTF_8.name();</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();</span>
+<span class="fc" id="L118">            final Reader reader = new InputStreamReader(bomStream, charsetName);</span>
+<span class="fc" id="L119">            final InputSource in = new InputSource(reader);</span>
+<span class="fc" id="L120">            xmlReader.parse(in);</span>
+<span class="fc" id="L121">            return handler.getModel();</span>
+<span class="fc" id="L122">        } catch (ParserConfigurationException | SAXException | IOException ex) {</span>
+<span class="fc" id="L123">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L124">            throw new PomParseException(ex);</span>
+        }
+    }
+
+    /**
+     * Parses the given XML file and returns a Model object containing only the
+     * fields dependency-check requires. No attempt is made to remove doctype
+     * definitions.
+     *
+     * @param inputStream an InputStream containing suppression rues
+     * @return a list of suppression rules
+     * @throws PomParseException if the XML cannot be parsed
+     */
+    public Model parseWithoutDocTypeCleanup(InputStream inputStream) throws PomParseException {
+        try {
+<span class="fc" id="L139">            final PomHandler handler = new PomHandler();</span>
+<span class="fc" id="L140">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();</span>
+<span class="fc" id="L141">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
+<span class="fc" id="L142">            xmlReader.setContentHandler(handler);</span>
+
+<span class="fc" id="L144">            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(inputStream));</span>
+<span class="fc" id="L145">            final ByteOrderMark bom = bomStream.getBOM();</span>
+<span class="fc" id="L146">            final String defaultEncoding = StandardCharsets.UTF_8.name();</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();</span>
+<span class="fc" id="L148">            final Reader reader = new InputStreamReader(bomStream, charsetName);</span>
+<span class="fc" id="L149">            final InputSource in = new InputSource(reader);</span>
+<span class="fc" id="L150">            xmlReader.parse(in);</span>
+<span class="fc" id="L151">            return handler.getModel();</span>
+<span class="fc" id="L152">        } catch (ParserConfigurationException | SAXException | IOException ex) {</span>
+<span class="fc" id="L153">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L154">            throw new PomParseException(ex);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

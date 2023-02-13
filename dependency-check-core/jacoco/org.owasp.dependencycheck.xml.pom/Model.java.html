@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Model.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.pom</a> &gt; <span class="el_source">Model.java</span></div><h1>Model.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2015 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.xml.pom;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.apache.commons.text.StringSubstitutor;
+import org.apache.commons.text.lookup.StringLookup;
+
+/**
+ * A simple pojo to hold data related to a Maven POM file.
+ *
+ * @author jeremy long
+ */
+@ThreadSafe
+<span class="fc" id="L35">public class Model implements Serializable {</span>
+
+    /**
+     * Generated UUID.
+     */
+    private static final long serialVersionUID = -7648711671774349441L;
+
+    /**
+     * The name of the project.
+     */
+    private String name;
+    /**
+     * The organization name.
+     */
+    private String organization;
+    /**
+     * The organization URL.
+     */
+    private String organizationUrl;
+    /**
+     * The description.
+     */
+    private String description;
+    /**
+     * The group id.
+     */
+    private String groupId;
+    /**
+     * The artifact id.
+     */
+    private String artifactId;
+    /**
+     * The version number.
+     */
+    private String version;
+    /**
+     * The parent group id.
+     */
+    private String parentGroupId;
+    /**
+     * The parent artifact id.
+     */
+    private String parentArtifactId;
+    /**
+     * The parent version number.
+     */
+    private String parentVersion;
+    /**
+     * The list of licenses.
+     */
+<span class="fc" id="L85">    private final List&lt;License&gt; licenses = new ArrayList&lt;&gt;();</span>
+    /**
+     * The list of developers.
+     */
+<span class="fc" id="L89">    private final List&lt;Developer&gt; developers = new ArrayList&lt;&gt;();</span>
+    /**
+     * The project URL.
+     */
+    private String projectURL;
+
+    /**
+     * Get the value of name.
+     *
+     * @return the value of name
+     */
+    public String getName() {
+<span class="fc" id="L101">        return name;</span>
+    }
+
+    /**
+     * Set the value of name.
+     *
+     * @param name new value of name
+     */
+    public void setName(String name) {
+<span class="fc" id="L110">        this.name = name;</span>
+<span class="fc" id="L111">    }</span>
+
+    /**
+     * Get the value of organization.
+     *
+     * @return the value of organization
+     */
+    public String getOrganization() {
+<span class="fc" id="L119">        return organization;</span>
+    }
+
+    /**
+     * Set the value of organization.
+     *
+     * @param organization new value of organization
+     */
+    public void setOrganization(String organization) {
+<span class="fc" id="L128">        this.organization = organization;</span>
+<span class="fc" id="L129">    }</span>
+
+    /**
+     * Get the value of organizationUrl.
+     *
+     * @return the value of organizationUrl
+     */
+    public String getOrganizationUrl() {
+<span class="fc" id="L137">        return organizationUrl;</span>
+    }
+
+    /**
+     * Set the value of organizationUrl.
+     *
+     * @param organizationUrl new value of organizationUrl
+     */
+    public void setOrganizationUrl(String organizationUrl) {
+<span class="fc" id="L146">        this.organizationUrl = organizationUrl;</span>
+<span class="fc" id="L147">    }</span>
+
+    /**
+     * Get the value of description.
+     *
+     * @return the value of description
+     */
+    public String getDescription() {
+<span class="fc" id="L155">        return description;</span>
+    }
+
+    /**
+     * Set the value of description.
+     *
+     * @param description new value of description
+     */
+    public void setDescription(String description) {
+<span class="fc" id="L164">        this.description = description;</span>
+<span class="fc" id="L165">    }</span>
+
+    /**
+     * Get the value of groupId.
+     *
+     * @return the value of groupId
+     */
+    public String getGroupId() {
+<span class="fc" id="L173">        return groupId;</span>
+    }
+
+    /**
+     * Set the value of groupId.
+     *
+     * @param groupId new value of groupId
+     */
+    public void setGroupId(String groupId) {
+<span class="fc" id="L182">        this.groupId = groupId;</span>
+<span class="fc" id="L183">    }</span>
+
+    /**
+     * Get the value of artifactId.
+     *
+     * @return the value of artifactId
+     */
+    public String getArtifactId() {
+<span class="fc" id="L191">        return artifactId;</span>
+    }
+
+    /**
+     * Set the value of artifactId.
+     *
+     * @param artifactId new value of artifactId
+     */
+    public void setArtifactId(String artifactId) {
+<span class="fc" id="L200">        this.artifactId = artifactId;</span>
+<span class="fc" id="L201">    }</span>
+
+    /**
+     * Get the value of version.
+     *
+     * @return the value of version
+     */
+    public String getVersion() {
+<span class="fc" id="L209">        return version;</span>
+    }
+
+    /**
+     * Set the value of version.
+     *
+     * @param version new value of version
+     */
+    public void setVersion(String version) {
+<span class="fc" id="L218">        this.version = version;</span>
+<span class="fc" id="L219">    }</span>
+
+    /**
+     * Get the value of parentGroupId.
+     *
+     * @return the value of parentGroupId
+     */
+    public String getParentGroupId() {
+<span class="fc" id="L227">        return parentGroupId;</span>
+    }
+
+    /**
+     * Set the value of parentGroupId.
+     *
+     * @param parentGroupId new value of parentGroupId
+     */
+    public void setParentGroupId(String parentGroupId) {
+<span class="fc" id="L236">        this.parentGroupId = parentGroupId;</span>
+<span class="fc" id="L237">    }</span>
+
+    /**
+     * Get the value of parentArtifactId.
+     *
+     * @return the value of parentArtifactId
+     */
+    public String getParentArtifactId() {
+<span class="fc" id="L245">        return parentArtifactId;</span>
+    }
+
+    /**
+     * Set the value of parentArtifactId.
+     *
+     * @param parentArtifactId new value of parentArtifactId
+     */
+    public void setParentArtifactId(String parentArtifactId) {
+<span class="fc" id="L254">        this.parentArtifactId = parentArtifactId;</span>
+<span class="fc" id="L255">    }</span>
+
+    /**
+     * Get the value of parentVersion.
+     *
+     * @return the value of parentVersion
+     */
+    public String getParentVersion() {
+<span class="fc" id="L263">        return parentVersion;</span>
+    }
+
+    /**
+     * Set the value of parentVersion.
+     *
+     * @param parentVersion new value of parentVersion
+     */
+    public void setParentVersion(String parentVersion) {
+<span class="fc" id="L272">        this.parentVersion = parentVersion;</span>
+<span class="fc" id="L273">    }</span>
+
+    /**
+     * Returns the list of licenses.
+     *
+     * @return the list of licenses
+     */
+    public List&lt;License&gt; getLicenses() {
+<span class="fc" id="L281">        return licenses;</span>
+    }
+
+    /**
+     * Adds a new license to the list of licenses.
+     *
+     * @param license the license to add
+     */
+    public void addLicense(License license) {
+<span class="fc" id="L290">        licenses.add(license);</span>
+<span class="fc" id="L291">    }</span>
+
+    /**
+     * Returns the list of developers.
+     *
+     * @return the list of developers
+     */
+    public List&lt;Developer&gt; getDevelopers() {
+<span class="fc" id="L299">        return developers;</span>
+    }
+
+    /**
+     * Adds a new developer to the list of developers.
+     *
+     * @param developer the developer to add
+     */
+    public void addDeveloper(Developer developer) {
+<span class="fc" id="L308">        developers.add(developer);</span>
+<span class="fc" id="L309">    }</span>
+
+    /**
+     * Get the value of projectURL.
+     *
+     * @return the value of projectURL
+     */
+    public String getProjectURL() {
+<span class="fc" id="L317">        return projectURL;</span>
+    }
+
+    /**
+     * Set the value of projectURL.
+     *
+     * @param projectURL new value of projectURL
+     */
+    public void setProjectURL(String projectURL) {
+<span class="fc" id="L326">        this.projectURL = projectURL;</span>
+<span class="fc" id="L327">    }</span>
+
+    /**
+     * Process the Maven properties file and interpolate all properties.
+     *
+     * @param properties new value of properties
+     */
+    public void processProperties(Properties properties) {
+<span class="fc bfc" id="L335" title="All 2 branches covered.">        if (properties == null) {</span>
+<span class="fc" id="L336">            return;</span>
+        }
+<span class="fc" id="L338">        this.groupId = interpolateString(this.groupId, properties);</span>
+<span class="fc bfc" id="L339" title="All 4 branches covered.">        if (groupId == null &amp;&amp; properties.containsKey(&quot;groupId&quot;)) {</span>
+<span class="fc" id="L340">            this.groupId = properties.getProperty(&quot;groupId&quot;);</span>
+        }
+<span class="fc" id="L342">        this.artifactId = interpolateString(this.artifactId, properties);</span>
+<span class="pc bpc" id="L343" title="1 of 4 branches missed.">        if (artifactId == null &amp;&amp; properties.containsKey(&quot;artifactId&quot;)) {</span>
+<span class="nc" id="L344">            this.artifactId = properties.getProperty(&quot;artifactId&quot;);</span>
+        }
+<span class="fc" id="L346">        this.version = interpolateString(this.version, properties);</span>
+<span class="fc bfc" id="L347" title="All 4 branches covered.">        if (version == null &amp;&amp; properties.containsKey(&quot;version&quot;)) {</span>
+<span class="fc" id="L348">            this.version = properties.getProperty(&quot;version&quot;);</span>
+        }
+<span class="fc" id="L350">        this.description = interpolateString(this.description, properties);</span>
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        for (License l : this.getLicenses()) {</span>
+<span class="fc" id="L352">            l.setName(interpolateString(l.getName(), properties));</span>
+<span class="fc" id="L353">            l.setUrl(interpolateString(l.getUrl(), properties));</span>
+<span class="fc" id="L354">        }</span>
+<span class="fc" id="L355">        this.name = interpolateString(this.name, properties);</span>
+<span class="fc" id="L356">        this.projectURL = interpolateString(this.projectURL, properties);</span>
+<span class="fc" id="L357">        this.organization = interpolateString(this.organization, properties);</span>
+<span class="fc" id="L358">        this.parentGroupId = interpolateString(this.parentGroupId, properties);</span>
+<span class="fc" id="L359">        this.parentArtifactId = interpolateString(this.parentArtifactId, properties);</span>
+<span class="fc" id="L360">        this.parentVersion = interpolateString(this.parentVersion, properties);</span>
+<span class="fc" id="L361">    }</span>
+
+    /**
+     * &lt;p&gt;
+     * A utility function that will interpolate strings based on values given in
+     * the properties file. It will also interpolate the strings contained
+     * within the properties file so that properties can reference other
+     * properties.&lt;/p&gt;
+     * &lt;p&gt;
+     * &lt;b&gt;Note:&lt;/b&gt; if there is no property found the reference will be removed.
+     * In other words, if the interpolated string will be replaced with an empty
+     * string.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Example:&lt;/p&gt;
+     * &lt;code&gt;
+     * Properties p = new Properties();
+     * p.setProperty(&quot;key&quot;, &quot;value&quot;);
+     * String s = interpolateString(&quot;'${key}' and '${nothing}'&quot;, p);
+     * System.out.println(s);
+     * &lt;/code&gt;
+     * &lt;p&gt;
+     * Will result in:&lt;/p&gt;
+     * &lt;code&gt;
+     * 'value' and ''
+     * &lt;/code&gt;
+     *
+     * @param text the string that contains references to properties.
+     * @param properties a collection of properties that may be referenced
+     * within the text.
+     * @return the interpolated text.
+     */
+    public static String interpolateString(String text, Properties properties) {
+<span class="pc bpc" id="L394" title="1 of 4 branches missed.">        if (null == text || null == properties) {</span>
+<span class="fc" id="L395">            return text;</span>
+        }
+<span class="fc" id="L397">        final StringSubstitutor substitutor = new StringSubstitutor(new PropertyLookup(properties));</span>
+<span class="fc" id="L398">        return substitutor.replace(text);</span>
+    }
+
+    /**
+     * Utility class that can provide values from a Properties object to a
+     * StringSubstitutor.
+     */
+    private static class PropertyLookup implements StringLookup {
+
+        /**
+         * Reference to the properties to lookup.
+         */
+        private final Properties props;
+
+        /**
+         * Constructs a new property lookup.
+         *
+         * @param props the properties to wrap.
+         */
+<span class="fc" id="L417">        PropertyLookup(Properties props) {</span>
+<span class="fc" id="L418">            this.props = props;</span>
+<span class="fc" id="L419">        }</span>
+
+        /**
+         * Looks up the given property.
+         *
+         * @param key the key to the property
+         * @return the value of the property specified by the key
+         */
+        @Override
+        public String lookup(String key) {
+<span class="fc" id="L429">            return props.getProperty(key);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

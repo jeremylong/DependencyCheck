@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WriteLock.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">WriteLock.java</span></div><h1>WriteLock.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2017 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileLock;
+import java.security.SecureRandom;
+import java.sql.Timestamp;
+import java.util.Date;
+import javax.annotation.concurrent.NotThreadSafe;
+import org.owasp.dependencycheck.exception.WriteLockException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * A lock file implementation; creates a custom lock file so that only a single
+ * instance of dependency-check can update the a given resource.
+ *
+ * @author Jeremy Long
+ */
+@NotThreadSafe
+public class WriteLock implements AutoCloseable {
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L44">    private static final Logger LOGGER = LoggerFactory.getLogger(WriteLock.class);</span>
+    /**
+     * Secure random number generator.
+     */
+<span class="fc" id="L48">    private static final SecureRandom SECURE_RANDOM = new SecureRandom();</span>
+    /**
+     * How long to sleep waiting for the lock.
+     */
+    public static final int SLEEP_DURATION = 15000;
+    /**
+     * Max attempts to obtain a lock.
+     */
+    public static final int MAX_SLEEP_COUNT = 160;
+    /**
+     * The file lock.
+     */
+<span class="fc" id="L60">    private FileLock lock = null;</span>
+    /**
+     * Reference to the file that we are locking.
+     */
+<span class="fc" id="L64">    private RandomAccessFile file = null;</span>
+    /**
+     * The lock file.
+     */
+<span class="fc" id="L68">    private File lockFile = null;</span>
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
+    /**
+     * A random string used to validate the lock.
+     */
+    private final String magic;
+    /**
+     * A flag indicating whether or not an resource is lockable.
+     */
+    private final boolean isLockable;
+    /**
+     * The name of the lock file.
+     */
+    private final String lockFileName;
+    /**
+     * The shutdown hook used to remove the lock file in case of an unexpected
+     * shutdown.
+     */
+<span class="fc" id="L89">    private WriteLockShutdownHook hook = null;</span>
+
+    /**
+     * Constructs a new Write Lock object with the configured settings.
+     *
+     * @param settings the configured settings
+     * @throws WriteLockException thrown if a lock could not be obtained
+     */
+    public WriteLock(Settings settings) throws WriteLockException {
+<span class="nc" id="L98">        this(settings, true);</span>
+<span class="nc" id="L99">    }</span>
+
+    /**
+     * Constructs a new Write Lock object with the configured settings.
+     *
+     * @param settings the configured settings
+     * @param isLockable a flag indicating if a lock can be obtained for the
+     * resource; if false the lock does nothing. This is useful in the case of
+     * ODC where we need to lock for updates against H2 but we do not need to
+     * lock updates for other databases.
+     * @throws WriteLockException thrown if a lock could not be obtained
+     */
+    public WriteLock(Settings settings, boolean isLockable) throws WriteLockException {
+<span class="fc" id="L112">        this(settings, isLockable, &quot;odc.update.lock&quot;);</span>
+<span class="fc" id="L113">    }</span>
+
+    /**
+     * Constructs a new Write Lock object with the configured settings.
+     *
+     * @param settings the configured settings
+     * @param isLockable a flag indicating if a lock can be obtained for the
+     * resource; if false the lock does nothing. This is useful in the case of
+     * ODC where we need to lock for updates against H2 but we do not need to
+     * lock updates for other databases.
+     * @param lockFileName the name of the lock file; note the lock file will be
+     * in the ODC data directory.
+     * @throws WriteLockException thrown if a lock could not be obtained
+     */
+<span class="fc" id="L127">    public WriteLock(Settings settings, boolean isLockable, String lockFileName) throws WriteLockException {</span>
+<span class="fc" id="L128">        this.settings = settings;</span>
+<span class="fc" id="L129">        final byte[] random = new byte[16];</span>
+<span class="fc" id="L130">        SECURE_RANDOM.nextBytes(random);</span>
+<span class="fc" id="L131">        magic = Checksum.getHex(random);</span>
+<span class="fc" id="L132">        this.isLockable = isLockable;</span>
+<span class="fc" id="L133">        this.lockFileName = lockFileName;</span>
+<span class="fc" id="L134">        lock();</span>
+<span class="fc" id="L135">    }</span>
+
+    /**
+     * Obtains a lock on the resource.
+     *
+     * @throws WriteLockException thrown if a lock could not be obtained
+     */
+    public final void lock() throws WriteLockException {
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if (!isLockable) {</span>
+<span class="fc" id="L144">            return;</span>
+        }
+        try {
+<span class="fc" id="L147">            final File dir = settings.getDataDirectory();</span>
+<span class="fc" id="L148">            lockFile = new File(dir, lockFileName);</span>
+<span class="fc" id="L149">            checkState();</span>
+<span class="fc" id="L150">            int ctr = 0;</span>
+            do {
+                try {
+<span class="pc bpc" id="L153" title="2 of 4 branches missed.">                    if (!lockFile.exists() &amp;&amp; lockFile.createNewFile()) {</span>
+<span class="fc" id="L154">                        file = new RandomAccessFile(lockFile, &quot;rw&quot;);</span>
+<span class="fc" id="L155">                        lock = file.getChannel().lock();</span>
+<span class="fc" id="L156">                        file.writeBytes(magic);</span>
+<span class="fc" id="L157">                        file.getChannel().force(true);</span>
+<span class="fc" id="L158">                        Thread.sleep(20);</span>
+<span class="fc" id="L159">                        file.seek(0);</span>
+<span class="fc" id="L160">                        final String current = file.readLine();</span>
+<span class="pc bpc" id="L161" title="2 of 4 branches missed.">                        if (current != null &amp;&amp; !current.equals(magic)) {</span>
+<span class="nc" id="L162">                            lock.close();</span>
+<span class="nc" id="L163">                            lock = null;</span>
+<span class="nc" id="L164">                            LOGGER.debug(&quot;Another process obtained a lock first ({})&quot;, Thread.currentThread().getName());</span>
+                        } else {
+<span class="fc" id="L166">                            addShutdownHook();</span>
+<span class="fc" id="L167">                            final Timestamp timestamp = new Timestamp(System.currentTimeMillis());</span>
+<span class="fc" id="L168">                            LOGGER.debug(&quot;Lock file created ({}) {} @ {}&quot;, Thread.currentThread().getName(), magic, timestamp);</span>
+                        }
+                    }
+<span class="nc" id="L171">                } catch (InterruptedException ex) {</span>
+<span class="nc" id="L172">                    Thread.currentThread().interrupt();</span>
+<span class="nc" id="L173">                    LOGGER.trace(&quot;Expected error as another thread has likely locked the file&quot;, ex);</span>
+<span class="nc" id="L174">                } catch (IOException ex) {</span>
+<span class="nc" id="L175">                    LOGGER.trace(&quot;Expected error as another thread has likely locked the file&quot;, ex);</span>
+                } finally {
+<span class="pc bpc" id="L177" title="3 of 4 branches missed.">                    if (lock == null &amp;&amp; file != null) {</span>
+                        try {
+<span class="nc" id="L179">                            file.close();</span>
+<span class="nc" id="L180">                            file = null;</span>
+<span class="nc" id="L181">                        } catch (IOException ex) {</span>
+<span class="nc" id="L182">                            LOGGER.trace(&quot;Unable to close the lock file&quot;, ex);</span>
+<span class="nc" id="L183">                        }</span>
+                    }
+                }
+<span class="pc bpc" id="L186" title="2 of 4 branches missed.">                if (lock == null || !lock.isValid()) {</span>
+                    try {
+<span class="nc" id="L188">                        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());</span>
+<span class="nc" id="L189">                        LOGGER.debug(&quot;Sleeping thread {} ({}) for {} seconds because an exclusive lock on the database could not be obtained ({})&quot;,</span>
+<span class="nc" id="L190">                                Thread.currentThread().getName(), magic, SLEEP_DURATION / 1000, timestamp);</span>
+<span class="nc" id="L191">                        Thread.sleep(SLEEP_DURATION);</span>
+<span class="nc" id="L192">                    } catch (InterruptedException ex) {</span>
+<span class="nc" id="L193">                        LOGGER.debug(&quot;sleep was interrupted.&quot;, ex);</span>
+<span class="nc" id="L194">                        Thread.currentThread().interrupt();</span>
+<span class="nc" id="L195">                    }</span>
+                }
+<span class="pc bpc" id="L197" title="3 of 6 branches missed.">            } while (++ctr &lt; MAX_SLEEP_COUNT &amp;&amp; (lock == null || !lock.isValid()));</span>
+<span class="pc bpc" id="L198" title="2 of 4 branches missed.">            if (lock == null || !lock.isValid()) {</span>
+<span class="nc" id="L199">                throw new WriteLockException(&quot;Unable to obtain the update lock, skipping the database update. Skipping the database update.&quot;);</span>
+            }
+<span class="nc" id="L201">        } catch (IOException ex) {</span>
+<span class="nc" id="L202">            throw new WriteLockException(ex.getMessage(), ex);</span>
+<span class="fc" id="L203">        }</span>
+<span class="fc" id="L204">    }</span>
+
+    /**
+     * Releases the lock on the resource.
+     */
+    @Override
+    public void close() {
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        if (!isLockable) {</span>
+<span class="fc" id="L212">            return;</span>
+        }
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">        if (lock != null) {</span>
+            try {
+<span class="fc" id="L216">                lock.release();</span>
+<span class="fc" id="L217">                lock = null;</span>
+<span class="nc" id="L218">            } catch (IOException ex) {</span>
+<span class="nc" id="L219">                LOGGER.debug(&quot;Failed to release lock&quot;, ex);</span>
+<span class="fc" id="L220">            }</span>
+        }
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        if (file != null) {</span>
+            try {
+<span class="fc" id="L224">                file.close();</span>
+<span class="fc" id="L225">                file = null;</span>
+<span class="nc" id="L226">            } catch (IOException ex) {</span>
+<span class="nc" id="L227">                LOGGER.debug(&quot;Unable to delete lock file&quot;, ex);</span>
+<span class="fc" id="L228">            }</span>
+        }
+<span class="pc bpc" id="L230" title="2 of 4 branches missed.">        if (lockFile != null &amp;&amp; lockFile.isFile()) {</span>
+<span class="fc" id="L231">            final String msg = readLockFile();</span>
+<span class="pc bpc" id="L232" title="3 of 6 branches missed.">            if (msg != null &amp;&amp; msg.equals(magic) &amp;&amp; !lockFile.delete()) {</span>
+<span class="nc" id="L233">                LOGGER.error(&quot;Lock file '{}' was unable to be deleted. Please manually delete this file.&quot;, lockFile.toString());</span>
+<span class="nc" id="L234">                lockFile.deleteOnExit();</span>
+            }
+        }
+<span class="fc" id="L237">        lockFile = null;</span>
+<span class="fc" id="L238">        removeShutdownHook();</span>
+<span class="fc" id="L239">        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());</span>
+<span class="fc" id="L240">        LOGGER.debug(&quot;Lock released ({}) {} @ {}&quot;, Thread.currentThread().getName(), magic, timestamp);</span>
+<span class="fc" id="L241">    }</span>
+
+    /**
+     * Checks the state of the custom write lock file and under some conditions
+     * will attempt to remove the lock file.
+     *
+     * @throws WriteLockException thrown if the lock directory does not exist
+     * and cannot be created
+     */
+    private void checkState() throws WriteLockException {
+<span class="pc bpc" id="L251" title="3 of 4 branches missed.">        if (!lockFile.getParentFile().isDirectory() &amp;&amp; !lockFile.mkdir()) {</span>
+<span class="nc" id="L252">            throw new WriteLockException(&quot;Unable to create path to data directory.&quot;);</span>
+        }
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">        if (lockFile.isFile()) {</span>
+            //TODO - this 30 minute check needs to be configurable.
+<span class="nc bnc" id="L256" title="All 2 branches missed.">            if (getFileAge(lockFile) &gt; 30) {</span>
+<span class="nc" id="L257">                LOGGER.debug(&quot;An old write lock file was found: {}&quot;, lockFile.getAbsolutePath());</span>
+<span class="nc bnc" id="L258" title="All 2 branches missed.">                if (!lockFile.delete()) {</span>
+<span class="nc" id="L259">                    LOGGER.warn(&quot;An old write lock file was found but the system was unable to delete &quot;</span>
+<span class="nc" id="L260">                            + &quot;the file. Consider manually deleting {}&quot;, lockFile.getAbsolutePath());</span>
+                }
+            } else {
+<span class="nc" id="L263">                LOGGER.info(&quot;Lock file found `{}`&quot;, lockFile);</span>
+<span class="nc" id="L264">                LOGGER.info(&quot;Existing update in progress; waiting for update to complete&quot;);</span>
+            }
+        }
+<span class="fc" id="L267">    }</span>
+
+    /**
+     * Reads the first line from the lock file and returns the results as a
+     * string.
+     *
+     * @return the first line from the lock file; or null if the contents could
+     * not be read
+     */
+    private String readLockFile() {
+<span class="fc" id="L277">        String msg = null;</span>
+<span class="fc" id="L278">        try (RandomAccessFile f = new RandomAccessFile(lockFile, &quot;rw&quot;)) {</span>
+<span class="fc" id="L279">            msg = f.readLine();</span>
+<span class="nc" id="L280">        } catch (IOException ex) {</span>
+<span class="nc" id="L281">            LOGGER.debug(String.format(&quot;Error reading lock file: %s&quot;, lockFile), ex);</span>
+<span class="fc" id="L282">        }</span>
+<span class="fc" id="L283">        return msg;</span>
+    }
+
+    /**
+     * Returns the age of the file in minutes.
+     *
+     * @param file the file to calculate the age
+     * @return the age of the file
+     */
+    private double getFileAge(File file) {
+<span class="nc" id="L293">        final Date d = new Date();</span>
+<span class="nc" id="L294">        final long modified = file.lastModified();</span>
+<span class="nc" id="L295">        final double time = (d.getTime() - modified) / 1000.0 / 60.0;</span>
+<span class="nc" id="L296">        LOGGER.debug(&quot;Lock file age is {} minutes&quot;, time);</span>
+<span class="nc" id="L297">        return time;</span>
+    }
+
+    /**
+     * Adds the shutdown hook to the JVM.
+     */
+    private void addShutdownHook() {
+<span class="pc bpc" id="L304" title="1 of 2 branches missed.">        if (hook == null) {</span>
+<span class="fc" id="L305">            hook = WriteLockShutdownHookFactory.getHook(settings);</span>
+<span class="fc" id="L306">            hook.add(this);</span>
+
+        }
+<span class="fc" id="L309">    }</span>
+
+    /**
+     * Removes the shutdown hook.
+     */
+    private void removeShutdownHook() {
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">        if (hook != null) {</span>
+<span class="fc" id="L316">            hook.remove();</span>
+<span class="fc" id="L317">            hook = null;</span>
+        }
+<span class="fc" id="L319">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

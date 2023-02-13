@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PipfileAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">PipfileAnalyzer.java</span></div><h1>PipfileAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import org.apache.commons.io.FileUtils;
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Checksum;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Used to analyze dependencies defined in Pipfile. This analyzer works in
+ * tandem with the `PipfilelockAnalyzer` - and both analyzers use the same key
+ * to enable/disable the analyzers. The PipfilelockAnalyzer will be used over
+ * the Pipfile if the lock file exists.
+ *
+ *
+ * @author fcano
+ */
+@Experimental
+@ThreadSafe
+<span class="fc" id="L57">public class PipfileAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L62">    private static final Logger LOGGER = LoggerFactory.getLogger(PipfileAnalyzer.class);</span>
+    /**
+     * &quot;Pipfile&quot; file.
+     */
+    private static final String PIPFILE = &quot;Pipfile&quot;;
+    /**
+     * &quot;Pipfile.lock&quot; file.
+     */
+    private static final String LOCKFILE = &quot;Pipfile.lock&quot;;
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = &quot;Pipfile Analyzer&quot;;
+
+    /**
+     * The phase that this analyzer is intended to run in.
+     */
+<span class="fc" id="L79">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+
+    /**
+     * o * Matches AC_INIT variables in the output configure script.
+     */
+<span class="fc" id="L84">    private static final Pattern PACKAGE_VERSION = Pattern.compile(&quot;^([^#].*?) = \&quot;(?:[=&gt;]=([\\.\\*0-9]+?))?\&quot;$&quot;, Pattern.MULTILINE);</span>
+
+    /**
+     * The file filter used to determine which files this analyzer supports.
+     */
+<span class="fc" id="L89">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(PIPFILE).build();</span>
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L98">        return FILTER;</span>
+    }
+
+    /**
+     * Returns the name of the analyzer.
+     *
+     * @return the name of the analyzer.
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L108">        return ANALYZER_NAME;</span>
+    }
+
+    /**
+     * Returns the phase that the analyzer is intended to run in.
+     *
+     * @return the phase that the analyzer is intended to run in.
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L118">        return ANALYSIS_PHASE;</span>
+    }
+
+    /**
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
+     *
+     * @return the analyzer's enabled property setting key
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L129">        return Settings.KEYS.ANALYZER_PIPFILE_ENABLED;</span>
+    }
+
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="fc" id="L134">        engine.removeDependency(dependency);</span>
+<span class="fc" id="L135">        final File lock = new File(dependency.getActualFile().getParentFile(), LOCKFILE);</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        if (lock.isFile()) {</span>
+<span class="nc" id="L137">            LOGGER.debug(&quot;Skipping {} because a lock file was identified&quot;, dependency.getActualFilePath());</span>
+<span class="nc" id="L138">            return;</span>
+        } else {
+<span class="fc" id="L140">            LOGGER.debug(&quot;Checking file {}&quot;, dependency.getActualFilePath());</span>
+        }
+
+<span class="fc" id="L143">        final File dependencyFile = dependency.getActualFile();</span>
+<span class="pc bpc" id="L144" title="2 of 4 branches missed.">        if (!dependencyFile.isFile() || dependencyFile.length() == 0) {</span>
+<span class="nc" id="L145">            return;</span>
+        }
+
+<span class="fc" id="L148">        final File actualFile = dependency.getActualFile();</span>
+
+<span class="fc" id="L150">        final String contents = getFileContents(actualFile);</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">        if (!contents.isEmpty()) {</span>
+<span class="fc" id="L152">            final Matcher matcher = PACKAGE_VERSION.matcher(contents);</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            while (matcher.find()) {</span>
+<span class="fc" id="L154">                final String identifiedPackage = matcher.group(1);</span>
+<span class="fc" id="L155">                final String identifiedVersion = matcher.group(2);</span>
+<span class="fc" id="L156">                LOGGER.debug(String.format(&quot;package, version: %s %s&quot;, identifiedPackage, identifiedVersion));</span>
+<span class="fc" id="L157">                final Dependency d = new Dependency(dependency.getActualFile(), true);</span>
+<span class="fc" id="L158">                d.setName(identifiedPackage);</span>
+<span class="fc" id="L159">                d.setVersion(identifiedVersion);</span>
+                try {
+<span class="fc" id="L161">                    final PackageURL purl = PackageURLBuilder.aPackageURL()</span>
+<span class="fc" id="L162">                            .withType(&quot;pypi&quot;)</span>
+<span class="fc" id="L163">                            .withName(identifiedPackage)</span>
+<span class="fc" id="L164">                            .withVersion(identifiedVersion)</span>
+<span class="fc" id="L165">                            .build();</span>
+<span class="fc" id="L166">                    d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L167">                } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L168">                    LOGGER.debug(&quot;Unable to build package url for pypi&quot;, ex);</span>
+<span class="nc" id="L169">                    d.addSoftwareIdentifier(new GenericIdentifier(&quot;pypi:&quot; + identifiedPackage + &quot;@&quot; + identifiedVersion, Confidence.HIGH));</span>
+<span class="fc" id="L170">                }</span>
+<span class="fc" id="L171">                d.setPackagePath(String.format(&quot;%s:%s&quot;, identifiedPackage, identifiedVersion));</span>
+<span class="fc" id="L172">                d.setEcosystem(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L173">                final String filePath = String.format(&quot;%s:%s/%s&quot;, dependency.getFilePath(), identifiedPackage, identifiedVersion);</span>
+<span class="fc" id="L174">                d.setFilePath(filePath);</span>
+<span class="fc" id="L175">                d.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
+<span class="fc" id="L176">                d.setSha256sum(Checksum.getSHA256Checksum(filePath));</span>
+<span class="fc" id="L177">                d.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
+<span class="fc" id="L178">                d.addEvidence(EvidenceType.VENDOR, PIPFILE, &quot;vendor&quot;, identifiedPackage, Confidence.HIGHEST);</span>
+<span class="fc" id="L179">                d.addEvidence(EvidenceType.PRODUCT, PIPFILE, &quot;product&quot;, identifiedPackage, Confidence.HIGHEST);</span>
+<span class="fc" id="L180">                d.addEvidence(EvidenceType.VERSION, PIPFILE, &quot;version&quot;, identifiedVersion, Confidence.HIGHEST);</span>
+<span class="fc" id="L181">                engine.addDependency(d);</span>
+<span class="fc" id="L182">            }</span>
+        }
+<span class="fc" id="L184">    }</span>
+
+    /**
+     * Retrieves the contents of a given file.
+     *
+     * @param actualFile the file to read
+     * @return the contents of the file
+     * @throws AnalysisException thrown if there is an IO Exception
+     */
+    private String getFileContents(final File actualFile) throws AnalysisException {
+        try {
+<span class="fc" id="L195">            return FileUtils.readFileToString(actualFile, Charset.defaultCharset()).trim();</span>
+<span class="nc" id="L196">        } catch (IOException e) {</span>
+<span class="nc" id="L197">            throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
+        }
+    }
+
+    /**
+     * Initializes the file type analyzer.
+     *
+     * @param engine a reference to the dependency-check engine
+     * @throws InitializationException thrown if there is an exception during
+     * initialization
+     */
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
+        // No initialization needed.
+<span class="fc" id="L211">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

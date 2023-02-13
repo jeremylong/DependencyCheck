@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NodeAuditAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">NodeAuditAnalyzer.java</span></div><h1>NodeAuditAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2018 Steve Springett. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import org.apache.commons.io.FileUtils;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nodeaudit.Advisory;
+import org.owasp.dependencycheck.data.nodeaudit.NpmPayloadBuilder;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.List;
+
+import javax.annotation.concurrent.ThreadSafe;
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+import org.owasp.dependencycheck.analyzer.exception.SearchException;
+import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.utils.URLConnectionFailureException;
+import us.springett.parsers.cpe.exceptions.CpeValidationException;
+
+/**
+ * Used to analyze Node Package Manager (npm) package-lock.json and
+ * npm-shrinkwrap.json files via NPM Audit API.
+ *
+ * @author Steve Springett
+ */
+@ThreadSafe
+<span class="fc" id="L55">public class NodeAuditAnalyzer extends AbstractNpmAnalyzer {</span>
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L60">    private static final Logger LOGGER = LoggerFactory.getLogger(NodeAuditAnalyzer.class);</span>
+    /**
+     * The default URL to the NPM Audit API.
+     */
+    public static final String DEFAULT_URL = &quot;https://registry.npmjs.org/-/npm/v1/security/audits&quot;;
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.NODEJS;
+    /**
+     * The file name to scan.
+     */
+    public static final String PACKAGE_LOCK_JSON = &quot;package-lock.json&quot;;
+    /**
+     * The file name to scan.
+     */
+    public static final String SHRINKWRAP_JSON = &quot;npm-shrinkwrap.json&quot;;
+
+    /**
+     * Filter that detects files named &quot;package-lock.json or
+     * npm-shrinkwrap.json&quot;.
+     */
+<span class="fc" id="L83">    private static final FileFilter PACKAGE_JSON_FILTER = FileFilterBuilder.newInstance()</span>
+<span class="fc" id="L84">            .addFilenames(PACKAGE_LOCK_JSON, SHRINKWRAP_JSON).build();</span>
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L93">        return PACKAGE_JSON_FILTER;</span>
+    }
+
+    /**
+     * Returns the name of the analyzer.
+     *
+     * @return the name of the analyzer.
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L103">        return &quot;Node Audit Analyzer&quot;;</span>
+    }
+
+    /**
+     * Returns the phase that the analyzer is intended to run in.
+     *
+     * @return the phase that the analyzer is intended to run in.
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L113">        return AnalysisPhase.FINDING_ANALYSIS;</span>
+    }
+
+    /**
+     * Returns the key used in the properties file to determine if the analyzer
+     * is enabled.
+     *
+     * @return the enabled property setting key for the analyzer
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L124">        return Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED;</span>
+    }
+
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if (dependency.getDisplayFileName().equals(dependency.getFileName())) {</span>
+<span class="fc" id="L130">            engine.removeDependency(dependency);</span>
+        }
+<span class="fc" id="L132">        final File packageLock = dependency.getActualFile();</span>
+<span class="fc" id="L133">        final File shrinkwrap = new File(packageLock.getParentFile(), SHRINKWRAP_JSON);</span>
+<span class="fc bfc" id="L134" title="All 4 branches covered.">        if (PACKAGE_LOCK_JSON.equals(dependency.getFileName()) &amp;&amp; shrinkwrap.isFile()) {</span>
+<span class="fc" id="L135">            LOGGER.debug(&quot;Skipping {} because shrinkwrap lock file exists&quot;, dependency.getFilePath());</span>
+<span class="fc" id="L136">            return;</span>
+        }
+<span class="pc bpc" id="L138" title="1 of 6 branches missed.">        if (!packageLock.isFile() || packageLock.length() == 0 || !shouldProcess(packageLock)) {</span>
+<span class="fc" id="L139">            return;</span>
+        }
+<span class="fc" id="L141">        final File packageJson = new File(packageLock.getParentFile(), &quot;package.json&quot;);</span>
+        final List&lt;Advisory&gt; advisories;
+<span class="fc" id="L143">        final MultiValuedMap&lt;String, String&gt; dependencyMap = new HashSetValuedHashMap&lt;&gt;();</span>
+        //final Map&lt;String, String&gt; dependencyMap = new HashMap&lt;&gt;();
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if (packageJson.isFile()) {</span>
+<span class="fc" id="L146">            advisories = analyzePackage(packageLock, packageJson, dependency, dependencyMap);</span>
+        } else {
+<span class="nc" id="L148">            advisories = legacyAnalysis(packageLock, dependency, dependencyMap);</span>
+        }
+        try {
+<span class="fc" id="L151">            processResults(advisories, engine, dependency, dependencyMap);</span>
+<span class="nc" id="L152">        } catch (CpeValidationException ex) {</span>
+<span class="nc" id="L153">            throw new UnexpectedAnalysisException(ex);</span>
+<span class="fc" id="L154">        }</span>
+<span class="fc" id="L155">    }</span>
+
+    /**
+     * Analyzes the package and package-lock files by extracting dependency
+     * information, creating a payload to submit to the npm audit API,
+     * submitting the payload, and returning the identified advisories.
+     *
+     * @param lockFile a reference to the package-lock.json
+     * @param packageFile a reference to the package.json
+     * @param dependency a reference to the dependency-object for the
+     * package-lock.json
+     * @param dependencyMap a collection of module/version pairs; during
+     * creation of the payload the dependency map is populated with the
+     * module/version information.
+     * @return a list of advisories
+     * @throws AnalysisException thrown when there is an error creating or
+     * submitting the npm audit API payload
+     */
+    private List&lt;Advisory&gt; analyzePackage(final File lockFile, final File packageFile,
+            Dependency dependency, MultiValuedMap&lt;String, String&gt; dependencyMap)
+            throws AnalysisException {
+        try {
+<span class="fc" id="L177">            final JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile));</span>
+<span class="fc" id="L178">            final JsonReader lockReader = Json.createReader(FileUtils.openInputStream(lockFile));</span>
+            // Retrieves the contents of package-lock.json from the Dependency
+<span class="fc" id="L180">            final JsonObject lockJson = lockReader.readObject();</span>
+            // Retrieves the contents of package-lock.json from the Dependency
+<span class="fc" id="L182">            final JsonObject packageJson = packageReader.readObject();</span>
+
+            // Modify the payload to meet the NPM Audit API requirements
+<span class="fc" id="L185">            final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap,</span>
+<span class="fc" id="L186">                    getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false));</span>
+
+            // Submits the package payload to the nsp check service
+<span class="fc" id="L189">            return getSearcher().submitPackage(payload);</span>
+
+<span class="nc" id="L191">        } catch (URLConnectionFailureException e) {</span>
+<span class="nc" id="L192">            this.setEnabled(false);</span>
+<span class="nc" id="L193">            throw new AnalysisException(&quot;Failed to connect to the NPM Audit API (NodeAuditAnalyzer); the analyzer &quot;</span>
+                    + &quot;is being disabled and may result in false negatives.&quot;, e);
+<span class="nc" id="L195">        } catch (IOException e) {</span>
+<span class="nc" id="L196">            LOGGER.debug(&quot;Error reading dependency or connecting to NPM Audit API&quot;, e);</span>
+<span class="nc" id="L197">            this.setEnabled(false);</span>
+<span class="nc" id="L198">            throw new AnalysisException(&quot;Failed to read results from the NPM Audit API (NodeAuditAnalyzer); &quot;</span>
+                    + &quot;the analyzer is being disabled and may result in false negatives.&quot;, e);
+<span class="nc" id="L200">        } catch (JsonException e) {</span>
+<span class="nc" id="L201">            throw new AnalysisException(String.format(&quot;Failed to parse %s file from the NPM Audit API &quot;</span>
+<span class="nc" id="L202">                    + &quot;(NodeAuditAnalyzer).&quot;, lockFile.getPath()), e);</span>
+<span class="nc" id="L203">        } catch (SearchException e) {</span>
+<span class="nc" id="L204">            final File yarnCheck = new File(lockFile.getParentFile(), &quot;yarn.lock&quot;);</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">            if (yarnCheck.exists()) {</span>
+<span class="nc" id="L206">                final String msg = &quot;NodeAuditAnalyzer failed on &quot; + dependency.getActualFilePath()</span>
+                        + &quot; - yarn.lock was found; if package-lock.json was generated using synp, it may not be in the correct format.&quot;;
+<span class="nc" id="L208">                LOGGER.error(msg);</span>
+<span class="nc" id="L209">                throw new AnalysisException(msg, e);</span>
+            }
+<span class="nc" id="L211">            LOGGER.error(&quot;NodeAuditAnalyzer failed on {}&quot;, dependency.getActualFilePath());</span>
+<span class="nc" id="L212">            throw e;</span>
+        }
+    }
+
+    /**
+     * Analyzes the package and package-lock files by extracting dependency
+     * information, creating a payload to submit to the npm audit API,
+     * submitting the payload, and returning the identified advisories.
+     *
+     * @param file a reference to the package-lock.json
+     * @param dependency a reference to the dependency-object for the
+     * package-lock.json
+     * @param dependencyMap a collection of module/version pairs; during
+     * creation of the payload the dependency map is populated with the
+     * module/version information.
+     * @return a list of advisories
+     * @throws AnalysisException thrown when there is an error creating or
+     * submitting the npm audit API payload
+     */
+    private List&lt;Advisory&gt; legacyAnalysis(final File file, Dependency dependency, MultiValuedMap&lt;String, String&gt; dependencyMap)
+            throws AnalysisException {
+
+<span class="nc" id="L234">        try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(file))) {</span>
+
+            // Retrieves the contents of package-lock.json from the Dependency
+<span class="nc" id="L237">            final JsonObject packageJson = jsonReader.readObject();</span>
+
+<span class="nc" id="L239">            final String projectName = packageJson.getString(&quot;name&quot;, &quot;&quot;);</span>
+<span class="nc" id="L240">            final String projectVersion = packageJson.getString(&quot;version&quot;, &quot;&quot;);</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">            if (!projectName.isEmpty()) {</span>
+<span class="nc" id="L242">                dependency.setName(projectName);</span>
+            }
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            if (!projectVersion.isEmpty()) {</span>
+<span class="nc" id="L245">                dependency.setVersion(projectVersion);</span>
+            }
+
+            // Modify the payload to meet the NPM Audit API requirements
+<span class="nc" id="L249">            final JsonObject payload = NpmPayloadBuilder.build(packageJson, dependencyMap,</span>
+<span class="nc" id="L250">                    getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_SKIPDEV, false));</span>
+
+            // Submits the package payload to the nsp check service
+<span class="nc" id="L253">            return getSearcher().submitPackage(payload);</span>
+
+<span class="nc" id="L255">        } catch (URLConnectionFailureException e) {</span>
+<span class="nc" id="L256">            this.setEnabled(false);</span>
+<span class="nc" id="L257">            throw new AnalysisException(&quot;Failed to connect to the NPM Audit API (NodeAuditAnalyzer); the analyzer &quot;</span>
+                    + &quot;is being disabled and may result in false negatives.&quot;, e);
+<span class="nc" id="L259">        } catch (IOException e) {</span>
+<span class="nc" id="L260">            LOGGER.debug(&quot;Error reading dependency or connecting to NPM Audit API&quot;, e);</span>
+<span class="nc" id="L261">            this.setEnabled(false);</span>
+<span class="nc" id="L262">            throw new AnalysisException(&quot;Failed to read results from the NPM Audit API (NodeAuditAnalyzer); &quot;</span>
+                    + &quot;the analyzer is being disabled and may result in false negatives.&quot;, e);
+<span class="nc" id="L264">        } catch (JsonException e) {</span>
+<span class="nc" id="L265">            throw new AnalysisException(String.format(&quot;Failed to parse %s file from the NPM Audit API &quot;</span>
+<span class="nc" id="L266">                    + &quot;(NodeAuditAnalyzer).&quot;, file.getPath()), e);</span>
+<span class="nc" id="L267">        } catch (SearchException ex) {</span>
+<span class="nc" id="L268">            LOGGER.error(&quot;NodeAuditAnalyzer failed on {}&quot;, dependency.getActualFilePath());</span>
+<span class="nc" id="L269">            throw ex;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
