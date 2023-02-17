@@ -199,7 +199,8 @@ public class PoetryAnalyzer extends AbstractFileTypeAnalyzer {
         final File lock = new File(parent, POETRY_LOCK);
         final File requirements = new File(parent, "requirements.txt");
         final boolean found = lock.isFile() || requirements.isFile();
-        if (!found) {
+        //do not throw an error if the pyproject.toml is in the node_modules (#5464).
+        if (!found && !parent.toString().contains("node_modules")) {
             throw new AnalysisException("Python `pyproject.toml` found and there "
                     + "is not a `poetry.lock` or `requirements.txt` - analysis will be incomplete");
         }
