@@ -641,4 +641,11 @@
    <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.nls/orai18n@.*$</packageUrl>
    <cpe>cpe:/a:oracle:database</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5460
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.nls/orai18n@.*$</packageUrl>
+   <cpe>cpe:/a:oracle:oracle_database</cpe>
+</suppress>
 </suppressions>
