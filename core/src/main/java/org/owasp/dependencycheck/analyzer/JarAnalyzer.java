@@ -446,6 +446,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
                     final Properties pomProperties = retrievePomProperties(path, jar);
                     final File pomFile = extractPom(path, jar);
                     final Model pom = PomUtils.readPom(pomFile);
+                    pom.setGAVFromPomDotProperties(pomProperties);
                     pom.processProperties(pomProperties);
 
                     final String artifactId = new File(path).getParentFile().getName();
