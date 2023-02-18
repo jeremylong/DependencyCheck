@@ -396,7 +396,7 @@ public class Model implements Serializable {
      * @param pomProperties A properties object that holds the properties from a pom.properties file.
      */
     public void setGAVFromPomDotProperties(Properties pomProperties) {
-        if (!pomProperties.containsKey("groupId") || !pomProperties.containsKey("artifactId")|| !pomProperties.containsKey("version")) {
+        if (!pomProperties.containsKey("groupId") || !pomProperties.containsKey("artifactId") || !pomProperties.containsKey("version")) {
             return;
         }
         this.groupId = pomProperties.getProperty("groupId");
