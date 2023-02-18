@@ -634,4 +634,11 @@
    <packageUrl regex="true">^pkg:maven/org\.codehaus\.woodstox/stax2-api@.*$</packageUrl>
    <cpe>cpe:/a:fasterxml:woodstox</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5459
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.nls/orai18n@.*$</packageUrl>
+   <cpe>cpe:/a:oracle:database</cpe>
+</suppress>
 </suppressions>
