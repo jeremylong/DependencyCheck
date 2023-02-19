@@ -369,7 +369,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     base = Paths.get(baseDir.getPath(), pathName).toFile();
                 } else {
                     base = Paths.get(baseDir.getPath(), "node_modules", name).toFile();
-                    if (!base.isFile()) {
+                    if (!base.isDirectory()) {
                         final File test = new File(modulesRoot, name);
                         if (test.isDirectory()) {
                             base = test;
