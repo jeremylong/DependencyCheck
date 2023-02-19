@@ -335,18 +335,6 @@ public class Model implements Serializable {
         if (properties == null) {
             return;
         }
-        this.groupId = interpolateString(this.groupId, properties);
-        if (groupId == null && properties.containsKey("groupId")) {
-            this.groupId = properties.getProperty("groupId");
-        }
-        this.artifactId = interpolateString(this.artifactId, properties);
-        if (artifactId == null && properties.containsKey("artifactId")) {
-            this.artifactId = properties.getProperty("artifactId");
-        }
-        this.version = interpolateString(this.version, properties);
-        if (version == null && properties.containsKey("version")) {
-            this.version = properties.getProperty("version");
-        }
         this.description = interpolateString(this.description, properties);
         for (License l : this.getLicenses()) {
             l.setName(interpolateString(l.getName(), properties));
@@ -396,6 +384,24 @@ public class Model implements Serializable {
         }
         final StringSubstitutor substitutor = new StringSubstitutor(new PropertyLookup(properties));
         return substitutor.replace(text);
+    }
+
+    /**
+     * Replaces the group/artifact/version obtained from the pom.xml which may contain variable references
+     * with the interpolated values of the
+     * <a href="https://maven.apache.org/shared/maven-archiver/#pom-properties-content>pom.properties</a>
+     * content (when present). Validates that at least the documented properties for the G/A/V coordinates
+     * are all present. If not it will leave the model unmodified as the property-source was apparently not
+     * a valid pom.properties file for the pom.xml.
+     * @param pomProperties A properties object that holds the properties from a pom.properties file.
+     */
+    public void setGAVFromPomDotProperties(Properties pomProperties) {
+        if (!pomProperties.containsKey("groupId") || !pomProperties.containsKey("artifactId") || !pomProperties.containsKey("version")) {
+            return;
+        }
+        this.groupId = pomProperties.getProperty("groupId");
+        this.artifactId = pomProperties.getProperty("artifactId");
+        this.version = pomProperties.getProperty("version");
     }
 
     /**
