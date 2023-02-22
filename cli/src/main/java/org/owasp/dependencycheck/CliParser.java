@@ -577,13 +577,13 @@ public final class CliParser {
      * Example given `--disableArchive` on the command line would cause this
      * method to return true for the disable archive setting.
      *
-     * @param argument the command line argument
+     * @param disableFlag the command line disable option
      * @param setting the corresponding settings key
      * @return true if the disable option was set, if not set the currently
      * configured value will be returned
      */
-    public boolean hasDisableOption(String argument, String setting) {
-        if (line == null || !line.hasOption(argument)) {
+    public boolean isDisabled(String disableFlag, String setting) {
+        if (line == null || !line.hasOption(disableFlag)) {
             try {
                 return !settings.getBoolean(setting);
             } catch (InvalidSettingException ise) {
@@ -602,7 +602,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isNodeAuditDisabled() {
-        return hasDisableOption(ARGUMENT.DISABLE_NODE_AUDIT, Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED);
+        return isDisabled(ARGUMENT.DISABLE_NODE_AUDIT, Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED);
     }
 
     /**
@@ -612,7 +612,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isYarnAuditDisabled() {
-        return hasDisableOption(ARGUMENT.DISABLE_YARN_AUDIT, Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED);
+        return isDisabled(ARGUMENT.DISABLE_YARN_AUDIT, Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED);
     }
 
     /**
@@ -622,7 +622,7 @@ public final class CliParser {
      * otherwise false
      */
     public boolean isPnpmAuditDisabled() {
-        return hasDisableOption(ARGUMENT.DISABLE_PNPM_AUDIT, Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED);
+        return isDisabled(ARGUMENT.DISABLE_PNPM_AUDIT, Settings.KEYS.ANALYZER_PNPM_AUDIT_ENABLED);
     }
 
     /**
