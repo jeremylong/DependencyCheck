@@ -558,7 +558,6 @@ public class App {
                 !cli.isDisabled(CliParser.ARGUMENT.DISABLE_DART, Settings.KEYS.ANALYZER_DART_ENABLED));
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED,
                 !cli.isDisabled(CliParser.ARGUMENT.DISABLE_NODE_JS, Settings.KEYS.ANALYZER_NODE_PACKAGE_ENABLED));
-        //TODO next major - remove the deprecated check in isNodeAuditDisabled
         settings.setBoolean(Settings.KEYS.ANALYZER_NODE_AUDIT_ENABLED,
                 !cli.isNodeAuditDisabled());
         settings.setBoolean(Settings.KEYS.ANALYZER_YARN_AUDIT_ENABLED,
