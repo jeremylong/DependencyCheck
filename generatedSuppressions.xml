@@ -689,3 +689,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.flink/flink-s3-fs-hadoop@.*$</packageUrl>
    <cpe>cpe:/a:apache:hadoop</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5492
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.microsoft\.azure/azure-cosmosdb-direct@.*$</packageUrl>
+   <cpe>cpe:/a:microsoft:platform_sdk</cpe>
+</suppress>
