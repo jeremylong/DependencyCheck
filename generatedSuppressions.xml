@@ -661,3 +661,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.iceberg/iceberg-orc@.*$</packageUrl>
    <cpe>cpe:/a:apache:orc</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5499
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.iceberg/iceberg-flink-1\.15@.*$</packageUrl>
+   <cpe>cpe:/a:apache:flink</cpe>
+</suppress>
