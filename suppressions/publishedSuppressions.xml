@@ -683,4 +683,11 @@
    <packageUrl regex="true">^pkg:maven/com\.google\.cloud/grpc-gcp@.*$</packageUrl>
    <cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5496
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.flink/flink-s3-fs-hadoop@.*$</packageUrl>
+   <cpe>cpe:/a:apache:hadoop</cpe>
+</suppress>
 </suppressions>
