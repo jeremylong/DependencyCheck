@@ -648,4 +648,11 @@
    <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.nls/orai18n@.*$</packageUrl>
    <cpe>cpe:/a:oracle:oracle_database</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5501
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jsonschema2pojo/jsonschema2pojo-jdk-annotation@.*$</packageUrl>
+   <cpe>cpe:/a:json-schema_project:json-schema</cpe>
+</suppress>
 </suppressions>
