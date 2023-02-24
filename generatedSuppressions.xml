@@ -717,3 +717,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.spark/spark-token-provider-kafka-0-10_2\.12@.*$</packageUrl>
    <cpe>cpe:/a:apache:kafka</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5462
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.ws\.commons\.axiom/axiom-impl@.*$</packageUrl>
+   <cpe>cpe:/a:web_project:web</cpe>
+</suppress>
