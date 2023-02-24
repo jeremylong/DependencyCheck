@@ -704,4 +704,11 @@
    <packageUrl regex="true">^pkg:maven/com\.microsoft\.azure/azure-cosmosdb@.*$</packageUrl>
    <cpe>cpe:/a:www-sql_project:www-sql</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5490
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.microsoft\.azure/azure-cosmosdb@.*$</packageUrl>
+   <cpe>cpe:/a:async_project:async</cpe>
+</suppress>
 </suppressions>
