@@ -675,3 +675,10 @@
    <packageUrl regex="true">^pkg:maven/com\.googlecode\.javaewah/JavaEWAH@.*$</packageUrl>
    <cpe>cpe:/a:google:google_search</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5497
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.google\.cloud/grpc-gcp@.*$</packageUrl>
+   <cpe>cpe:/a:grpc:grpc</cpe>
+</suppress>
