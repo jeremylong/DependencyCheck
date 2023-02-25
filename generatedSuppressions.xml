@@ -724,3 +724,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.ws\.commons\.axiom/axiom-impl@.*$</packageUrl>
    <cpe>cpe:/a:web_project:web</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5461
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.github\.luben/zstd-jni@.*$</packageUrl>
+   <cpe>cpe:/a:freebsd:freebsd</cpe>
+</suppress>
