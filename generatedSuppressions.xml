@@ -731,3 +731,10 @@
    <packageUrl regex="true">^pkg:maven/com\.github\.luben/zstd-jni@.*$</packageUrl>
    <cpe>cpe:/a:freebsd:freebsd</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5506
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.kamon/kamon-prometheus_2\.13@.*$</packageUrl>
+   <cpe>cpe:/a:prometheus:prometheus</cpe>
+</suppress>
