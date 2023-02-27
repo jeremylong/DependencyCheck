@@ -199,10 +199,11 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L199">        final File lock = new File(parent, POETRY_LOCK);</span>
 <span class="fc" id="L200">        final File requirements = new File(parent, &quot;requirements.txt&quot;);</span>
 <span class="pc bpc" id="L201" title="2 of 4 branches missed.">        final boolean found = lock.isFile() || requirements.isFile();</span>
-<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        if (!found) {</span>
-<span class="fc" id="L203">            throw new AnalysisException(&quot;Python `pyproject.toml` found and there &quot;</span>
+        //do not throw an error if the pyproject.toml is in the node_modules (#5464).
+<span class="pc bpc" id="L203" title="2 of 4 branches missed.">        if (!found &amp;&amp; !parent.toString().contains(&quot;node_modules&quot;)) {</span>
+<span class="fc" id="L204">            throw new AnalysisException(&quot;Python `pyproject.toml` found and there &quot;</span>
                     + &quot;is not a `poetry.lock` or `requirements.txt` - analysis will be incomplete&quot;);
         }
-<span class="nc" id="L206">    }</span>
+<span class="nc" id="L207">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

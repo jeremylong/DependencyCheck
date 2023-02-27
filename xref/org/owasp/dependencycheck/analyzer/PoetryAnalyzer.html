@@ -207,12 +207,13 @@
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">final</strong> File lock = <strong class="jxr_keyword">new</strong> File(parent, POETRY_LOCK);
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>         <strong class="jxr_keyword">final</strong> File requirements = <strong class="jxr_keyword">new</strong> File(parent, <span class="jxr_string">"requirements.txt"</span>);
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> found = lock.isFile() || requirements.isFile();
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>         <strong class="jxr_keyword">if</strong> (!found) {
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"Python `pyproject.toml` found and there "</span>
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>                     + <span class="jxr_string">"is not a `poetry.lock` or `requirements.txt` - analysis will be incomplete"</span>);
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>         }
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>     }
-<a class="jxr_linenumber" name="L207" href="#L207">207</a> }
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>         <em class="jxr_comment">//do not throw an error if the pyproject.toml is in the node_modules (#5464).</em>
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>         <strong class="jxr_keyword">if</strong> (!found &amp;&amp; !parent.toString().contains(<span class="jxr_string">"node_modules"</span>)) {
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(<span class="jxr_string">"Python `pyproject.toml` found and there "</span>
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>                     + <span class="jxr_string">"is not a `poetry.lock` or `requirements.txt` - analysis will be incomplete"</span>);
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         }
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>     }
+<a class="jxr_linenumber" name="L208" href="#L208">208</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

@@ -377,7 +377,7 @@
 <a class="jxr_linenumber" name="L369" href="#L369">369</a>                     base = Paths.get(baseDir.getPath(), pathName).toFile();
 <a class="jxr_linenumber" name="L370" href="#L370">370</a>                 } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L371" href="#L371">371</a>                     base = Paths.get(baseDir.getPath(), <span class="jxr_string">"node_modules"</span>, name).toFile();
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>                     <strong class="jxr_keyword">if</strong> (!base.isFile()) {
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>                     <strong class="jxr_keyword">if</strong> (!base.isDirectory()) {
 <a class="jxr_linenumber" name="L373" href="#L373">373</a>                         <strong class="jxr_keyword">final</strong> File test = <strong class="jxr_keyword">new</strong> File(modulesRoot, name);
 <a class="jxr_linenumber" name="L374" href="#L374">374</a>                         <strong class="jxr_keyword">if</strong> (test.isDirectory()) {
 <a class="jxr_linenumber" name="L375" href="#L375">375</a>                             base = test;
