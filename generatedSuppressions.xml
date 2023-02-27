@@ -738,3 +738,4 @@
    <packageUrl regex="true">^pkg:maven/io\.kamon/kamon-prometheus_2\.13@.*$</packageUrl>
    <cpe>cpe:/a:prometheus:prometheus</cpe>
 </suppress>
+<!-- suppressions above this line will be included in 8.1.1 by PR #5504 -->
