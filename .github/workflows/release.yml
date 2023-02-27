@@ -185,20 +185,17 @@ jobs:
           prerelease: false
           draft: false
           body: |
-            ### Added
-
-            - `Pipefile.lock` files are now supported ([#5404](https://github.com/jeremylong/DependencyCheck/pull/5404)).
-            - Python projects with only a `pyproject.toml` but no lock file or requirements will report an error as ODC is unable to analyze the project ([#5409](https://github.com/jeremylong/DependencyCheck/pull/5409)).
-
             ### Fixed
 
-            - Some maven projects caused false positives due to bad string interpolation ([#5421](https://github.com/jeremylong/DependencyCheck/pull/5421)).
-            - Error message from Assembly Analyzer has been updated to emphasize dotnet 6 is required for analysis ([#5408](https://github.com/jeremylong/DependencyCheck/pull/5408)).
-            - Correct issue where database defrag occurs even when no updates were performed ([#5441](https://github.com/jeremylong/DependencyCheck/pull/5441)).
-            - Fixed several False Positives and one False Negative.
-            - Fixed the `format` configuration more flexible in the gradle plugin ([dependency-check-gradle/#324](https://github.com/dependency-check/dependency-check-gradle/pull/324)).
+             - allow hosted suppressions file to be disabled (#5509)
+             - Several FPs not suitable for our automation (#5504)
+             - Fix incorrect defaults for nexus and central-analyzer in gradle plugin documentation (#5503)
+             - Erroneous error-log for deprecated CLI flag usage when using properyfile based disablement of Node Audit Analyzer (#5487)
+             - Prefer pom.properties G/A/V over pom.xml G/A/V to resolve GAV interpolation issues (#5473)
+             - Node package dependencies ending up as related dependency of the wrong version of the package (#5479)
+             - do not throw error if pyproject.toml is in node_modules (#5470)
 
-            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/60?closed=1).
+            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/61?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli

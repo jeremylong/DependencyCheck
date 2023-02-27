@@ -1,5 +1,19 @@
 # Change Log
 
+## [Version 8.1.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.1.1) (2023-02-27)
+
+### Fixed
+
+ - allow hosted suppressions file to be disabled (#5509)
+ - Several FPs not suitable for our automation (#5504)
+ - Fix incorrect defaults for nexus and central-analyzer in gradle plugin documentation (#5503)
+ - Erroneous error-log for deprecated CLI flag usage when using properyfile based disablement of Node Audit Analyzer (#5487)
+ - Prefer pom.properties G/A/V over pom.xml G/A/V to resolve GAV interpolation issues (#5473)
+ - Node package dependencies ending up as related dependency of the wrong version of the package (#5479)
+ - do not throw error if pyproject.toml is in node_modules (#5470)
+ 
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/61?closed=1).
+
 ## [Version 8.1.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.1.0) (2023-01-26)
 
 ### Added
