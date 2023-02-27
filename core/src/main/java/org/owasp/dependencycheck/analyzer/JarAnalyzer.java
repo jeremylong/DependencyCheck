@@ -512,7 +512,7 @@ public class JarAnalyzer extends AbstractFileTypeAnalyzer {
      * @return a Properties object or null if no pom.properties was found
      */
     private Properties retrievePomProperties(String path, final JarFile jar) {
-        Properties pomProperties = new Properties();
+        final Properties pomProperties = new Properties();
         final String propPath = path.substring(0, path.length() - 7) + "pom.properties";
         final ZipEntry propEntry = jar.getEntry(propPath);
         if (propEntry != null) {
