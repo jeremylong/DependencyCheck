@@ -6180,4 +6180,210 @@
         <packageUrl regex="true">^(?!pkg:maven/org.eclipse.platform).+$</packageUrl>
         <cpe>cpe:/a:eclipse:eclipse_ide</cpe>
     </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        suppress various improper matches to the CPE that belongs only to pkg:maven/org.json/json
+        FP per #5502
+        ]]></notes>
+        <packageUrl regex="true">^(?!pkg:maven/org\.json/json@).+$</packageUrl>
+        <cpe>cpe:/a:json-java_project:json-java</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        suppress various improper matches to the CPE that belongs only to pkg:npm/flat
+        FP per #5454
+        ]]></notes>
+        <packageUrl regex="true">^(?!pkg:npm/flat@).+$</packageUrl>
+        <cpe>cpe:/a:flat_project:flat</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5489, make sure to include all apacha calcite-avatica modules
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.calcite\.avatica/.*$</packageUrl>
+        <cpe>cpe:/a:apache:calcite:</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+        FP per issue #5381, apollo_project:apollo is a PHP project unrelated to apollographql
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.apollographql\.apollo/.*$</packageUrl>
+        <cpe>cpe:/a:apollo_project:apollo</cpe>
+    </suppress>
+    <!-- generated suppressions added to main in 8.1.1 -->
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5333
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-kickstart-spring-support@.*$</packageUrl>
+        <cpe>cpe:/a:graphql-java_project:graphql-java</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5336
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.openrewrite\.recipe/rewrite-jhipster@.*$</packageUrl>
+        <cpe>cpe:/a:jhipster:jhipster</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5361
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/jakarta\.resource/jakarta\.resource-api@.*$</packageUrl>
+        <cpe>cpe:/a:payara:payara</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5373
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
+        <cpe>cpe:/a:voyager_project:voyager</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5372
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.locationtech\.spatial4j/spatial4j@.*$</packageUrl>
+        <cpe>cpe:/a:smiley_project:smiley</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5380
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/dev\.ludovic\.netlib/lapack@.*$</packageUrl>
+        <cpe>cpe:/a:lapack_project:lapack</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5375
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.eclipse\.microprofile\.jwt/microprofile-jwt-auth-api@.*$</packageUrl>
+        <cpe>cpe:/a:payara:payara</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5368
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.hadoop\.thirdparty/hadoop-shaded-protobuf_3_7@.*$</packageUrl>
+        <cpe>cpe:/a:apache:hadoop</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5325
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.enterprisedt/edtFTPj@.*$</packageUrl>
+        <cpe>cpe:/a:ftp_project:ftp</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5436
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.codehaus\.woodstox/stax2-api@.*$</packageUrl>
+        <cpe>cpe:/a:fasterxml:woodstox</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5459
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.nls/orai18n@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:database</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5460
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.oracle\.database\.nls/orai18n@.*$</packageUrl>
+        <cpe>cpe:/a:oracle:oracle_database</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5501
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.jsonschema2pojo/jsonschema2pojo-jdk-annotation@.*$</packageUrl>
+        <cpe>cpe:/a:json-schema_project:json-schema</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5500
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.iceberg/iceberg-orc@.*$</packageUrl>
+        <cpe>cpe:/a:apache:orc</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5499
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.iceberg/iceberg-flink-1\.15@.*$</packageUrl>
+        <cpe>cpe:/a:apache:flink</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5498
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.googlecode\.javaewah/JavaEWAH@.*$</packageUrl>
+        <cpe>cpe:/a:google:google_search</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5497
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.google\.cloud/grpc-gcp@.*$</packageUrl>
+        <cpe>cpe:/a:grpc:grpc</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5496
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.flink/flink-s3-fs-hadoop@.*$</packageUrl>
+        <cpe>cpe:/a:apache:hadoop</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5492
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.microsoft\.azure/azure-cosmosdb-direct@.*$</packageUrl>
+        <cpe>cpe:/a:microsoft:platform_sdk</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5491
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.microsoft\.azure/azure-cosmosdb@.*$</packageUrl>
+        <cpe>cpe:/a:www-sql_project:www-sql</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5490
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.microsoft\.azure/azure-cosmosdb@.*$</packageUrl>
+        <cpe>cpe:/a:async_project:async</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5471
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.spark/spark-token-provider-kafka-0-10_2\.12@.*$</packageUrl>
+        <cpe>cpe:/a:apache:kafka</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5462
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.apache\.ws\.commons\.axiom/axiom-impl@.*$</packageUrl>
+        <cpe>cpe:/a:web_project:web</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5461
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.github\.luben/zstd-jni@.*$</packageUrl>
+        <cpe>cpe:/a:freebsd:freebsd</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
+   FP per issue #5506
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/io\.kamon/kamon-prometheus_2\.13@.*$</packageUrl>
+        <cpe>cpe:/a:prometheus:prometheus</cpe>
+    </suppress>
 </suppressions>
