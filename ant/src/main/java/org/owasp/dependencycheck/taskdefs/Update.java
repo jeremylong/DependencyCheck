@@ -109,9 +109,13 @@ public class Update extends Purge {
      */
     private Integer hostedSuppressionsValidForHours;
     /**
-     * Whether or not the hosted suppressions file will be updated regardless of the `autoupdate` settings. Defaults to false.
+     * Whether the hosted suppressions file will be updated regardless of the `autoupdate` settings. Defaults to false.
      */
     private Boolean hostedSuppressionsForceUpdate;
+    /**
+     * Whether the hosted suppressions file will be used. Defaults to true.
+     */
+    private Boolean hostedSuppressionsEnabled;
 
     /**
      * Specify the first year of NVD CVE data to download; default is 2002.
@@ -476,6 +480,23 @@ public class Update extends Purge {
     }
 
     /**
+     * Get the value of hostedSuppressionsEnabled.
+     *
+     * @return the value of hostedSuppressionsEnabled
+     */
+    public Boolean isHostedSuppressionsEnabled() {
+        return hostedSuppressionsEnabled;
+    }
+    /**
+     * Set the value of hostedSuppressionsEnabled.
+     *
+     * @param hostedSuppressionsEnabled new value of hostedSuppressionsEnabled
+     */
+    public void setHostedSuppressionsEnabled(Boolean hostedSuppressionsEnabled) {
+        this.hostedSuppressionsEnabled = hostedSuppressionsEnabled;
+    }
+
+    /**
      * Executes the update by initializing the settings, downloads the NVD XML
      * data, and then processes the data storing it in the local database.
      *
@@ -539,6 +560,7 @@ public class Update extends Purge {
         getSettings().setIntIfNotNull(Settings.KEYS.CVE_START_YEAR, cveStartYear);
         getSettings().setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);
         getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);
         if (cveValidForHours != null) {
             if (cveValidForHours >= 0) {
                 getSettings().setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);

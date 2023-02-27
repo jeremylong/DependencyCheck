@@ -66,7 +66,8 @@ public class HostedSuppressionsDataSource  implements CachedWebDataSource {
         final boolean forceupdate = settings.getBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, false);
         final boolean cpeSuppressionEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_CPE_SUPPRESSION_ENABLED, true);
         final boolean vulnSuppressionEnabled = settings.getBoolean(Settings.KEYS.ANALYZER_VULNERABILITY_SUPPRESSION_ENABLED, true);
-        final boolean enabled = cpeSuppressionEnabled || vulnSuppressionEnabled;
+        boolean enabled = settings.getBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, true);
+        enabled = enabled && (cpeSuppressionEnabled || vulnSuppressionEnabled);
         try {
             final URL url = new URL(configuredUrl);
             final File filepath = new File(url.getPath());

@@ -499,6 +499,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.ENABLE_NEXUS, "Enable the Nexus Analyzer."))
                 .addOption(newOption(ARGUMENT.ARTIFACTORY_ENABLED, "Whether the Artifactory Analyzer should be enabled."))
                 .addOption(newOption(ARGUMENT.PURGE_NVD, "Purges the local NVD data cache"))
+                .addOption(newOption(ARGUMENT.DISABLE_HOSTED_SUPPRESSIONS, "Disable the usage of the hosted suppressions file"))
                 .addOption(newOption(ARGUMENT.HOSTED_SUPPRESSIONS_FORCEUPDATE, "Force the hosted suppressions file to update even"
                                                                                + " if autoupdate is disabled"))
                 .addOption(newOptionWithArg(ARGUMENT.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, "hours",
@@ -1521,6 +1522,10 @@ public final class CliParser {
          * when generating the JUNIT report format.
          */
         public static final String FAIL_JUNIT_ON_CVSS = "junitFailOnCVSS";
+        /**
+         * The CLI argument to set the number of hours to wait before re-checking hosted suppressions file for updates.
+         */
+        public static final String DISABLE_HOSTED_SUPPRESSIONS = "disableHostedSuppressions";
         /**
          * The CLI argument to set the number of hours to wait before re-checking hosted suppressions file for updates.
          */

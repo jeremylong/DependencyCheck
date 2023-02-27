@@ -165,9 +165,10 @@ ossIndex     | password              | The optional passwod or API token to conn
 ossIndex     | warnOnlyOnRemoteErrors| Sets whether remote errors from the OSS Index (e.g. BAD GATEWAY, RATE LIMIT EXCEEDED) will result in warnings only instead of failing execution. | false
 slack        | enabled               | Whether or not slack notifications are enabled.                                                                   | false
 slack        | webhookUrl            | The custom incoming webhook URL to receive notifications.                                                         | &nbsp;
-hostedSuppressions | enabled         | The number of hours to wait before checking for new updates of the hosted suppressions file .                     | 2
+hostedSuppressions | enabled         | Whether the hosted suppressions file will be used.                                                                | true
 hostedSuppressions | forceupdate     | Sets whether hosted suppressions file will update regardless of the `autoupdate` setting.                         | false
 hostedSuppressions | url             | The URL to the Retire JS repository.                                                                              | https://jeremylong.github.io/DependencyCheck/suppressions/publishedSuppressions.xml
+hostedSuppressions | validForHours   | The number of hours to wait before checking for new updates of the hosted suppressions file .                     | 2
 
 #### Example
 ```groovy

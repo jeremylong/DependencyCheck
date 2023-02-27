@@ -230,6 +230,10 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
     private void loadHostedSuppressionBaseData(final SuppressionParser parser, final Engine engine) {
         final File repoFile;
         boolean repoEmpty = false;
+        final boolean enabled = getSettings().getBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, true);
+        if (!enabled) {
+            return;
+        }
         final boolean autoupdate = getSettings().getBoolean(Settings.KEYS.AUTO_UPDATE, true);
         final boolean forceupdate = getSettings().getBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, false);
 

@@ -663,6 +663,8 @@ public class App {
 
         settings.setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_URL,
                 cli.getStringArgument(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_URL));
+        settings.setBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED,
+                !cli.isDisabled(CliParser.ARGUMENT.DISABLE_HOSTED_SUPPRESSIONS, Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED));
         settings.setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE,
                 cli.hasOption(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_FORCEUPDATE));
         settings.setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS,

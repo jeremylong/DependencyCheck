@@ -162,12 +162,13 @@ connectionString         | The connection string used to connect to the database
 serverId                 | The id of a server defined in the settings.xml; this can be used to encrypt the database password. See [password encryption](http://maven.apache.org/guides/mini/guide-encryption.html) for more information. | &nbsp; |
 databaseUser             | The username used when connecting to the database.                                                                                         | &nbsp;                                                              |
 databasePassword         | The password used when connecting to the database.                                                                                         | &nbsp;                                                              |
-hostedSuppressionsForceUpdate                 | Whether the hosted suppressions file will update regardless of the `autoupdate` setting.                              | false
-hostedSuppressionsUrl                         | The URL to a mirrored copy of the hosted suppressions file for internet-constrained environments.                     | https://jeremylong.github.io/DependencyCheck/suppressions/publishedSuppressions.xml
-hostedSuppressionsValidForHours            | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 2
-retireJsUrlServerId      | The id of a server defined in the settings.xml to retrieve the credentials (username and password) to connect to RetireJS instance. | &nbsp;
-retireJsUser          | If you don't want register user/password in settings.xml, you can specify user. | &nbsp;
-retireJsPassword         | If you don't want register user/password in settings.xml, you can specify user. | &nbsp;
+hostedSuppressionsEnabled      | Whether the hosted suppressions file will be used.                                                                                    | true
+hostedSuppressionsForceUpdate  | Whether the hosted suppressions file will update regardless of the `autoupdate` setting.                                             | false
+hostedSuppressionsUrl          | The URL to a mirrored copy of the hosted suppressions file for internet-constrained environments.                                    | https://jeremylong.github.io/DependencyCheck/suppressions/publishedSuppressions.xml
+hostedSuppressionsValidForHours| Sets the number of hours to wait before checking for new updates from the NVD.                                                       | 2
+retireJsUrlServerId      | The id of a server defined in the settings.xml to retrieve the credentials (username and password) to connect to RetireJS instance.        | &nbsp;
+retireJsUser             | If you don't want register user/password in settings.xml, you can specify user.                                                            | &nbsp;
+retireJsPassword         | If you don't want register user/password in settings.xml, you can specify user.                                                            | &nbsp;
 
 Proxy Configuration
 ====================

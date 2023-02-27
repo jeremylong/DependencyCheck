@@ -44,6 +44,7 @@ _odc_completions()
             --disableFileName
             --disableGolangDep
             --disableGolangMod
+            --disableHostedSuppressions
             --disableJar
             --disableMavenInstall
             --disableMixAudit
