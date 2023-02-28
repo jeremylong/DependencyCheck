@@ -1,5 +1,13 @@
 # Change Log
 
+## [Version 8.1.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.1.2) (2023-02-28)
+
+### Fixed
+
+ - Fix `NullPointerException` in the Jar Analyzer introduced in 8.1.1 (#5512)
+ 
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/62?closed=1).
+
 ## [Version 8.1.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.1.1) (2023-02-27)
 
 ### Fixed
