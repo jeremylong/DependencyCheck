@@ -68,7 +68,7 @@ Dependency-Check Core,org.owasp.dependencycheck.data.update,KnownExploitedDataSo
 Dependency-Check Core,org.owasp.dependencycheck.data.update,RetireJSDataSource,166,114,16,6,35,23,11,6,2,4
 Dependency-Check Core,org.owasp.dependencycheck.data.update,NvdCveUpdater,1090,106,126,4,239,30,73,7,8,7
 Dependency-Check Core,org.owasp.dependencycheck.data.update,HostedSuppressionsDataSource,185,129,19,9,42,25,15,6,3,4
-Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,11,76,0,10,3,18,0,8,0,3
+Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,15,72,1,9,4,17,1,7,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,LuceneUtils,0,61,1,11,0,17,1,8,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,TokenPairConcatenatingFilter,59,99,6,10,17,28,5,8,2,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,AlphaNumericFilter,51,114,6,14,15,28,5,11,2,4
@@ -186,7 +186,7 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,PythonPackageAnalyzer,5
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,OssIndexAnalyzer,374,245,38,18,91,62,31,19,6,16
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CPEAnalyzer.IdentifierConfidence,0,34,0,0,0,4,0,1,0,1
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,NugetconfAnalyzer,37,232,0,6,8,43,0,11,0,8
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,JarAnalyzer,749,2480,184,294,139,473,153,120,0,34
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,JarAnalyzer,749,2478,184,294,139,472,153,120,0,34
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,ArtifactoryAnalyzer,212,40,20,0,57,12,14,8,4,8
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CpeSuppressionAnalyzer,0,23,0,2,0,9,0,8,0,7
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PEAnalyzer,149,363,36,46,26,79,26,27,0,9
