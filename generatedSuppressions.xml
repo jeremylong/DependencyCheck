@@ -739,3 +739,11 @@
    <cpe>cpe:/a:prometheus:prometheus</cpe>
 </suppress>
 <!-- suppressions above this line will be included in 8.1.1 by PR #5504 -->
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5529
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.github\.dasniko/testcontainers-keycloak@.*$</packageUrl>
+   <cpe>cpe:/a:keycloak:keycloak</cpe>
+</suppress>
