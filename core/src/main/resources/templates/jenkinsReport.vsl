@@ -713,7 +713,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             #if($vuln.getSource().name().equals("NVD"))
                                 <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b></p>
                             #elseif($vuln.getSource().name().equals("NPM"))
-                                <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b></p>
+                                <p><b><a target="_blank" href="https://github.com/advisories/$enc.url($vuln.name)">$enc.html($vuln.name) (NPM)</a></b></p>
                             #else
                                 <p><span class="underline"><b>$enc.html($vuln.name)</b>&nbsp;($vuln.getSource().name())</span></p>
                             #end
@@ -787,7 +787,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
             <br/>
             This report may contain data retrieved from the <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA Known Exploited Vulnerability Catalog</a>.
             <br/>
-            This report may contain data retrieved from the <a href="https://www.npmjs.com/advisories">NPM Public Advisories</a>.
+            This report may contain data retrieved from the <a href="https://github.com/advisories/">Github Advisory Database (via NPM Audit API)</a>.
             <br/>
             This report may contain data retrieved from <a href="https://retirejs.github.io/retire.js/">RetireJS</a>.
             <br/>

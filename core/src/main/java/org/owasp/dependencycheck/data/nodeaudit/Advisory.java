@@ -33,12 +33,12 @@ public class Advisory implements Serializable {
     /**
      * Serial version UID.
      */
-    private static final long serialVersionUID = -6157232800626565476L;
+    private static final long serialVersionUID = -6157232800626565475L;
 
     /**
-     * The unique ID of the advisory as issued by NPM.
+     * The github_advisory_id of the advisory as issued by GHSA-hosted NPM Audit API.
      */
-    private int id;
+    private String ghsaId;
 
     /**
      * The timestamp of which the advisory was created.
@@ -122,13 +122,6 @@ public class Advisory implements Serializable {
      */
     private String cwe;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getCreated() {
         return created;
@@ -258,4 +251,11 @@ public class Advisory implements Serializable {
         this.cwe = cwe;
     }
 
+    public String getGhsaId() {
+        return ghsaId;
+    }
+
+    public void setGhsaId(String ghsaId) {
+        this.ghsaId = ghsaId;
+    }
 }

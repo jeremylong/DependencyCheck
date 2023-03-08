@@ -70,7 +70,7 @@ public class NpmAuditParser {
      */
     private Advisory parseAdvisory(JSONObject object) throws JSONException {
         final Advisory advisory = new Advisory();
-        advisory.setId(object.getInt("id"));
+        advisory.setGhsaId(object.getString("github_advisory_id"));
         advisory.setOverview(object.optString("overview", null));
         advisory.setReferences(object.optString("references", null));
         advisory.setCreated(object.optString("created", null));

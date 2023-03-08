@@ -451,11 +451,11 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
             //Create a new vulnerability out of the advisory returned by nsp.
             final Vulnerability vuln = new Vulnerability();
             vuln.setDescription(advisory.getOverview());
-            vuln.setName(String.valueOf(advisory.getId()));
+            vuln.setName(String.valueOf(advisory.getGhsaId()));
             vuln.setUnscoredSeverity(advisory.getSeverity());
             vuln.setSource(Vulnerability.Source.NPM);
             vuln.addReference(
-                    "Advisory " + advisory.getId() + ": " + advisory.getTitle(),
+                    "NPM Advisory " + advisory.getGhsaId() + ": " + advisory.getTitle(),
                     advisory.getReferences(),
                     null
             );
