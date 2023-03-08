@@ -748,4 +748,11 @@
    <packageUrl regex="true">^pkg:maven/com\.github\.dasniko/testcontainers-keycloak@.*$</packageUrl>
    <cpe>cpe:/a:keycloak:keycloak</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5540
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.kerby/zookeeper-backend@.*$</packageUrl>
+   <cpe>cpe:/a:apache:zookeeper</cpe>
+</suppress>
 </suppressions>
