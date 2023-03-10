@@ -84,7 +84,15 @@ public class NpmAuditParser {
         advisory.setPatchedVersions(object.optString("patched_versions", null));
         advisory.setAccess(object.optString("access", null));
         advisory.setSeverity(object.optString("severity", null));
-        advisory.setCwe(object.optString("cwe", null));
+
+        final JSONArray jsonCwes = object.optJSONArray("cwe");
+        final List<String> stringCwes = new ArrayList<>();
+        if (jsonCwes != null) {
+            for (int j = 0; j < jsonCwes.length(); j++) {
+                stringCwes.add(jsonCwes.getString(j));
+            }
+        }
+        advisory.setCwes(stringCwes);
 
         final JSONArray findings = object.optJSONArray("findings");
         for (int i = 0; i < findings.length(); i++) {

@@ -118,9 +118,9 @@ public class Advisory implements Serializable {
     private String severity;
 
     /**
-     * The CWE of the advisory.
+     * The CWEs of the advisory.
      */
-    private String cwe;
+    private List<String> cwes;
 
 
     public String getCreated() {
@@ -243,12 +243,12 @@ public class Advisory implements Serializable {
         this.severity = severity;
     }
 
-    public String getCwe() {
-        return cwe;
+    public List<String> getCwes() {
+        return cwes;
     }
 
-    public void setCwe(String cwe) {
-        this.cwe = cwe;
+    public void setCwes(List<String> cwes) {
+        this.cwes = cwes;
     }
 
     public String getGhsaId() {
