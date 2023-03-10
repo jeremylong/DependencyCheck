@@ -1,0 +1,10 @@
+<Project>
+
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+
+  <PropertyGroup Label="nuget dependency versions">
+     <HumanizerVersion>1.0.0</HumanizerVersion>
+  </PropertyGroup>
+
+</Project>

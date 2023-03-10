@@ -32,42 +32,47 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.owasp.dependencycheck.utils.InterpolationUtil;
 import org.owasp.dependencycheck.utils.InterpolationUtil.SyntaxStyle;
 
 /**
- * Parses a MSBuild project file for NuGet references using XPath.
+ * Parses a nuget's Directory.Packages.props file using XPath.
  *
- * @author paulirwin
+ * @author Jeremy Long
  */
-public class XPathMSBuildProjectParser {
+public class DirectoryPackagesPropsParser {
 
     /**
-     * Parses the given stream for MSBuild PackageReference elements.
+     * Parses the given stream for Directory.Packages.props elements.
      *
      * @param stream the input stream to parse
      * @param props the Directory.Build.props properties
-     * @param centrallyManaged a map of centrally managed package references
      * @return a collection of discovered NuGet package references
      * @throws MSBuildProjectParseException if an exception occurs
      */
-    public List<NugetPackageReference> parse(InputStream stream, Properties props,
-            Map<String, String> centrallyManaged) throws MSBuildProjectParseException {
+    public Map<String, String> parse(InputStream stream, Properties props) throws MSBuildProjectParseException {
         try {
             final DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();
             final Document d = db.parse(stream);
 
             final XPath xpath = XPathFactory.newInstance().newXPath();
-            final List<NugetPackageReference> packages = new ArrayList<>();
-
-            final NodeList nodeList = (NodeList) xpath.evaluate("//PackageReference", d, XPathConstants.NODESET);
+            final Map<String, String> packages = new HashMap<>();
+            final Node centralNode = (Node) xpath.evaluate("/Project/PropertyGroup/ManagePackageVersionsCentrally", d, XPathConstants.NODE);
+            if (centralNode != null && centralNode.getChildNodes().getLength() == 1) {
+                final String val = centralNode.getChildNodes().item(0).getNodeValue();
+                if (!"true".equalsIgnoreCase(val)) {
+                    return packages;
+                }
+            } else {
+                return packages;
+            }
+            final NodeList nodeList = (NodeList) xpath.evaluate("//PackageVersion", d, XPathConstants.NODESET);
 
             if (nodeList == null) {
-                throw new MSBuildProjectParseException("Unable to parse MSBuild project file");
+                throw new MSBuildProjectParseException("Unable to parse Directory.Packages.props file");
             }
 
             for (int i = 0; i < nodeList.getLength(); i++) {
@@ -82,32 +87,21 @@ public class XPathMSBuildProjectParser {
                 final String include = includeAttr.getNodeValue();
                 String version = null;
 
-                if (centrallyManaged.containsKey(include)) {
-                    if (attrs.getNamedItem("VersionOverride") != null) {
-                        version = attrs.getNamedItem("VersionOverride").getNodeValue();
-                    } else {
-                        version = centrallyManaged.get(include);
-                    }
-                } else if (attrs.getNamedItem("Version") != null) {
+                if (attrs.getNamedItem("Version") != null) {
                     version = attrs.getNamedItem("Version").getNodeValue();
                 } else if (xpath.evaluate("Version", node, XPathConstants.NODE) instanceof Node) {
                     version = ((Node) xpath.evaluate("Version", node, XPathConstants.NODE)).getTextContent();
                 }
 
                 if (include != null && version != null) {
-
-                    final NugetPackageReference npr = new NugetPackageReference();
-
-                    npr.setId(include);
-                    npr.setVersion(InterpolationUtil.interpolate(version, props, SyntaxStyle.MSBUILD));
-
-                    packages.add(npr);
+                    version = InterpolationUtil.interpolate(version, props, SyntaxStyle.MSBUILD);
+                    packages.put(include, version);
                 }
             }
 
             return packages;
         } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | MSBuildProjectParseException e) {
-            throw new MSBuildProjectParseException("Unable to parse MSBuild project file", e);
+            throw new MSBuildProjectParseException("Unable to parse Directory.Packages.props file", e);
         }
     }
 

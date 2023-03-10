@@ -1,0 +1,13 @@
+<Project>
+
+  <PropertyGroup>    
+    <Product>Shared Packages</Product>
+    <Copyright>Copyright © 2020</Copyright>
+   </PropertyGroup>
+
+  <PropertyGroup Label="nuget dependency versions">
+     <NodaTimeVersion>3.0.0</NodaTimeVersion>
+     <EntityFrameworkCoreVersion>5.0.0</EntityFrameworkCoreVersion>
+  </PropertyGroup>
+
+</Project>

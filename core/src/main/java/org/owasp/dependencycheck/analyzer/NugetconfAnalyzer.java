@@ -24,7 +24,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nuget.NugetPackageReference;
 import org.owasp.dependencycheck.data.nuget.NugetconfParseException;
-import org.owasp.dependencycheck.data.nuget.NugetconfParser;
 import org.owasp.dependencycheck.data.nuget.XPathNugetconfParser;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -150,7 +149,7 @@ public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
         LOGGER.debug("Checking packages.config file {}", dependency);
         try {
-            final NugetconfParser parser = new XPathNugetconfParser();
+            final XPathNugetconfParser parser = new XPathNugetconfParser();
             final List<NugetPackageReference> packages;
             try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath())) {
                 packages = parser.parse(fis);

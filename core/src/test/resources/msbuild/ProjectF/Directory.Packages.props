@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="NodaTime" Version="5.1.0" />
+    <PackageVersion Include="Humanizer" Version="6.0.0" />
+  </ItemGroup>
+</Project>

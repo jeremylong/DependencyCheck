@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.utils.InterpolationUtil;
 
 /**
  *
@@ -288,18 +289,5 @@ public class ModelTest extends BaseTest {
         assertEquals(expResults, instance.getName());
     }
 
-    /**
-     * Test of interpolateString method, of class Model.
-     */
-    @Test
-    public void testInterpolateString() {
-        Properties prop = new Properties();
-        prop.setProperty("key", "value");
-        prop.setProperty("nested", "nested ${key}");
-        String text = "This is a test of '${key}' '${nested}'";
-        String expResults = "This is a test of 'value' 'nested value'";
-        String results = Model.interpolateString(text, prop);
-        assertEquals(expResults, results);
-    }
 
 }

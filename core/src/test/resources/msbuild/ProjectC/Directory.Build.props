@@ -1,0 +1,9 @@
+<Project>
+
+  <Import Project="..\Directory.Build.props" />
+
+  <PropertyGroup Label="nuget dependency versions">
+     <HumanizerVersion>3.0.0</HumanizerVersion>
+  </PropertyGroup>
+
+</Project>

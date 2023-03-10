@@ -1,0 +1,7 @@
+<Project>
+
+  <PropertyGroup Label="nuget dependency versions">
+    <NodaTimeVersion>4.0.0</NodaTimeVersion>
+  </PropertyGroup>
+
+</Project>

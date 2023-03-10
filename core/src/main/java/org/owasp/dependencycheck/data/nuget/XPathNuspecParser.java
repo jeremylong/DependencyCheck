@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
  * @author colezlaw
  */
 @ThreadSafe
-public class XPathNuspecParser implements NuspecParser {
+public class XPathNuspecParser {
 
     /**
      * Gets the string value of a node or null if it's not present
@@ -61,7 +61,6 @@ public class XPathNuspecParser implements NuspecParser {
      * @return the populated bean
      * @throws NuspecParseException when an exception occurs
      */
-    @Override
     public NugetPackage parse(InputStream stream) throws NuspecParseException {
         try {
             final DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();

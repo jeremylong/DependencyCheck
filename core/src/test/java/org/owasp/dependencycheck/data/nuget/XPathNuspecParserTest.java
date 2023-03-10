@@ -38,7 +38,7 @@ public class XPathNuspecParserTest extends BaseTest {
      */
     @Test
     public void testGoodDocument() throws Exception {
-        NuspecParser parser = new XPathNuspecParser();
+        XPathNuspecParser parser = new XPathNuspecParser();
         //InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("log4net.2.0.3.nuspec");
         InputStream is = BaseTest.getResourceAsStream(this, "log4net.2.0.3.nuspec");
         NugetPackage np = parser.parse(is);
@@ -57,7 +57,7 @@ public class XPathNuspecParserTest extends BaseTest {
      */
     @Test(expected = NuspecParseException.class)
     public void testMissingDocument() throws Exception {
-        NuspecParser parser = new XPathNuspecParser();
+        XPathNuspecParser parser = new XPathNuspecParser();
         //InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("dependencycheck.properties");
         InputStream is = BaseTest.getResourceAsStream(this, "dependencycheck.properties");
 
@@ -75,7 +75,7 @@ public class XPathNuspecParserTest extends BaseTest {
      */
     @Test(expected = NuspecParseException.class)
     public void testNotNuspec() throws Exception {
-        NuspecParser parser = new XPathNuspecParser();
+        XPathNuspecParser parser = new XPathNuspecParser();
         //InputStream is = XPathNuspecParserTest.class.getClassLoader().getResourceAsStream("suppressions.xml");
         InputStream is = BaseTest.getResourceAsStream(this, "suppressions.xml");
         parser.parse(is);

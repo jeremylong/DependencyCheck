@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
  * @author doshyt
  */
 @ThreadSafe
-public class XPathNugetconfParser implements NugetconfParser {
+public class XPathNugetconfParser {
     /**
      * Parse an input stream and return the resulting {@link NugetPackage}.
      *
@@ -50,8 +50,6 @@ public class XPathNugetconfParser implements NugetconfParser {
      * @return the populated bean
      * @throws NugetconfParseException when an exception occurs
      */
-
-    @Override
     public List<NugetPackageReference> parse(InputStream stream) throws NugetconfParseException {
         try {
             final DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();
