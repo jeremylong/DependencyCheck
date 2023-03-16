@@ -454,6 +454,7 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
             vuln.setDescription(advisory.getOverview());
             vuln.setName(String.valueOf(advisory.getGhsaId()));
             vuln.setUnscoredSeverity(advisory.getSeverity());
+            vuln.setCvssV3(advisory.getCvssV3());
             vuln.setSource(Vulnerability.Source.NPM);
             for (String cwe : advisory.getCwes()) {
                 vuln.addCwe(cwe);

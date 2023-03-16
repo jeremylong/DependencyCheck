@@ -17,6 +17,8 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
+import org.owasp.dependencycheck.dependency.CvssV3;
+
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
@@ -122,6 +124,7 @@ public class Advisory implements Serializable {
      */
     private List<String> cwes;
 
+    private CvssV3 cvssV3;
 
     public String getCreated() {
         return created;
@@ -257,5 +260,13 @@ public class Advisory implements Serializable {
 
     public void setGhsaId(String ghsaId) {
         this.ghsaId = ghsaId;
+    }
+
+    public CvssV3 getCvssV3() {
+        return cvssV3;
+    }
+
+    public void setCvssV3(CvssV3 cvssV3) {
+        this.cvssV3 = cvssV3;
     }
 }
