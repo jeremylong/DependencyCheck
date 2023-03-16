@@ -31,11 +31,15 @@ import java.util.List;
  */
 public class CvssV3 implements Serializable {
 
-    public static final List<String> BASE_METRICS = Arrays.asList("AV", "AC", "PR", "UI", "S", "C", "I", "A");
     /**
      * Serial version UID.
      */
     private static final long serialVersionUID = -315810090425928920L;
+
+    /**
+     * The CVSS v3 Base Metrics (that are required by the spec for any CVSS v3 Vector String)
+     */
+    private static final List<String> BASE_METRICS = Arrays.asList("AV", "AC", "PR", "UI", "S", "C", "I", "A");
 
     /**
      * CVSS Availability Impact.

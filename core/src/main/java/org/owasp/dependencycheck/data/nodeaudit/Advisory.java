@@ -124,6 +124,9 @@ public class Advisory implements Serializable {
      */
     private List<String> cwes;
 
+    /**
+     * The CVSSv3 of the advisory.
+     */
     private CvssV3 cvssV3;
 
     public String getCreated() {

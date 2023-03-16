@@ -139,9 +139,9 @@ public class NpmAuditParser {
                             LOGGER.warn("Invalid CVSS vector format encountered in NPM Audit results '{}' ", vector, iae);
                         }
                     } else {
-                        LOGGER.warn("Unsupported CVSS vector format in NPM Audit results, please file a feature " +
-                                "request at https://github.com/jeremylong/DependencyCheck/issues/new/choose to " +
-                                "support vector format '{}' ", vector);
+                        LOGGER.warn("Unsupported CVSS vector format in NPM Audit results, please file a feature "
+                                + "request at https://github.com/jeremylong/DependencyCheck/issues/new/choose to "
+                                + "support vector format '{}' ", vector);
                     }
                 }
             }
