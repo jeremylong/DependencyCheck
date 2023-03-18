@@ -102,7 +102,7 @@ jobs:
       - name: Semgrep
         id: semgrep
         run: |
-            docker run --rm -v "${PWD}:/src" returntocorp/semgrep --config "p/ci" --sarif > semgrep.sarif
+            docker run --rm -v "${PWD}:/src" returntocorp/semgrep semgrep --config "p/ci" --sarif > semgrep.sarif
       - name: Maven Site
         if: always()
         run: |
