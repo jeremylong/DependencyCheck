@@ -66,7 +66,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
         <version>$enc.xml($applicationVersion)</version>
 #end
         <reportDate>$scanDateXML</reportDate>
-        <credits>This report contains data retrieved from the National Vulnerability Database: https://nvd.nist.gov, NPM Public Advisories: https://www.npmjs.com/advisories, and the RetireJS community.</credits>
+        <credits>This report contains data retrieved from the National Vulnerability Database: https://nvd.nist.gov, Github Advisory Database (via NPM Audit API): https://github.com/advisories/, and the RetireJS community.</credits>
     </projectInfo>
     <dependencies>
 #foreach($dependency in $dependencies)

@@ -958,7 +958,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             #if($vuln.getSource().name().equals("NVD"))
                                 <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this CVE for this file" data-display-name="$enc.html($dependency.DisplayFileName)" data-sha1="$enc.html($dependency.Sha1sum)" data-pkgurl="#if($supressPkgUrl)$enc.html($supressPkgUrl)#end" data-type-to-suppress="cve" data-id-to-suppress="$enc.html($vuln.name)">suppress</button></p>
                             #elseif($vuln.getSource().name().equals("NPM"))
-                                <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this vulnerability for this file" data-display-name="$enc.html($dependency.DisplayFileName)" data-sha1="$enc.html($dependency.Sha1sum)" data-pkgurl="#if($supressPkgUrl)$enc.html($supressPkgUrl)#end" data-type-to-suppress="vulnerabilityName" data-id-to-suppress="$enc.html($vuln.name)">suppress</button></p>
+                                <p><b><a target="_blank" href="https://github.com/advisories/$enc.url($vuln.name)">$enc.html($vuln.name) (NPM)</a></b>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this vulnerability for this file" data-display-name="$enc.html($dependency.DisplayFileName)" data-sha1="$enc.html($dependency.Sha1sum)" data-pkgurl="#if($supressPkgUrl)$enc.html($supressPkgUrl)#end" data-type-to-suppress="vulnerabilityName" data-id-to-suppress="$enc.html($vuln.name)">suppress</button></p>
                             #else
                                 <p><span class="underline"><b>$enc.html($vuln.name)</b>&nbsp;($vuln.getSource().name())</span>&nbsp;&nbsp;<button class="copybutton" title="Generate Suppression XML for this vulnerability for this file" data-display-name="$enc.html($dependency.DisplayFileName)" data-sha1="$enc.html($dependency.Sha1sum)" data-pkgurl="#if($supressPkgUrl)$enc.html($supressPkgUrl)#end" data-type-to-suppress="vulnerabilityName" data-id-to-suppress="$enc.html($vuln.name)">suppress</button></p>
                             #end
@@ -1159,7 +1159,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                                     #if($vuln.getSource().name().equals("NVD"))
                                         <p><b><a target="_blank" href="http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vuln.name)">$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
                                     #elseif($vuln.getSource().name().equals("NPM"))
-                                        <p><b><a target="_blank" href="https://www.npmjs.com/advisories/$enc.url($vuln.name)">NPM-$enc.html($vuln.name)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
+                                        <p><b><a target="_blank" href="https://github.com/advisories/$enc.url($vuln.name)">$enc.html($vuln.name) (NPM)</a></b>&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
                                     #else
                                         <p><b>$enc.html($vuln.name)</b> ($vuln.getSource().name())&nbsp;&nbsp;<span class="suppressedLabel" >suppressed</span></p>
                                     #end
@@ -1250,7 +1250,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
             <br/>
             This report may contain data retrieved from the <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA Known Exploited Vulnerability Catalog</a>.
             <br/>
-            This report may contain data retrieved from the <a href="https://www.npmjs.com/advisories">NPM Public Advisories</a>.
+            This report may contain data retrieved from the <a href="https://github.com/advisories/">Github Advisory Database (via NPM Audit API)</a>.
             <br/>
             This report may contain data retrieved from <a href="https://retirejs.github.io/retire.js/">RetireJS</a>.
             <br/>

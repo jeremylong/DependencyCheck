@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -451,14 +452,28 @@ public abstract class AbstractNpmAnalyzer extends AbstractFileTypeAnalyzer {
             //Create a new vulnerability out of the advisory returned by nsp.
             final Vulnerability vuln = new Vulnerability();
             vuln.setDescription(advisory.getOverview());
-            vuln.setName(String.valueOf(advisory.getId()));
+            vuln.setName(String.valueOf(advisory.getGhsaId()));
             vuln.setUnscoredSeverity(advisory.getSeverity());
+            vuln.setCvssV3(advisory.getCvssV3());
             vuln.setSource(Vulnerability.Source.NPM);
-            vuln.addReference(
-                    "Advisory " + advisory.getId() + ": " + advisory.getTitle(),
-                    advisory.getReferences(),
-                    null
-            );
+            for (String cwe : advisory.getCwes()) {
+                vuln.addCwe(cwe);
+            }
+            if (advisory.getReferences() != null) {
+                final String[] references = advisory.getReferences().split("\\n");
+                for (String reference : references) {
+                    if (reference.length() > 3) {
+                        String url = reference.substring(2);
+                        try {
+                            new URL(url);
+                        } catch (MalformedURLException ignored) {
+                            // reference is not a format-valid URL, so null it to make the reference be used as plaintext
+                            url = null;
+                        }
+                        vuln.addReference("NPM Advisory reference: ", url == null ? reference : url, url);
+                    }
+                }
+            }
 
             //Create a single vulnerable software object - these do not use CPEs unlike the NVD.
             final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();

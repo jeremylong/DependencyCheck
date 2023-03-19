@@ -17,6 +17,8 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
+import org.owasp.dependencycheck.dependency.CvssV3;
+
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
@@ -33,12 +35,12 @@ public class Advisory implements Serializable {
     /**
      * Serial version UID.
      */
-    private static final long serialVersionUID = -6157232800626565476L;
+    private static final long serialVersionUID = -6157232800626565475L;
 
     /**
-     * The unique ID of the advisory as issued by NPM.
+     * The github_advisory_id of the advisory as issued by GHSA-hosted NPM Audit API.
      */
-    private int id;
+    private String ghsaId;
 
     /**
      * The timestamp of which the advisory was created.
@@ -118,17 +120,14 @@ public class Advisory implements Serializable {
     private String severity;
 
     /**
-     * The CWE of the advisory.
+     * The CWEs of the advisory.
      */
-    private String cwe;
+    private List<String> cwes;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    /**
+     * The CVSSv3 of the advisory.
+     */
+    private CvssV3 cvssV3;
 
     public String getCreated() {
         return created;
@@ -250,12 +249,27 @@ public class Advisory implements Serializable {
         this.severity = severity;
     }
 
-    public String getCwe() {
-        return cwe;
+    public List<String> getCwes() {
+        return cwes;
     }
 
-    public void setCwe(String cwe) {
-        this.cwe = cwe;
+    public void setCwes(List<String> cwes) {
+        this.cwes = cwes;
     }
 
+    public String getGhsaId() {
+        return ghsaId;
+    }
+
+    public void setGhsaId(String ghsaId) {
+        this.ghsaId = ghsaId;
+    }
+
+    public CvssV3 getCvssV3() {
+        return cvssV3;
+    }
+
+    public void setCvssV3(CvssV3 cvssV3) {
+        this.cvssV3 = cvssV3;
+    }
 }

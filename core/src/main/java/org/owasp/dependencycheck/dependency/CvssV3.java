@@ -17,7 +17,12 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import org.sonatype.ossindex.service.api.cvss.Cvss3Severity;
+
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * CVSS V3 scoring information.
@@ -30,6 +35,11 @@ public class CvssV3 implements Serializable {
      * Serial version UID.
      */
     private static final long serialVersionUID = -315810090425928920L;
+
+    /**
+     * The CVSS v3 Base Metrics (that are required by the spec for any CVSS v3 Vector String)
+     */
+    private static final List<String> BASE_METRICS = Arrays.asList("AV", "AC", "PR", "UI", "S", "C", "I", "A");
 
     /**
      * CVSS Availability Impact.
@@ -141,6 +151,50 @@ public class CvssV3 implements Serializable {
         this.version = version;
     }
     //CSON: ParameterNumber
+
+    /**
+     * Constructs a new CVSS V3 object from a CVSS v3.x Vector String representation and
+     * a CVSS V3 Base score.
+     *
+     * @param vectorString a CVSS v3 Vector String
+     * @param baseScore the CVSS v3 base score
+     * @throws IllegalArgumentException when the provided vectorString is not a valid
+     * <a href="https://www.first.org/cvss/specification-document#Vector-String">CVSS v3.x vector string</a>.
+     */
+    public CvssV3(String vectorString, float baseScore) {
+        if (!vectorString.startsWith("CVSS:3")) {
+            throw new IllegalArgumentException("Not a valid CVSSv3 vector string: " + vectorString);
+        }
+        this.version = vectorString.substring(5, vectorString.indexOf('/'));
+        final String[] metricStrings = vectorString.substring(vectorString.indexOf('/') + 1).split("/");
+        final HashMap<String, String> metrics = new HashMap<>();
+        for (int i = 0; i < metricStrings.length; i++) {
+            final String[] metricKeyVal = metricStrings[i].split(":");
+            if (metricKeyVal.length != 2) {
+                throw new IllegalArgumentException(
+                        String.format("Not a valid CVSSv3 vector string '%s', invalid metric component '%s'",
+                                vectorString, metricStrings[i]));
+            }
+            metrics.put(metricKeyVal[0], metricKeyVal[1]);
+        }
+        if (!metrics.keySet().containsAll(BASE_METRICS)) {
+            throw new IllegalArgumentException(
+                    String.format("Not a valid CVSSv3 vector string '%s'; missing one or more required Base Metrics;",
+                            vectorString));
+        }
+        this.attackVector = metrics.get("AV");
+        this.attackComplexity = metrics.get("AC");
+        this.privilegesRequired = metrics.get("PR");
+        this.userInteraction = metrics.get("UI");
+        this.scope = metrics.get("S");
+        this.confidentialityImpact = metrics.get("C");
+        this.integrityImpact = metrics.get("I");
+        this.availabilityImpact = metrics.get("A");
+        this.baseScore = baseScore;
+        this.baseSeverity = Cvss3Severity.of(baseScore).name();
+        this.exploitabilityScore = null;
+        this.impactScore = null;
+    }
 
     /**
      * Get the value of attackVector.
