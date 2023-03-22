@@ -1,5 +1,23 @@
 # Change Log
 
+## [Version 8.2.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.2.0) (2023-03-22)
+
+### Added
+
+ - Support msbuild Directory.build.props (#5475)
+ - better display of NPM audit references
+ - Add CVSS V3 results from NPM Audit results
+
+### Fixed
+
+ - Fix several issues on NPM Audit reporting (#5546)
+ - Case issue in SQL (#5557)
+ - Fix CWE(s) extraction for NPM Audit advisories
+ - Use the stable github_advisory_id instead of the now unstable id in NPM audit results
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/63?closed=1).
+
+
 ## [Version 8.1.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.1.2) (2023-02-28)
 
 ### Fixed
