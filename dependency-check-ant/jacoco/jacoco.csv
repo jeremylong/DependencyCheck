@@ -3,8 +3,8 @@ Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Check,656,852,36,34
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Update,213,157,11,3,76,34,45,7,39,6
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Check.ReportFormat,0,14,0,0,0,4,0,3,0,3
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,RetirejsFilter,0,10,0,0,0,4,0,3,0,3
-Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,SuppressionFile,0,10,0,0,0,4,0,3,0,3
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Purge,64,89,3,1,20,24,9,4,7,4
+Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,SuppressionFile,0,10,0,0,0,4,0,3,0,3
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Check.ReportFormats,0,35,0,2,0,7,0,3,0,2
 Dependency-Check Ant Task,org.owasp.dependencycheck.ant.logging,AntLoggerAdapter,163,167,33,17,48,52,36,21,15,17
 Dependency-Check Ant Task,org.owasp.dependencycheck.ant.logging,AntLoggerFactory,0,12,0,0,0,4,0,2,0,2

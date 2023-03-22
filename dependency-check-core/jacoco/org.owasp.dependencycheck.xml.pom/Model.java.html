@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Properties;
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.apache.commons.text.StringSubstitutor;
-import org.apache.commons.text.lookup.StringLookup;
+import org.owasp.dependencycheck.utils.InterpolationUtil;
 
 /**
  * A simple pojo to hold data related to a Maven POM file.
@@ -32,7 +31,7 @@ import org.apache.commons.text.lookup.StringLookup;
  * @author jeremy long
  */
 @ThreadSafe
-<span class="fc" id="L35">public class Model implements Serializable {</span>
+<span class="fc" id="L34">public class Model implements Serializable {</span>
 
     /**
      * Generated UUID.
@@ -82,11 +81,11 @@ import org.apache.commons.text.lookup.StringLookup;
     /**
      * The list of licenses.
      */
-<span class="fc" id="L85">    private final List&lt;License&gt; licenses = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L84">    private final List&lt;License&gt; licenses = new ArrayList&lt;&gt;();</span>
     /**
      * The list of developers.
      */
-<span class="fc" id="L89">    private final List&lt;Developer&gt; developers = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L88">    private final List&lt;Developer&gt; developers = new ArrayList&lt;&gt;();</span>
     /**
      * The project URL.
      */
@@ -98,7 +97,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of name
      */
     public String getName() {
-<span class="fc" id="L101">        return name;</span>
+<span class="fc" id="L100">        return name;</span>
     }
 
     /**
@@ -107,8 +106,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param name new value of name
      */
     public void setName(String name) {
-<span class="fc" id="L110">        this.name = name;</span>
-<span class="fc" id="L111">    }</span>
+<span class="fc" id="L109">        this.name = name;</span>
+<span class="fc" id="L110">    }</span>
 
     /**
      * Get the value of organization.
@@ -116,7 +115,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of organization
      */
     public String getOrganization() {
-<span class="fc" id="L119">        return organization;</span>
+<span class="fc" id="L118">        return organization;</span>
     }
 
     /**
@@ -125,8 +124,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param organization new value of organization
      */
     public void setOrganization(String organization) {
-<span class="fc" id="L128">        this.organization = organization;</span>
-<span class="fc" id="L129">    }</span>
+<span class="fc" id="L127">        this.organization = organization;</span>
+<span class="fc" id="L128">    }</span>
 
     /**
      * Get the value of organizationUrl.
@@ -134,7 +133,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of organizationUrl
      */
     public String getOrganizationUrl() {
-<span class="fc" id="L137">        return organizationUrl;</span>
+<span class="fc" id="L136">        return organizationUrl;</span>
     }
 
     /**
@@ -143,8 +142,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param organizationUrl new value of organizationUrl
      */
     public void setOrganizationUrl(String organizationUrl) {
-<span class="fc" id="L146">        this.organizationUrl = organizationUrl;</span>
-<span class="fc" id="L147">    }</span>
+<span class="fc" id="L145">        this.organizationUrl = organizationUrl;</span>
+<span class="fc" id="L146">    }</span>
 
     /**
      * Get the value of description.
@@ -152,7 +151,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of description
      */
     public String getDescription() {
-<span class="fc" id="L155">        return description;</span>
+<span class="fc" id="L154">        return description;</span>
     }
 
     /**
@@ -161,8 +160,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param description new value of description
      */
     public void setDescription(String description) {
-<span class="fc" id="L164">        this.description = description;</span>
-<span class="fc" id="L165">    }</span>
+<span class="fc" id="L163">        this.description = description;</span>
+<span class="fc" id="L164">    }</span>
 
     /**
      * Get the value of groupId.
@@ -170,7 +169,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of groupId
      */
     public String getGroupId() {
-<span class="fc" id="L173">        return groupId;</span>
+<span class="fc" id="L172">        return groupId;</span>
     }
 
     /**
@@ -179,8 +178,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param groupId new value of groupId
      */
     public void setGroupId(String groupId) {
-<span class="fc" id="L182">        this.groupId = groupId;</span>
-<span class="fc" id="L183">    }</span>
+<span class="fc" id="L181">        this.groupId = groupId;</span>
+<span class="fc" id="L182">    }</span>
 
     /**
      * Get the value of artifactId.
@@ -188,7 +187,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of artifactId
      */
     public String getArtifactId() {
-<span class="fc" id="L191">        return artifactId;</span>
+<span class="fc" id="L190">        return artifactId;</span>
     }
 
     /**
@@ -197,8 +196,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param artifactId new value of artifactId
      */
     public void setArtifactId(String artifactId) {
-<span class="fc" id="L200">        this.artifactId = artifactId;</span>
-<span class="fc" id="L201">    }</span>
+<span class="fc" id="L199">        this.artifactId = artifactId;</span>
+<span class="fc" id="L200">    }</span>
 
     /**
      * Get the value of version.
@@ -206,7 +205,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of version
      */
     public String getVersion() {
-<span class="fc" id="L209">        return version;</span>
+<span class="fc" id="L208">        return version;</span>
     }
 
     /**
@@ -215,8 +214,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param version new value of version
      */
     public void setVersion(String version) {
-<span class="fc" id="L218">        this.version = version;</span>
-<span class="fc" id="L219">    }</span>
+<span class="fc" id="L217">        this.version = version;</span>
+<span class="fc" id="L218">    }</span>
 
     /**
      * Get the value of parentGroupId.
@@ -224,7 +223,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of parentGroupId
      */
     public String getParentGroupId() {
-<span class="fc" id="L227">        return parentGroupId;</span>
+<span class="fc" id="L226">        return parentGroupId;</span>
     }
 
     /**
@@ -233,8 +232,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param parentGroupId new value of parentGroupId
      */
     public void setParentGroupId(String parentGroupId) {
-<span class="fc" id="L236">        this.parentGroupId = parentGroupId;</span>
-<span class="fc" id="L237">    }</span>
+<span class="fc" id="L235">        this.parentGroupId = parentGroupId;</span>
+<span class="fc" id="L236">    }</span>
 
     /**
      * Get the value of parentArtifactId.
@@ -242,7 +241,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of parentArtifactId
      */
     public String getParentArtifactId() {
-<span class="fc" id="L245">        return parentArtifactId;</span>
+<span class="fc" id="L244">        return parentArtifactId;</span>
     }
 
     /**
@@ -251,8 +250,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param parentArtifactId new value of parentArtifactId
      */
     public void setParentArtifactId(String parentArtifactId) {
-<span class="fc" id="L254">        this.parentArtifactId = parentArtifactId;</span>
-<span class="fc" id="L255">    }</span>
+<span class="fc" id="L253">        this.parentArtifactId = parentArtifactId;</span>
+<span class="fc" id="L254">    }</span>
 
     /**
      * Get the value of parentVersion.
@@ -260,7 +259,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of parentVersion
      */
     public String getParentVersion() {
-<span class="fc" id="L263">        return parentVersion;</span>
+<span class="fc" id="L262">        return parentVersion;</span>
     }
 
     /**
@@ -269,8 +268,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param parentVersion new value of parentVersion
      */
     public void setParentVersion(String parentVersion) {
-<span class="fc" id="L272">        this.parentVersion = parentVersion;</span>
-<span class="fc" id="L273">    }</span>
+<span class="fc" id="L271">        this.parentVersion = parentVersion;</span>
+<span class="fc" id="L272">    }</span>
 
     /**
      * Returns the list of licenses.
@@ -278,7 +277,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the list of licenses
      */
     public List&lt;License&gt; getLicenses() {
-<span class="fc" id="L281">        return licenses;</span>
+<span class="fc" id="L280">        return licenses;</span>
     }
 
     /**
@@ -287,8 +286,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param license the license to add
      */
     public void addLicense(License license) {
-<span class="fc" id="L290">        licenses.add(license);</span>
-<span class="fc" id="L291">    }</span>
+<span class="fc" id="L289">        licenses.add(license);</span>
+<span class="fc" id="L290">    }</span>
 
     /**
      * Returns the list of developers.
@@ -296,7 +295,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the list of developers
      */
     public List&lt;Developer&gt; getDevelopers() {
-<span class="fc" id="L299">        return developers;</span>
+<span class="fc" id="L298">        return developers;</span>
     }
 
     /**
@@ -305,8 +304,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param developer the developer to add
      */
     public void addDeveloper(Developer developer) {
-<span class="fc" id="L308">        developers.add(developer);</span>
-<span class="fc" id="L309">    }</span>
+<span class="fc" id="L307">        developers.add(developer);</span>
+<span class="fc" id="L308">    }</span>
 
     /**
      * Get the value of projectURL.
@@ -314,7 +313,7 @@ import org.apache.commons.text.lookup.StringLookup;
      * @return the value of projectURL
      */
     public String getProjectURL() {
-<span class="fc" id="L317">        return projectURL;</span>
+<span class="fc" id="L316">        return projectURL;</span>
     }
 
     /**
@@ -323,8 +322,8 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param projectURL new value of projectURL
      */
     public void setProjectURL(String projectURL) {
-<span class="fc" id="L326">        this.projectURL = projectURL;</span>
-<span class="fc" id="L327">    }</span>
+<span class="fc" id="L325">        this.projectURL = projectURL;</span>
+<span class="fc" id="L326">    }</span>
 
     /**
      * Process the Maven properties file and interpolate all properties.
@@ -332,108 +331,41 @@ import org.apache.commons.text.lookup.StringLookup;
      * @param properties new value of properties
      */
     public void processProperties(Properties properties) {
-<span class="fc bfc" id="L335" title="All 2 branches covered.">        if (properties == null) {</span>
-<span class="fc" id="L336">            return;</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">        if (properties == null) {</span>
+<span class="fc" id="L335">            return;</span>
         }
-<span class="fc" id="L338">        this.description = interpolateString(this.description, properties);</span>
-<span class="fc bfc" id="L339" title="All 2 branches covered.">        for (License l : this.getLicenses()) {</span>
-<span class="fc" id="L340">            l.setName(interpolateString(l.getName(), properties));</span>
-<span class="fc" id="L341">            l.setUrl(interpolateString(l.getUrl(), properties));</span>
-<span class="fc" id="L342">        }</span>
-<span class="fc" id="L343">        this.name = interpolateString(this.name, properties);</span>
-<span class="fc" id="L344">        this.projectURL = interpolateString(this.projectURL, properties);</span>
-<span class="fc" id="L345">        this.organization = interpolateString(this.organization, properties);</span>
-<span class="fc" id="L346">        this.parentGroupId = interpolateString(this.parentGroupId, properties);</span>
-<span class="fc" id="L347">        this.parentArtifactId = interpolateString(this.parentArtifactId, properties);</span>
-<span class="fc" id="L348">        this.parentVersion = interpolateString(this.parentVersion, properties);</span>
-<span class="fc" id="L349">    }</span>
+<span class="fc" id="L337">        this.description = InterpolationUtil.interpolate(this.description, properties);</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">        for (License l : this.getLicenses()) {</span>
+<span class="fc" id="L339">            l.setName(InterpolationUtil.interpolate(l.getName(), properties));</span>
+<span class="fc" id="L340">            l.setUrl(InterpolationUtil.interpolate(l.getUrl(), properties));</span>
+<span class="fc" id="L341">        }</span>
+<span class="fc" id="L342">        this.name = InterpolationUtil.interpolate(this.name, properties);</span>
+<span class="fc" id="L343">        this.projectURL = InterpolationUtil.interpolate(this.projectURL, properties);</span>
+<span class="fc" id="L344">        this.organization = InterpolationUtil.interpolate(this.organization, properties);</span>
+<span class="fc" id="L345">        this.parentGroupId = InterpolationUtil.interpolate(this.parentGroupId, properties);</span>
+<span class="fc" id="L346">        this.parentArtifactId = InterpolationUtil.interpolate(this.parentArtifactId, properties);</span>
+<span class="fc" id="L347">        this.parentVersion = InterpolationUtil.interpolate(this.parentVersion, properties);</span>
+<span class="fc" id="L348">    }</span>
 
     /**
-     * &lt;p&gt;
-     * A utility function that will interpolate strings based on values given in
-     * the properties file. It will also interpolate the strings contained
-     * within the properties file so that properties can reference other
-     * properties.&lt;/p&gt;
-     * &lt;p&gt;
-     * &lt;b&gt;Note:&lt;/b&gt; if there is no property found the reference will be removed.
-     * In other words, if the interpolated string will be replaced with an empty
-     * string.
-     * &lt;/p&gt;
-     * &lt;p&gt;
-     * Example:&lt;/p&gt;
-     * &lt;code&gt;
-     * Properties p = new Properties();
-     * p.setProperty(&quot;key&quot;, &quot;value&quot;);
-     * String s = interpolateString(&quot;'${key}' and '${nothing}'&quot;, p);
-     * System.out.println(s);
-     * &lt;/code&gt;
-     * &lt;p&gt;
-     * Will result in:&lt;/p&gt;
-     * &lt;code&gt;
-     * 'value' and ''
-     * &lt;/code&gt;
-     *
-     * @param text the string that contains references to properties.
-     * @param properties a collection of properties that may be referenced
-     * within the text.
-     * @return the interpolated text.
-     */
-    public static String interpolateString(String text, Properties properties) {
-<span class="pc bpc" id="L382" title="1 of 4 branches missed.">        if (null == text || null == properties) {</span>
-<span class="fc" id="L383">            return text;</span>
-        }
-<span class="fc" id="L385">        final StringSubstitutor substitutor = new StringSubstitutor(new PropertyLookup(properties));</span>
-<span class="fc" id="L386">        return substitutor.replace(text);</span>
-    }
-
-    /**
-     * Replaces the group/artifact/version obtained from the pom.xml which may contain variable references
-     * with the interpolated values of the
+     * Replaces the group/artifact/version obtained from the `pom.xml` which may
+     * contain variable references with the interpolated values of the
      * &lt;a href=&quot;https://maven.apache.org/shared/maven-archiver/#pom-properties-content&gt;pom.properties&lt;/a&gt;
-     * content (when present). Validates that at least the documented properties for the G/A/V coordinates
-     * are all present. If not it will leave the model unmodified as the property-source was apparently not
-     * a valid pom.properties file for the pom.xml.
-     * @param pomProperties A properties object that holds the properties from a pom.properties file.
+     * content (when present). Validates that at least the documented properties
+     * for the G/A/V coordinates are all present. If not it will leave the model
+     * unmodified as the property-source was apparently not a valid
+     * pom.properties file for the `pom.xml`.
+     *
+     * @param pomProperties A properties object that holds the properties from a
+     * pom.properties file.
      */
     public void setGAVFromPomDotProperties(Properties pomProperties) {
-<span class="pc bpc" id="L399" title="3 of 6 branches missed.">        if (!pomProperties.containsKey(&quot;groupId&quot;) || !pomProperties.containsKey(&quot;artifactId&quot;) || !pomProperties.containsKey(&quot;version&quot;)) {</span>
-<span class="nc" id="L400">            return;</span>
+<span class="pc bpc" id="L363" title="3 of 6 branches missed.">        if (!pomProperties.containsKey(&quot;groupId&quot;) || !pomProperties.containsKey(&quot;artifactId&quot;) || !pomProperties.containsKey(&quot;version&quot;)) {</span>
+<span class="nc" id="L364">            return;</span>
         }
-<span class="fc" id="L402">        this.groupId = pomProperties.getProperty(&quot;groupId&quot;);</span>
-<span class="fc" id="L403">        this.artifactId = pomProperties.getProperty(&quot;artifactId&quot;);</span>
-<span class="fc" id="L404">        this.version = pomProperties.getProperty(&quot;version&quot;);</span>
-<span class="fc" id="L405">    }</span>
-
-    /**
-     * Utility class that can provide values from a Properties object to a
-     * StringSubstitutor.
-     */
-    private static class PropertyLookup implements StringLookup {
-
-        /**
-         * Reference to the properties to lookup.
-         */
-        private final Properties props;
-
-        /**
-         * Constructs a new property lookup.
-         *
-         * @param props the properties to wrap.
-         */
-<span class="fc" id="L423">        PropertyLookup(Properties props) {</span>
-<span class="fc" id="L424">            this.props = props;</span>
-<span class="fc" id="L425">        }</span>
-
-        /**
-         * Looks up the given property.
-         *
-         * @param key the key to the property
-         * @return the value of the property specified by the key
-         */
-        @Override
-        public String lookup(String key) {
-<span class="fc" id="L435">            return props.getProperty(key);</span>
-        }
-    }
+<span class="fc" id="L366">        this.groupId = pomProperties.getProperty(&quot;groupId&quot;);</span>
+<span class="fc" id="L367">        this.artifactId = pomProperties.getProperty(&quot;artifactId&quot;);</span>
+<span class="fc" id="L368">        this.version = pomProperties.getProperty(&quot;version&quot;);</span>
+<span class="fc" id="L369">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

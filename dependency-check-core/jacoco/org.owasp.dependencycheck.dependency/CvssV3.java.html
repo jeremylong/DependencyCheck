@@ -17,7 +17,12 @@
  */
 package org.owasp.dependencycheck.dependency;
 
+import org.sonatype.ossindex.service.api.cvss.Cvss3Severity;
+
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * CVSS V3 scoring information.
@@ -30,6 +35,11 @@ public class CvssV3 implements Serializable {
      * Serial version UID.
      */
     private static final long serialVersionUID = -315810090425928920L;
+
+    /**
+     * The CVSS v3 Base Metrics (that are required by the spec for any CVSS v3 Vector String)
+     */
+<span class="fc" id="L42">    private static final List&lt;String&gt; BASE_METRICS = Arrays.asList(&quot;AV&quot;, &quot;AC&quot;, &quot;PR&quot;, &quot;UI&quot;, &quot;S&quot;, &quot;C&quot;, &quot;I&quot;, &quot;A&quot;);</span>
 
     /**
      * CVSS Availability Impact.
@@ -102,9 +112,9 @@ public class CvssV3 implements Serializable {
     public CvssV3(String attackVector, String attackComplexity, String privilegesRequired,
             String userInteraction, String scope, String confidentialityImpact, String integrityImpact,
             String availabilityImpact, float baseScore, String baseSeverity) {
-<span class="fc" id="L105">        this(attackVector, attackComplexity, privilegesRequired, userInteraction, scope, confidentialityImpact,</span>
+<span class="fc" id="L115">        this(attackVector, attackComplexity, privilegesRequired, userInteraction, scope, confidentialityImpact,</span>
                 integrityImpact, availabilityImpact, baseScore, baseSeverity, null, null, null);
-<span class="fc" id="L107">    }</span>
+<span class="fc" id="L117">    }</span>
 
     /**
      * Constructs a new CVSS V3 object.
@@ -125,22 +135,66 @@ public class CvssV3 implements Serializable {
      */
     public CvssV3(String attackVector, String attackComplexity, String privilegesRequired,
             String userInteraction, String scope, String confidentialityImpact, String integrityImpact,
-<span class="fc" id="L128">            String availabilityImpact, float baseScore, String baseSeverity, Float exploitabilityScore, Float impactScore, String version) {</span>
-<span class="fc" id="L129">        this.attackVector = attackVector;</span>
-<span class="fc" id="L130">        this.attackComplexity = attackComplexity;</span>
-<span class="fc" id="L131">        this.privilegesRequired = privilegesRequired;</span>
-<span class="fc" id="L132">        this.userInteraction = userInteraction;</span>
-<span class="fc" id="L133">        this.scope = scope;</span>
-<span class="fc" id="L134">        this.confidentialityImpact = confidentialityImpact;</span>
-<span class="fc" id="L135">        this.integrityImpact = integrityImpact;</span>
-<span class="fc" id="L136">        this.availabilityImpact = availabilityImpact;</span>
-<span class="fc" id="L137">        this.baseScore = baseScore;</span>
-<span class="fc" id="L138">        this.baseSeverity = baseSeverity;</span>
-<span class="fc" id="L139">        this.exploitabilityScore = exploitabilityScore;</span>
-<span class="fc" id="L140">        this.impactScore = impactScore;</span>
-<span class="fc" id="L141">        this.version = version;</span>
-<span class="fc" id="L142">    }</span>
+<span class="fc" id="L138">            String availabilityImpact, float baseScore, String baseSeverity, Float exploitabilityScore, Float impactScore, String version) {</span>
+<span class="fc" id="L139">        this.attackVector = attackVector;</span>
+<span class="fc" id="L140">        this.attackComplexity = attackComplexity;</span>
+<span class="fc" id="L141">        this.privilegesRequired = privilegesRequired;</span>
+<span class="fc" id="L142">        this.userInteraction = userInteraction;</span>
+<span class="fc" id="L143">        this.scope = scope;</span>
+<span class="fc" id="L144">        this.confidentialityImpact = confidentialityImpact;</span>
+<span class="fc" id="L145">        this.integrityImpact = integrityImpact;</span>
+<span class="fc" id="L146">        this.availabilityImpact = availabilityImpact;</span>
+<span class="fc" id="L147">        this.baseScore = baseScore;</span>
+<span class="fc" id="L148">        this.baseSeverity = baseSeverity;</span>
+<span class="fc" id="L149">        this.exploitabilityScore = exploitabilityScore;</span>
+<span class="fc" id="L150">        this.impactScore = impactScore;</span>
+<span class="fc" id="L151">        this.version = version;</span>
+<span class="fc" id="L152">    }</span>
     //CSON: ParameterNumber
+
+    /**
+     * Constructs a new CVSS V3 object from a CVSS v3.x Vector String representation and
+     * a CVSS V3 Base score.
+     *
+     * @param vectorString a CVSS v3 Vector String
+     * @param baseScore the CVSS v3 base score
+     * @throws IllegalArgumentException when the provided vectorString is not a valid
+     * &lt;a href=&quot;https://www.first.org/cvss/specification-document#Vector-String&quot;&gt;CVSS v3.x vector string&lt;/a&gt;.
+     */
+<span class="fc" id="L164">    public CvssV3(String vectorString, float baseScore) {</span>
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">        if (!vectorString.startsWith(&quot;CVSS:3&quot;)) {</span>
+<span class="nc" id="L166">            throw new IllegalArgumentException(&quot;Not a valid CVSSv3 vector string: &quot; + vectorString);</span>
+        }
+<span class="fc" id="L168">        this.version = vectorString.substring(5, vectorString.indexOf('/'));</span>
+<span class="fc" id="L169">        final String[] metricStrings = vectorString.substring(vectorString.indexOf('/') + 1).split(&quot;/&quot;);</span>
+<span class="fc" id="L170">        final HashMap&lt;String, String&gt; metrics = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">        for (int i = 0; i &lt; metricStrings.length; i++) {</span>
+<span class="fc" id="L172">            final String[] metricKeyVal = metricStrings[i].split(&quot;:&quot;);</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">            if (metricKeyVal.length != 2) {</span>
+<span class="nc" id="L174">                throw new IllegalArgumentException(</span>
+<span class="nc" id="L175">                        String.format(&quot;Not a valid CVSSv3 vector string '%s', invalid metric component '%s'&quot;,</span>
+                                vectorString, metricStrings[i]));
+            }
+<span class="fc" id="L178">            metrics.put(metricKeyVal[0], metricKeyVal[1]);</span>
+        }
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (!metrics.keySet().containsAll(BASE_METRICS)) {</span>
+<span class="nc" id="L181">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L182">                    String.format(&quot;Not a valid CVSSv3 vector string '%s'; missing one or more required Base Metrics;&quot;,</span>
+                            vectorString));
+        }
+<span class="fc" id="L185">        this.attackVector = metrics.get(&quot;AV&quot;);</span>
+<span class="fc" id="L186">        this.attackComplexity = metrics.get(&quot;AC&quot;);</span>
+<span class="fc" id="L187">        this.privilegesRequired = metrics.get(&quot;PR&quot;);</span>
+<span class="fc" id="L188">        this.userInteraction = metrics.get(&quot;UI&quot;);</span>
+<span class="fc" id="L189">        this.scope = metrics.get(&quot;S&quot;);</span>
+<span class="fc" id="L190">        this.confidentialityImpact = metrics.get(&quot;C&quot;);</span>
+<span class="fc" id="L191">        this.integrityImpact = metrics.get(&quot;I&quot;);</span>
+<span class="fc" id="L192">        this.availabilityImpact = metrics.get(&quot;A&quot;);</span>
+<span class="fc" id="L193">        this.baseScore = baseScore;</span>
+<span class="fc" id="L194">        this.baseSeverity = Cvss3Severity.of(baseScore).name();</span>
+<span class="fc" id="L195">        this.exploitabilityScore = null;</span>
+<span class="fc" id="L196">        this.impactScore = null;</span>
+<span class="fc" id="L197">    }</span>
 
     /**
      * Get the value of attackVector.
@@ -148,7 +202,7 @@ public class CvssV3 implements Serializable {
      * @return the value of attackVector
      */
     public String getAttackVector() {
-<span class="fc" id="L151">        return attackVector;</span>
+<span class="fc" id="L205">        return attackVector;</span>
     }
 
     /**
@@ -157,7 +211,7 @@ public class CvssV3 implements Serializable {
      * @return the value of attackComplexity
      */
     public String getAttackComplexity() {
-<span class="fc" id="L160">        return attackComplexity;</span>
+<span class="fc" id="L214">        return attackComplexity;</span>
     }
 
     /**
@@ -166,7 +220,7 @@ public class CvssV3 implements Serializable {
      * @return the value of privilegesRequired
      */
     public String getPrivilegesRequired() {
-<span class="fc" id="L169">        return privilegesRequired;</span>
+<span class="fc" id="L223">        return privilegesRequired;</span>
     }
 
     /**
@@ -175,7 +229,7 @@ public class CvssV3 implements Serializable {
      * @return the value of userInteraction
      */
     public String getUserInteraction() {
-<span class="fc" id="L178">        return userInteraction;</span>
+<span class="fc" id="L232">        return userInteraction;</span>
     }
 
     /**
@@ -184,7 +238,7 @@ public class CvssV3 implements Serializable {
      * @return the value of scope
      */
     public String getScope() {
-<span class="fc" id="L187">        return scope;</span>
+<span class="fc" id="L241">        return scope;</span>
     }
 
     /**
@@ -193,7 +247,7 @@ public class CvssV3 implements Serializable {
      * @return the value of confidentialityImpact
      */
     public String getConfidentialityImpact() {
-<span class="fc" id="L196">        return confidentialityImpact;</span>
+<span class="fc" id="L250">        return confidentialityImpact;</span>
     }
 
     /**
@@ -202,7 +256,7 @@ public class CvssV3 implements Serializable {
      * @return the value of integrityImpact
      */
     public String getIntegrityImpact() {
-<span class="fc" id="L205">        return integrityImpact;</span>
+<span class="fc" id="L259">        return integrityImpact;</span>
     }
 
     /**
@@ -211,7 +265,7 @@ public class CvssV3 implements Serializable {
      * @return the value of availabilityImpact
      */
     public String getAvailabilityImpact() {
-<span class="fc" id="L214">        return availabilityImpact;</span>
+<span class="fc" id="L268">        return availabilityImpact;</span>
     }
 
     /**
@@ -220,7 +274,7 @@ public class CvssV3 implements Serializable {
      * @return the value of baseScore
      */
     public float getBaseScore() {
-<span class="fc" id="L223">        return baseScore;</span>
+<span class="fc" id="L277">        return baseScore;</span>
     }
 
     /**
@@ -229,7 +283,7 @@ public class CvssV3 implements Serializable {
      * @return the value of baseSeverity
      */
     public String getBaseSeverity() {
-<span class="fc" id="L232">        return baseSeverity;</span>
+<span class="fc" id="L286">        return baseSeverity;</span>
     }
 
     /**
@@ -238,7 +292,7 @@ public class CvssV3 implements Serializable {
      * @return the value of version
      */
     public String getVersion() {
-<span class="fc" id="L241">        return version;</span>
+<span class="fc" id="L295">        return version;</span>
     }
 
     /**
@@ -247,7 +301,7 @@ public class CvssV3 implements Serializable {
      * @return the exploitabilityScore
      */
     public Float getexploitabilityScore() {
-<span class="fc" id="L250">        return exploitabilityScore;</span>
+<span class="fc" id="L304">        return exploitabilityScore;</span>
     }
 
     /**
@@ -256,21 +310,21 @@ public class CvssV3 implements Serializable {
      * @return the impactScore
      */
     public Float getimpactScore() {
-<span class="fc" id="L259">        return impactScore;</span>
+<span class="fc" id="L313">        return impactScore;</span>
     }
 
     @Override
     public String toString() {
-<span class="pc bpc" id="L264" title="2 of 4 branches missed.">        return String.format(&quot;CVSS:%s/AV:%s/AC:%s/PR:%s/UI:%s/S:%s/C:%s/I:%s/A:%s&quot;,</span>
+<span class="pc bpc" id="L318" title="1 of 4 branches missed.">        return String.format(&quot;CVSS:%s/AV:%s/AC:%s/PR:%s/UI:%s/S:%s/C:%s/I:%s/A:%s&quot;,</span>
                 version == null ? &quot;&quot; : version,
-<span class="pc bpc" id="L266" title="1 of 2 branches missed.">                attackVector == null ? &quot;&quot; : attackVector.substring(0, 1),</span>
-<span class="pc bpc" id="L267" title="1 of 2 branches missed.">                attackComplexity == null ? &quot;&quot; : attackComplexity.substring(0, 1),</span>
-<span class="pc bpc" id="L268" title="1 of 2 branches missed.">                privilegesRequired == null ? &quot;&quot; : privilegesRequired.substring(0, 1),</span>
-<span class="pc bpc" id="L269" title="1 of 2 branches missed.">                userInteraction == null ? &quot;&quot; : userInteraction.substring(0, 1),</span>
-<span class="pc bpc" id="L270" title="1 of 2 branches missed.">                scope == null ? &quot;&quot; : scope.substring(0, 1),</span>
-<span class="pc bpc" id="L271" title="1 of 2 branches missed.">                confidentialityImpact == null ? &quot;&quot; : confidentialityImpact.substring(0, 1),</span>
-<span class="pc bpc" id="L272" title="1 of 2 branches missed.">                integrityImpact == null ? &quot;&quot; : integrityImpact.substring(0, 1),</span>
-<span class="fc" id="L273">                availabilityImpact == null ? &quot;&quot; : availabilityImpact.substring(0, 1));</span>
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">                attackVector == null ? &quot;&quot; : attackVector.substring(0, 1),</span>
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">                attackComplexity == null ? &quot;&quot; : attackComplexity.substring(0, 1),</span>
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">                privilegesRequired == null ? &quot;&quot; : privilegesRequired.substring(0, 1),</span>
+<span class="pc bpc" id="L323" title="1 of 2 branches missed.">                userInteraction == null ? &quot;&quot; : userInteraction.substring(0, 1),</span>
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">                scope == null ? &quot;&quot; : scope.substring(0, 1),</span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">                confidentialityImpact == null ? &quot;&quot; : confidentialityImpact.substring(0, 1),</span>
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">                integrityImpact == null ? &quot;&quot; : integrityImpact.substring(0, 1),</span>
+<span class="fc" id="L327">                availabilityImpact == null ? &quot;&quot; : availabilityImpact.substring(0, 1));</span>
     }
 
 }

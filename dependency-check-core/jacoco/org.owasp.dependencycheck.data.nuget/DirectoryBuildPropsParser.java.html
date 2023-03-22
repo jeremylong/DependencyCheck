@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DirectoryBuildPropsParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nuget</a> &gt; <span class="el_source">DirectoryBuildPropsParser.java</span></div><h1>DirectoryBuildPropsParser.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2023 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nuget;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import org.owasp.dependencycheck.utils.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+/**
+ * Parses `Directory.Build.props`.
+ *
+ * @see
+ * &lt;a href=&quot;https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2019&quot;&gt;Directory.Build.props&lt;/a&gt;
+ * @author Jeremy Long
+ */
+<span class="fc" id="L46">public class DirectoryBuildPropsParser {</span>
+
+    /**
+     * The collection of imports identified during parsing.
+     */
+<span class="fc" id="L51">    private Set&lt;String&gt; imports = new HashSet&lt;&gt;();</span>
+
+    /**
+     * Returns the imports identified during parsing.
+     *
+     * @return the imports identified during parsing.
+     */
+    public Set&lt;String&gt; getImports() {
+<span class="fc" id="L59">        return imports;</span>
+    }
+
+    /**
+     * Parse the properties from the `Directory.Build.props` file InputStream.If
+     * any import nodes are found while parsing, the values will be available
+     * via `getImports()` after parsing is complete.
+     *
+     * @param stream the input stream containing the props file to parse.
+     * @return the properties.
+     * @throws MSBuildProjectParseException thrown if there is a parsing error.
+     */
+    public Map&lt;String, String&gt; parse(InputStream stream) throws MSBuildProjectParseException {
+        try {
+<span class="fc" id="L73">            final HashMap&lt;String, String&gt; props = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L75">            final DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();</span>
+<span class="fc" id="L76">            final Document d = db.parse(stream);</span>
+
+<span class="fc" id="L78">            final XPath xpath = XPathFactory.newInstance().newXPath();</span>
+
+            //&lt;Import Project=&quot;$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))&quot; /&gt;
+<span class="fc" id="L81">            final NodeList importList = (NodeList) xpath.evaluate(&quot;//Import&quot;, d, XPathConstants.NODESET);</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">            if (importList != null) {</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                for (int i = 0; i &lt; importList.getLength(); i++) {</span>
+<span class="fc" id="L84">                    final Node importNode = importList.item(i);</span>
+<span class="fc" id="L85">                    final Node project = importNode.getAttributes().getNamedItem(&quot;Project&quot;);</span>
+<span class="fc" id="L86">                    imports.add(project.getNodeValue());</span>
+                }
+            }
+<span class="fc" id="L89">            final NodeList propertyGroups = (NodeList) xpath.evaluate(&quot;//PropertyGroup&quot;, d, XPathConstants.NODESET);</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">            if (propertyGroups != null) {</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                for (int i = 0; i &lt; propertyGroups.getLength(); i++) {</span>
+<span class="fc" id="L92">                    final Node group = propertyGroups.item(i);</span>
+<span class="fc" id="L93">                    final NodeList propertyNodes = group.getChildNodes();</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">                    for (int x = 0; x &lt; propertyNodes.getLength(); x++) {</span>
+<span class="fc" id="L95">                        final Node node = propertyNodes.item(x);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">                        if (node instanceof Element) {</span>
+<span class="fc" id="L97">                            final Element property = (Element) node;</span>
+<span class="fc" id="L98">                            final String name = property.getNodeName();</span>
+<span class="fc" id="L99">                            final Node value = property.getChildNodes().item(0);</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">                            if (value != null) {</span>
+<span class="fc" id="L101">                                props.put(name, value.getNodeValue().trim());</span>
+                            }
+                        }
+                    }
+                }
+            }
+<span class="fc" id="L107">            return props;</span>
+<span class="nc" id="L108">        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException ex) {</span>
+<span class="nc" id="L109">            throw new MSBuildProjectParseException(&quot;Error parsing Directory.Build.props&quot;, ex);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

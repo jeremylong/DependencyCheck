@@ -34,67 +34,80 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import org.owasp.dependencycheck.utils.InterpolationUtil;
+import org.owasp.dependencycheck.utils.InterpolationUtil.SyntaxStyle;
 
 /**
  * Parses a MSBuild project file for NuGet references using XPath.
  *
  * @author paulirwin
  */
-<span class="fc" id="L43">public class XPathMSBuildProjectParser implements MSBuildProjectParser {</span>
+<span class="fc" id="L47">public class XPathMSBuildProjectParser {</span>
 
     /**
      * Parses the given stream for MSBuild PackageReference elements.
      *
      * @param stream the input stream to parse
+     * @param props the Directory.Build.props properties
+     * @param centrallyManaged a map of centrally managed package references
      * @return a collection of discovered NuGet package references
      * @throws MSBuildProjectParseException if an exception occurs
      */
-    @Override
-    public List&lt;NugetPackageReference&gt; parse(InputStream stream) throws MSBuildProjectParseException {
+    public List&lt;NugetPackageReference&gt; parse(InputStream stream, Properties props,
+            Map&lt;String, String&gt; centrallyManaged) throws MSBuildProjectParseException {
         try {
-<span class="fc" id="L55">            final DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();</span>
-<span class="fc" id="L56">            final Document d = db.parse(stream);</span>
+<span class="fc" id="L61">            final DocumentBuilder db = XmlUtils.buildSecureDocumentBuilder();</span>
+<span class="fc" id="L62">            final Document d = db.parse(stream);</span>
 
-<span class="fc" id="L58">            final XPath xpath = XPathFactory.newInstance().newXPath();</span>
-<span class="fc" id="L59">            final List&lt;NugetPackageReference&gt; packages = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L64">            final XPath xpath = XPathFactory.newInstance().newXPath();</span>
+<span class="fc" id="L65">            final List&lt;NugetPackageReference&gt; packages = new ArrayList&lt;&gt;();</span>
 
-<span class="fc" id="L61">            final NodeList nodeList = (NodeList) xpath.evaluate(&quot;//PackageReference&quot;, d, XPathConstants.NODESET);</span>
+<span class="fc" id="L67">            final NodeList nodeList = (NodeList) xpath.evaluate(&quot;//PackageReference&quot;, d, XPathConstants.NODESET);</span>
 
-<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            if (nodeList == null) {</span>
-<span class="nc" id="L64">                throw new MSBuildProjectParseException(&quot;Unable to parse MSBuild project file&quot;);</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">            if (nodeList == null) {</span>
+<span class="nc" id="L70">                throw new MSBuildProjectParseException(&quot;Unable to parse MSBuild project file&quot;);</span>
             }
 
-<span class="fc bfc" id="L67" title="All 2 branches covered.">            for (int i = 0; i &lt; nodeList.getLength(); i++) {</span>
-<span class="fc" id="L68">                final Node node = nodeList.item(i);</span>
-<span class="fc" id="L69">                final NamedNodeMap attrs = node.getAttributes();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            for (int i = 0; i &lt; nodeList.getLength(); i++) {</span>
+<span class="fc" id="L74">                final Node node = nodeList.item(i);</span>
+<span class="fc" id="L75">                final NamedNodeMap attrs = node.getAttributes();</span>
 
-<span class="fc" id="L71">                final Node includeAttr = attrs.getNamedItem(&quot;Include&quot;);</span>
-<span class="pc bpc" id="L72" title="1 of 2 branches missed.">                if (includeAttr == null) {</span>
+<span class="fc" id="L77">                final Node includeAttr = attrs.getNamedItem(&quot;Include&quot;);</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">                if (includeAttr == null) {</span>
                     // Issue 5144 work-around for NPE on packageReferences other than includes
-<span class="nc" id="L74">                    continue;</span>
+<span class="nc" id="L80">                    continue;</span>
                 }
-<span class="fc" id="L76">                final String include = includeAttr.getNodeValue();</span>
-<span class="fc" id="L77">                String version = null;</span>
+<span class="fc" id="L82">                final String include = includeAttr.getNodeValue();</span>
+<span class="fc" id="L83">                String version = null;</span>
 
-<span class="fc bfc" id="L79" title="All 2 branches covered.">                if (attrs.getNamedItem(&quot;Version&quot;) != null) {</span>
-<span class="fc" id="L80">                    version = attrs.getNamedItem(&quot;Version&quot;).getNodeValue();</span>
-<span class="fc bfc" id="L81" title="All 2 branches covered.">                } else if (xpath.evaluate(&quot;Version&quot;, node, XPathConstants.NODE) instanceof Node) {</span>
-<span class="fc" id="L82">                    version = ((Node) xpath.evaluate(&quot;Version&quot;, node, XPathConstants.NODE)).getTextContent();</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                if (centrallyManaged.containsKey(include)) {</span>
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                    if (attrs.getNamedItem(&quot;VersionOverride&quot;) != null) {</span>
+<span class="fc" id="L87">                        version = attrs.getNamedItem(&quot;VersionOverride&quot;).getNodeValue();</span>
+                    } else {
+<span class="fc" id="L89">                        version = centrallyManaged.get(include);</span>
+                    }
+<span class="fc bfc" id="L91" title="All 2 branches covered.">                } else if (attrs.getNamedItem(&quot;Version&quot;) != null) {</span>
+<span class="fc" id="L92">                    version = attrs.getNamedItem(&quot;Version&quot;).getNodeValue();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">                } else if (xpath.evaluate(&quot;Version&quot;, node, XPathConstants.NODE) instanceof Node) {</span>
+<span class="fc" id="L94">                    version = ((Node) xpath.evaluate(&quot;Version&quot;, node, XPathConstants.NODE)).getTextContent();</span>
                 }
 
-<span class="pc bpc" id="L85" title="1 of 4 branches missed.">                if (include != null &amp;&amp; version != null) {</span>
-<span class="fc" id="L86">                    final NugetPackageReference npr = new NugetPackageReference();</span>
+<span class="pc bpc" id="L97" title="1 of 4 branches missed.">                if (include != null &amp;&amp; version != null) {</span>
 
-<span class="fc" id="L88">                    npr.setId(include);</span>
-<span class="fc" id="L89">                    npr.setVersion(version);</span>
+<span class="fc" id="L99">                    final NugetPackageReference npr = new NugetPackageReference();</span>
 
-<span class="fc" id="L91">                    packages.add(npr);</span>
+<span class="fc" id="L101">                    npr.setId(include);</span>
+<span class="fc" id="L102">                    npr.setVersion(InterpolationUtil.interpolate(version, props, SyntaxStyle.MSBUILD));</span>
+
+<span class="fc" id="L104">                    packages.add(npr);</span>
                 }
             }
 
-<span class="fc" id="L95">            return packages;</span>
-<span class="nc" id="L96">        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | MSBuildProjectParseException e) {</span>
-<span class="nc" id="L97">            throw new MSBuildProjectParseException(&quot;Unable to parse MSBuild project file&quot;, e);</span>
+<span class="fc" id="L108">            return packages;</span>
+<span class="nc" id="L109">        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException | MSBuildProjectParseException e) {</span>
+<span class="nc" id="L110">            throw new MSBuildProjectParseException(&quot;Unable to parse MSBuild project file&quot;, e);</span>
         }
     }
 

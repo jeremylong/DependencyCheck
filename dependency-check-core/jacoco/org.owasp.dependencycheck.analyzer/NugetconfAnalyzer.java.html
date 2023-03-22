@@ -24,7 +24,6 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nuget.NugetPackageReference;
 import org.owasp.dependencycheck.data.nuget.NugetconfParseException;
-import org.owasp.dependencycheck.data.nuget.NugetconfParser;
 import org.owasp.dependencycheck.data.nuget.XPathNugetconfParser;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -53,7 +52,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
  * @author doshyt
  */
 @ThreadSafe
-<span class="fc" id="L56">public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {</span>
+<span class="fc" id="L55">public class NugetconfAnalyzer extends AbstractFileTypeAnalyzer {</span>
 
     /**
      * A descriptor for the type of dependencies processed or added by this
@@ -64,7 +63,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
     /**
      * The logger.
      */
-<span class="fc" id="L67">    private static final Logger LOGGER = LoggerFactory.getLogger(NugetconfAnalyzer.class);</span>
+<span class="fc" id="L66">    private static final Logger LOGGER = LoggerFactory.getLogger(NugetconfAnalyzer.class);</span>
 
     /**
      * The name of the analyzer.
@@ -74,7 +73,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
     /**
      * The phase in which the analyzer runs.
      */
-<span class="fc" id="L77">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+<span class="fc" id="L76">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
 
     /**
      * The file filter used to determine which files this analyzer supports.
@@ -84,7 +83,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
     /**
      * The file filter used to determine which files this analyzer supports.
      */
-<span class="fc" id="L87">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(FILE_NAME).build();</span>
+<span class="fc" id="L86">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addFilenames(FILE_NAME).build();</span>
 
     /**
      * Initializes the analyzer once before any analysis is performed.
@@ -95,7 +94,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         //nothing to initialize
-<span class="fc" id="L98">    }</span>
+<span class="fc" id="L97">    }</span>
 
     /**
      * Returns the analyzer's name.
@@ -104,7 +103,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
      */
     @Override
     public String getName() {
-<span class="fc" id="L107">        return ANALYZER_NAME;</span>
+<span class="fc" id="L106">        return ANALYZER_NAME;</span>
     }
 
     /**
@@ -115,7 +114,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L118">        return Settings.KEYS.ANALYZER_NUGETCONF_ENABLED;</span>
+<span class="fc" id="L117">        return Settings.KEYS.ANALYZER_NUGETCONF_ENABLED;</span>
     }
 
     /**
@@ -125,7 +124,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
      */
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L128">        return ANALYSIS_PHASE;</span>
+<span class="fc" id="L127">        return ANALYSIS_PHASE;</span>
     }
 
     /**
@@ -135,7 +134,7 @@ import org.owasp.dependencycheck.exception.InitializationException;
      */
     @Override
     protected FileFilter getFileFilter() {
-<span class="fc" id="L138">        return FILTER;</span>
+<span class="fc" id="L137">        return FILTER;</span>
     }
 
     /**
@@ -148,64 +147,64 @@ import org.owasp.dependencycheck.exception.InitializationException;
     @Override
     @SuppressWarnings(&quot;StringSplitter&quot;)
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="fc" id="L151">        LOGGER.debug(&quot;Checking packages.config file {}&quot;, dependency);</span>
+<span class="fc" id="L150">        LOGGER.debug(&quot;Checking packages.config file {}&quot;, dependency);</span>
         try {
-<span class="fc" id="L153">            final NugetconfParser parser = new XPathNugetconfParser();</span>
+<span class="fc" id="L152">            final XPathNugetconfParser parser = new XPathNugetconfParser();</span>
             final List&lt;NugetPackageReference&gt; packages;
-<span class="fc" id="L155">            try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath())) {</span>
-<span class="fc" id="L156">                packages = parser.parse(fis);</span>
-<span class="nc" id="L157">            } catch (NugetconfParseException | FileNotFoundException ex) {</span>
-<span class="nc" id="L158">                throw new AnalysisException(ex);</span>
-<span class="fc" id="L159">            }</span>
+<span class="fc" id="L154">            try (FileInputStream fis = new FileInputStream(dependency.getActualFilePath())) {</span>
+<span class="fc" id="L155">                packages = parser.parse(fis);</span>
+<span class="nc" id="L156">            } catch (NugetconfParseException | FileNotFoundException ex) {</span>
+<span class="nc" id="L157">                throw new AnalysisException(ex);</span>
+<span class="fc" id="L158">            }</span>
 
-<span class="fc bfc" id="L161" title="All 2 branches covered.">            for (NugetPackageReference np : packages) {</span>
-<span class="fc" id="L162">                final Dependency child = new Dependency(dependency.getActualFile(), true);</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            for (NugetPackageReference np : packages) {</span>
+<span class="fc" id="L161">                final Dependency child = new Dependency(dependency.getActualFile(), true);</span>
 
-<span class="fc" id="L164">                final String id = np.getId();</span>
-<span class="fc" id="L165">                final String version = np.getVersion();</span>
+<span class="fc" id="L163">                final String id = np.getId();</span>
+<span class="fc" id="L164">                final String version = np.getVersion();</span>
 
-<span class="fc" id="L167">                child.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="fc" id="L168">                child.setName(id);</span>
-<span class="fc" id="L169">                child.setVersion(version);</span>
+<span class="fc" id="L166">                child.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L167">                child.setName(id);</span>
+<span class="fc" id="L168">                child.setVersion(version);</span>
 
                 try {
-<span class="fc" id="L172">                    final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;nuget&quot;).withName(id).withVersion(version).build();</span>
-<span class="fc" id="L173">                    child.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
-<span class="nc" id="L174">                } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L175">                    LOGGER.debug(&quot;Unable to build package url for nuget package&quot;, ex);</span>
-<span class="nc" id="L176">                    final GenericIdentifier gid = new GenericIdentifier(&quot;nuget:&quot; + id + &quot;@&quot; + version, Confidence.HIGHEST);</span>
-<span class="nc" id="L177">                    child.addSoftwareIdentifier(gid);</span>
-<span class="fc" id="L178">                }</span>
+<span class="fc" id="L171">                    final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;nuget&quot;).withName(id).withVersion(version).build();</span>
+<span class="fc" id="L172">                    child.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L173">                } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L174">                    LOGGER.debug(&quot;Unable to build package url for nuget package&quot;, ex);</span>
+<span class="nc" id="L175">                    final GenericIdentifier gid = new GenericIdentifier(&quot;nuget:&quot; + id + &quot;@&quot; + version, Confidence.HIGHEST);</span>
+<span class="nc" id="L176">                    child.addSoftwareIdentifier(gid);</span>
+<span class="fc" id="L177">                }</span>
 
-<span class="fc" id="L180">                child.setPackagePath(String.format(&quot;%s:%s&quot;, id, version));</span>
-<span class="fc" id="L181">                child.setSha1sum(Checksum.getSHA1Checksum(String.format(&quot;%s:%s&quot;, id, version)));</span>
-<span class="fc" id="L182">                child.setSha256sum(Checksum.getSHA256Checksum(String.format(&quot;%s:%s&quot;, id, version)));</span>
-<span class="fc" id="L183">                child.setMd5sum(Checksum.getMD5Checksum(String.format(&quot;%s:%s&quot;, id, version)));</span>
-<span class="fc" id="L184">                child.addEvidence(EvidenceType.VERSION, &quot;packages.config&quot;, &quot;version&quot;, np.getVersion(), Confidence.HIGHEST);</span>
-<span class="fc" id="L185">                child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, np.getId(), Confidence.HIGHEST);</span>
+<span class="fc" id="L179">                child.setPackagePath(String.format(&quot;%s:%s&quot;, id, version));</span>
+<span class="fc" id="L180">                child.setSha1sum(Checksum.getSHA1Checksum(String.format(&quot;%s:%s&quot;, id, version)));</span>
+<span class="fc" id="L181">                child.setSha256sum(Checksum.getSHA256Checksum(String.format(&quot;%s:%s&quot;, id, version)));</span>
+<span class="fc" id="L182">                child.setMd5sum(Checksum.getMD5Checksum(String.format(&quot;%s:%s&quot;, id, version)));</span>
+<span class="fc" id="L183">                child.addEvidence(EvidenceType.VERSION, &quot;packages.config&quot;, &quot;version&quot;, np.getVersion(), Confidence.HIGHEST);</span>
+<span class="fc" id="L184">                child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, np.getId(), Confidence.HIGHEST);</span>
 
                 // handle package names the same way as the MSBuild analyzer
-<span class="fc bfc" id="L188" title="All 2 branches covered.">                if (id.indexOf('.') &gt; 0) {</span>
-<span class="fc" id="L189">                    final String[] parts = id.split(&quot;\\.&quot;);</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">                if (id.indexOf('.') &gt; 0) {</span>
+<span class="fc" id="L188">                    final String[] parts = id.split(&quot;\\.&quot;);</span>
 
                     // example: Microsoft.EntityFrameworkCore
-<span class="fc" id="L192">                    child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, parts[0], Confidence.MEDIUM);</span>
-<span class="fc" id="L193">                    child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, parts[1], Confidence.MEDIUM);</span>
+<span class="fc" id="L191">                    child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, parts[0], Confidence.MEDIUM);</span>
+<span class="fc" id="L192">                    child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, parts[1], Confidence.MEDIUM);</span>
 
-<span class="fc bfc" id="L195" title="All 2 branches covered.">                    if (parts.length &gt; 2) {</span>
-<span class="fc" id="L196">                        final String rest = id.substring(id.indexOf('.') + 1);</span>
-<span class="fc" id="L197">                        child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, rest, Confidence.MEDIUM);</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">                    if (parts.length &gt; 2) {</span>
+<span class="fc" id="L195">                        final String rest = id.substring(id.indexOf('.') + 1);</span>
+<span class="fc" id="L196">                        child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, rest, Confidence.MEDIUM);</span>
                     }
-<span class="fc" id="L199">                } else {</span>
+<span class="fc" id="L198">                } else {</span>
                     // example: jQuery
-<span class="fc" id="L201">                    child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, id, Confidence.LOW);</span>
+<span class="fc" id="L200">                    child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, id, Confidence.LOW);</span>
                 }
 
-<span class="fc" id="L204">                engine.addDependency(child);</span>
-<span class="fc" id="L205">            }</span>
-<span class="nc" id="L206">        } catch (Throwable e) {</span>
-<span class="nc" id="L207">            throw new AnalysisException(e);</span>
-<span class="fc" id="L208">        }</span>
-<span class="fc" id="L209">    }</span>
+<span class="fc" id="L203">                engine.addDependency(child);</span>
+<span class="fc" id="L204">            }</span>
+<span class="nc" id="L205">        } catch (Throwable e) {</span>
+<span class="nc" id="L206">            throw new AnalysisException(e);</span>
+<span class="fc" id="L207">        }</span>
+<span class="fc" id="L208">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

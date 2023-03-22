@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InterpolationUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">InterpolationUtil.java</span></div><h1>InterpolationUtil.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2023 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import java.util.Properties;
+import org.apache.commons.text.StringSubstitutor;
+import org.apache.commons.text.lookup.StringLookup;
+
+/**
+ *
+ * @author Jeremy Long
+ */
+public final class InterpolationUtil {
+
+    private InterpolationUtil() {
+    }
+
+    /**
+     * &lt;p&gt;
+     * A utility function that will interpolate strings based on values given in
+     * the properties file. It will also interpolate the strings contained
+     * within the properties file so that properties can reference other
+     * properties.&lt;/p&gt;
+     * &lt;p&gt;
+     * &lt;b&gt;Note:&lt;/b&gt; if there is no property found the reference will be removed.
+     * In other words, if the interpolated string will be replaced with an empty
+     * string.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Example:&lt;/p&gt;
+     * &lt;code&gt;
+     * Properties p = new Properties();
+     * p.setProperty(&quot;key&quot;, &quot;value&quot;);
+     * String s = interpolateString(&quot;'${key}' and '${nothing}'&quot;, p);
+     * System.out.println(s);
+     * &lt;/code&gt;
+     * &lt;p&gt;
+     * Will result in:&lt;/p&gt;
+     * &lt;code&gt;
+     * 'value' and ''
+     * &lt;/code&gt;
+     *
+     * @param text the string that contains references to properties.
+     * @param properties a collection of properties that may be referenced
+     * within the text.
+     * @return the interpolated text.
+     */
+    public static String interpolate(String text, Properties properties) {
+<span class="fc" id="L64">        return interpolate(text, properties, SyntaxStyle.DEFAULT);</span>
+    }
+
+    /**
+     * &lt;p&gt;
+     * A utility function that will interpolate strings based on values given in
+     * the properties file. It will also interpolate the strings contained
+     * within the properties file so that properties can reference other
+     * properties.&lt;/p&gt;
+     * &lt;p&gt;
+     * &lt;b&gt;Note:&lt;/b&gt; if there is no property found the reference will be removed.
+     * In other words, if the interpolated string will be replaced with an empty
+     * string.
+     * &lt;/p&gt;
+     * &lt;p&gt;
+     * Example:&lt;/p&gt;
+     * &lt;code&gt;
+     * Properties p = new Properties();
+     * p.setProperty(&quot;key&quot;, &quot;value&quot;);
+     * String s = interpolateString(&quot;'${key}' and '${nothing}'&quot;, p);
+     * System.out.println(s);
+     * &lt;/code&gt;
+     * &lt;p&gt;
+     * Will result in:&lt;/p&gt;
+     * &lt;code&gt;
+     * 'value' and ''
+     * &lt;/code&gt;
+     *
+     * @param text the string that contains references to properties.
+     * @param properties a collection of properties that may be referenced
+     * within the text.
+     * @param style the syntax style for the interpolation (MSBuild; &quot;$(var)&quot;,
+     * Default &quot;${var}&quot;)&quot;
+     * @return the interpolated text.
+     */
+    public static String interpolate(String text, Properties properties, SyntaxStyle style) {
+<span class="pc bpc" id="L100" title="1 of 4 branches missed.">        if (null == text || null == properties) {</span>
+<span class="fc" id="L101">            return text;</span>
+        }
+        final StringSubstitutor substitutor;
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (style == SyntaxStyle.MSBUILD) {</span>
+<span class="fc" id="L105">            substitutor = new StringSubstitutor(new PropertyLookup(properties), &quot;$(&quot;, &quot;)&quot;, '$');</span>
+        } else {
+<span class="fc" id="L107">            substitutor = new StringSubstitutor(new PropertyLookup(properties));</span>
+        }
+<span class="fc" id="L109">        return substitutor.replace(text);</span>
+    }
+
+    /**
+     * The syntax style for the interpolation.
+     */
+<span class="fc" id="L115">    public enum SyntaxStyle {</span>
+        /**
+         * Default variable interpolation. Example: '${var}'
+         */
+<span class="fc" id="L119">        DEFAULT,</span>
+        /**
+         * MS Build variable interpolation. Example: '$(var)'
+         */
+<span class="fc" id="L123">        MSBUILD</span>
+    }
+
+    /**
+     * Utility class that can provide values from a Properties object to a
+     * StringSubstitutor.
+     */
+    private static class PropertyLookup implements StringLookup {
+
+        /**
+         * Reference to the properties to lookup.
+         */
+        private final Properties props;
+
+        /**
+         * Constructs a new property lookup.
+         *
+         * @param props the properties to wrap.
+         */
+<span class="fc" id="L142">        PropertyLookup(Properties props) {</span>
+<span class="fc" id="L143">            this.props = props;</span>
+<span class="fc" id="L144">        }</span>
+
+        /**
+         * Looks up the given property.
+         *
+         * @param key the key to the property
+         * @return the value of the property specified by the key
+         */
+        @Override
+        public String lookup(String key) {
+<span class="fc" id="L154">            return props.getProperty(key, &quot;&quot;);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
