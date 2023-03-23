@@ -148,7 +148,7 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,NvdCveAnalyzer,120,129,
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,GolangModAnalyzer,263,220,17,9,46,66,13,12,0,11
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PinnedMavenInstallAnalyzer.MavenDependency,0,3,0,0,0,1,0,1,0,1
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PythonDistributionAnalyzer,141,401,27,29,31,93,24,19,1,14
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,MSBuildProjectAnalyzer,66,547,17,39,19,113,17,24,0,13
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,MSBuildProjectAnalyzer,66,553,20,42,19,115,20,24,0,13
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,DependencyMergingAnalyzer,88,390,52,84,26,89,45,40,0,17
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,RubyBundleAuditAnalyzer,290,145,24,10,69,39,15,11,1,8
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractDependencyComparingAnalyzer,0,79,1,11,0,20,1,9,0,4

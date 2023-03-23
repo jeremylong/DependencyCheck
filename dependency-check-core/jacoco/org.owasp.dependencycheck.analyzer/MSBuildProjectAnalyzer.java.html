@@ -226,13 +226,16 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
         }
 
 <span class="fc" id="L228">        final File directoryProps = locateDirectoryBuildFile(DIRECTORY_BUILDPROPS, directory);</span>
-<span class="fc" id="L229">        final Map&lt;String, String&gt; entries = readDirectoryBuildProps(directoryProps);</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">        if (directoryProps != null) {</span>
+<span class="fc" id="L230">            final Map&lt;String, String&gt; entries = readDirectoryBuildProps(directoryProps);</span>
 
-<span class="fc bfc" id="L231" title="All 2 branches covered.">        for (Map.Entry&lt;String, String&gt; entry : entries.entrySet()) {</span>
-<span class="fc" id="L232">            props.put(entry.getKey(), entry.getValue());</span>
-<span class="fc" id="L233">        }</span>
-
-<span class="fc" id="L235">        return props;</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            if (entries != null) {</span>
+<span class="fc bfc" id="L233" title="All 2 branches covered.">                for (Map.Entry&lt;String, String&gt; entry : entries.entrySet()) {</span>
+<span class="fc" id="L234">                    props.put(entry.getKey(), entry.getValue());</span>
+<span class="fc" id="L235">                }</span>
+            }
+        }
+<span class="fc" id="L238">        return props;</span>
     }
 
     /**
@@ -243,15 +246,15 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
      * @return the `Directory.Build.props` file if found; otherwise null.
      */
     private File locateDirectoryBuildFile(String name, File directory) {
-<span class="fc" id="L246">        File search = directory;</span>
-<span class="pc bpc" id="L247" title="1 of 4 branches missed.">        while (search != null &amp;&amp; search.isDirectory()) {</span>
-<span class="fc" id="L248">            final File props = new File(search, name);</span>
-<span class="fc bfc" id="L249" title="All 2 branches covered.">            if (props.isFile()) {</span>
-<span class="fc" id="L250">                return props;</span>
+<span class="fc" id="L249">        File search = directory;</span>
+<span class="pc bpc" id="L250" title="1 of 4 branches missed.">        while (search != null &amp;&amp; search.isDirectory()) {</span>
+<span class="fc" id="L251">            final File props = new File(search, name);</span>
+<span class="fc bfc" id="L252" title="All 2 branches covered.">            if (props.isFile()) {</span>
+<span class="fc" id="L253">                return props;</span>
             }
-<span class="fc" id="L252">            search = search.getParentFile();</span>
-<span class="fc" id="L253">        }</span>
-<span class="fc" id="L254">        return null;</span>
+<span class="fc" id="L255">            search = search.getParentFile();</span>
+<span class="fc" id="L256">        }</span>
+<span class="fc" id="L257">        return null;</span>
     }
 
     /**
@@ -273,83 +276,83 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
     private File getImport(String importStatement, File currentFile) {
         //&lt;Import Project=&quot;$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))&quot; /&gt;
         //&lt;Import Project=&quot;$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.props))\Directory.Build.props&quot; /&gt;
-<span class="pc bpc" id="L276" title="2 of 4 branches missed.">        if (importStatement == null || importStatement.isEmpty()) {</span>
-<span class="nc" id="L277">            return null;</span>
+<span class="pc bpc" id="L279" title="2 of 4 branches missed.">        if (importStatement == null || importStatement.isEmpty()) {</span>
+<span class="nc" id="L280">            return null;</span>
         }
-<span class="fc bfc" id="L279" title="All 2 branches covered.">        if (importStatement.startsWith(&quot;$&quot;)) {</span>
-<span class="fc" id="L280">            final String compact = importStatement.replaceAll(&quot;\\s&quot;, &quot;&quot;);</span>
-<span class="fc bfc" id="L281" title="All 2 branches covered.">            if (IMPORT_GET_PATH_OF_FILE.equalsIgnoreCase(compact)</span>
-<span class="fc bfc" id="L282" title="All 2 branches covered.">                    || IMPORT_GET_DIRECTORY.equalsIgnoreCase(compact)) {</span>
-<span class="fc" id="L283">                return locateDirectoryBuildFile(&quot;Directory.Build.props&quot;, currentFile.getParentFile().getParentFile());</span>
-<span class="pc bpc" id="L284" title="1 of 2 branches missed.">            } else if (importStatement.startsWith(&quot;$(MSBuildThisFileDirectory)&quot;)) {</span>
-<span class="fc" id="L285">                final String path = importStatement.substring(27);</span>
-<span class="fc" id="L286">                final File currentDirectory = currentFile.getParentFile();</span>
-<span class="fc" id="L287">                final Path p = Paths.get(currentDirectory.getAbsolutePath(),</span>
-<span class="fc" id="L288">                        path.replace('\\', File.separatorChar).replace('/', File.separatorChar));</span>
-<span class="fc" id="L289">                final File f = p.normalize().toFile();</span>
-<span class="pc bpc" id="L290" title="2 of 4 branches missed.">                if (f.isFile() &amp;&amp; !f.equals(currentFile)) {</span>
-<span class="fc" id="L291">                    return f;</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">        if (importStatement.startsWith(&quot;$&quot;)) {</span>
+<span class="fc" id="L283">            final String compact = importStatement.replaceAll(&quot;\\s&quot;, &quot;&quot;);</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">            if (IMPORT_GET_PATH_OF_FILE.equalsIgnoreCase(compact)</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">                    || IMPORT_GET_DIRECTORY.equalsIgnoreCase(compact)) {</span>
+<span class="fc" id="L286">                return locateDirectoryBuildFile(&quot;Directory.Build.props&quot;, currentFile.getParentFile().getParentFile());</span>
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">            } else if (importStatement.startsWith(&quot;$(MSBuildThisFileDirectory)&quot;)) {</span>
+<span class="fc" id="L288">                final String path = importStatement.substring(27);</span>
+<span class="fc" id="L289">                final File currentDirectory = currentFile.getParentFile();</span>
+<span class="fc" id="L290">                final Path p = Paths.get(currentDirectory.getAbsolutePath(),</span>
+<span class="fc" id="L291">                        path.replace('\\', File.separatorChar).replace('/', File.separatorChar));</span>
+<span class="fc" id="L292">                final File f = p.normalize().toFile();</span>
+<span class="pc bpc" id="L293" title="2 of 4 branches missed.">                if (f.isFile() &amp;&amp; !f.equals(currentFile)) {</span>
+<span class="fc" id="L294">                    return f;</span>
                 }
             }
-<span class="nc" id="L294">        } else {</span>
-<span class="fc" id="L295">            final File currentDirectory = currentFile.getParentFile();</span>
-<span class="fc" id="L296">            final Path p = Paths.get(currentDirectory.getAbsolutePath(),</span>
-<span class="fc" id="L297">                    importStatement.replace('\\', File.separatorChar).replace('/', File.separatorChar));</span>
+<span class="nc" id="L297">        } else {</span>
+<span class="fc" id="L298">            final File currentDirectory = currentFile.getParentFile();</span>
+<span class="fc" id="L299">            final Path p = Paths.get(currentDirectory.getAbsolutePath(),</span>
+<span class="fc" id="L300">                    importStatement.replace('\\', File.separatorChar).replace('/', File.separatorChar));</span>
 
-<span class="fc" id="L299">            final File f = p.normalize().toFile();</span>
+<span class="fc" id="L302">            final File f = p.normalize().toFile();</span>
 
-<span class="pc bpc" id="L301" title="2 of 4 branches missed.">            if (f.isFile() &amp;&amp; !f.equals(currentFile)) {</span>
-<span class="fc" id="L302">                return f;</span>
+<span class="pc bpc" id="L304" title="2 of 4 branches missed.">            if (f.isFile() &amp;&amp; !f.equals(currentFile)) {</span>
+<span class="fc" id="L305">                return f;</span>
             }
         }
-<span class="nc" id="L305">        LOGGER.warn(&quot;Unable to import Directory.Build.props import `{}` in `{}`&quot;, importStatement, currentFile);</span>
-<span class="nc" id="L306">        return null;</span>
+<span class="nc" id="L308">        LOGGER.warn(&quot;Unable to import Directory.Build.props import `{}` in `{}`&quot;, importStatement, currentFile);</span>
+<span class="nc" id="L309">        return null;</span>
     }
 
     private Map&lt;String, String&gt; readDirectoryBuildProps(File directoryProps) throws MSBuildProjectParseException {
-<span class="fc" id="L310">        Map&lt;String, String&gt; entries = null;</span>
-<span class="fc" id="L311">        final Set&lt;String&gt; imports = new HashSet&lt;&gt;();</span>
-<span class="pc bpc" id="L312" title="2 of 4 branches missed.">        if (directoryProps != null &amp;&amp; directoryProps.isFile()) {</span>
-<span class="fc" id="L313">            final DirectoryBuildPropsParser parser = new DirectoryBuildPropsParser();</span>
-<span class="fc" id="L314">            try (FileInputStream fis = new FileInputStream(directoryProps);</span>
-<span class="fc" id="L315">                    BOMInputStream bis = new BOMInputStream(fis)) {</span>
+<span class="fc" id="L313">        Map&lt;String, String&gt; entries = null;</span>
+<span class="fc" id="L314">        final Set&lt;String&gt; imports = new HashSet&lt;&gt;();</span>
+<span class="pc bpc" id="L315" title="2 of 4 branches missed.">        if (directoryProps != null &amp;&amp; directoryProps.isFile()) {</span>
+<span class="fc" id="L316">            final DirectoryBuildPropsParser parser = new DirectoryBuildPropsParser();</span>
+<span class="fc" id="L317">            try (FileInputStream fis = new FileInputStream(directoryProps);</span>
+<span class="fc" id="L318">                    BOMInputStream bis = new BOMInputStream(fis)) {</span>
                 //skip BOM if it exists
-<span class="fc" id="L317">                bis.getBOM();</span>
-<span class="fc" id="L318">                entries = parser.parse(bis);</span>
-<span class="fc" id="L319">                imports.addAll(parser.getImports());</span>
-<span class="nc" id="L320">            } catch (IOException ex) {</span>
-<span class="nc" id="L321">                throw new MSBuildProjectParseException(&quot;Error reading Directory.Build.props&quot;, ex);</span>
-<span class="fc" id="L322">            }</span>
+<span class="fc" id="L320">                bis.getBOM();</span>
+<span class="fc" id="L321">                entries = parser.parse(bis);</span>
+<span class="fc" id="L322">                imports.addAll(parser.getImports());</span>
+<span class="nc" id="L323">            } catch (IOException ex) {</span>
+<span class="nc" id="L324">                throw new MSBuildProjectParseException(&quot;Error reading Directory.Build.props&quot;, ex);</span>
+<span class="fc" id="L325">            }</span>
 
-<span class="fc bfc" id="L324" title="All 2 branches covered.">            for (String importStatement : imports) {</span>
-<span class="fc" id="L325">                final File parentBuildProps = getImport(importStatement, directoryProps);</span>
-<span class="pc bpc" id="L326" title="1 of 2 branches missed.">                if (!directoryProps.equals(parentBuildProps)) {</span>
-<span class="fc" id="L327">                    final Map&lt;String, String&gt; parentEntries = readDirectoryBuildProps(parentBuildProps);</span>
-<span class="pc bpc" id="L328" title="1 of 2 branches missed.">                    if (parentEntries != null) {</span>
-<span class="fc" id="L329">                        parentEntries.putAll(entries);</span>
-<span class="fc" id="L330">                        entries = parentEntries;</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">            for (String importStatement : imports) {</span>
+<span class="fc" id="L328">                final File parentBuildProps = getImport(importStatement, directoryProps);</span>
+<span class="pc bpc" id="L329" title="2 of 4 branches missed.">                if (parentBuildProps != null &amp;&amp; !directoryProps.equals(parentBuildProps)) {</span>
+<span class="fc" id="L330">                    final Map&lt;String, String&gt; parentEntries = readDirectoryBuildProps(parentBuildProps);</span>
+<span class="pc bpc" id="L331" title="1 of 2 branches missed.">                    if (parentEntries != null) {</span>
+<span class="fc" id="L332">                        parentEntries.putAll(entries);</span>
+<span class="fc" id="L333">                        entries = parentEntries;</span>
                     }
                 }
-<span class="fc" id="L333">            }</span>
-<span class="fc" id="L334">            return entries;</span>
+<span class="fc" id="L336">            }</span>
+<span class="fc" id="L337">            return entries;</span>
         }
-<span class="nc" id="L336">        return null;</span>
+<span class="nc" id="L339">        return null;</span>
     }
 
     private Map&lt;String, String&gt; loadCentrallyManaged(File folder, Properties props) throws MSBuildProjectParseException {
-<span class="fc" id="L340">        final File packages = locateDirectoryBuildFile(DIRECTORY_PACKAGESPROPS, folder);</span>
-<span class="pc bpc" id="L341" title="1 of 4 branches missed.">        if (packages != null &amp;&amp; packages.isFile()) {</span>
-<span class="fc" id="L342">            final DirectoryPackagesPropsParser parser = new DirectoryPackagesPropsParser();</span>
-<span class="fc" id="L343">            try (FileInputStream fis = new FileInputStream(packages);</span>
-<span class="fc" id="L344">                    BOMInputStream bis = new BOMInputStream(fis)) {</span>
+<span class="fc" id="L343">        final File packages = locateDirectoryBuildFile(DIRECTORY_PACKAGESPROPS, folder);</span>
+<span class="pc bpc" id="L344" title="1 of 4 branches missed.">        if (packages != null &amp;&amp; packages.isFile()) {</span>
+<span class="fc" id="L345">            final DirectoryPackagesPropsParser parser = new DirectoryPackagesPropsParser();</span>
+<span class="fc" id="L346">            try (FileInputStream fis = new FileInputStream(packages);</span>
+<span class="fc" id="L347">                    BOMInputStream bis = new BOMInputStream(fis)) {</span>
                 //skip BOM if it exists
-<span class="fc" id="L346">                bis.getBOM();</span>
-<span class="fc" id="L347">                return parser.parse(bis, props);</span>
-<span class="nc" id="L348">            } catch (IOException ex) {</span>
-<span class="nc" id="L349">                throw new MSBuildProjectParseException(&quot;Error reading Directory.Build.props&quot;, ex);</span>
+<span class="fc" id="L349">                bis.getBOM();</span>
+<span class="fc" id="L350">                return parser.parse(bis, props);</span>
+<span class="nc" id="L351">            } catch (IOException ex) {</span>
+<span class="nc" id="L352">                throw new MSBuildProjectParseException(&quot;Error reading Directory.Build.props&quot;, ex);</span>
             }
         }
-<span class="fc" id="L352">        return new HashMap&lt;&gt;();</span>
+<span class="fc" id="L355">        return new HashMap&lt;&gt;();</span>
     }
 
 }
