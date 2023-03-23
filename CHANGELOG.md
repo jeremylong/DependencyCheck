@@ -1,5 +1,16 @@
 # Change Log
 
+
+## [Version 8.2.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.2.1) (2023-03-23)
+
+### Fixed
+
+ - NullPointerException in MSBuildAnalyzer (#5589)
+ - SQL Syntax for Oracle (#5590)
+ - Use `https://` URLs in report templates (#5582)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/64?closed=1).
+
 ## [Version 8.2.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.2.0) (2023-03-22)
 
 ### Added
@@ -16,7 +27,6 @@
  - Use the stable github_advisory_id instead of the now unstable id in NPM audit results
 
 See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/63?closed=1).
-
 
 ## [Version 8.1.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.1.2) (2023-02-28)
 

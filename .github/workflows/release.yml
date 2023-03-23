@@ -185,20 +185,13 @@ jobs:
           prerelease: false
           draft: false
           body: |
-            ### Added
-
-             - Support msbuild Directory.build.props (#5475)
-             - better display of NPM audit references
-             - Add CVSS V3 results from NPM Audit results
-
             ### Fixed
 
-             - Fix several issues on NPM Audit reporting (#5546)
-             - Case issue in SQL (#5557)
-             - Fix CWE(s) extraction for NPM Audit advisories
-             - Use the stable github_advisory_id instead of the now unstable id in NPM audit results
+             - NullPointerException in MSBuildAnalyzer (#5589)
+             - SQL Syntax for Oracle (#5590)
+             - Use `https://` URLs in report templates (#5582)
 
-            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/63?closed=1).
+            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/64?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
