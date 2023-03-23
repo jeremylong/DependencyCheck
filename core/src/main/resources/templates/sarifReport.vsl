@@ -19,7 +19,7 @@
               },
               "help": {
                 "text": "",
-                "markdown": "#if($rule.getSource().equals("NVD"))For more information see [$enc.json($rule.name)](http://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($rule.name)).\n
+                "markdown": "#if($rule.getSource().equals("NVD"))For more information see [$enc.json($rule.name)](https://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($rule.name)).\n
 #elseif($rule.getSource().equals("NPM"))For more information see [$enc.json($rule.name)](https://github.com/advisories/$enc.url($rule.name))\n#end
 \n\n
 If this is a false positive - consider using the HTML report to generate a suppression file. 
@@ -61,7 +61,7 @@ For more information see [How dependency-check works](https://jeremylong.github.
           ],
         "properties": {
           "disclaimer": "Dependency-Check is an open source tool performing a best effort analysis of 3rd party dependencies; false positives and false negatives may exist in the analysis performed by the tool. Use of the tool and the reporting provided constitutes acceptance for use in an AS IS condition, and there are NO warranties, implied or otherwise, with regard to the analysis or its use. Any use of the tool and the reporting provided is at the user's risk. In no event shall the copyright holder or OWASP be held liable for any damages whatsoever arising out of or in connection with the use of this tool, the analysis performed, or the resulting report.",
-          "nvd": "This report contains data retrieved from the National Vulnerability Database: http://nvd.nist.gov",
+          "nvd": "This report contains data retrieved from the National Vulnerability Database: https://nvd.nist.gov",
           "cisa": "This report may contain data retrieved from the CISA Known Exploited Vulnerability Catalog: https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
           "npm": "This report may contain data retrieved from the the Github Advisory Database (via NPM Audit API): https://github.com/advisories/",
           "retirejs": "This report may contain data retrieved from the RetireJS community: https://retirejs.github.io/retire.js/",
