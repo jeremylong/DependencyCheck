@@ -226,12 +226,15 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         final File directoryProps = locateDirectoryBuildFile(DIRECTORY_BUILDPROPS, directory);
-        final Map<String, String> entries = readDirectoryBuildProps(directoryProps);
+        if (directoryProps != null) {
+            final Map<String, String> entries = readDirectoryBuildProps(directoryProps);
 
-        for (Map.Entry<String, String> entry : entries.entrySet()) {
-            props.put(entry.getKey(), entry.getValue());
+            if (entries != null) {
+                for (Map.Entry<String, String> entry : entries.entrySet()) {
+                    props.put(entry.getKey(), entry.getValue());
+                }
+            }
         }
-
         return props;
     }
 
@@ -323,7 +326,7 @@ public class MSBuildProjectAnalyzer extends AbstractFileTypeAnalyzer {
 
             for (String importStatement : imports) {
                 final File parentBuildProps = getImport(importStatement, directoryProps);
-                if (!directoryProps.equals(parentBuildProps)) {
+                if (parentBuildProps != null && !directoryProps.equals(parentBuildProps)) {
                     final Map<String, String> parentEntries = readDirectoryBuildProps(parentBuildProps);
                     if (parentEntries != null) {
                         parentEntries.putAll(entries);
