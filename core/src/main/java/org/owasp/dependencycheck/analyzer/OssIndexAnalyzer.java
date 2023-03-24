@@ -310,37 +310,27 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         final float cvssScore = source.getCvssScore() != null ? source.getCvssScore() : -1;
 
         if (source.getCvssVector() != null) {
-            // convert cvss details
-            final CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());
-
-            final Map<String, String> metrics = cvssVector.getMetrics();
-            if (cvssVector instanceof Cvss2Vector) {
-                result.setCvssV2(new CvssV2(
-                        cvssScore,
-                        metrics.get(Cvss2Vector.ACCESS_VECTOR),
-                        metrics.get(Cvss2Vector.ACCESS_COMPLEXITY),
-                        metrics.get(Cvss2Vector.AUTHENTICATION),
-                        metrics.get(Cvss2Vector.CONFIDENTIALITY_IMPACT),
-                        metrics.get(Cvss2Vector.INTEGRITY_IMPACT),
-                        metrics.get(Cvss2Vector.AVAILABILITY_IMPACT),
-                        Cvss2Severity.of(cvssScore).name()
-                ));
-            } else if (cvssVector instanceof Cvss3Vector) {
-                result.setCvssV3(new CvssV3(
-                        metrics.get(Cvss3Vector.ATTACK_VECTOR),
-                        metrics.get(Cvss3Vector.ATTACK_COMPLEXITY),
-                        metrics.get(Cvss3Vector.PRIVILEGES_REQUIRED),
-                        metrics.get(Cvss3Vector.USER_INTERACTION),
-                        metrics.get(Cvss3Vector.SCOPE),
-                        metrics.get(Cvss3Vector.CONFIDENTIALITY_IMPACT),
-                        metrics.get(Cvss3Vector.INTEGRITY_IMPACT),
-                        metrics.get(Cvss3Vector.AVAILABILITY_IMPACT),
-                        cvssScore,
-                        Cvss3Severity.of(cvssScore).name()
-                ));
+            if (source.getCvssVector().startsWith("CVSS:3")) {
+                result.setCvssV3(new CvssV3(source.getCvssVector(), cvssScore));
             } else {
-                LOG.warn("Unsupported CVSS vector: {}", cvssVector);
-                result.setUnscoredSeverity(Float.toString(cvssScore));
+                // convert cvss details
+                final CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());
+                final Map<String, String> metrics = cvssVector.getMetrics();
+                if (cvssVector instanceof Cvss2Vector) {
+                    result.setCvssV2(new CvssV2(
+                            cvssScore,
+                            metrics.get(Cvss2Vector.ACCESS_VECTOR),
+                            metrics.get(Cvss2Vector.ACCESS_COMPLEXITY),
+                            metrics.get(Cvss2Vector.AUTHENTICATION),
+                            metrics.get(Cvss2Vector.CONFIDENTIALITY_IMPACT),
+                            metrics.get(Cvss2Vector.INTEGRITY_IMPACT),
+                            metrics.get(Cvss2Vector.AVAILABILITY_IMPACT),
+                            Cvss2Severity.of(cvssScore).name()
+                    ));
+                } else {
+                    LOG.warn("Unsupported CVSS vector: {}", cvssVector);
+                    result.setUnscoredSeverity(Float.toString(cvssScore));
+                }
             }
         } else {
             LOG.debug("OSS has no vector for {}", result.getName());
