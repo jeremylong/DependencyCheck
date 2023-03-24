@@ -428,7 +428,7 @@
             <evidence type="vendor" source="hint analyzer" name="vendor" value="vt" confidence="HIGHEST"/>
         </add>
     </hint>
-        <hint>
+    <hint>
         <given>
             <evidence type="vendor" source="pom" name="url" value="https://www.bouncycastle.org/fips-java"/>
         </given>
@@ -466,7 +466,7 @@
             <evidence type="product" source="hint analyzer" name="product" value="parquet-mr" confidence="HIGH"/>
         </add>
     </hint>
-        <hint>
+    <hint>
         <!-- false negative per issue #1387 -->
         <given>
             <evidence type="product" source="composer.lock" name="product" value="yii2"/>
@@ -478,6 +478,15 @@
             <evidence type="product" source="hint analyzer" name="product" value="framework" confidence="HIGH"/>
             <evidence type="vendor" source="hint analyzer" name="vendor" value="yii" confidence="HIGH"/>
             <evidence type="product" source="hint analyzer" name="product" value="yii" confidence="HIGH"/>
+        </add>
+    </hint>
+    <hint>
+        <!-- false negative per issue #5525 -->
+        <given>
+            <evidence type="vendor" source="pom" name="groupid" value="com.lowagie"/>
+        </given>
+        <add>
+            <evidence type="vendor" source="hint analyzer" name="vendor" value="itextpdf" confidence="HIGH"/>
         </add>
     </hint>
 </hints>
