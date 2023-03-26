@@ -755,4 +755,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.kerby/zookeeper-backend@.*$</packageUrl>
    <cpe>cpe:/a:apache:zookeeper</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5593
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.camel\.springboot/camel-ftp-starter@.*$</packageUrl>
+   <cpe>cpe:/a:ftp_project:ftp</cpe>
+</suppress>
 </suppressions>
