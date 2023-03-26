@@ -761,3 +761,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.camel\.springboot/camel-ftp-starter@.*$</packageUrl>
    <cpe>cpe:/a:ftp_project:ftp</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5592
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/javax\.resource/connector@.*$</packageUrl>
+   <cpe>cpe:/a:sun:j2ee</cpe>
+</suppress>
