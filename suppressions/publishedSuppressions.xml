@@ -776,4 +776,11 @@
    <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring-cloud-sleuth-autoconfigure@.*$</packageUrl>
    <cpe>cpe:/a:vmware:spring_cloud_config</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5618
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jfrog\.artifactory\.client/artifactory-java-client-services@.*$</packageUrl>
+   <cpe>cpe:/a:jfrog:artifactory</cpe>
+</suppress>
 </suppressions>
