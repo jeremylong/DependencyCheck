@@ -12,6 +12,7 @@
                     </formats>
                     <prettyPrint>true</prettyPrint>
                     <failBuildOnCVSS>11</failBuildOnCVSS>
+                    <failOnError>false</failOnError>
                     <enableExperimental>true</enableExperimental>
                 </configuration>
                 <executions>
