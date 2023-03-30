@@ -782,3 +782,10 @@
    <packageUrl regex="true">^pkg:maven/org\.jfrog\.artifactory\.client/artifactory-java-client-services@.*$</packageUrl>
    <cpe>cpe:/a:jfrog:artifactory</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5622
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/net\.minidev/accessors-smart@.*$</packageUrl>
+   <cpe>cpe:/a:json-smart_project:json-smart</cpe>
+</suppress>
