@@ -37,12 +37,16 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </script>
         <script type="text/javascript">
             $(document).ready(function() {
-                $(".expandable, .collapsed").click(function (event) {
-                    e = event || window.event;
-                    var h = e.target || e.srcElement;
+                function toggleExpandable(h, animate) {
                     var content = "#content" + h.id.substr(6);
                     var header = "#" + h.id;
-                    $(content).slideToggle("fast");
+
+                    if (animate) {
+                        $(content).slideToggle("fast");
+                    } else {
+                        $(content).toggle();
+                    }
+
                     var exprx = /expandable\b/;
                     if (exprx.exec($(header).attr("class"))) {
                         $(header).addClass("collapsed");
@@ -60,8 +64,28 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         $(header).addClass("expandablesubsection");
                         $(header).removeClass("collaspablesubsection");
                     }
+                }
+
+                $(".expandable, .collapsed").click(function (event) {
+                    e = event || window.event;
+                    var h = e.target || e.srcElement;
+                    toggleExpandable(h, true);
                     return false;
                 });
+
+                const suppressedVulnerabilitiesLink = $('#suppressed-vulnerabilities-link');
+                suppressedVulnerabilitiesLink.click(function (event) {
+                    // Expand header, if currently collapsed
+                    const header = $('#header-suppressed.expandable').get(0);
+                    if (header !== undefined) {
+                        toggleExpandable(header, false);
+                    }
+
+                    // Let browser perform default link click handling, i.e. scroll to header
+                    return true;
+                });
+
+
                 var table = $("#summaryTable").stupidtable();
                 table.bind('aftertablesort', function (event, data) {
                     var th = $(this).find('th');
@@ -685,7 +709,11 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                         <li><i>Dependencies Scanned</i>:&nbsp;$depCount ($dependencies.size() unique)</li>
                         <li><i>Vulnerable Dependencies</i>:&nbsp;<span id="vulnerableCount">$vulnDepCount</span></li>
                         <li><i>Vulnerabilities Found</i>:&nbsp;$vulnCount</li>
-                        <li><i>Vulnerabilities Suppressed</i>:&nbsp;$vulnSuppressedCount</li>
+                        <li><i>Vulnerabilities Suppressed</i>:&nbsp;$vulnSuppressedCount
+                            #if($vulnSuppressedCount>0)
+                                (<a id="suppressed-vulnerabilities-link" href="#header-suppressed">show</a>)
+                            #end
+                        </li>
                         <li class="scaninfo">...</li>
                         #foreach($prop in $properties.getMetaData().entrySet())
                         <li class="scaninfo hidden"><i>$enc.html($prop.key)</i>: $enc.html($prop.value)</li>
@@ -1042,9 +1070,8 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
 
 ## BEGIN SUPPRESSED VULNERABILITIES
                 #if ($vulnSuppressedCount>0 || $cpeSuppressedCount>0)
-                    #set($cnt=$cnt+1)
-                    <h2 id="header$cnt" class="expandable">Suppressed Vulnerabilities</h2>
-                    <div id="content$cnt" class="hidden">
+                    <h2 id="header-suppressed" class="expandable">Suppressed Vulnerabilities</h2>
+                    <div id="content-suppressed" class="hidden">
 
                     #foreach($dependency in $dependencies)
                         #if ($dependency.getSuppressedIdentifiers().size()>0 || $dependency.getSuppressedVulnerabilities().size()>0)
