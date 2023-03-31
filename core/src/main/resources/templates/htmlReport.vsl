@@ -204,6 +204,13 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             return toggleDisplay(event.target, '.scaninfo', 'show all', 'show less');
           });
           $( "#vulnerabilityDisplayToggle" ).bind( "click", function( event ) {
+            const dependenciesHeader = $('#header-dependencies');
+            const dependenciesHeaderAllText = 'Dependencies (all)';
+            if (dependenciesHeader.text() == dependenciesHeaderAllText) {
+                dependenciesHeader.text('Dependencies (vulnerable)');
+            } else {
+                dependenciesHeader.text(dependenciesHeaderAllText);
+            }
             return toggleDisplay(event.target, '.notvulnerable', 'Showing Vulnerable Dependencies (click to show all)', 'Showing All Dependencies (click to show less)');
           });
           $( ".versionToggle" ).bind( "click", function( event ) {
@@ -840,7 +847,7 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                 #if($hasknown==1)
                 <p>* indicates the dependency has a known exploited vulnerability</p>
                 #end
-                <h2>Dependencies</h2>
+                <h2 id="header-dependencies">Dependencies (vulnerable)</h2>
                 #set($lnkcnt=0)
                 #set($vsctr=0) ##counter to create unique groups for vulnerable software
                 #foreach($dependency in $dependencies)
