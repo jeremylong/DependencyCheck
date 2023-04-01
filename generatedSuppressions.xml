@@ -789,3 +789,10 @@
    <packageUrl regex="true">^pkg:maven/net\.minidev/accessors-smart@.*$</packageUrl>
    <cpe>cpe:/a:json-smart_project:json-smart</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5629
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.springframework\.integration/spring-integration-ftp@.*$</packageUrl>
+   <cpe>cpe:/a:vmware:spring_integration</cpe>
+</suppress>
