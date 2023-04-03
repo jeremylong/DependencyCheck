@@ -796,3 +796,10 @@
    <packageUrl regex="true">^pkg:maven/org\.springframework\.integration/spring-integration-ftp@.*$</packageUrl>
    <cpe>cpe:/a:vmware:spring_integration</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5636
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java/graphql-java-extended-scalars@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java:graphql-java</cpe>
+</suppress>
