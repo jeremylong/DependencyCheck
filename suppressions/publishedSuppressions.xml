@@ -811,4 +811,11 @@
    <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-java-tools@.*$</packageUrl>
    <cpe>cpe:/a:graphql-java:graphql-java</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5638
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-java-servlet@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java:graphql-java</cpe>
+</suppress>
 </suppressions>
