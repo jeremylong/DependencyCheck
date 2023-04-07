@@ -137,7 +137,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven-surefire-report-plugin.version>3.0.0</maven-surefire-report-plugin.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
         <spotbugs.version>4.7.3</spotbugs.version>
-        <spotbugs.maven.plugin.version>4.7.3.3</spotbugs.maven.plugin.version>
+        <spotbugs.maven.plugin.version>4.7.3.4</spotbugs.maven.plugin.version>
         <taglist-maven-plugin.version>3.0.0</taglist-maven-plugin.version>
         <versions-maven-plugin.version>2.15.0</versions-maven-plugin.version>
         <jetbrains.annotations.version>24.0.1</jetbrains.annotations.version>
