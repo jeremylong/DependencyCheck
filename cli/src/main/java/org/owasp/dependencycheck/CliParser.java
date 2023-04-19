@@ -389,6 +389,8 @@ public final class CliParser {
                 .addOption(newOptionWithArg(ARGUMENT.PATH_TO_BUNDLE_AUDIT_WORKING_DIRECTORY, "path",
                         "The path to working directory that the bundle-audit command should be executed from when "
                         + "doing Gem bundle analysis."))
+                .addOption(newOptionWithArg(ARGUMENT.CENTRAL_URL, "url",
+                        "Alternative URL for Maven Central Search. If not set the public Sonatype Maven Central will be used."))
                 .addOption(newOptionWithArg(ARGUMENT.OSSINDEX_URL, "url",
                         "Alternative URL for the OSS Index. If not set the public Sonatype OSS Index will be used."))
                 .addOption(newOptionWithArg(ARGUMENT.OSSINDEX_USERNAME, "username",
@@ -1310,6 +1312,10 @@ public final class CliParser {
          * Disables the Central Analyzer's ability to cache results locally.
          */
         public static final String DISABLE_CENTRAL_CACHE = "disableCentralCache";
+        /**
+         * The alternative URL for Maven Central Search.
+         */
+        public static final String CENTRAL_URL = "centralUrl";
         /**
          * Disables the Nexus Analyzer.
          */

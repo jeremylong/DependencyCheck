@@ -214,7 +214,8 @@ public class CentralSearch {
                 }
             } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
                 // Anything else is jacked up XML stuff that we really can't recover from well
-                throw new IOException(e.getMessage(), e);
+                final String errorMessage = "Failed to parse MavenCentral XML Response: " + e.getMessage();
+                throw new IOException(errorMessage, e);
             }
 
             if (missing) {
