@@ -299,6 +299,10 @@ public class Check extends Update {
      */
     private Boolean nugetconfAnalyzerEnabled;
     /**
+     * Whether or not the Libman Analyzer is enabled.
+     */
+    private Boolean libmanAnalyzerEnabled;
+    /**
      * Whether or not the PHP Composer Analyzer is enabled.
      */
     private Boolean composerAnalyzerEnabled;
@@ -878,7 +882,7 @@ public class Check extends Update {
      */
     public Boolean isNugetconfAnalyzerEnabled() {
         return nugetconfAnalyzerEnabled;
-    }
+    }    
 
     /**
      * Sets whether or not the analyzer is enabled.
@@ -896,6 +900,24 @@ public class Check extends Update {
      */
     public void setNugetconfAnalyzerEnabled(Boolean nugetconfAnalyzerEnabled) {
         this.nugetconfAnalyzerEnabled = nugetconfAnalyzerEnabled;
+    }
+
+    /**
+     * Returns whether or not the analyzer is enabled.
+     *
+     * @return true if the analyzer is enabled
+     */
+    public Boolean isLibmanAnalyzerEnabled() {
+        return libmanAnalyzerEnabled;
+    }
+
+    /**
+     * Sets whether or not the analyzer is enabled.
+     *
+     * @param libmanAnalyzerEnabled the value of the new setting
+     */
+    public void setLibmanAnalyzerEnabled(Boolean libmanAnalyzerEnabled) {
+        this.libmanAnalyzerEnabled = libmanAnalyzerEnabled;
     }
 
     /**
@@ -2156,6 +2178,7 @@ public class Check extends Update {
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_MIX_AUDIT_PATH, mixAuditPath);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED, nugetconfAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_LIBMAN_ENABLED, libmanAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, centralAnalyzerUseCache);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);

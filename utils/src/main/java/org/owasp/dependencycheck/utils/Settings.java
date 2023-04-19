@@ -516,6 +516,10 @@ public final class Settings {
          */
         public static final String ANALYZER_NUGETCONF_ENABLED = "analyzer.nugetconf.enabled";
         /**
+         * The properties key for whether the Libman analyzer is enabled.
+         */
+        public static final String ANALYZER_LIBMAN_ENABLED = "analyzer.libman.enabled";
+        /**
          * The properties key for whether the .NET MSBuild Project analyzer is
          * enabled.
          */

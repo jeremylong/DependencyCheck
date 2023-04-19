@@ -610,6 +610,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private Boolean nugetconfAnalyzerEnabled;
 
     /**
+     * Whether or not the Libman Analyzer is enabled.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "libmanAnalyzerEnabled")
+    private Boolean libmanAnalyzerEnabled;
+    
+    /**
      * Whether or not the Central Analyzer is enabled.
      */
     @SuppressWarnings("CanBeFinal")
@@ -2200,6 +2207,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_JAR_ENABLED, jarAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUSPEC_ENABLED, nuspecAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_NUGETCONF_ENABLED, nugetconfAnalyzerEnabled);
+        settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_LIBMAN_ENABLED, libmanAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_CENTRAL_USE_CACHE, centralAnalyzerUseCache);
         settings.setBooleanIfNotNull(Settings.KEYS.ANALYZER_ARTIFACTORY_ENABLED, artifactoryAnalyzerEnabled);

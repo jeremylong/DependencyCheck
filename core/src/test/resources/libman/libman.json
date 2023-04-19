@@ -1,0 +1,45 @@
+{
+    "version": "1.0",
+    "defaultProvider": "cdnjs",
+    "libraries": [
+        {
+            "library": "bootstrap@4.6.0",
+            "destination": "wwwroot/lib/bootstrap/",
+            "files": [
+                "dist/css/bootstrap-grid.css",
+                "dist/css/bootstrap-grid.css.map",
+                "dist/css/bootstrap-grid.min.css",
+                "dist/css/bootstrap-grid.min.css.map"
+            ]
+        },
+        {
+            "provider": "unpkg",
+            "library": "jquery@3.6.3",
+            "destination": "wwwroot/lib/jquery/",
+            "files": [
+                "dist/jquery.js",
+                "dist/jquery.min.js",
+                "dist/jquery.min.map",
+                "dist/jquery.slim.js"
+            ]
+        },
+        {
+            "provider": "cdnjs",
+            "library": "font-awesome@6.2.1",
+            "destination": "wwwroot/lib/font-awesome/"
+        },
+        {
+            "provider": "unpkg",
+            "library": "@regru/jquery-ui@1.6.3",
+            "destination": "wwwroot/lib/jquery-ui/"
+        },
+        {
+            "provider": "filesystem",
+            "library": "../../path/to/library.js",
+            "destination": "wwwroot/lib/mylib/",
+            "files": [
+                "somefile.js"
+            ]
+        }
+    ]
+}
