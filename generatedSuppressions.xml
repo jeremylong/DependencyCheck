@@ -838,3 +838,10 @@
    <packageUrl regex="true">^pkg:maven/org\.bouncycastle/bcpg-jdk15on@.*$</packageUrl>
    <cpe>cpe:/a:open_cas_project:open_cas</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5700
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jboss\.resteasy\.microprofile/microprofile-config@.*$</packageUrl>
+   <cpe>cpe:/a:redhat:resteasy</cpe>
+</suppress>
