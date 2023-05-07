@@ -853,4 +853,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.ignite/ignite-log4j2@.*$</packageUrl>
    <cpe>cpe:/a:apache:log4j</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5704
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.directory\.api/api-ldap-net-mina@.*$</packageUrl>
+   <cpe>cpe:/a:apache:mina</cpe>
+</suppress>
 </suppressions>
