@@ -244,7 +244,15 @@ public final class NpmPayloadBuilder {
             depBuilder.add("integrity", dep.getString("integrity"));
         }
         if (dep.containsKey("requires")) {
-            depBuilder.add("requires", dep.getJsonObject("requires"));
+            final JsonObjectBuilder requiresBuilder = Json.createObjectBuilder();
+            dep.getJsonObject("requires").forEach((key, value) -> {
+                if (NodePackageAnalyzer.shouldSkipDependency(key, ((JsonString) value).getString())) {
+                    return;
+                }
+    
+                requiresBuilder.add(key, value);
+            });
+            depBuilder.add("requires", requiresBuilder.build());
         }
         if (dep.containsKey("dependencies")) {
             final JsonObjectBuilder dependeciesBuilder = Json.createObjectBuilder();
