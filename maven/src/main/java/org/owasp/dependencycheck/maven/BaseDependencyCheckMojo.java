@@ -1062,6 +1062,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "odc.dependencies.scan", defaultValue = "true", required = false)
     private boolean scanDependencies = true;
 
+    @Parameter
+    private ProxyConfig proxy;
+    
     // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Base Maven implementation">
     /**
@@ -2160,14 +2163,13 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);
 
-        final Proxy proxy = getMavenProxy();
-        boolean proxySet = false;
-        if (proxy != null) {
-            proxySet = true;
-            settings.setString(Settings.KEYS.PROXY_SERVER, proxy.getHost());
-            settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(proxy.getPort()));
-            final String userName = proxy.getUsername();
-            String password = proxy.getPassword();
+        // use global maven proxy if provided
+        final Proxy mavenProxy = getMavenProxy();
+        if (mavenProxy != null) {
+            settings.setString(Settings.KEYS.PROXY_SERVER, mavenProxy.getHost());
+            settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(mavenProxy.getPort()));
+            final String userName = mavenProxy.getUsername();
+            String password = mavenProxy.getPassword();
             if (password != null && !password.isEmpty()) {
                 if (settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {
                     System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
@@ -2175,14 +2177,15 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 try {
                     password = decryptPasswordFromSettings(password);
                 } catch (SecDispatcherException ex) {
-                    password = handleSecDispatcherException("proxy", proxy.getId(), password, ex);
+                    password = handleSecDispatcherException("proxy", mavenProxy.getId(), password, ex);
                 }
             }
             settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
             settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
-            settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, proxy.getNonProxyHosts());
+            settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, mavenProxy.getNonProxyHosts());
         }
-        if (!proxySet && System.getProperty("http.proxyHost") != null) {
+        // or use standard Java system properties
+        else if (System.getProperty("http.proxyHost") != null) {
             settings.setString(Settings.KEYS.PROXY_SERVER, System.getProperty("http.proxyHost", ""));
             if (System.getProperty("http.proxyPort") != null) {
                 settings.setString(Settings.KEYS.PROXY_PORT, System.getProperty("http.proxyPort"));
@@ -2197,6 +2200,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 settings.setString(Settings.KEYS.PROXY_NON_PROXY_HOSTS, System.getProperty("http.nonProxyHosts"));
             }
         }
+        // or use configured <proxy>
+        else if ( this.proxy != null && this.proxy.host != null) {
+            settings.setString(Settings.KEYS.PROXY_SERVER, this.proxy.host);
+            settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(this.proxy.port));
+            // user name and password from <server> entry settings.xml
+            configureServerCredentials(this.proxy.serverId, Settings.KEYS.PROXY_USERNAME, Settings.KEYS.PROXY_PASSWORD);
+        }
+        
         final String[] suppressions = determineSuppressions();
         settings.setArrayIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressions);
         settings.setBooleanIfNotNull(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, versionCheckEnabled);
