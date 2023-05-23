@@ -1094,7 +1094,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency><!--upgrade transitive dependency due to reported vulns-->
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
-                <version>3.5.1</version>
+                <version>4.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
