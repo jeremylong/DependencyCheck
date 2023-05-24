@@ -866,3 +866,10 @@
    <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-webclient@.*$</packageUrl>
    <cpe>cpe:/a:graphql-java:graphql-java</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5727
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.quarkiverse\.openapi\.generator/quarkus-openapi-generator@.*$</packageUrl>
+   <cpe>cpe:/a:openapi-generator:openapi_generator</cpe>
+</suppress>
