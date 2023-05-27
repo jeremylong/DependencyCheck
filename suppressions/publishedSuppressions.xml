@@ -881,4 +881,11 @@
    <packageUrl regex="true">^pkg:nuget/MagicFileEncoding@.*$</packageUrl>
    <cpe>cpe:/a:file_project:file</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5736
+   ]]></notes>
+   <packageUrl regex="true">^pkg:nuget/FluentFTP@.*$</packageUrl>
+   <cpe>cpe:/a:ftp:ftp</cpe>
+</suppress>
 </suppressions>
