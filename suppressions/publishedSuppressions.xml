@@ -874,4 +874,11 @@
    <packageUrl regex="true">^pkg:maven/io\.quarkiverse\.openapi\.generator/quarkus-openapi-generator@.*$</packageUrl>
    <cpe>cpe:/a:openapi-generator:openapi_generator</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5737
+   ]]></notes>
+   <packageUrl regex="true">^pkg:nuget/MagicFileEncoding@.*$</packageUrl>
+   <cpe>cpe:/a:file_project:file</cpe>
+</suppress>
 </suppressions>
