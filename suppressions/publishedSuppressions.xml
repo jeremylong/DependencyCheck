@@ -888,4 +888,11 @@
    <packageUrl regex="true">^pkg:nuget/FluentFTP@.*$</packageUrl>
    <cpe>cpe:/a:ftp:ftp</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5734
+   ]]></notes>
+   <packageUrl regex="true">^pkg:nuget/KubernetesClient@.*$</packageUrl>
+   <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+</suppress>
 </suppressions>
