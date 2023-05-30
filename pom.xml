@@ -133,7 +133,7 @@ Copyright (c) 2012 - Jeremy Long
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <!-- upgrading beyond 2.5 breaks maven site-->
         <maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
-        <maven-project-info-reports-plugin.version>3.4.3</maven-project-info-reports-plugin.version>
+        <maven-project-info-reports-plugin.version>3.4.4</maven-project-info-reports-plugin.version>
         <maven-surefire-report-plugin.version>3.1.0</maven-surefire-report-plugin.version>
         <jacoco-maven-plugin.version>0.8.10</jacoco-maven-plugin.version>
         <spotbugs.version>4.7.3</spotbugs.version>
