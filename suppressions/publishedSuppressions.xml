@@ -895,4 +895,11 @@
    <packageUrl regex="true">^pkg:nuget/KubernetesClient@.*$</packageUrl>
    <cpe>cpe:/a:kubernetes:kubernetes</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5742
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.sling/org\.apache\.sling\.commons\.johnzon@.*$</packageUrl>
+   <cpe>cpe:/a:apache:sling_commons_json</cpe>
+</suppress>
 </suppressions>
