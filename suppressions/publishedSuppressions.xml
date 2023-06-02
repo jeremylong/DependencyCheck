@@ -902,4 +902,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.sling/org\.apache\.sling\.commons\.johnzon@.*$</packageUrl>
    <cpe>cpe:/a:apache:sling_commons_json</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5749
+   ]]></notes>
+   <packageUrl regex="true">^pkg:nuget/AspNetCoreRateLimit\.Redis@.*$</packageUrl>
+   <cpe>cpe:/a:asp-project:asp-project</cpe>
+</suppress>
 </suppressions>
