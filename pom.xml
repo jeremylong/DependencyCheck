@@ -818,7 +818,7 @@ Copyright (c) 2012 - Jeremy Long
                     <dependency>
                         <groupId>se.bjurr.violations</groupId>
                         <artifactId>violations-lib</artifactId>
-                        <version>1.156.4</version>
+                        <version>1.156.5</version>
                     </dependency>
                 </dependencies>
                 <configuration>
