@@ -908,3 +908,10 @@
    <packageUrl regex="true">^pkg:nuget/AspNetCoreRateLimit\.Redis@.*$</packageUrl>
    <cpe>cpe:/a:asp-project:asp-project</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5754
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.swagger\.parser\.v3/swagger-parser-safe-url-resolver@.*$</packageUrl>
+   <cpe>cpe:/a:parse-url_project:2.1.14</cpe>
+</suppress>
