@@ -916,4 +916,11 @@
    <packageUrl regex="true">^pkg:maven/io\.swagger\.parser\.v3/swagger-parser-safe-url-resolver@.*$</packageUrl>
    <cpe>cpe:/a:parse-url_project:2.1.14</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5762
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jruby/jzlib@.*$</packageUrl>
+   <cpe>cpe:/a:jruby:jruby</cpe>
+</suppress>
 </suppressions>
