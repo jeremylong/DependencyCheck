@@ -922,3 +922,10 @@
    <packageUrl regex="true">^pkg:maven/org\.jruby/jzlib@.*$</packageUrl>
    <cpe>cpe:/a:jruby:jruby</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5753
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.bazaarvoice\.jolt/json-utils@.*$</packageUrl>
+   <cpe>cpe:/a:utils_project:utils</cpe>
+</suppress>
