@@ -1,5 +1,21 @@
 # Change Log
 
+## [Version 8.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.3.0) (2023-06-12)
+
+### Added
+
+ - Add LibmanAnalyzer (#5652)
+ - Update HTML report Dependencies header based on display settings (#5619)
+ - Add link to suppressed vulnerabilities header in HTML report (#5620)
+ - Enable local proxy configuration in maven plugin configuration (#5696)
+
+### Fixed
+
+ - Fix npm alias present in requires of dependencies (#5703)
+ - Make Central URL configurable via CLI (#5667)
+ - Ensure support of CVSSv3.1 (#5602)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/65?closed=1).
 
 ## [Version 8.2.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.2.1) (2023-03-23)
 
