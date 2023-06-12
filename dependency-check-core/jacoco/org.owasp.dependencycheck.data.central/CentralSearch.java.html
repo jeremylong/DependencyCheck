@@ -214,26 +214,27 @@ public class CentralSearch {
                 }
 <span class="nc" id="L215">            } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {</span>
                 // Anything else is jacked up XML stuff that we really can't recover from well
-<span class="nc" id="L217">                throw new IOException(e.getMessage(), e);</span>
-<span class="fc" id="L218">            }</span>
+<span class="nc" id="L217">                final String errorMessage = &quot;Failed to parse MavenCentral XML Response: &quot; + e.getMessage();</span>
+<span class="nc" id="L218">                throw new IOException(errorMessage, e);</span>
+<span class="fc" id="L219">            }</span>
 
-<span class="fc bfc" id="L220" title="All 2 branches covered.">            if (missing) {</span>
-<span class="pc bpc" id="L221" title="1 of 2 branches missed.">                if (cache != null) {</span>
-<span class="fc" id="L222">                    cache.put(sha1, result);</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">            if (missing) {</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                if (cache != null) {</span>
+<span class="fc" id="L223">                    cache.put(sha1, result);</span>
                 }
-<span class="fc" id="L224">                throw new FileNotFoundException(&quot;Artifact not found in Central&quot;);</span>
+<span class="fc" id="L225">                throw new FileNotFoundException(&quot;Artifact not found in Central&quot;);</span>
             }
-<span class="pc bnc" id="L226" title="All 2 branches missed.">        } else if (conn.getResponseCode() == 429) {</span>
-<span class="nc" id="L227">            final String errorMessage = &quot;Too many requests sent to MavenCentral; additional requests are being rejected.&quot;;</span>
-<span class="nc" id="L228">            throw new TooManyRequestsException(errorMessage);</span>
+<span class="pc bnc" id="L227" title="All 2 branches missed.">        } else if (conn.getResponseCode() == 429) {</span>
+<span class="nc" id="L228">            final String errorMessage = &quot;Too many requests sent to MavenCentral; additional requests are being rejected.&quot;;</span>
+<span class="nc" id="L229">            throw new TooManyRequestsException(errorMessage);</span>
         } else {
-<span class="nc" id="L230">            final String errorMessage = &quot;Could not connect to MavenCentral (&quot; + conn.getResponseCode() + &quot;): &quot; + conn.getResponseMessage();</span>
-<span class="nc" id="L231">            throw new IOException(errorMessage);</span>
+<span class="nc" id="L231">            final String errorMessage = &quot;Could not connect to MavenCentral (&quot; + conn.getResponseCode() + &quot;): &quot; + conn.getResponseMessage();</span>
+<span class="nc" id="L232">            throw new IOException(errorMessage);</span>
         }
-<span class="pc bpc" id="L233" title="1 of 2 branches missed.">        if (cache != null) {</span>
-<span class="fc" id="L234">            cache.put(sha1, result);</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        if (cache != null) {</span>
+<span class="fc" id="L235">            cache.put(sha1, result);</span>
         }
-<span class="fc" id="L236">        return result;</span>
+<span class="fc" id="L237">        return result;</span>
     }
 
     /**
@@ -244,13 +245,13 @@ public class CentralSearch {
      */
     private boolean isInvalidURL(String url) {
         try {
-<span class="fc" id="L247">            final URL u = new URL(url);</span>
-<span class="fc" id="L248">            u.toURI();</span>
-<span class="nc" id="L249">        } catch (MalformedURLException | URISyntaxException e) {</span>
-<span class="nc" id="L250">            LOGGER.trace(&quot;URL is invalid: {}&quot;, url);</span>
-<span class="nc" id="L251">            return true;</span>
-<span class="fc" id="L252">        }</span>
-<span class="fc" id="L253">        return false;</span>
+<span class="fc" id="L248">            final URL u = new URL(url);</span>
+<span class="fc" id="L249">            u.toURI();</span>
+<span class="nc" id="L250">        } catch (MalformedURLException | URISyntaxException e) {</span>
+<span class="nc" id="L251">            LOGGER.trace(&quot;URL is invalid: {}&quot;, url);</span>
+<span class="nc" id="L252">            return true;</span>
+<span class="fc" id="L253">        }</span>
+<span class="fc" id="L254">        return false;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
