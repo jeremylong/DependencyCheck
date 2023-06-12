@@ -1,5 +1,11 @@
 # Change Log
 
+## [Version 8.3.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.3.1) (2023-06-12)
+
+Re-release of 8.3.0 as 8.3.1.
+
+### Added
+
 ## [Version 8.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.3.0) (2023-06-12)
 
 ### Added
