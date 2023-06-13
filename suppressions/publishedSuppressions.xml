@@ -944,4 +944,11 @@
    <packageUrl regex="true">^pkg:maven/org\.mockftpserver/MockFtpServer@.*$</packageUrl>
    <cpe>cpe:/a:ftp_project:ftp</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5770
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.sun\.xml\.bind\.jaxb/isorelax@.*$</packageUrl>
+   <cpe>cpe:/a:xml_library_project:xml_library</cpe>
+</suppress>
 </suppressions>
