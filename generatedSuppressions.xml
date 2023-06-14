@@ -950,3 +950,12 @@
    <packageUrl regex="true">^pkg:maven/com\.sun\.xml\.bind\.jaxb/isorelax@.*$</packageUrl>
    <cpe>cpe:/a:xml_library_project:xml_library</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5772 - taking into account same FP-risk for other RestEasy microprofile libraries
+   retain this one and remove the following FP-automation suppression rule when merging into bundled
+   suppressions
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jboss\.resteasy\.microprofile/.*$</packageUrl>
+   <cpe>cpe:/a:redhat:resteasy</cpe>
+</suppress>
