@@ -959,3 +959,11 @@
    <packageUrl regex="true">^pkg:maven/org\.jboss\.resteasy\.microprofile/.*$</packageUrl>
    <cpe>cpe:/a:redhat:resteasy</cpe>
 </suppress>
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5772
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jboss\.resteasy\.microprofile/microprofile-rest-client@.*$</packageUrl>
+   <cpe>cpe:/a:redhat:resteasy</cpe>
+</suppress>
