@@ -101,9 +101,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Regex to extract product and version information.
      *
-     * Group 1: Product
-     *
-     * Group 2: Version
+     * <p>Group 1: Product</p>
+     * <p>Group 2: Version</p>
      */
     private static final Pattern SET_VERSION = Pattern
             .compile("^\\s*set\\s*\\(\\s*(\\w+)_version\\s+\"?([^\")]*)\\s*\"?\\)", REGEX_OPTIONS);
@@ -349,8 +348,8 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
      * initialized by other variables and end up forming an unresolvable
      * chain.
      *
-     * This method takes the resolved variables map as an input and will return
-     * a new map, without the keys generate an infinite resolution chain.
+     * <p>This method takes the resolved variables map as an input and will return
+     * a new map, without the keys generating an infinite resolution chain.</p>
      *
      * @param vars variables initialization detected in the CMake build file
      *
