@@ -995,3 +995,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.thrift/libfb303@.*$</packageUrl>
    <cpe>cpe:/a:apache:thrift</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5777
+   ]]></notes>
+   <packageUrl regex="true">^pkg:nuget/RazorEngine\.NetCore@.*$</packageUrl>
+   <cpe>cpe:/a:razorengine_project:razorengine</cpe>
+</suppress>
