@@ -219,6 +219,54 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
         assertEquals(expectedOutput, output);
     }
 
+    @Test
+    public void testRemoveSelfReferences2() {
+        // Given
+        Map<String, String> input = new HashMap<>();
+        input.put("FLTK2_DIR", "${FLTK2_INCLUDE_DIR}");
+        input.put("FLTK2_LIBRARY_SEARCH_PATH", "");
+        input.put("FLTK2_INCLUDE_DIR", "${FLTK2_DIR}");
+        input.put("FLTK2_IMAGES_LIBS", "");
+        input.put("FLTK2_DIR_SEARCH", "");
+        input.put("FLTK2_WRAP_UI", "1");
+        input.put("FLTK2_FOUND", "0");
+        input.put("FLTK2_IMAGES_LIBRARY", "fltk2_images");
+        input.put("FLTK2_PLATFORM_DEPENDENT_LIBS", "import32");
+        input.put("FLTK_FLUID_EXECUTABLE", "${FLTK2_FLUID_EXECUTABLE}");
+        input.put("FLTK2_INCLUDE_SEARCH_PATH", "");
+        input.put("FLTK2_LIBRARY", "${FLTK2_LIBRARIES}");
+        input.put("FLTK2_BUILT_WITH_CMAKE", "1");
+        input.put("FLTK2_INCLUDE_PATH", "${FLTK2_INCLUDE_DIR}");
+        input.put("FLTK2_GL_LIBRARY", "fltk2_gl");
+        input.put("FLTK2_FLUID_EXE", "${FLTK2_FLUID_EXECUTABLE}");
+        input.put("HAS_FLTK2", "${FLTK2_FOUND}");
+        input.put("FLTK2_BASE_LIBRARY", "fltk2");
+
+
+        Map<String, String> expectedOutput = new HashMap<>();
+        expectedOutput.put("FLTK2_LIBRARY_SEARCH_PATH", "");
+        expectedOutput.put("FLTK2_IMAGES_LIBS", "");
+        expectedOutput.put("FLTK2_DIR_SEARCH", "");
+        expectedOutput.put("FLTK2_WRAP_UI", "1");
+        expectedOutput.put("FLTK2_FOUND", "0");
+        expectedOutput.put("FLTK2_IMAGES_LIBRARY", "fltk2_images");
+        expectedOutput.put("FLTK2_PLATFORM_DEPENDENT_LIBS", "import32");
+        expectedOutput.put("FLTK_FLUID_EXECUTABLE", "${FLTK2_FLUID_EXECUTABLE}");
+        expectedOutput.put("FLTK2_INCLUDE_SEARCH_PATH", "");
+        expectedOutput.put("FLTK2_LIBRARY", "${FLTK2_LIBRARIES}");
+        expectedOutput.put("FLTK2_BUILT_WITH_CMAKE", "1");
+        expectedOutput.put("FLTK2_GL_LIBRARY", "fltk2_gl");
+        expectedOutput.put("FLTK2_FLUID_EXE", "${FLTK2_FLUID_EXECUTABLE}");
+        expectedOutput.put("HAS_FLTK2", "${FLTK2_FOUND}");
+        expectedOutput.put("FLTK2_BASE_LIBRARY", "fltk2");
+
+        // When
+        Map<String, String> output = analyzer.removeSelfReferences(input);
+
+        // Then
+        assertEquals(expectedOutput, output);
+    }
+
     /**
      * Test the analyzer does not end up in an infinite loop when a temp
      * variable is used to store old value and then restore it afterwards.
@@ -233,6 +281,17 @@ public class CMakeAnalyzerTest extends BaseDBTestCase {
             analyzer.analyze(result, engine);
 
             assertEquals("FindDeflate.cmake", result.getFileName());
+        }
+    }
+
+    @Test
+    public void testAnalyzeCMakeInfiniteLoop() throws AnalysisException {
+        try (Engine engine = new Engine(getSettings())) {
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(
+                    this, "cmake/cmake-modules/FindFLTK2.cmake"));
+            analyzer.analyze(result, engine);
+
+            assertEquals("FindFLTK2.cmake", result.getFileName());
         }
     }
 }

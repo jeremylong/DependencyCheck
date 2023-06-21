@@ -1,6 +1,11 @@
 CMakeAnalyzer Test Resources README
 ===================================
 
+cmake-modules/
+--------------
+
+Origin: https://gitlab.kitware.com/cmake/cmake/-/tree/master/Modules
+
 opencv/
 -------
 

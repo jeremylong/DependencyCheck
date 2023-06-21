@@ -379,6 +379,9 @@ public class CMakeAnalyzer extends AbstractFileTypeAnalyzer {
                 break;
             }
             nextKey = matcher.group(2);
+            if (resolutionChain.contains(nextKey)) {
+                return true;
+            }
             resolutionChain.add(nextKey);
         } while (Objects.nonNull(nextKey) && vars.containsKey(nextKey) && !key.equals(nextKey));
 
