@@ -988,3 +988,10 @@
    <packageUrl regex="true">^pkg:nuget/Minio\.AspNetCore@.*$</packageUrl>
    <cpe>cpe:/a:minio:minio</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5781
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.thrift/libfb303@.*$</packageUrl>
+   <cpe>cpe:/a:apache:thrift</cpe>
+</suppress>
