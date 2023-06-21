@@ -1002,3 +1002,10 @@
    <packageUrl regex="true">^pkg:nuget/RazorEngine\.NetCore@.*$</packageUrl>
    <cpe>cpe:/a:razorengine_project:razorengine</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5648
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.github\.graphql-java/graphql-java-annotations@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java:graphql-java</cpe>
+</suppress>
