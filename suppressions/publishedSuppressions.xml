@@ -982,4 +982,11 @@
    <packageUrl regex="true">^pkg:maven/cloud\.localstack/localstack-utils@.*$</packageUrl>
    <cpe>cpe:/a:utils_project:utils</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5788
+   ]]></notes>
+   <packageUrl regex="true">^pkg:nuget/Minio\.AspNetCore@.*$</packageUrl>
+   <cpe>cpe:/a:minio:minio</cpe>
+</suppress>
 </suppressions>
