@@ -1030,3 +1030,10 @@
    <packageUrl regex="true">^pkg:maven/com\.apollographql\.federation/federation-graphql-java-support-api@.*$</packageUrl>
    <cpe>cpe:/a:graphql-java:graphql-java</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5646
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.apollographql\.federation/federation-graphql-java-support@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java:graphql-java</cpe>
+</suppress>
