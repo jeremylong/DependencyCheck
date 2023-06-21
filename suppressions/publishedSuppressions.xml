@@ -975,4 +975,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.sling/org\.apache\.sling\.commons\.osgi@.*$</packageUrl>
    <cpe>cpe:/a:apache:sling</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5785
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/cloud\.localstack/localstack-utils@.*$</packageUrl>
+   <cpe>cpe:/a:utils_project:utils</cpe>
+</suppress>
 </suppressions>
