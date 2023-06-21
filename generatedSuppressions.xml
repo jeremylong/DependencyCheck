@@ -1016,3 +1016,10 @@
    <packageUrl regex="true">^pkg:maven/com\.graphql-java-kickstart/graphql-spring-boot-starter@.*$</packageUrl>
    <cpe>cpe:/a:graphql-java:graphql-java</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5641
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.graphql-java/java-dataloader@.*$</packageUrl>
+   <cpe>cpe:/a:graphql-java:graphql-java</cpe>
+</suppress>
