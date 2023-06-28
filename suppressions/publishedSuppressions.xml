@@ -1052,4 +1052,11 @@
    <packageUrl regex="true">^pkg:nuget/Microsoft\.Win32\.SystemEvents@.*$</packageUrl>
    <cpe>cpe:/a:events_project:events</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5797
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.wildfly\.security/wildfly-elytron-json-util@.*$</packageUrl>
+   <cpe>cpe:/a:jsonutil_project:jsonutil</cpe>
+</suppress>
 </suppressions>
