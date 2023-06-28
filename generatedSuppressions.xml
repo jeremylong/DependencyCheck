@@ -1053,8 +1053,8 @@
 </suppress>
 <suppress base="true">
    <notes><![CDATA[
-   FP per issue #5797
+   hand-curated better suppression for FP per issue #5797
    ]]></notes>
-   <packageUrl regex="true">^pkg:maven/org\.wildfly\.security/wildfly-elytron-json-util@.*$</packageUrl>
+   <packageUrl regex="true">^(?!pkg:maven/net\.pwall\.json/jsonutil).*$</packageUrl>
    <cpe>cpe:/a:jsonutil_project:jsonutil</cpe>
 </suppress>
