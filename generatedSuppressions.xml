@@ -1058,3 +1058,12 @@
    <packageUrl regex="true">^(?!pkg:maven/net\.pwall\.json/jsonutil).*$</packageUrl>
    <cpe>cpe:/a:jsonutil_project:jsonutil</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   hand-curated better FP suppression rule for issue #5794
+   to be replacing the autmatic FP-OPS flow suppression that will follow behind it when taking it over to the
+   bundled suppression-file
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.apollographql\.apollo3/.*$</packageUrl>
+   <cpe>cpe:/a:apollo_project:apollo</cpe>
+</suppress>
