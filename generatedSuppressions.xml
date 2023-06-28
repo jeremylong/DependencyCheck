@@ -1067,3 +1067,11 @@
    <packageUrl regex="true">^pkg:maven/com\.apollographql\.apollo3/.*$</packageUrl>
    <cpe>cpe:/a:apollo_project:apollo</cpe>
 </suppress>
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5794
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.apollographql\.apollo3/apollo-annotations-jvm@.*$</packageUrl>
+   <cpe>cpe:/a:apollo_project:apollo</cpe>
+</suppress>
