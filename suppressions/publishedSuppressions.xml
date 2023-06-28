@@ -1045,4 +1045,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.cxf/cxf-rt-bindings-soap@.*$</packageUrl>
    <cpe>cpe:/a:apache:soap</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5796
+   ]]></notes>
+   <packageUrl regex="true">^pkg:nuget/Microsoft\.Win32\.SystemEvents@.*$</packageUrl>
+   <cpe>cpe:/a:events_project:events</cpe>
+</suppress>
 </suppressions>
