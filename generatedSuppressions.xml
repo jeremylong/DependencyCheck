@@ -1075,3 +1075,10 @@
    <packageUrl regex="true">^pkg:maven/com\.apollographql\.apollo3/apollo-annotations-jvm@.*$</packageUrl>
    <cpe>cpe:/a:apollo_project:apollo</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5802
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.itextpdf\.licensing/licensing-base@.*$</packageUrl>
+   <cpe>cpe:/a:itextpdf:itext</cpe>
+</suppress>
