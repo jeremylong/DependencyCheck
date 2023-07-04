@@ -55,7 +55,7 @@ The latest CLI can be downloaded from github in the [releases section](https://g
 Downloading the latest release:
 ```
 $ VERSION=$(curl -s https://jeremylong.github.io/DependencyCheck/current.txt)
-$ curl -s "https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip" --output dependency-check.zip
+$ curl -Ls "https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip" --output dependency-check.zip
 ```
 
 On *nix
