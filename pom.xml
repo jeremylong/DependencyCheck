@@ -1099,7 +1099,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-xml</artifactId>
-                <version>4.0.1</version>
+                <version>4.0.2</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
