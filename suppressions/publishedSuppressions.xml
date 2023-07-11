@@ -1090,4 +1090,11 @@
    <packageUrl regex="true">^pkg:maven/com\.itextpdf\.licensing/licensing-remote@.*$</packageUrl>
    <cpe>cpe:/a:itextpdf:itext</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5821
+   ]]></notes>
+   <packageUrl regex="true">^pkg:npm/wordwrap@.*$</packageUrl>
+   <cpe>cpe:/a:word-wrap_project:word-wrap</cpe>
+</suppress>
 </suppressions>
