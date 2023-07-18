@@ -1097,4 +1097,11 @@
    <packageUrl regex="true">^pkg:npm/wordwrap@.*$</packageUrl>
    <cpe>cpe:/a:word-wrap_project:word-wrap</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5829
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.exactpro\.th2/netty-bytebuf-utils@.*$</packageUrl>
+   <cpe>cpe:/a:utils_project:utils</cpe>
+</suppress>
 </suppressions>
