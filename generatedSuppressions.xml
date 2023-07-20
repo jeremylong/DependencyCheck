@@ -1103,3 +1103,10 @@
    <packageUrl regex="true">^pkg:maven/com\.exactpro\.th2/netty-bytebuf-utils@.*$</packageUrl>
    <cpe>cpe:/a:utils_project:utils</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5830
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.github\.detekt\.sarif4k/sarif4k-jvm@.*$</packageUrl>
+   <cpe>cpe:/a:detekt:detekt</cpe>
+</suppress>
