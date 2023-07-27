@@ -54,6 +54,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.net.SocketTimeoutException;
+
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.sonatype.goodies.packageurl.InvalidException;
@@ -153,6 +155,14 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                     } else {
                         LOG.debug("Error requesting component reports, disabling the analyzer", ex);
                         throw new AnalysisException("Failed to request component-reports", ex);
+                    }
+                } catch (SocketTimeoutException e) {
+                    final boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);
+                    if (warnOnly) {
+                        LOG.warn("OSS Index socket timeout, disabling the analyzer", e);
+                    } else {
+                        LOG.debug("OSS Index socket timeout", e);
+                        throw new AnalysisException("Failed to establish socket to OSS Index", e);
                     }
                 } catch (Exception e) {
                     LOG.debug("Error requesting component reports", e);
