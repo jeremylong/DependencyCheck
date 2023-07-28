@@ -1117,3 +1117,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.avro/avro@.*$</packageUrl>
    <cpe>cpe:/a:avro_project:avro</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5846
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/commons-logging/commons-logging@.*$</packageUrl>
+   <cpe>cpe:/a:morgan_project:morgan</cpe>
+</suppress>
