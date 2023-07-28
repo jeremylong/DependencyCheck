@@ -158,6 +158,7 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
                     }
                 } catch (SocketTimeoutException e) {
                     final boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);
+                    this.setEnabled(false);
                     if (warnOnly) {
                         LOG.warn("OSS Index socket timeout, disabling the analyzer", e);
                     } else {
