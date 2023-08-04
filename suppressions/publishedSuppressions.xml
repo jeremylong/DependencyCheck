@@ -1125,4 +1125,53 @@
    <packageUrl regex="true">^pkg:maven/commons-logging/commons-logging@.*$</packageUrl>
    <cpe>cpe:/a:morgan_project:morgan</cpe>
 </suppress>
+<suppress base="true">
+<notes><![CDATA[
+   FP per issue #5854
+   akka-grpc libraries are neither part of the akka actor system nor gRPC
+   ]]></notes>
+<packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.grpc/.*$</packageUrl>
+<cpe>cpe:/a:akka:akka</cpe>
+<cpe>cpe:/a:lightbend:akka</cpe>
+<cpe>cpe:/a:grpc:grpc</cpe>
+</suppress>
+<suppress base="true">
+<notes><![CDATA[
+   FP per issue #5855;  akka-persistence-r2dbc is not part of the akka actor system projects
+   ]]></notes>
+<packageUrl regex="true">^pkg:maven/com\.lightbend\.akka/akka-persistence-r2dbc.*$</packageUrl>
+<cpe>cpe:/a:akka:akka</cpe>
+<cpe>cpe:/a:lightbend:akka</cpe>
+</suppress>
+<suppress base="true">
+<notes><![CDATA[
+   FP per issues #5857, #5856; akka-projection projects are not part of the akka actor system projects
+   ]]></notes>
+<packageUrl regex="true">^pkg:maven/com\.lightbend\.akka/akka-projection-.*$</packageUrl>
+<cpe>cpe:/a:akka:akka</cpe>
+<cpe>cpe:/a:lightbend:akka</cpe>
+</suppress>
+<suppress base="true">
+<notes><![CDATA[
+   FP per issue #5857; akka-projection-grpc is not grpc itself
+   ]]></notes>
+<packageUrl regex="true">^pkg:maven/com\.lightbend\.akka/akka-projection-grpc.*$</packageUrl>
+<cpe>cpe:/a:grpc:grpc</cpe>
+</suppress>
+<suppress base="true">
+<notes><![CDATA[
+   Optimized suppression for FP per issue #5859
+   The suppression following this for the same FP issue from FP-report automation bot
+   can be discarded when bringing the suppressions into the package suppressions file.
+   ]]></notes>
+<packageUrl regex="true">^pkg:maven/org\.apache\.jackrabbit/oak-.*$</packageUrl>
+<cpe>cpe:/a:apache:jackrabbit</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5859
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.jackrabbit/oak-core@.*$</packageUrl>
+   <cpe>cpe:/a:apache:jackrabbit</cpe>
+</suppress>
 </suppressions>
