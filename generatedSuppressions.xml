@@ -1157,3 +1157,12 @@
 <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka/akka-projection-grpc.*$</packageUrl>
 <cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
+<suppress base="true">
+<notes><![CDATA[
+   Optimized suppression for FP per issue #5859
+   The suppression following this for the same FP issue from FP-report automation bot
+   can be discarded when bringing the suppressions into the package suppressions file.
+   ]]></notes>
+<packageUrl regex="true">^pkg:maven/org\.apache\.jackrabbit/oak-.*$</packageUrl>
+<cpe>cpe:/a:apache:jackrabbit</cpe>
+</suppress>
