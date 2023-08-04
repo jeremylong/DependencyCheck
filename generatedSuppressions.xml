@@ -1166,3 +1166,10 @@
 <packageUrl regex="true">^pkg:maven/org\.apache\.jackrabbit/oak-.*$</packageUrl>
 <cpe>cpe:/a:apache:jackrabbit</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5859
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.jackrabbit/oak-core@.*$</packageUrl>
+   <cpe>cpe:/a:apache:jackrabbit</cpe>
+</suppress>
