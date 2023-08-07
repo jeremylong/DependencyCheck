@@ -1180,3 +1180,10 @@
    <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin-swing-kit-flow@.*$</packageUrl>
    <cpe>cpe:/a:vaadin:flow</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5864
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.sling/org\.apache\.sling\.commons\.johnzon@.*$</packageUrl>
+   <cpe>cpe:/a:apache:sling</cpe>
+</suppress>
