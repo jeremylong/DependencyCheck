@@ -1173,3 +1173,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.jackrabbit/oak-core@.*$</packageUrl>
    <cpe>cpe:/a:apache:jackrabbit</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5860
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.vaadin/vaadin-swing-kit-flow@.*$</packageUrl>
+   <cpe>cpe:/a:vaadin:flow</cpe>
+</suppress>
