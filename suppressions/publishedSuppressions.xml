@@ -1202,4 +1202,11 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.geronimo\.specs/geronimo-saaj_1\.3_spec@.*$</packageUrl>
    <cpe>cpe:/a:apache:soap</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5880
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.ops4j\.pax\.logging/pax-logging-log4j2@.*$</packageUrl>
+   <cpe>cpe:/a:apache:log4j</cpe>
+</suppress>
 </suppressions>
