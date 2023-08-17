@@ -1195,4 +1195,11 @@
    <packageUrl regex="true">^pkg:maven/io\.netty\.incubator/netty-incubator-codec-classes-quic@.*$</packageUrl>
    <cpe>cpe:/a:quic_project:quic</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5883
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.geronimo\.specs/geronimo-saaj_1\.3_spec@.*$</packageUrl>
+   <cpe>cpe:/a:apache:soap</cpe>
+</suppress>
 </suppressions>
