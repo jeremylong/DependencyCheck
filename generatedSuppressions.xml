@@ -1208,3 +1208,10 @@
    <packageUrl regex="true">^pkg:maven/org\.ops4j\.pax\.logging/pax-logging-log4j2@.*$</packageUrl>
    <cpe>cpe:/a:apache:log4j</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5888
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/software\.amazon\.awssdk\.crt/aws-crt@.*$</packageUrl>
+   <cpe>cpe:/a:amazon:aws-sdk-java</cpe>
+</suppress>
