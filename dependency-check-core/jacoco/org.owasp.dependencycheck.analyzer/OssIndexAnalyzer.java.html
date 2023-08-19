@@ -54,6 +54,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.net.SocketTimeoutException;
+
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.sonatype.goodies.packageurl.InvalidException;
@@ -65,17 +67,17 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
  * @author Jason Dillon
  * @since 5.0.0
  */
-<span class="fc" id="L68">public class OssIndexAnalyzer extends AbstractAnalyzer {</span>
+<span class="fc" id="L70">public class OssIndexAnalyzer extends AbstractAnalyzer {</span>
 
     /**
      * A reference to the logger.
      */
-<span class="fc" id="L73">    private static final Logger LOG = LoggerFactory.getLogger(OssIndexAnalyzer.class);</span>
+<span class="fc" id="L75">    private static final Logger LOG = LoggerFactory.getLogger(OssIndexAnalyzer.class);</span>
 
     /**
      * A pattern to match CVE identifiers.
      */
-<span class="fc" id="L78">    private static final Pattern CVE_PATTERN = Pattern.compile(&quot;\\bCVE-\\d{4}-\\d{4,10}\\b&quot;);</span>
+<span class="fc" id="L80">    private static final Pattern CVE_PATTERN = Pattern.compile(&quot;\\bCVE-\\d{4}-\\d{4,10}\\b&quot;);</span>
 
     /**
      * The reference type.
@@ -90,21 +92,21 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
     /**
      * Lock to protect fetching state.
      */
-<span class="fc" id="L93">    private static final Object FETCH_MUTIX = new Object();</span>
+<span class="fc" id="L95">    private static final Object FETCH_MUTIX = new Object();</span>
 
     @Override
     public String getName() {
-<span class="fc" id="L97">        return &quot;Sonatype OSS Index Analyzer&quot;;</span>
+<span class="fc" id="L99">        return &quot;Sonatype OSS Index Analyzer&quot;;</span>
     }
 
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L102">        return AnalysisPhase.FINDING_ANALYSIS_PHASE2;</span>
+<span class="fc" id="L104">        return AnalysisPhase.FINDING_ANALYSIS_PHASE2;</span>
     }
 
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L107">        return Settings.KEYS.ANALYZER_OSSINDEX_ENABLED;</span>
+<span class="fc" id="L109">        return Settings.KEYS.ANALYZER_OSSINDEX_ENABLED;</span>
     }
 
     /**
@@ -114,71 +116,80 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
      */
     @Override
     public boolean supportsParallelProcessing() {
-<span class="nc" id="L117">        return true;</span>
+<span class="nc" id="L119">        return true;</span>
     }
 
     @Override
     protected void closeAnalyzer() throws Exception {
-<span class="fc" id="L122">        synchronized (FETCH_MUTIX) {</span>
-<span class="fc" id="L123">            reports = null;</span>
-<span class="fc" id="L124">        }</span>
-<span class="fc" id="L125">    }</span>
+<span class="fc" id="L124">        synchronized (FETCH_MUTIX) {</span>
+<span class="fc" id="L125">            reports = null;</span>
+<span class="fc" id="L126">        }</span>
+<span class="fc" id="L127">    }</span>
 
     @Override
     protected void analyzeDependency(final Dependency dependency, final Engine engine) throws AnalysisException {
         // batch request component-reports for all dependencies
-<span class="fc" id="L130">        synchronized (FETCH_MUTIX) {</span>
-<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if (reports == null) {</span>
+<span class="fc" id="L132">        synchronized (FETCH_MUTIX) {</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">            if (reports == null) {</span>
                 try {
-<span class="fc" id="L133">                    requestDelay();</span>
-<span class="fc" id="L134">                    reports = requestReports(engine.getDependencies());</span>
-<span class="fc" id="L135">                } catch (TransportException ex) {</span>
-<span class="fc" id="L136">                    final String message = ex.getMessage();</span>
-<span class="fc" id="L137">                    final boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);</span>
-<span class="fc" id="L138">                    this.setEnabled(false);</span>
-<span class="pc bpc" id="L139" title="1 of 2 branches missed.">                    if (StringUtils.endsWith(message, &quot;401&quot;)) {</span>
-<span class="nc" id="L140">                        LOG.error(&quot;Invalid credentials for the OSS Index, disabling the analyzer&quot;);</span>
-<span class="nc" id="L141">                        throw new AnalysisException(&quot;Invalid credentials provided for OSS Index&quot;, ex);</span>
-<span class="fc bfc" id="L142" title="All 2 branches covered.">                    } else if (StringUtils.endsWith(message, &quot;403&quot;)) {</span>
-<span class="fc" id="L143">                        LOG.error(&quot;OSS Index access forbidden, disabling the analyzer&quot;);</span>
-<span class="fc" id="L144">                        throw new AnalysisException(&quot;OSS Index access forbidden&quot;, ex);</span>
-<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                    } else if (StringUtils.endsWith(message, &quot;429&quot;)) {</span>
-<span class="nc bnc" id="L146" title="All 2 branches missed.">                        if (warnOnly) {</span>
-<span class="nc" id="L147">                            LOG.warn(&quot;OSS Index rate limit exceeded, disabling the analyzer&quot;, ex);</span>
+<span class="fc" id="L135">                    requestDelay();</span>
+<span class="fc" id="L136">                    reports = requestReports(engine.getDependencies());</span>
+<span class="fc" id="L137">                } catch (TransportException ex) {</span>
+<span class="fc" id="L138">                    final String message = ex.getMessage();</span>
+<span class="fc" id="L139">                    final boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);</span>
+<span class="fc" id="L140">                    this.setEnabled(false);</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">                    if (StringUtils.endsWith(message, &quot;401&quot;)) {</span>
+<span class="nc" id="L142">                        LOG.error(&quot;Invalid credentials for the OSS Index, disabling the analyzer&quot;);</span>
+<span class="nc" id="L143">                        throw new AnalysisException(&quot;Invalid credentials provided for OSS Index&quot;, ex);</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                    } else if (StringUtils.endsWith(message, &quot;403&quot;)) {</span>
+<span class="fc" id="L145">                        LOG.error(&quot;OSS Index access forbidden, disabling the analyzer&quot;);</span>
+<span class="fc" id="L146">                        throw new AnalysisException(&quot;OSS Index access forbidden&quot;, ex);</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">                    } else if (StringUtils.endsWith(message, &quot;429&quot;)) {</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">                        if (warnOnly) {</span>
+<span class="nc" id="L149">                            LOG.warn(&quot;OSS Index rate limit exceeded, disabling the analyzer&quot;, ex);</span>
                         } else {
-<span class="nc" id="L149">                            throw new AnalysisException(&quot;OSS Index rate limit exceeded, disabling the analyzer&quot;, ex);</span>
+<span class="nc" id="L151">                            throw new AnalysisException(&quot;OSS Index rate limit exceeded, disabling the analyzer&quot;, ex);</span>
                         }
-<span class="pc bpc" id="L151" title="1 of 2 branches missed.">                    } else if (warnOnly) {</span>
-<span class="fc" id="L152">                        LOG.warn(&quot;Error requesting component reports, disabling the analyzer&quot;, ex);</span>
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">                    } else if (warnOnly) {</span>
+<span class="fc" id="L154">                        LOG.warn(&quot;Error requesting component reports, disabling the analyzer&quot;, ex);</span>
                     } else {
-<span class="nc" id="L154">                        LOG.debug(&quot;Error requesting component reports, disabling the analyzer&quot;, ex);</span>
-<span class="nc" id="L155">                        throw new AnalysisException(&quot;Failed to request component-reports&quot;, ex);</span>
+<span class="nc" id="L156">                        LOG.debug(&quot;Error requesting component reports, disabling the analyzer&quot;, ex);</span>
+<span class="nc" id="L157">                        throw new AnalysisException(&quot;Failed to request component-reports&quot;, ex);</span>
                     }
-<span class="nc" id="L157">                } catch (Exception e) {</span>
-<span class="nc" id="L158">                    LOG.debug(&quot;Error requesting component reports&quot;, e);</span>
-<span class="nc" id="L159">                    throw new AnalysisException(&quot;Failed to request component-reports&quot;, e);</span>
-<span class="fc" id="L160">                }</span>
+<span class="fc" id="L159">                } catch (SocketTimeoutException e) {</span>
+<span class="fc" id="L160">                    final boolean warnOnly = getSettings().getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_WARN_ONLY_ON_REMOTE_ERRORS, false);</span>
+<span class="fc" id="L161">                    this.setEnabled(false);</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">                    if (warnOnly) {</span>
+<span class="fc" id="L163">                        LOG.warn(&quot;OSS Index socket timeout, disabling the analyzer&quot;, e);</span>
+                    } else {
+<span class="fc" id="L165">                        LOG.debug(&quot;OSS Index socket timeout&quot;, e);</span>
+<span class="fc" id="L166">                        throw new AnalysisException(&quot;Failed to establish socket to OSS Index&quot;, e);</span>
+                    }
+<span class="nc" id="L168">                } catch (Exception e) {</span>
+<span class="nc" id="L169">                    LOG.debug(&quot;Error requesting component reports&quot;, e);</span>
+<span class="nc" id="L170">                    throw new AnalysisException(&quot;Failed to request component-reports&quot;, e);</span>
+<span class="fc" id="L171">                }</span>
             }
 
             // skip enrichment if we failed to fetch reports
-<span class="fc bfc" id="L164" title="All 2 branches covered.">            if (reports != null) {</span>
-<span class="fc" id="L165">                enrich(dependency);</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            if (reports != null) {</span>
+<span class="fc" id="L176">                enrich(dependency);</span>
             }
-<span class="fc" id="L167">        }</span>
+<span class="fc" id="L178">        }</span>
 
-<span class="fc" id="L169">    }</span>
+<span class="fc" id="L180">    }</span>
 
     /**
      * Delays each request (thread) by the configured amount of seconds, if the
      * configuration is present.
      */
     private void requestDelay() throws InterruptedException {
-<span class="fc" id="L176">        final int delay = getSettings().getInt(Settings.KEYS.ANALYZER_OSSINDEX_REQUEST_DELAY, 0);</span>
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (delay &gt; 0) {</span>
-<span class="nc" id="L178">            LOG.debug(&quot;Request delay: &quot; + delay);</span>
-<span class="nc" id="L179">            TimeUnit.SECONDS.sleep(delay);</span>
+<span class="fc" id="L187">        final int delay = getSettings().getInt(Settings.KEYS.ANALYZER_OSSINDEX_REQUEST_DELAY, 0);</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">        if (delay &gt; 0) {</span>
+<span class="nc" id="L189">            LOG.debug(&quot;Request delay: &quot; + delay);</span>
+<span class="nc" id="L190">            TimeUnit.SECONDS.sleep(delay);</span>
         }
-<span class="fc" id="L181">    }</span>
+<span class="fc" id="L192">    }</span>
 
     /**
      * Helper to complain if unable to parse Package-URL.
@@ -189,10 +200,10 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
     @Nullable
     private PackageUrl parsePackageUrl(final String value) {
         try {
-<span class="fc" id="L192">            return PackageUrl.parse(value);</span>
-<span class="nc" id="L193">        } catch (InvalidException e) {</span>
-<span class="nc" id="L194">            LOG.debug(&quot;Invalid Package-URL: {}&quot;, value, e);</span>
-<span class="nc" id="L195">            return null;</span>
+<span class="fc" id="L203">            return PackageUrl.parse(value);</span>
+<span class="nc" id="L204">        } catch (InvalidException e) {</span>
+<span class="nc" id="L205">            LOG.debug(&quot;Invalid Package-URL: {}&quot;, value, e);</span>
+<span class="nc" id="L206">            return null;</span>
         }
     }
 
@@ -204,27 +215,27 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
      * @throws Exception thrown if there is an exception requesting the report
      */
     private Map&lt;PackageUrl, ComponentReport&gt; requestReports(final Dependency[] dependencies) throws Exception {
-<span class="fc" id="L207">        LOG.debug(&quot;Requesting component-reports for {} dependencies&quot;, dependencies.length);</span>
+<span class="fc" id="L218">        LOG.debug(&quot;Requesting component-reports for {} dependencies&quot;, dependencies.length);</span>
         // create requests for each dependency which has a PURL identifier
-<span class="fc" id="L209">        final List&lt;PackageUrl&gt; packages = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L210">        Arrays.stream(dependencies).forEach(dependency -&gt; dependency.getSoftwareIdentifiers().stream()</span>
-<span class="fc" id="L211">                .filter(id -&gt; id instanceof PurlIdentifier)</span>
-<span class="fc" id="L212">                .map(id -&gt; parsePackageUrl(id.getValue()))</span>
-<span class="pc bpc" id="L213" title="2 of 4 branches missed.">                .filter(id -&gt; id != null &amp;&amp; StringUtils.isNotBlank(id.getVersion()))</span>
-<span class="fc" id="L214">                .forEach(packages::add));</span>
+<span class="fc" id="L220">        final List&lt;PackageUrl&gt; packages = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L221">        Arrays.stream(dependencies).forEach(dependency -&gt; dependency.getSoftwareIdentifiers().stream()</span>
+<span class="fc" id="L222">                .filter(id -&gt; id instanceof PurlIdentifier)</span>
+<span class="fc" id="L223">                .map(id -&gt; parsePackageUrl(id.getValue()))</span>
+<span class="pc bpc" id="L224" title="2 of 4 branches missed.">                .filter(id -&gt; id != null &amp;&amp; StringUtils.isNotBlank(id.getVersion()))</span>
+<span class="fc" id="L225">                .forEach(packages::add));</span>
         // only attempt if we have been able to collect some packages
-<span class="pc bpc" id="L216" title="1 of 2 branches missed.">        if (!packages.isEmpty()) {</span>
-<span class="fc" id="L217">            try (OssindexClient client = newOssIndexClient()) {</span>
-<span class="fc" id="L218">                LOG.debug(&quot;OSS Index Analyzer submitting: &quot; + packages);</span>
-<span class="fc" id="L219">                return client.requestComponentReports(packages);</span>
+<span class="pc bpc" id="L227" title="1 of 2 branches missed.">        if (!packages.isEmpty()) {</span>
+<span class="fc" id="L228">            try (OssindexClient client = newOssIndexClient()) {</span>
+<span class="fc" id="L229">                LOG.debug(&quot;OSS Index Analyzer submitting: &quot; + packages);</span>
+<span class="fc" id="L230">                return client.requestComponentReports(packages);</span>
             }
         }
-<span class="nc" id="L222">        LOG.warn(&quot;Unable to determine Package-URL identifiers for {} dependencies&quot;, dependencies.length);</span>
-<span class="nc" id="L223">        return Collections.emptyMap();</span>
+<span class="nc" id="L233">        LOG.warn(&quot;Unable to determine Package-URL identifiers for {} dependencies&quot;, dependencies.length);</span>
+<span class="nc" id="L234">        return Collections.emptyMap();</span>
     }
 
     OssindexClient newOssIndexClient() {
-<span class="fc" id="L227">        return OssindexClientFactory.create(getSettings());</span>
+<span class="fc" id="L238">        return OssindexClientFactory.create(getSettings());</span>
     }
 
     /**
@@ -234,44 +245,44 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
      * @param dependency the dependency to enrich
      */
     void enrich(final Dependency dependency) {
-<span class="fc" id="L237">        LOG.debug(&quot;Enrich dependency: {}&quot;, dependency);</span>
+<span class="fc" id="L248">        LOG.debug(&quot;Enrich dependency: {}&quot;, dependency);</span>
 
-<span class="fc bfc" id="L239" title="All 2 branches covered.">        for (Identifier id : dependency.getSoftwareIdentifiers()) {</span>
-<span class="pc bpc" id="L240" title="1 of 2 branches missed.">            if (id instanceof PurlIdentifier) {</span>
-<span class="fc" id="L241">                LOG.debug(&quot;  Package: {} -&gt; {}&quot;, id, id.getConfidence());</span>
+<span class="fc bfc" id="L250" title="All 2 branches covered.">        for (Identifier id : dependency.getSoftwareIdentifiers()) {</span>
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">            if (id instanceof PurlIdentifier) {</span>
+<span class="fc" id="L252">                LOG.debug(&quot;  Package: {} -&gt; {}&quot;, id, id.getConfidence());</span>
 
-<span class="fc" id="L243">                final PackageUrl purl = parsePackageUrl(id.getValue());</span>
-<span class="pc bpc" id="L244" title="2 of 4 branches missed.">                if (purl != null &amp;&amp; StringUtils.isNotBlank(purl.getVersion())) {</span>
+<span class="fc" id="L254">                final PackageUrl purl = parsePackageUrl(id.getValue());</span>
+<span class="pc bpc" id="L255" title="2 of 4 branches missed.">                if (purl != null &amp;&amp; StringUtils.isNotBlank(purl.getVersion())) {</span>
                     try {
-<span class="fc" id="L246">                        final ComponentReport report = reports.get(purl);</span>
-<span class="pc bpc" id="L247" title="1 of 2 branches missed.">                        if (report == null) {</span>
-<span class="nc" id="L248">                            LOG.debug(&quot;Missing component-report for: &quot; + purl);</span>
-<span class="nc" id="L249">                            continue;</span>
+<span class="fc" id="L257">                        final ComponentReport report = reports.get(purl);</span>
+<span class="pc bpc" id="L258" title="1 of 2 branches missed.">                        if (report == null) {</span>
+<span class="nc" id="L259">                            LOG.debug(&quot;Missing component-report for: &quot; + purl);</span>
+<span class="nc" id="L260">                            continue;</span>
                         }
 
                         // expose the URL to the package details for report generation
-<span class="fc" id="L253">                        id.setUrl(report.getReference().toString());</span>
+<span class="fc" id="L264">                        id.setUrl(report.getReference().toString());</span>
 
-<span class="fc" id="L255">                        report.getVulnerabilities().stream()</span>
-<span class="pc" id="L256">                                .map((vuln) -&gt; transform(report, vuln))</span>
-<span class="fc" id="L257">                                .forEachOrdered((v) -&gt; {</span>
-<span class="nc" id="L258">                                    final Vulnerability existing = dependency.getVulnerabilities().stream()</span>
-<span class="nc" id="L259">                                            .filter(e -&gt; e.getName().equals(v.getName())).findFirst()</span>
-<span class="nc" id="L260">                                            .orElse(null);</span>
-<span class="nc bnc" id="L261" title="All 2 branches missed.">                                    if (existing != null) {</span>
+<span class="fc" id="L266">                        report.getVulnerabilities().stream()</span>
+<span class="pc" id="L267">                                .map((vuln) -&gt; transform(report, vuln))</span>
+<span class="fc" id="L268">                                .forEachOrdered((v) -&gt; {</span>
+<span class="nc" id="L269">                                    final Vulnerability existing = dependency.getVulnerabilities().stream()</span>
+<span class="nc" id="L270">                                            .filter(e -&gt; e.getName().equals(v.getName())).findFirst()</span>
+<span class="nc" id="L271">                                            .orElse(null);</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">                                    if (existing != null) {</span>
                                         //TODO - can we enhance anything other than the references?
-<span class="nc" id="L263">                                        existing.getReferences().addAll(v.getReferences());</span>
+<span class="nc" id="L274">                                        existing.getReferences().addAll(v.getReferences());</span>
                                     } else {
-<span class="nc" id="L265">                                        dependency.addVulnerability(v);</span>
+<span class="nc" id="L276">                                        dependency.addVulnerability(v);</span>
                                     }
-<span class="nc" id="L267">                                });</span>
-<span class="nc" id="L268">                    } catch (Exception e) {</span>
-<span class="nc" id="L269">                        LOG.warn(&quot;Failed to fetch component-report for: {}&quot;, purl, e);</span>
-<span class="fc" id="L270">                    }</span>
+<span class="nc" id="L278">                                });</span>
+<span class="nc" id="L279">                    } catch (Exception e) {</span>
+<span class="nc" id="L280">                        LOG.warn(&quot;Failed to fetch component-report for: {}&quot;, purl, e);</span>
+<span class="fc" id="L281">                    }</span>
                 }
             }
-<span class="fc" id="L273">        }</span>
-<span class="fc" id="L274">    }</span>
+<span class="fc" id="L284">        }</span>
+<span class="fc" id="L285">    }</span>
 
     /**
      * Transform OSS Index component-report to ODC vulnerability.
@@ -281,86 +292,86 @@ import org.sonatype.ossindex.service.client.transport.Transport.TransportExcepti
      * @return the transformed vulnerability
      */
     private Vulnerability transform(final ComponentReport report, final ComponentReportVulnerability source) {
-<span class="nc" id="L284">        final Vulnerability result = new Vulnerability();</span>
-<span class="nc" id="L285">        result.setSource(Vulnerability.Source.OSSINDEX);</span>
+<span class="nc" id="L295">        final Vulnerability result = new Vulnerability();</span>
+<span class="nc" id="L296">        result.setSource(Vulnerability.Source.OSSINDEX);</span>
 
-<span class="nc bnc" id="L287" title="All 2 branches missed.">        if (source.getCve() != null) {</span>
-<span class="nc" id="L288">            result.setName(source.getCve());</span>
+<span class="nc bnc" id="L298" title="All 2 branches missed.">        if (source.getCve() != null) {</span>
+<span class="nc" id="L299">            result.setName(source.getCve());</span>
         } else {
-<span class="nc" id="L290">            String cve = null;</span>
-<span class="nc bnc" id="L291" title="All 2 branches missed.">            if (source.getTitle() != null) {</span>
-<span class="nc" id="L292">                final Matcher matcher = CVE_PATTERN.matcher(source.getTitle());</span>
-<span class="nc bnc" id="L293" title="All 2 branches missed.">                if (matcher.find()) {</span>
-<span class="nc" id="L294">                    cve = matcher.group();</span>
+<span class="nc" id="L301">            String cve = null;</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">            if (source.getTitle() != null) {</span>
+<span class="nc" id="L303">                final Matcher matcher = CVE_PATTERN.matcher(source.getTitle());</span>
+<span class="nc bnc" id="L304" title="All 2 branches missed.">                if (matcher.find()) {</span>
+<span class="nc" id="L305">                    cve = matcher.group();</span>
                 } else {
-<span class="nc" id="L296">                    cve = source.getTitle();</span>
+<span class="nc" id="L307">                    cve = source.getTitle();</span>
                 }
             }
-<span class="nc bnc" id="L299" title="All 4 branches missed.">            if (cve == null &amp;&amp; source.getReference() != null) {</span>
-<span class="nc" id="L300">                final Matcher matcher = CVE_PATTERN.matcher(source.getReference().toString());</span>
-<span class="nc bnc" id="L301" title="All 2 branches missed.">                if (matcher.find()) {</span>
-<span class="nc" id="L302">                    cve = matcher.group();</span>
+<span class="nc bnc" id="L310" title="All 4 branches missed.">            if (cve == null &amp;&amp; source.getReference() != null) {</span>
+<span class="nc" id="L311">                final Matcher matcher = CVE_PATTERN.matcher(source.getReference().toString());</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">                if (matcher.find()) {</span>
+<span class="nc" id="L313">                    cve = matcher.group();</span>
                 }
             }
-<span class="nc bnc" id="L305" title="All 2 branches missed.">            result.setName(cve != null ? cve : source.getId());</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">            result.setName(cve != null ? cve : source.getId());</span>
         }
-<span class="nc" id="L307">        result.setDescription(source.getDescription());</span>
-<span class="nc" id="L308">        result.addCwe(source.getCwe());</span>
+<span class="nc" id="L318">        result.setDescription(source.getDescription());</span>
+<span class="nc" id="L319">        result.addCwe(source.getCwe());</span>
 
-<span class="nc bnc" id="L310" title="All 2 branches missed.">        final float cvssScore = source.getCvssScore() != null ? source.getCvssScore() : -1;</span>
+<span class="nc bnc" id="L321" title="All 2 branches missed.">        final float cvssScore = source.getCvssScore() != null ? source.getCvssScore() : -1;</span>
 
-<span class="nc bnc" id="L312" title="All 2 branches missed.">        if (source.getCvssVector() != null) {</span>
-<span class="nc bnc" id="L313" title="All 2 branches missed.">            if (source.getCvssVector().startsWith(&quot;CVSS:3&quot;)) {</span>
-<span class="nc" id="L314">                result.setCvssV3(new CvssV3(source.getCvssVector(), cvssScore));</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">        if (source.getCvssVector() != null) {</span>
+<span class="nc bnc" id="L324" title="All 2 branches missed.">            if (source.getCvssVector().startsWith(&quot;CVSS:3&quot;)) {</span>
+<span class="nc" id="L325">                result.setCvssV3(new CvssV3(source.getCvssVector(), cvssScore));</span>
             } else {
                 // convert cvss details
-<span class="nc" id="L317">                final CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());</span>
-<span class="nc" id="L318">                final Map&lt;String, String&gt; metrics = cvssVector.getMetrics();</span>
-<span class="nc bnc" id="L319" title="All 2 branches missed.">                if (cvssVector instanceof Cvss2Vector) {</span>
-<span class="nc" id="L320">                    result.setCvssV2(new CvssV2(</span>
+<span class="nc" id="L328">                final CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());</span>
+<span class="nc" id="L329">                final Map&lt;String, String&gt; metrics = cvssVector.getMetrics();</span>
+<span class="nc bnc" id="L330" title="All 2 branches missed.">                if (cvssVector instanceof Cvss2Vector) {</span>
+<span class="nc" id="L331">                    result.setCvssV2(new CvssV2(</span>
                             cvssScore,
-<span class="nc" id="L322">                            metrics.get(Cvss2Vector.ACCESS_VECTOR),</span>
-<span class="nc" id="L323">                            metrics.get(Cvss2Vector.ACCESS_COMPLEXITY),</span>
-<span class="nc" id="L324">                            metrics.get(Cvss2Vector.AUTHENTICATION),</span>
-<span class="nc" id="L325">                            metrics.get(Cvss2Vector.CONFIDENTIALITY_IMPACT),</span>
-<span class="nc" id="L326">                            metrics.get(Cvss2Vector.INTEGRITY_IMPACT),</span>
-<span class="nc" id="L327">                            metrics.get(Cvss2Vector.AVAILABILITY_IMPACT),</span>
-<span class="nc" id="L328">                            Cvss2Severity.of(cvssScore).name()</span>
+<span class="nc" id="L333">                            metrics.get(Cvss2Vector.ACCESS_VECTOR),</span>
+<span class="nc" id="L334">                            metrics.get(Cvss2Vector.ACCESS_COMPLEXITY),</span>
+<span class="nc" id="L335">                            metrics.get(Cvss2Vector.AUTHENTICATION),</span>
+<span class="nc" id="L336">                            metrics.get(Cvss2Vector.CONFIDENTIALITY_IMPACT),</span>
+<span class="nc" id="L337">                            metrics.get(Cvss2Vector.INTEGRITY_IMPACT),</span>
+<span class="nc" id="L338">                            metrics.get(Cvss2Vector.AVAILABILITY_IMPACT),</span>
+<span class="nc" id="L339">                            Cvss2Severity.of(cvssScore).name()</span>
                     ));
                 } else {
-<span class="nc" id="L331">                    LOG.warn(&quot;Unsupported CVSS vector: {}&quot;, cvssVector);</span>
-<span class="nc" id="L332">                    result.setUnscoredSeverity(Float.toString(cvssScore));</span>
+<span class="nc" id="L342">                    LOG.warn(&quot;Unsupported CVSS vector: {}&quot;, cvssVector);</span>
+<span class="nc" id="L343">                    result.setUnscoredSeverity(Float.toString(cvssScore));</span>
                 }
-<span class="nc" id="L334">            }</span>
+<span class="nc" id="L345">            }</span>
         } else {
-<span class="nc" id="L336">            LOG.debug(&quot;OSS has no vector for {}&quot;, result.getName());</span>
-<span class="nc" id="L337">            result.setUnscoredSeverity(Float.toString(cvssScore));</span>
+<span class="nc" id="L347">            LOG.debug(&quot;OSS has no vector for {}&quot;, result.getName());</span>
+<span class="nc" id="L348">            result.setUnscoredSeverity(Float.toString(cvssScore));</span>
         }
         // generate a reference to the vulnerability details on OSS Index
-<span class="nc" id="L340">        result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());</span>
+<span class="nc" id="L351">        result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());</span>
 
         // generate references to other references reported by OSS Index
-<span class="nc" id="L343">        source.getExternalReferences().forEach(externalReference</span>
-<span class="nc" id="L344">                -&gt; result.addReference(&quot;OSSIndex&quot;, externalReference.toString(), externalReference.toString()));</span>
+<span class="nc" id="L354">        source.getExternalReferences().forEach(externalReference</span>
+<span class="nc" id="L355">                -&gt; result.addReference(&quot;OSSIndex&quot;, externalReference.toString(), externalReference.toString()));</span>
 
         // attach vulnerable software details as best we can
-<span class="nc" id="L347">        final PackageUrl purl = report.getCoordinates();</span>
+<span class="nc" id="L358">        final PackageUrl purl = report.getCoordinates();</span>
         try {
-<span class="nc" id="L349">            final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder()</span>
-<span class="nc" id="L350">                    .part(Part.APPLICATION)</span>
-<span class="nc" id="L351">                    .vendor(purl.getNamespaceAsString())</span>
-<span class="nc" id="L352">                    .product(purl.getName())</span>
-<span class="nc" id="L353">                    .version(purl.getVersion());</span>
+<span class="nc" id="L360">            final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder()</span>
+<span class="nc" id="L361">                    .part(Part.APPLICATION)</span>
+<span class="nc" id="L362">                    .vendor(purl.getNamespaceAsString())</span>
+<span class="nc" id="L363">                    .product(purl.getName())</span>
+<span class="nc" id="L364">                    .version(purl.getVersion());</span>
 
             // TODO: consider if we want/need to extract version-ranges to apply to vulnerable-software?
-<span class="nc" id="L356">            final VulnerableSoftware software = builder.build();</span>
-<span class="nc" id="L357">            result.addVulnerableSoftware(software);</span>
-<span class="nc" id="L358">            result.setMatchedVulnerableSoftware(software);</span>
-<span class="nc" id="L359">        } catch (CpeValidationException e) {</span>
-<span class="nc" id="L360">            LOG.warn(&quot;Unable to construct vulnerable-software for: {}&quot;, purl, e);</span>
-<span class="nc" id="L361">        }</span>
+<span class="nc" id="L367">            final VulnerableSoftware software = builder.build();</span>
+<span class="nc" id="L368">            result.addVulnerableSoftware(software);</span>
+<span class="nc" id="L369">            result.setMatchedVulnerableSoftware(software);</span>
+<span class="nc" id="L370">        } catch (CpeValidationException e) {</span>
+<span class="nc" id="L371">            LOG.warn(&quot;Unable to construct vulnerable-software for: {}&quot;, purl, e);</span>
+<span class="nc" id="L372">        }</span>
 
-<span class="nc" id="L363">        return result;</span>
+<span class="nc" id="L374">        return result;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

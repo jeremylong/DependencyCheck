@@ -26,55 +26,127 @@ package org.owasp.dependencycheck.analyzer;
 
     /**
      * Initialization phase.
+     * @implNote Bound analyzers are {@link ArchiveAnalyzer}
      */
-<span class="fc" id="L30">    INITIAL,</span>
+<span class="fc" id="L31">    INITIAL,</span>
     /**
      * Pre information collection phase.
+     * @implNote Bound analyzers are {@link ElixirMixAuditAnalyzer},{@link RubyBundleAuditAnalyzer}
      */
-<span class="fc" id="L34">    PRE_INFORMATION_COLLECTION,</span>
+<span class="fc" id="L36">    PRE_INFORMATION_COLLECTION,</span>
     /**
      * Information collection phase.
+     * @implNote Bound analyzers are
+     * {@link ArtifactoryAnalyzer}
+     * {@link AssemblyAnalyzer}
+     * {@link AutoconfAnalyzer}
+     * {@link CMakeAnalyzer}
+     * {@link CentralAnalyzer}
+     * {@link CocoaPodsAnalyzer}
+     * {@link ComposerLockAnalyzer}
+     * {@link DartAnalyzer}
+     * {@link FileNameAnalyzer}
+     * {@link GolangDepAnalyzer}
+     * {@link GolangModAnalyzer}
+     * {@link JarAnalyzer}
+     * {@link LibmanAnalyzer}
+     * {@link MSBuildProjectAnalyzer}
+     * {@link NexusAnalyzer}
+     * {@link NodeAuditAnalyzer}
+     * {@link NugetconfAnalyzer}
+     * {@link NuspecAnalyzer}
+     * {@link OpenSSLAnalyzer}
+     * {@link PinnedMavenInstallAnalyzer}
+     * {@link PipAnalyzer}
+     * {@link PipfileAnalyzer}
+     * {@link PipfilelockAnalyzer}
+     * {@link PoetryAnalyzer}
+     * {@link PythonDistributionAnalyzer}
+     * {@link PythonPackageAnalyzer}
+     * {@link RubyGemspecAnalyzer}
+     * {@link RubyBundlerAnalyzer}
+     * {@link SwiftPackageManagerAnalyzer}
+     * {@link SwiftPackageResolvedAnalyzer}
      */
-<span class="fc" id="L38">    INFORMATION_COLLECTION,</span>
+<span class="fc" id="L71">    INFORMATION_COLLECTION,</span>
     /**
      * Information collection phase 2.
+     * @implNote Bound analyzers are
+     * {@link PEAnalyzer}
      */
-<span class="fc" id="L42">    INFORMATION_COLLECTION2,</span>
+<span class="fc" id="L77">    INFORMATION_COLLECTION2,</span>
     /**
-     * Post information collection phase.
+     * Post information collection phase 1.
+     * @implNote Bound analyzers are
+     * {@link DependencyMergingAnalyzer}
      */
-<span class="fc" id="L46">    POST_INFORMATION_COLLECTION,</span>
+<span class="fc" id="L83">    POST_INFORMATION_COLLECTION1,</span>
+    /**
+     * Post information collection phase 2.
+     * @implNote Bound analyzers are
+     * {@link HintAnalyzer} (must run before {@link VersionFilterAnalyzer}, should run after {@link DependencyMergingAnalyzer})
+     */
+<span class="fc" id="L89">    POST_INFORMATION_COLLECTION2,</span>
+    /**
+     * Post information collection phase 3.
+     * @implNote Bound analyzers are
+     * {@link VersionFilterAnalyzer}
+     */
+<span class="fc" id="L95">    POST_INFORMATION_COLLECTION3,</span>
     /**
      * Pre identifier analysis phase.
+     * @implNote Bound analyzers are
+     * {@link NpmCPEAnalyzer} (must run in a separate phase from {@link CPEAnalyzer} due to singleton re-use)
      */
-<span class="fc" id="L50">    PRE_IDENTIFIER_ANALYSIS,</span>
+<span class="fc" id="L101">    PRE_IDENTIFIER_ANALYSIS,</span>
     /**
      * Identifier analysis phase.
+     * @implNote Bound analyzers are
+     * {@link CPEAnalyzer}
      */
-<span class="fc" id="L54">    IDENTIFIER_ANALYSIS,</span>
+<span class="fc" id="L107">    IDENTIFIER_ANALYSIS,</span>
     /**
      * Post identifier analysis phase.
+     * @implNote Bound analyzers are
+     * {@link CpeSuppressionAnalyzer}
+     * {@link FalsePositiveAnalyzer}
      */
-<span class="fc" id="L58">    POST_IDENTIFIER_ANALYSIS,</span>
+<span class="fc" id="L114">    POST_IDENTIFIER_ANALYSIS,</span>
     /**
      * Pre finding analysis phase.
+     * @implNote No analyzers bound to this phase
      */
-<span class="fc" id="L62">    PRE_FINDING_ANALYSIS,</span>
+<span class="fc" id="L119">    PRE_FINDING_ANALYSIS,</span>
     /**
      * Finding analysis phase.
+     * @implNote Bound analyzers are
+     * {@link NodeAuditAnalyzer}
+     * {@link NvdCveAnalyzer}
+     * {@link PnpmAuditAnalyzer}
+     * {@link RetireJsAnalyzer}
+     * {@link YarnAuditAnalyzer}
+     *
      */
-<span class="fc" id="L66">    FINDING_ANALYSIS,</span>
+<span class="fc" id="L130">    FINDING_ANALYSIS,</span>
     /**
      * Finding analysis phase 2.
+     * @implNote Bound analyzers are
+     * {@link OssIndexAnalyzer}
      */
-<span class="fc" id="L70">    FINDING_ANALYSIS_PHASE2,</span>
+<span class="fc" id="L136">    FINDING_ANALYSIS_PHASE2,</span>
     /**
      * Post analysis phase.
+     * @implNote Bound analyzers are
+     * {@link KnownExploitedVulnerabilityAnalyzer}
+     * {@link VulnerabilitySuppressionAnalyzer}
      */
-<span class="fc" id="L74">    POST_FINDING_ANALYSIS,</span>
+<span class="fc" id="L143">    POST_FINDING_ANALYSIS,</span>
     /**
      * The final analysis phase.
+     * @implNote Bound analyzers are
+     * {@link DependencyBundlingAnalyzer}
+     * {@link UnusedSuppressionRuleAnalyzer}
      */
-<span class="fc" id="L78">    FINAL</span>
+<span class="fc" id="L150">    FINAL</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

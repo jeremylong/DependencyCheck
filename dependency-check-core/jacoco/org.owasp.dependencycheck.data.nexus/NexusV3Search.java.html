@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NexusV3Search.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nexus</a> &gt; <span class="el_source">NexusV3Search.java</span></div><h1>NexusV3Search.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2023 Hans Aikema. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.nexus;
+
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Class of methods to search Nexus v3 repositories.
+ *
+ * @author Hans Aikema
+ */
+@ThreadSafe
+public class NexusV3Search implements NexusSearch {
+
+    /**
+     * By default, NexusV3Search accepts only classifier-less artifacts.
+     * &lt;p&gt;
+     * This prevents, among others, sha1-collisions for empty jars on empty javadoc/sources jars.
+     * See e.g. issues #5559 and #5118
+     */
+<span class="nc" id="L58">    private final Set&lt;String&gt; acceptedClassifiers = new HashSet&lt;&gt;();</span>
+
+    /**
+     * The root URL for the Nexus repository service.
+     */
+    private final URL rootURL;
+
+    /**
+     * Whether to use the Proxy when making requests.
+     */
+    private final boolean useProxy;
+    /**
+     * The configured settings.
+     */
+    private final Settings settings;
+    /**
+     * Used for logging.
+     */
+<span class="nc" id="L76">    private static final Logger LOGGER = LoggerFactory.getLogger(NexusV3Search.class);</span>
+
+    /**
+     * Creates a NexusV3Search for the given repository URL.
+     *
+     * @param settings the configured settings
+     * @param useProxy flag indicating if the proxy settings should be used
+     * @throws MalformedURLException thrown if the configured URL is
+     *                               invalid
+     */
+<span class="nc" id="L86">    public NexusV3Search(Settings settings, boolean useProxy) throws MalformedURLException {</span>
+<span class="nc" id="L87">        this.settings = settings;</span>
+<span class="nc" id="L88">        this.useProxy = useProxy;</span>
+<span class="nc" id="L89">        this.acceptedClassifiers.add(null);</span>
+<span class="nc" id="L90">        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);</span>
+<span class="nc" id="L91">        LOGGER.debug(&quot;Nexus Search URL: {}&quot;, searchUrl);</span>
+<span class="nc" id="L92">        this.rootURL = new URL(searchUrl);</span>
+
+<span class="nc" id="L94">    }</span>
+
+    @Override
+    public MavenArtifact searchSha1(String sha1) throws IOException {
+<span class="nc bnc" id="L98" title="All 4 branches missed.">        if (null == sha1 || !sha1.matches(&quot;^[0-9A-Fa-f]{40}$&quot;)) {</span>
+<span class="nc" id="L99">            throw new IllegalArgumentException(&quot;Invalid SHA1 format&quot;);</span>
+        }
+
+<span class="nc" id="L102">        final List&lt;MavenArtifact&gt; collectedMatchingArtifacts = new ArrayList&lt;&gt;(1);</span>
+
+<span class="nc" id="L104">        String continuationToken = retrievePageAndAddMatchingArtifact(collectedMatchingArtifacts, sha1, null);</span>
+<span class="nc bnc" id="L105" title="All 4 branches missed.">        while (continuationToken != null &amp;&amp; collectedMatchingArtifacts.isEmpty()) {</span>
+<span class="nc" id="L106">            continuationToken = retrievePageAndAddMatchingArtifact(collectedMatchingArtifacts, sha1, continuationToken);</span>
+        }
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        if (collectedMatchingArtifacts.isEmpty()) {</span>
+<span class="nc" id="L109">            throw new FileNotFoundException(&quot;Artifact not found in Nexus&quot;);</span>
+        } else {
+<span class="nc" id="L111">            return collectedMatchingArtifacts.get(0);</span>
+        }
+    }
+
+    private String retrievePageAndAddMatchingArtifact(List&lt;MavenArtifact&gt; collectedMatchingArtifacts, String sha1, String continuationToken)
+            throws IOException {
+        final URL url;
+<span class="nc" id="L118">        LOGGER.debug(&quot;Search with continuation token {}&quot;, continuationToken);</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (continuationToken == null) {</span>
+<span class="nc" id="L120">            url = new URL(rootURL, String.format(&quot;v1/search/?sha1=%s&quot;,</span>
+<span class="nc" id="L121">                    sha1.toLowerCase()));</span>
+        } else {
+<span class="nc" id="L123">            url = new URL(rootURL, String.format(&quot;v1/search/?sha1=%s&amp;continuationToken=%s&quot;,</span>
+<span class="nc" id="L124">                    sha1.toLowerCase(), continuationToken));</span>
+        }
+
+<span class="nc" id="L127">        LOGGER.debug(&quot;Searching Nexus url {}&quot;, url);</span>
+        // Determine if we need to use a proxy. The rules:
+        // 1) If the proxy is set, AND the setting is set to true, use the proxy
+        // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
+        // or proxy is specifically set to false
+        final HttpURLConnection conn;
+<span class="nc" id="L133">        final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
+<span class="nc" id="L134">        conn = factory.createHttpURLConnection(url, useProxy);</span>
+<span class="nc" id="L135">        conn.setDoOutput(true);</span>
+<span class="nc" id="L136">        final String authHeader = buildHttpAuthHeaderValue();</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (!authHeader.isEmpty()) {</span>
+<span class="nc" id="L138">            conn.addRequestProperty(&quot;Authorization&quot;, authHeader);</span>
+        }
+
+<span class="nc" id="L141">        conn.addRequestProperty(&quot;Accept&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L142">        conn.connect();</span>
+        final String nextContinuationToken;
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (conn.getResponseCode() == 200) {</span>
+<span class="nc" id="L145">            nextContinuationToken = parseResponse(conn, sha1, collectedMatchingArtifacts);</span>
+        } else {
+<span class="nc" id="L147">            LOGGER.debug(&quot;Could not connect to Nexus received response code: {} {}&quot;,</span>
+<span class="nc" id="L148">                    conn.getResponseCode(), conn.getResponseMessage());</span>
+<span class="nc" id="L149">            throw new IOException(String.format(&quot;Could not connect to Nexus, HTTP response code %d&quot;, conn.getResponseCode()));</span>
+        }
+<span class="nc" id="L151">        return nextContinuationToken;</span>
+    }
+
+    private String parseResponse(HttpURLConnection conn, String sha1, List&lt;MavenArtifact&gt; matchingArtifacts) throws IOException {
+<span class="nc" id="L155">        try (InputStream in = new BufferedInputStream(conn.getInputStream());</span>
+<span class="nc" id="L156">             JsonReader jsonReader = Json.createReader(in)) {</span>
+<span class="nc" id="L157">            final JsonObject jsonResponse = jsonReader.readObject();</span>
+<span class="nc" id="L158">            final String continuationToken = jsonResponse.getString(&quot;continuationToken&quot;, null);</span>
+<span class="nc" id="L159">            final JsonArray components = jsonResponse.getJsonArray(&quot;items&quot;);</span>
+<span class="nc" id="L160">            boolean found = false;</span>
+<span class="nc bnc" id="L161" title="All 4 branches missed.">            for (int i = 0; i &lt; components.size() &amp;&amp; !found; i++) {</span>
+<span class="nc" id="L162">                boolean jarFound = false;</span>
+<span class="nc" id="L163">                boolean pomFound = false;</span>
+<span class="nc" id="L164">                String downloadUrl = null;</span>
+<span class="nc" id="L165">                String groupId = null;</span>
+<span class="nc" id="L166">                String artifactId = null;</span>
+<span class="nc" id="L167">                String version = null;</span>
+<span class="nc" id="L168">                String pomUrl = null;</span>
+
+<span class="nc" id="L170">                final JsonObject component = components.getJsonObject(i);</span>
+
+<span class="nc" id="L172">                final String format = components.getJsonObject(0).getString(&quot;format&quot;, &quot;unknown&quot;);</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">                if (&quot;maven2&quot;.equals(format)) {</span>
+<span class="nc" id="L174">                    final JsonArray assets = component.getJsonArray(&quot;assets&quot;);</span>
+<span class="nc bnc" id="L175" title="All 4 branches missed.">                    for (int j = 0; !found &amp;&amp; j &lt; assets.size(); j++) {</span>
+<span class="nc" id="L176">                        final JsonObject asset = assets.getJsonObject(j);</span>
+<span class="nc" id="L177">                        final JsonObject checksums = asset.getJsonObject(&quot;checksum&quot;);</span>
+<span class="nc" id="L178">                        final JsonObject maven2 = asset.getJsonObject(&quot;maven2&quot;);</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">                        if (maven2 != null</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">                                &amp;&amp; &quot;jar&quot;.equals(maven2.getString(&quot;extension&quot;, null))</span>
+<span class="nc bnc" id="L181" title="All 4 branches missed.">                                &amp;&amp; acceptedClassifiers.contains(maven2.getString(&quot;classifier&quot;, null))</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">                                &amp;&amp; checksums != null &amp;&amp; sha1.equals(checksums.getString(&quot;sha1&quot;, null))</span>
+                        ) {
+<span class="nc" id="L184">                            downloadUrl = asset.getString(&quot;downloadUrl&quot;);</span>
+<span class="nc" id="L185">                            groupId = maven2.getString(&quot;groupId&quot;);</span>
+<span class="nc" id="L186">                            artifactId = maven2.getString(&quot;artifactId&quot;);</span>
+<span class="nc" id="L187">                            version = maven2.getString(&quot;version&quot;);</span>
+
+<span class="nc" id="L189">                            jarFound = true;</span>
+<span class="nc bnc" id="L190" title="All 4 branches missed.">                        } else if (maven2 != null &amp;&amp; &quot;pom&quot;.equals(maven2.getString(&quot;extension&quot;))) {</span>
+<span class="nc" id="L191">                            pomFound = true;</span>
+<span class="nc" id="L192">                            pomUrl = asset.getString(&quot;downloadUrl&quot;);</span>
+                        }
+<span class="nc bnc" id="L194" title="All 4 branches missed.">                        if (pomFound &amp;&amp; jarFound) {</span>
+<span class="nc" id="L195">                            found = true;</span>
+                        }
+                    }
+<span class="nc bnc" id="L198" title="All 2 branches missed.">                    if (found) {</span>
+<span class="nc" id="L199">                        matchingArtifacts.add(new MavenArtifact(groupId, artifactId, version, downloadUrl, pomUrl));</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">                    } else if (jarFound) {</span>
+<span class="nc" id="L201">                        final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version, downloadUrl);</span>
+<span class="nc" id="L202">                        ma.setPomUrl(MavenArtifact.derivePomUrl(artifactId, version, downloadUrl));</span>
+<span class="nc" id="L203">                        matchingArtifacts.add(ma);</span>
+<span class="nc" id="L204">                        found = true;</span>
+                    }
+                }
+            }
+<span class="nc" id="L208">            return continuationToken;</span>
+        }
+    }
+
+    @Override
+    public boolean preflightRequest() {
+        final HttpURLConnection conn;
+        try {
+<span class="nc" id="L216">            final URL url = new URL(rootURL, &quot;v1/status&quot;);</span>
+<span class="nc" id="L217">            final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
+<span class="nc" id="L218">            conn = factory.createHttpURLConnection(url, useProxy);</span>
+<span class="nc" id="L219">            conn.addRequestProperty(&quot;Accept&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L220">            final String authHeader = buildHttpAuthHeaderValue();</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">            if (!authHeader.isEmpty()) {</span>
+<span class="nc" id="L222">                conn.addRequestProperty(&quot;Authorization&quot;, authHeader);</span>
+            }
+<span class="nc" id="L224">            conn.connect();</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">            if (conn.getResponseCode() != 200) {</span>
+<span class="nc" id="L226">                LOGGER.warn(&quot;Expected 200 result from Nexus, got {}&quot;, conn.getResponseCode());</span>
+<span class="nc" id="L227">                return false;</span>
+            }
+<span class="nc bnc" id="L229" title="All 2 branches missed.">            if (conn.getContentLength() != 0) {</span>
+<span class="nc" id="L230">                LOGGER.warn(&quot;Expected empty OK response (content-length 0), got content-length {}&quot;, conn.getContentLength());</span>
+<span class="nc" id="L231">                return false;</span>
+            }
+<span class="nc" id="L233">        } catch (IOException e) {</span>
+<span class="nc" id="L234">            LOGGER.warn(&quot;Pre-flight request to Nexus failed: &quot;, e);</span>
+<span class="nc" id="L235">            return false;</span>
+<span class="nc" id="L236">        }</span>
+<span class="nc" id="L237">        return true;</span>
+    }
+
+    /**
+     * Constructs the base64 encoded basic authentication header value.
+     *
+     * @return the base64 encoded basic authentication header value
+     */
+    private String buildHttpAuthHeaderValue() {
+<span class="nc" id="L246">        final String user = settings.getString(Settings.KEYS.ANALYZER_NEXUS_USER, &quot;&quot;);</span>
+<span class="nc" id="L247">        final String pass = settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, &quot;&quot;);</span>
+<span class="nc" id="L248">        String result = &quot;&quot;;</span>
+<span class="nc bnc" id="L249" title="All 4 branches missed.">        if (user.isEmpty() || pass.isEmpty()) {</span>
+<span class="nc" id="L250">            LOGGER.debug(&quot;Skip authentication as user and/or password for nexus is empty&quot;);</span>
+        } else {
+<span class="nc" id="L252">            final String auth = user + ':' + pass;</span>
+<span class="nc" id="L253">            final String base64Auth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));</span>
+<span class="nc" id="L254">            result = &quot;Basic &quot; + base64Auth;</span>
+        }
+<span class="nc" id="L256">        return result;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -22,6 +22,8 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nexus.NexusSearch;
+import org.owasp.dependencycheck.data.nexus.NexusV2Search;
+import org.owasp.dependencycheck.data.nexus.NexusV3Search;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
@@ -35,6 +37,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
@@ -64,7 +67,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
  * @author colezlaw
  */
 @ThreadSafe
-<span class="fc" id="L67">public class NexusAnalyzer extends AbstractFileTypeAnalyzer {</span>
+<span class="fc" id="L70">public class NexusAnalyzer extends AbstractFileTypeAnalyzer {</span>
 
     /**
      * The default URL - this will be used by the CentralAnalyzer to determine
@@ -75,7 +78,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
     /**
      * The logger.
      */
-<span class="fc" id="L78">    private static final Logger LOGGER = LoggerFactory.getLogger(NexusAnalyzer.class);</span>
+<span class="fc" id="L81">    private static final Logger LOGGER = LoggerFactory.getLogger(NexusAnalyzer.class);</span>
 
     /**
      * The name of the analyzer.
@@ -85,7 +88,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
     /**
      * The phase in which the analyzer runs.
      */
-<span class="fc" id="L88">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+<span class="fc" id="L91">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
 
     /**
      * The types of files on which this will work.
@@ -95,7 +98,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
     /**
      * The file filter used to determine which files this analyzer supports.
      */
-<span class="fc" id="L98">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();</span>
+<span class="fc" id="L101">    private static final FileFilter FILTER = FileFilterBuilder.newInstance().addExtensions(SUPPORTED_EXTENSIONS).build();</span>
 
     /**
      * The Nexus Search to be set up for this analyzer.
@@ -105,7 +108,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
     /**
      * Field indicating if the analyzer is enabled.
      */
-<span class="fc" id="L108">    private boolean enabled = true;</span>
+<span class="fc" id="L111">    private boolean enabled = true;</span>
 
     /**
      * Initializes the analyzer with the configured settings.
@@ -114,9 +117,9 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
      */
     @Override
     public void initialize(Settings settings) {
-<span class="fc" id="L117">        super.initialize(settings);</span>
-<span class="fc" id="L118">        enabled = checkEnabled();</span>
-<span class="fc" id="L119">    }</span>
+<span class="fc" id="L120">        super.initialize(settings);</span>
+<span class="fc" id="L121">        enabled = checkEnabled();</span>
+<span class="fc" id="L122">    }</span>
 
     /**
      * Determines if this analyzer is enabled
@@ -129,21 +132,21 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
          other than the default one (if it's the default one, we'll use the
          central analyzer) and it's enabled by the user.
          */
-<span class="fc" id="L132">        boolean retval = false;</span>
+<span class="fc" id="L135">        boolean retval = false;</span>
         try {
-<span class="fc bfc" id="L134" title="All 2 branches covered.">            if (getSettings().getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {</span>
-<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                if (getSettings().getString(Settings.KEYS.ANALYZER_NEXUS_URL) != null</span>
-<span class="pc bpc" id="L136" title="1 of 2 branches missed.">                        &amp;&amp; !DEFAULT_URL.equals(getSettings().getString(Settings.KEYS.ANALYZER_NEXUS_URL))) {</span>
-<span class="nc" id="L137">                    retval = true;</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">            if (getSettings().getBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED)) {</span>
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">                if (getSettings().getString(Settings.KEYS.ANALYZER_NEXUS_URL) != null</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">                        &amp;&amp; !DEFAULT_URL.equals(getSettings().getString(Settings.KEYS.ANALYZER_NEXUS_URL))) {</span>
+<span class="nc" id="L140">                    retval = true;</span>
                 } else {
-<span class="fc" id="L139">                    LOGGER.warn(&quot;Disabling Nexus analyzer - please specify the URL to a Nexus Server&quot;);</span>
+<span class="fc" id="L142">                    LOGGER.warn(&quot;Disabling Nexus analyzer - please specify the URL to a Nexus Server&quot;);</span>
                 }
             }
-<span class="nc" id="L142">        } catch (InvalidSettingException ise) {</span>
-<span class="nc" id="L143">            LOGGER.warn(&quot;Invalid setting. Disabling Nexus analyzer&quot;);</span>
-<span class="fc" id="L144">        }</span>
+<span class="nc" id="L145">        } catch (InvalidSettingException ise) {</span>
+<span class="nc" id="L146">            LOGGER.warn(&quot;Invalid setting. Disabling Nexus analyzer&quot;);</span>
+<span class="fc" id="L147">        }</span>
 
-<span class="fc" id="L146">        return retval;</span>
+<span class="fc" id="L149">        return retval;</span>
     }
 
     /**
@@ -153,7 +156,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
      */
     @Override
     public boolean isEnabled() {
-<span class="fc" id="L156">        return enabled;</span>
+<span class="fc" id="L159">        return enabled;</span>
     }
 
     /**
@@ -164,23 +167,44 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
      */
     @Override
     public void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
-<span class="nc" id="L167">        LOGGER.debug(&quot;Initializing Nexus Analyzer&quot;);</span>
-<span class="nc" id="L168">        LOGGER.debug(&quot;Nexus Analyzer enabled: {}&quot;, isEnabled());</span>
-<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (isEnabled()) {</span>
-<span class="nc" id="L170">            final boolean useProxy = useProxy();</span>
-<span class="nc" id="L171">            LOGGER.debug(&quot;Using proxy: {}&quot;, useProxy);</span>
-            try {
-<span class="nc" id="L173">                searcher = new NexusSearch(getSettings(), useProxy);</span>
-<span class="nc bnc" id="L174" title="All 2 branches missed.">                if (!searcher.preflightRequest()) {</span>
-<span class="nc" id="L175">                    setEnabled(false);</span>
-<span class="nc" id="L176">                    throw new InitializationException(&quot;There was an issue getting Nexus status. Disabling analyzer.&quot;);</span>
-                }
-<span class="nc" id="L178">            } catch (MalformedURLException mue) {</span>
-<span class="nc" id="L179">                setEnabled(false);</span>
-<span class="nc" id="L180">                throw new InitializationException(&quot;Malformed URL to Nexus&quot;, mue);</span>
-<span class="nc" id="L181">            }</span>
+<span class="nc" id="L170">        LOGGER.debug(&quot;Initializing Nexus Analyzer&quot;);</span>
+<span class="nc" id="L171">        LOGGER.debug(&quot;Nexus Analyzer enabled: {}&quot;, isEnabled());</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (isEnabled()) {</span>
+<span class="nc" id="L173">            final boolean useProxy = useProxy();</span>
+<span class="nc" id="L174">            LOGGER.debug(&quot;Using proxy: {}&quot;, useProxy);</span>
+<span class="nc" id="L175">            searcher = createNexusSearchOrDisable(useProxy);</span>
         }
-<span class="nc" id="L183">    }</span>
+<span class="nc" id="L177">    }</span>
+
+    /**
+     * Creates a NexusSearch for the appropriate Nexus version (Nexus V2 and V3 supported).
+     * &lt;p&gt;
+     * If errors are encountered creating or validating the NexusSearch it disables this analyzer.
+     *
+     * @param useProxy Whether a proxy is to be used
+     * @return A NexusSearch appropriate for the configured ANALYZER_NEXUS_URL
+     * @throws InitializationException Upon errors creating of validating the ANALYZER_NEXUS_URL
+     */
+    private NexusSearch createNexusSearchOrDisable(boolean useProxy) throws InitializationException {
+<span class="nc" id="L189">        final Settings settings = getSettings();</span>
+<span class="nc" id="L190">        final String nexusRootURL = settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);</span>
+        final NexusSearch result;
+        try {
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            if (nexusRootURL.toLowerCase(Locale.ROOT).contains(&quot;service/local/&quot;)) {</span>
+<span class="nc" id="L194">                result = new NexusV2Search(settings, useProxy);</span>
+            } else {
+<span class="nc" id="L196">                result = new NexusV3Search(settings, useProxy);</span>
+            }
+<span class="nc bnc" id="L198" title="All 2 branches missed.">            if (!result.preflightRequest()) {</span>
+<span class="nc" id="L199">                setEnabled(false);</span>
+<span class="nc" id="L200">                throw new InitializationException(&quot;There was an error getting Nexus status. Disabling NexusAnalyzer.&quot;);</span>
+            }
+<span class="nc" id="L202">        } catch (MalformedURLException mue) {</span>
+<span class="nc" id="L203">            setEnabled(false);</span>
+<span class="nc" id="L204">            throw new InitializationException(&quot;Malformed URL to Nexus. Disabling NexusAnalyzer&quot;, mue);</span>
+<span class="nc" id="L205">        }</span>
+<span class="nc" id="L206">        return result;</span>
+    }
 
     /**
      * Returns the analyzer's name.
@@ -189,7 +213,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
      */
     @Override
     public String getName() {
-<span class="fc" id="L192">        return ANALYZER_NAME;</span>
+<span class="fc" id="L216">        return ANALYZER_NAME;</span>
     }
 
     /**
@@ -200,7 +224,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L203">        return Settings.KEYS.ANALYZER_NEXUS_ENABLED;</span>
+<span class="fc" id="L227">        return Settings.KEYS.ANALYZER_NEXUS_ENABLED;</span>
     }
 
     /**
@@ -210,7 +234,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
      */
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L213">        return ANALYSIS_PHASE;</span>
+<span class="fc" id="L237">        return ANALYSIS_PHASE;</span>
     }
 
     /**
@@ -220,7 +244,7 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
      */
     @Override
     protected FileFilter getFileFilter() {
-<span class="fc" id="L223">        return FILTER;</span>
+<span class="fc" id="L247">        return FILTER;</span>
     }
 
     /**
@@ -232,63 +256,63 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
      */
     @Override
     public void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="nc bnc" id="L235" title="All 2 branches missed.">        if (!isEnabled()) {</span>
-<span class="nc" id="L236">            return;</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">        if (!isEnabled()) {</span>
+<span class="nc" id="L260">            return;</span>
         }
         try {
-<span class="nc" id="L239">            final MavenArtifact ma = searcher.searchSha1(dependency.getSha1sum());</span>
-<span class="nc" id="L240">            dependency.addAsEvidence(&quot;nexus&quot;, ma, Confidence.HIGH);</span>
-<span class="nc" id="L241">            boolean pomAnalyzed = false;</span>
-<span class="nc" id="L242">            LOGGER.debug(&quot;POM URL {}&quot;, ma.getPomUrl());</span>
-<span class="nc bnc" id="L243" title="All 2 branches missed.">            for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {</span>
-<span class="nc bnc" id="L244" title="All 2 branches missed.">                if (&quot;pom&quot;.equals(e.getSource())) {</span>
-<span class="nc" id="L245">                    pomAnalyzed = true;</span>
-<span class="nc" id="L246">                    break;</span>
+<span class="nc" id="L263">            final MavenArtifact ma = searcher.searchSha1(dependency.getSha1sum());</span>
+<span class="nc" id="L264">            dependency.addAsEvidence(&quot;nexus&quot;, ma, Confidence.HIGH);</span>
+<span class="nc" id="L265">            boolean pomAnalyzed = false;</span>
+<span class="nc" id="L266">            LOGGER.debug(&quot;POM URL {}&quot;, ma.getPomUrl());</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">            for (Evidence e : dependency.getEvidence(EvidenceType.VENDOR)) {</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">                if (&quot;pom&quot;.equals(e.getSource())) {</span>
+<span class="nc" id="L269">                    pomAnalyzed = true;</span>
+<span class="nc" id="L270">                    break;</span>
                 }
-<span class="nc" id="L248">            }</span>
-<span class="nc bnc" id="L249" title="All 4 branches missed.">            if (!pomAnalyzed &amp;&amp; ma.getPomUrl() != null) {</span>
-<span class="nc" id="L250">                File pomFile = null;</span>
+<span class="nc" id="L272">            }</span>
+<span class="nc bnc" id="L273" title="All 4 branches missed.">            if (!pomAnalyzed &amp;&amp; ma.getPomUrl() != null) {</span>
+<span class="nc" id="L274">                File pomFile = null;</span>
                 try {
-<span class="nc" id="L252">                    final File baseDir = getSettings().getTempDirectory();</span>
-<span class="nc" id="L253">                    pomFile = File.createTempFile(&quot;pom&quot;, &quot;.xml&quot;, baseDir);</span>
-<span class="nc bnc" id="L254" title="All 2 branches missed.">                    if (!pomFile.delete()) {</span>
-<span class="nc" id="L255">                        LOGGER.warn(&quot;Unable to fetch pom.xml for {} from Nexus repository; &quot;</span>
-<span class="nc" id="L256">                                + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
-<span class="nc" id="L257">                        LOGGER.debug(&quot;Unable to delete temp file&quot;);</span>
+<span class="nc" id="L276">                    final File baseDir = getSettings().getTempDirectory();</span>
+<span class="nc" id="L277">                    pomFile = File.createTempFile(&quot;pom&quot;, &quot;.xml&quot;, baseDir);</span>
+<span class="nc bnc" id="L278" title="All 2 branches missed.">                    if (!pomFile.delete()) {</span>
+<span class="nc" id="L279">                        LOGGER.warn(&quot;Unable to fetch pom.xml for {} from Nexus repository; &quot;</span>
+<span class="nc" id="L280">                                + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
+<span class="nc" id="L281">                        LOGGER.debug(&quot;Unable to delete temp file&quot;);</span>
                     }
-<span class="nc" id="L259">                    LOGGER.debug(&quot;Downloading {}&quot;, ma.getPomUrl());</span>
-<span class="nc" id="L260">                    final Downloader downloader = new Downloader(getSettings());</span>
-<span class="nc" id="L261">                    downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);</span>
-<span class="nc" id="L262">                    PomUtils.analyzePOM(dependency, pomFile);</span>
-<span class="nc" id="L263">                } catch (DownloadFailedException ex) {</span>
-<span class="nc" id="L264">                    LOGGER.warn(&quot;Unable to download pom.xml for {} from Nexus repository; &quot;</span>
-<span class="nc" id="L265">                            + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
-<span class="nc" id="L266">                } catch (TooManyRequestsException ex) {</span>
-<span class="nc" id="L267">                    this.setEnabled(false);</span>
-<span class="nc" id="L268">                    throw new AnalysisException(&quot;Received a 429 - too many requests from nexus; &quot;</span>
+<span class="nc" id="L283">                    LOGGER.debug(&quot;Downloading {}&quot;, ma.getPomUrl());</span>
+<span class="nc" id="L284">                    final Downloader downloader = new Downloader(getSettings());</span>
+<span class="nc" id="L285">                    downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);</span>
+<span class="nc" id="L286">                    PomUtils.analyzePOM(dependency, pomFile);</span>
+<span class="nc" id="L287">                } catch (DownloadFailedException ex) {</span>
+<span class="nc" id="L288">                    LOGGER.warn(&quot;Unable to download pom.xml for {} from Nexus repository; &quot;</span>
+<span class="nc" id="L289">                            + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
+<span class="nc" id="L290">                } catch (TooManyRequestsException ex) {</span>
+<span class="nc" id="L291">                    this.setEnabled(false);</span>
+<span class="nc" id="L292">                    throw new AnalysisException(&quot;Received a 429 - too many requests from nexus; &quot;</span>
                             + &quot;the nexus analyzer is being disabled.&quot;, ex);
-<span class="nc" id="L270">                } catch (ResourceNotFoundException ex) {</span>
-<span class="nc" id="L271">                    LOGGER.warn(&quot;pom.xml not found for {} from nexus; &quot;</span>
-<span class="nc" id="L272">                            + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
+<span class="nc" id="L294">                } catch (ResourceNotFoundException ex) {</span>
+<span class="nc" id="L295">                    LOGGER.warn(&quot;pom.xml not found for {} from nexus; &quot;</span>
+<span class="nc" id="L296">                            + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
                 } finally {
-<span class="nc bnc" id="L274" title="All 6 branches missed.">                    if (pomFile != null &amp;&amp; pomFile.exists() &amp;&amp; !FileUtils.deleteQuietly(pomFile)) {</span>
-<span class="nc" id="L275">                        LOGGER.debug(&quot;Failed to delete temporary pom file {}&quot;, pomFile);</span>
-<span class="nc" id="L276">                        pomFile.deleteOnExit();</span>
+<span class="nc bnc" id="L298" title="All 6 branches missed.">                    if (pomFile != null &amp;&amp; pomFile.exists() &amp;&amp; !FileUtils.deleteQuietly(pomFile)) {</span>
+<span class="nc" id="L299">                        LOGGER.debug(&quot;Failed to delete temporary pom file {}&quot;, pomFile);</span>
+<span class="nc" id="L300">                        pomFile.deleteOnExit();</span>
                     }
                 }
             }
-<span class="nc" id="L280">        } catch (IllegalArgumentException iae) {</span>
+<span class="nc" id="L304">        } catch (IllegalArgumentException iae) {</span>
             //dependency.addAnalysisException(new AnalysisException(&quot;Invalid SHA-1&quot;));
-<span class="nc" id="L282">            LOGGER.info(&quot;invalid sha-1 hash on {}&quot;, dependency.getFileName());</span>
-<span class="nc" id="L283">        } catch (FileNotFoundException fnfe) {</span>
+<span class="nc" id="L306">            LOGGER.info(&quot;invalid sha-1 hash on {}&quot;, dependency.getFileName());</span>
+<span class="nc" id="L307">        } catch (FileNotFoundException fnfe) {</span>
             //dependency.addAnalysisException(new AnalysisException(&quot;Artifact not found on repository&quot;));
-<span class="nc" id="L285">            LOGGER.debug(&quot;Artifact not found in repository '{}'&quot;, dependency.getFileName());</span>
-<span class="nc" id="L286">            LOGGER.debug(fnfe.getMessage(), fnfe);</span>
-<span class="nc" id="L287">        } catch (IOException ioe) {</span>
+<span class="nc" id="L309">            LOGGER.debug(&quot;Artifact not found in repository '{}'&quot;, dependency.getFileName());</span>
+<span class="nc" id="L310">            LOGGER.debug(fnfe.getMessage(), fnfe);</span>
+<span class="nc" id="L311">        } catch (IOException ioe) {</span>
             //dependency.addAnalysisException(new AnalysisException(&quot;Could not connect to repository&quot;, ioe));
-<span class="nc" id="L289">            LOGGER.debug(&quot;Could not connect to nexus repository&quot;, ioe);</span>
-<span class="nc" id="L290">        }</span>
-<span class="nc" id="L291">    }</span>
+<span class="nc" id="L313">            LOGGER.debug(&quot;Could not connect to nexus repository&quot;, ioe);</span>
+<span class="nc" id="L314">        }</span>
+<span class="nc" id="L315">    }</span>
 
     /**
      * Determine if a proxy should be used for the Nexus Analyzer.
@@ -297,11 +321,11 @@ import org.owasp.dependencycheck.utils.TooManyRequestsException;
      */
     public boolean useProxy() {
         try {
-<span class="nc bnc" id="L300" title="All 2 branches missed.">            return getSettings().getString(Settings.KEYS.PROXY_SERVER) != null</span>
-<span class="nc bnc" id="L301" title="All 2 branches missed.">                    &amp;&amp; getSettings().getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY);</span>
-<span class="nc" id="L302">        } catch (InvalidSettingException ise) {</span>
-<span class="nc" id="L303">            LOGGER.warn(&quot;Failed to parse proxy settings.&quot;, ise);</span>
-<span class="nc" id="L304">            return false;</span>
+<span class="nc bnc" id="L324" title="All 2 branches missed.">            return getSettings().getString(Settings.KEYS.PROXY_SERVER) != null</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">                    &amp;&amp; getSettings().getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY);</span>
+<span class="nc" id="L326">        } catch (InvalidSettingException ise) {</span>
+<span class="nc" id="L327">            LOGGER.warn(&quot;Failed to parse proxy settings.&quot;, ise);</span>
+<span class="nc" id="L328">            return false;</span>
         }
     }
 }
