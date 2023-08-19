@@ -86,7 +86,7 @@ public class VersionFilterAnalyzer extends AbstractAnalyzer {
     /**
      * The phase that this analyzer is intended to run in.
      */
-    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.POST_INFORMATION_COLLECTION;
+    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.POST_INFORMATION_COLLECTION3;
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Standard implementation of Analyzer">

@@ -78,7 +78,9 @@ import static org.owasp.dependencycheck.analyzer.AnalysisPhase.INFORMATION_COLLE
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.INITIAL;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.POST_FINDING_ANALYSIS;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.POST_IDENTIFIER_ANALYSIS;
-import static org.owasp.dependencycheck.analyzer.AnalysisPhase.POST_INFORMATION_COLLECTION;
+import static org.owasp.dependencycheck.analyzer.AnalysisPhase.POST_INFORMATION_COLLECTION1;
+import static org.owasp.dependencycheck.analyzer.AnalysisPhase.POST_INFORMATION_COLLECTION2;
+import static org.owasp.dependencycheck.analyzer.AnalysisPhase.POST_INFORMATION_COLLECTION3;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_FINDING_ANALYSIS;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_IDENTIFIER_ANALYSIS;
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_INFORMATION_COLLECTION;
@@ -1294,7 +1296,9 @@ public class Engine implements FileFilter, AutoCloseable {
                 PRE_INFORMATION_COLLECTION,
                 INFORMATION_COLLECTION,
                 INFORMATION_COLLECTION2,
-                POST_INFORMATION_COLLECTION
+                POST_INFORMATION_COLLECTION1,
+                POST_INFORMATION_COLLECTION2,
+                POST_INFORMATION_COLLECTION3
         ),
         /**
          * In evidence processing mode the {@link Engine} processes the evidence

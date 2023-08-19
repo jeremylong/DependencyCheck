@@ -47,7 +47,7 @@ public class DependencyMergingAnalyzer extends AbstractDependencyComparingAnalyz
     /**
      * The phase that this analyzer is intended to run in.
      */
-    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.POST_INFORMATION_COLLECTION;
+    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.POST_INFORMATION_COLLECTION1;
     /**
      * Used for synchronization when merging related dependencies.
      */

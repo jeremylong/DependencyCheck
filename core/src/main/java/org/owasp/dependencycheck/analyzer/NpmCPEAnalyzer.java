@@ -49,7 +49,7 @@ public class NpmCPEAnalyzer extends CPEAnalyzer {
     /**
      * The Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CPEAnalyzer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NpmCPEAnalyzer.class);
 
     /**
      * Returns the analysis phase that this analyzer should run in.

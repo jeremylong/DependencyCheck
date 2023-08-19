@@ -49,7 +49,7 @@ public class VersionFilterAnalyzerTest extends BaseTest {
     public void testGetAnalysisPhase() {
         VersionFilterAnalyzer instance = new VersionFilterAnalyzer();
         instance.initialize(getSettings());
-        AnalysisPhase expResult = AnalysisPhase.POST_INFORMATION_COLLECTION;
+        AnalysisPhase expResult = AnalysisPhase.POST_INFORMATION_COLLECTION3;
         AnalysisPhase result = instance.getAnalysisPhase();
         assertEquals(expResult, result);
     }
