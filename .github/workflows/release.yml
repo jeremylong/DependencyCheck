@@ -185,7 +185,19 @@ jobs:
           prerelease: false
           draft: false
           body: |
-            Re-release of 8.3.0 as 8.3.1.
+            ### Added
+
+            - feat: Add support for Nexus v3 to NexusAnalyzer (#5849)
+
+            ### Fixed
+
+            - fix: Hint Analyzer should run before VersionFilter Analyzer (#5818)
+            - chore: switch to sha1-pinning as suggested by Semgrep
+            - fix: OSS Index Analyzer SocketTimeoutException exception handling based on warn only parameter (#5845)
+            - fix: use curl with -L to follow github redirect (#5808)
+            - fix: use curl with -L to follow github redirect
+            - fix: #5671 out of memory error (#5789)
+            - fix: #5671 Exit method as soon as we detect a loop to prevent an infinite loop leading to an OutOfMemoryError
 
       - name: Upload CLI
         id: upload-release-cli

@@ -1,10 +1,26 @@
 # Change Log
 
+## [Version 8.4.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.4.0) (2023-08-19)
+
+### Added
+
+- feat: Add support for Nexus v3 to NexusAnalyzer (#5849)
+
+### Fixed
+
+- fix: Hint Analyzer should run before VersionFilter Analyzer (#5818)
+- chore: switch to sha1-pinning as suggested by Semgrep
+- fix: OSS Index Analyzer SocketTimeoutException exception handling based on warn only parameter (#5845)
+- fix: use curl with -L to follow github redirect (#5808)
+- fix: use curl with -L to follow github redirect
+- fix: #5671 out of memory error (#5789)
+- fix: #5671 Exit method as soon as we detect a loop to prevent an infinite loop leading to an OutOfMemoryError
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/66?closed=1).
+
 ## [Version 8.3.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.3.1) (2023-06-12)
 
 Re-release of 8.3.0 as 8.3.1.
-
-### Added
 
 ## [Version 8.3.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.3.0) (2023-06-12)
 
