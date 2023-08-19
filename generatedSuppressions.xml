@@ -1215,3 +1215,4 @@
    <packageUrl regex="true">^pkg:maven/software\.amazon\.awssdk\.crt/aws-crt@.*$</packageUrl>
    <cpe>cpe:/a:amazon:aws-sdk-java</cpe>
 </suppress>
+<!-- suppressions above this line will be included in 8.4.0  -->
