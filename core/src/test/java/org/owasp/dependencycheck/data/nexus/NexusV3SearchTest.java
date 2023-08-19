@@ -17,9 +17,6 @@
  */
 package org.owasp.dependencycheck.data.nexus;
 
-import java.io.FileNotFoundException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -29,18 +26,28 @@ import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NexusSearchTest extends BaseTest {
+import java.io.FileNotFoundException;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NexusSearchTest.class);
-    private NexusSearch searcher;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class NexusV3SearchTest extends BaseTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NexusV3SearchTest.class);
+    private NexusV3Search searcher;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        String nexusUrl = getSettings().getString(Settings.KEYS.ANALYZER_NEXUS_URL);
+        Settings sett = getSettings();
+//        sett.setString(Settings.KEYS.ANALYZER_NEXUS_USER, "demo");
+//        sett.setString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, "demo");
+//        sett.setString(Settings.KEYS.ANALYZER_NEXUS_URL, "http://localhost/service/rest/");
+        String nexusUrl = sett.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
+
         LOGGER.debug(nexusUrl);
-        searcher = new NexusSearch(getSettings(), false);
+        searcher = new NexusV3Search(sett, false);
         Assume.assumeTrue(searcher.preflightRequest());
     }
 
