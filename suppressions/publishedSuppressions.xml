@@ -1232,4 +1232,11 @@
    <packageUrl regex="true">^pkg:maven/com\.adobe\.cq/core\.wcm\.components\.core@.*$</packageUrl>
    <cpe>cpe:/a:adobe:experience_manager</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5906
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.adobe\.cq/core\.wcm\.components\.core@.*$</packageUrl>
+   <cpe>cpe:/a:adobe:experience_manager_forms</cpe>
+</suppress>
 </suppressions>
