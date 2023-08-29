@@ -1216,4 +1216,13 @@
    <packageUrl regex="true">^pkg:maven/software\.amazon\.awssdk\.crt/aws-crt@.*$</packageUrl>
    <cpe>cpe:/a:amazon:aws-sdk-java</cpe>
 </suppress>
+<!-- suppressions above this line will be included in 8.4.0  -->
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5904
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.adobe\.cq/core\.wcm\.components\.core@.*$</packageUrl>
+   <cpe>cpe:/a:adobe:download_manager</cpe>
+</suppress>
 </suppressions>
