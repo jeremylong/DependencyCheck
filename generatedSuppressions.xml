@@ -1245,3 +1245,10 @@
    <packageUrl regex="true">^pkg:maven/com\.adobe\.cq/core\.wcm\.components\.core@.*$</packageUrl>
    <cpe>cpe:/a:adobe:form_client</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5909
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.adobe\.cq/core\.wcm\.components\.core@.*$</packageUrl>
+   <cpe>cpe:/a:list_site_pro:list_site_pro</cpe>
+</suppress>
