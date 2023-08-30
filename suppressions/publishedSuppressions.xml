@@ -1253,4 +1253,11 @@
    <packageUrl regex="true">^pkg:maven/com\.adobe\.cq/core\.wcm\.components\.core@.*$</packageUrl>
    <cpe>cpe:/a:list_site_pro:list_site_pro</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5910
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.adobe\.cq/core\.wcm\.components\.core@.*$</packageUrl>
+   <cpe>cpe:/a:oembed_project:oembed</cpe>
+</suppress>
 </suppressions>
