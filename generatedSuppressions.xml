@@ -1259,3 +1259,10 @@
    <packageUrl regex="true">^pkg:maven/com\.adobe\.cq/core\.wcm\.components\.core@.*$</packageUrl>
    <cpe>cpe:/a:oembed_project:oembed</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5911
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.adobe\.cq/core\.wcm\.components\.core@.*$</packageUrl>
+   <cpe>cpe:/a:xml_library_project:xml_library</cpe>
+</suppress>
