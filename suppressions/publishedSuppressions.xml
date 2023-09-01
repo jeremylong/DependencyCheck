@@ -1269,9 +1269,9 @@
 </suppress>
 <suppress base="true">
    <notes><![CDATA[
-   FP per issue #5917
+   FP per issue #5916
    ]]></notes>
-   <packageUrl regex="true">^pkg:maven/io\.grpc/grpc-kotlin-stub@.*$</packageUrl>
-   <cpe>cpe:/a:grpc:grpc</cpe>
+   <packageUrl regex="true">^pkg:maven/org\.springframework\.plugin/spring-plugin-core@.*$</packageUrl>
+   <cpe>cpe:/a:vmware:spring</cpe>
 </suppress>
 </suppressions>
