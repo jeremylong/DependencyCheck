@@ -1273,3 +1273,10 @@
    <packageUrl regex="true">^pkg:maven/org\.springframework\.plugin/spring-plugin-core@.*$</packageUrl>
    <cpe>cpe:/a:vmware:spring</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5915 - suppress the CVE only to avoid clash when cpe:/a:vmware:spring were to get broader use
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.springframework(?!\.kafka).*$</packageUrl>
+   <cve>CVE-2023-34040</cve>
+</suppress>
