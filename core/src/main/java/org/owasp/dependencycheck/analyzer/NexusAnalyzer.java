@@ -22,6 +22,8 @@ import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.data.nexus.NexusSearch;
+import org.owasp.dependencycheck.data.nexus.NexusV2Search;
+import org.owasp.dependencycheck.data.nexus.NexusV3Search;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
@@ -35,6 +37,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 import javax.annotation.concurrent.ThreadSafe;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.exception.InitializationException;
@@ -169,17 +172,38 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
         if (isEnabled()) {
             final boolean useProxy = useProxy();
             LOGGER.debug("Using proxy: {}", useProxy);
-            try {
-                searcher = new NexusSearch(getSettings(), useProxy);
-                if (!searcher.preflightRequest()) {
-                    setEnabled(false);
-                    throw new InitializationException("There was an issue getting Nexus status. Disabling analyzer.");
-                }
-            } catch (MalformedURLException mue) {
-                setEnabled(false);
-                throw new InitializationException("Malformed URL to Nexus", mue);
-            }
+            searcher = createNexusSearchOrDisable(useProxy);
         }
+    }
+
+    /**
+     * Creates a NexusSearch for the appropriate Nexus version (Nexus V2 and V3 supported).
+     * <p>
+     * If errors are encountered creating or validating the NexusSearch it disables this analyzer.
+     *
+     * @param useProxy Whether a proxy is to be used
+     * @return A NexusSearch appropriate for the configured ANALYZER_NEXUS_URL
+     * @throws InitializationException Upon errors creating of validating the ANALYZER_NEXUS_URL
+     */
+    private NexusSearch createNexusSearchOrDisable(boolean useProxy) throws InitializationException {
+        final Settings settings = getSettings();
+        final String nexusRootURL = settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);
+        final NexusSearch result;
+        try {
+            if (nexusRootURL.toLowerCase(Locale.ROOT).contains("service/local/")) {
+                result = new NexusV2Search(settings, useProxy);
+            } else {
+                result = new NexusV3Search(settings, useProxy);
+            }
+            if (!result.preflightRequest()) {
+                setEnabled(false);
+                throw new InitializationException("There was an error getting Nexus status. Disabling NexusAnalyzer.");
+            }
+        } catch (MalformedURLException mue) {
+            setEnabled(false);
+            throw new InitializationException("Malformed URL to Nexus. Disabling NexusAnalyzer", mue);
+        }
+        return result;
     }
 
     /**

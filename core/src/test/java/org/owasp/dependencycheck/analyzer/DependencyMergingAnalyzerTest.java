@@ -53,7 +53,7 @@ public class DependencyMergingAnalyzerTest extends BaseTest {
     @Test
     public void testGetAnalysisPhase() {
         DependencyMergingAnalyzer instance = new DependencyMergingAnalyzer();
-        AnalysisPhase expResult = AnalysisPhase.POST_INFORMATION_COLLECTION;
+        AnalysisPhase expResult = AnalysisPhase.POST_INFORMATION_COLLECTION1;
         AnalysisPhase result = instance.getAnalysisPhase();
         assertEquals(expResult, result);
     }

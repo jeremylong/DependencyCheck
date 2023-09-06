@@ -24,7 +24,7 @@
     <logger name="org.owasp.dependencycheck.data.central.ArtifactorySearchTest" additivity="false" level="WARN">
         <appender-ref ref="console"/>
     </logger>
-    <logger name="org.owasp.dependencycheck.data.nexus.NexusSearchTest" additivity="false" level="WARN">
+    <logger name="org.owasp.dependencycheck.data.nexus.NexusV2SearchTest" additivity="false" level="WARN">
         <appender-ref ref="console"/>
     </logger>
     <!-- disable error log statements during test cases on FileUtils -->

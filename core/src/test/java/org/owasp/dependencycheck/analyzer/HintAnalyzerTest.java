@@ -54,7 +54,7 @@ public class HintAnalyzerTest extends BaseDBTestCase {
     @Test
     public void testGetAnalysisPhase() {
         HintAnalyzer instance = new HintAnalyzer();
-        AnalysisPhase expResult = AnalysisPhase.PRE_IDENTIFIER_ANALYSIS;
+        AnalysisPhase expResult = AnalysisPhase.POST_INFORMATION_COLLECTION2;
         AnalysisPhase result = instance.getAnalysisPhase();
         assertEquals(expResult, result);
     }
