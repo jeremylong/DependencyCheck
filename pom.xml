@@ -153,7 +153,7 @@ Copyright (c) 2012 - Jeremy Long
         <jmockit.version>1.49</jmockit.version>
         <mockito-core.version>4.11.0</mockito-core.version>
         <jsoup.version>1.16.1</jsoup.version>
-        <commons-compress.version>1.23.0</commons-compress.version>
+        <commons-compress.version>1.24.0</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.1.0</org.apache.maven.shared.file-management.version>
         <maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
         <maven-plugin-annotations.version>3.9.0</maven-plugin-annotations.version>
