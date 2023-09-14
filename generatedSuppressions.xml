@@ -1280,3 +1280,10 @@
    <packageUrl regex="true">^pkg:maven/org\.springframework(?!\.kafka).*$</packageUrl>
    <cve>CVE-2023-34040</cve>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5932
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.logback-extensions/logback-ext-spring@.*$</packageUrl>
+   <cpe>cpe:/a:qos:logback</cpe>
+</suppress>
