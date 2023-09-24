@@ -1287,3 +1287,10 @@
    <packageUrl regex="true">^pkg:maven/org\.logback-extensions/logback-ext-spring@.*$</packageUrl>
    <cpe>cpe:/a:qos:logback</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5948
+   ]]></notes>
+   <packageUrl regex="true">^pkg:npm/mysql@.*$</packageUrl>
+   <cpe>cpe:/a:mysql:mysql</cpe>
+</suppress>
