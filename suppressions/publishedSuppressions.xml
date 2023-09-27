@@ -1302,4 +1302,11 @@
    <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty\.incubator/reactor-netty-incubator-quic@.*$</packageUrl>
    <cpe>cpe:/a:quic_project:quic</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5958
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/net\.rossillo\.mvc\.cache/spring-mvc-cache-control@.*$</packageUrl>
+   <cpe>cpe:/a:spring:spring</cpe>
+</suppress>
 </suppressions>
