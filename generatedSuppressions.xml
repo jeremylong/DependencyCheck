@@ -1294,3 +1294,10 @@
    <packageUrl regex="true">^pkg:npm/mysql@.*$</packageUrl>
    <cpe>cpe:/a:mysql:mysql</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5913
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty\.incubator/reactor-netty-incubator-quic@.*$</packageUrl>
+   <cpe>cpe:/a:quic_project:quic</cpe>
+</suppress>
