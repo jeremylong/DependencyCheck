@@ -1330,4 +1330,11 @@
    <packageUrl regex="true">^pkg:maven/ch\.qos\.logback\.contrib/logback-json-classic@.*$</packageUrl>
    <cpe>cpe:/a:json-c:json-c</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5953
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.asyncer/r2dbc-mysql@.*$</packageUrl>
+   <cpe>cpe:/a:mysql:mysql</cpe>
+</suppress>
 </suppressions>
