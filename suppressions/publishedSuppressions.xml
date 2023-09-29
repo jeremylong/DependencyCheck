@@ -1309,4 +1309,11 @@
    <packageUrl regex="true">^pkg:maven/net\.rossillo\.mvc\.cache/spring-mvc-cache-control@.*$</packageUrl>
    <cpe>cpe:/a:spring:spring</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5961
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/ch\.qos\.logback\.contrib/logback-json-core@.*$</packageUrl>
+   <cpe>cpe:/a:json-c:json-c</cpe>
+</suppress>
 </suppressions>
