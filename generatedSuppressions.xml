@@ -1322,3 +1322,10 @@
    <packageUrl regex="true">^pkg:maven/io\.netty\.incubator/netty-incubator-codec-native-quic@.*$</packageUrl>
    <cpe>cpe:/a:quic_project:quic</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #5966
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/ch\.qos\.logback\.contrib/logback-json-classic@.*$</packageUrl>
+   <cpe>cpe:/a:json-c:json-c</cpe>
+</suppress>
