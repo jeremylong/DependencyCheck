@@ -147,7 +147,7 @@ public class HintRule {
      * @param confidence the confidence of the evidence
      */
     public void addAddProduct(String source, String name, String value, Confidence confidence) {
-        addProduct.add(new Evidence(source, name, value, confidence));
+        addProduct.add(new Evidence(source, name, value, confidence, true));
     }
 
     /**
@@ -168,7 +168,7 @@ public class HintRule {
      * @param confidence the confidence of the evidence
      */
     public void addAddVersion(String source, String name, String value, Confidence confidence) {
-        addVersion.add(new Evidence(source, name, value, confidence));
+        addVersion.add(new Evidence(source, name, value, confidence, true));
     }
 
     /**
@@ -189,7 +189,7 @@ public class HintRule {
      * @param confidence the confidence of the evidence
      */
     public void addAddVendor(String source, String name, String value, Confidence confidence) {
-        addVendor.add(new Evidence(source, name, value, confidence));
+        addVendor.add(new Evidence(source, name, value, confidence, true));
     }
 
     /**

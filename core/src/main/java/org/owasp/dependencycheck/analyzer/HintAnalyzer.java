@@ -198,7 +198,7 @@ public class HintAnalyzer extends AbstractAnalyzer {
             for (VendorDuplicatingHintRule dhr : vendorHints) {
                 if (dhr.getValue().equalsIgnoreCase(e.getValue())) {
                     dependency.addEvidence(EvidenceType.VENDOR, new Evidence(e.getSource() + " (hint)",
-                            e.getName(), dhr.getDuplicate(), e.getConfidence()));
+                            e.getName(), dhr.getDuplicate(), e.getConfidence(), true));
                 }
             }
         }

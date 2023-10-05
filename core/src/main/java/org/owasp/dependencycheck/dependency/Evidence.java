@@ -60,6 +60,11 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     private Confidence confidence;
 
     /**
+     * Whether the evidence originates from a hint.
+     */
+    private boolean fromHint;
+
+    /**
      * Creates a new Evidence object.
      */
     public Evidence() {
@@ -74,10 +79,24 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      * @param confidence the confidence of the evidence.
      */
     public Evidence(String source, String name, String value, Confidence confidence) {
+        this(source, name, value, confidence, false);
+    }
+
+    /**
+     * Creates a new Evidence objects.
+     *
+     * @param source     the source of the evidence.
+     * @param name       the name of the evidence.
+     * @param value      the value of the evidence.
+     * @param confidence the confidence of the evidence.
+     * @param fromHint whether the evidence was introduced by a hint.
+     */
+    public Evidence(String source, String name, String value, Confidence confidence, boolean fromHint) {
         this.source = source;
         this.name = name;
         this.value = value;
         this.confidence = confidence;
+        this.fromHint = fromHint;
     }
 
     /**
@@ -153,6 +172,24 @@ public class Evidence implements Serializable, Comparable<Evidence> {
     }
 
     /**
+     * Get the value of fromHint.
+     *
+     * @return the value of fromHint
+     */
+    public boolean isFromHint() {
+        return fromHint;
+    }
+
+    /**
+     * Set the value of fromHint.
+     *
+     * @param fromHint new value of fromHint
+     */
+    public void setFromHint(boolean fromHint) {
+        this.fromHint = fromHint;
+    }
+
+    /**
      * Implements the hashCode for Evidence.
      *
      * @return hash code.
@@ -187,6 +224,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
                 .append(this.name == null ? null : this.name.toLowerCase(), o.name == null ? null : o.name.toLowerCase())
                 .append(this.value == null ? null : this.value.toLowerCase(), o.value == null ? null : o.value.toLowerCase())
                 .append(this.confidence, o.getConfidence())
+                .append(this.fromHint, o.isFromHint())
                 .build();
     }
 
@@ -196,7 +234,6 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      * @param o the evidence being compared
      * @return an integer indicating the ordering of the two objects
      */
-    @SuppressWarnings("deprecation")
     @Override
     public int compareTo(@NotNull Evidence o) {
         return new CompareToBuilder()
@@ -204,6 +241,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
                 .append(this.name == null ? null : this.name.toLowerCase(), o.name == null ? null : o.name.toLowerCase())
                 .append(this.value == null ? null : this.value.toLowerCase(), o.value == null ? null : o.value.toLowerCase())
                 .append(this.confidence, o.getConfidence())
+                .append(this.fromHint, o.isFromHint())
                 .toComparison();
     }
 
@@ -214,6 +252,7 @@ public class Evidence implements Serializable, Comparable<Evidence> {
      */
     @Override
     public String toString() {
-        return "Evidence{" + "name=" + name + ", source=" + source + ", value=" + value + ", confidence=" + confidence + '}';
+        return "Evidence{" + "name=" + name + ", source=" + source + ", value=" + value + ", confidence=" + confidence
+                + ", fromHint=" + fromHint + '}';
     }
 }

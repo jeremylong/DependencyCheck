@@ -148,48 +148,6 @@
         </add>
     </hint>
     
-    <!-- begin hack for temporary patch of issue #534-->
-    <hint>
-        <given>
-            <fileName regex="true" contains=".*hibernate-validator-5\.0\..*"/>
-        </given>
-        <add>
-            <evidence type="version" source="hint" name="version" value="5.0" confidence="HIGHEST"/>
-        </add>
-    </hint>
-    <hint>
-        <given>
-            <fileName regex="true" contains=".*hibernate-validator-5\.1\.[01].*"/>
-        </given>
-        <add>
-            <evidence type="version" source="hint" name="version" value="5.1" confidence="HIGHEST"/>
-        </add>
-    </hint>
-    <hint>
-        <given>
-            <fileName regex="true" contains=".*hibernate-validator-4\.1\..*"/>
-        </given>
-        <add>
-            <evidence type="version" source="hint" name="version" value="4.1.0" confidence="HIGHEST"/>
-        </add>
-    </hint>
-    <hint>
-        <given>
-            <fileName regex="true" contains=".*hibernate-validator-4\.2\.0.*"/>
-        </given>
-        <add>
-            <evidence type="version" source="hint" name="version" value="4.2.0" confidence="HIGHEST"/>
-        </add>
-    </hint>
-    <hint>
-        <given>
-            <fileName regex="true" contains=".*hibernate-validator-4\.3\.[01]\..*"/>
-        </given>
-        <add>
-            <evidence type="version" source="hint" name="version" value="4.3.0" confidence="HIGHEST"/>
-        </add>
-    </hint>
-    <!-- end hack for temporary patch of issue #534-->
     <!-- creating a spring boot starter project can cause your app to incorrectly be flagged as spring-->
     <hint>
         <given>

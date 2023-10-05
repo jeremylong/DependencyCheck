@@ -86,11 +86,11 @@ public class HintAnalyzerTest extends BaseDBTestCase {
                     sdep = d;
                 }
             }
-            final Evidence springTest1 = new Evidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGHEST);
-            final Evidence springTest2 = new Evidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGHEST);
-            final Evidence springTest3 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGHEST);
-            final Evidence springTest4 = new Evidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGHEST);
-            final Evidence springTest5 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGHEST);
+            final Evidence springTest1 = new Evidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGHEST, true);
+            final Evidence springTest2 = new Evidence("hint analyzer", "vendor", "SpringSource", Confidence.HIGHEST, true);
+            final Evidence springTest3 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGHEST, true);
+            final Evidence springTest4 = new Evidence("hint analyzer", "product", "springsource_spring_framework", Confidence.HIGHEST, true);
+            final Evidence springTest5 = new Evidence("hint analyzer", "vendor", "vmware", Confidence.HIGHEST, true);
 
             assertFalse(gdep.contains(EvidenceType.PRODUCT, springTest1));
             assertFalse(gdep.contains(EvidenceType.VENDOR, springTest2));
