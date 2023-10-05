@@ -74,7 +74,7 @@ public class PipAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * o * Matches AC_INIT variables in the output configure script.
      */
-    private static final Pattern PACKAGE_VERSION = Pattern.compile("^([^#].*?)(?:[=>]=([\\.\\*0-9]+?))?$", Pattern.MULTILINE);
+    private static final Pattern PACKAGE_VERSION = Pattern.compile("^([^#].*?)(?:[=~>]=([\\.\\*0-9]+?))?$", Pattern.MULTILINE);
 
     /**
      * The file filter used to determine which files this analyzer supports.

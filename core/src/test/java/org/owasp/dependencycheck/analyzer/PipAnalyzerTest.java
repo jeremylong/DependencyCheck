@@ -103,17 +103,25 @@ public class PipAnalyzerTest extends BaseDBTestCase {
             engine.addDependency(result);
             analyzer.analyze(result, engine);
             assertFalse(ArrayUtils.contains(engine.getDependencies(), result));
-            assertEquals(23, engine.getDependencies().length);
-            boolean found = false;
+            assertEquals(24, engine.getDependencies().length);
+            boolean foundPyYAML = false;
+            boolean foundCryptography = false;
             for (Dependency d : engine.getDependencies()) {
                 if ("PyYAML".equals(d.getName())) {
-                    found = true;
+                    foundPyYAML = true;
                     assertEquals("3.12", d.getVersion());
                     assertThat(d.getDisplayFileName(), equalTo("PyYAML:3.12"));
                     assertEquals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM, d.getEcosystem());
                 }
+                if ("cryptography".equals(d.getName())) {
+                    foundCryptography = true;
+                    assertEquals("1.8.2", d.getVersion());
+                    assertThat(d.getDisplayFileName(), equalTo("cryptography:1.8.2"));
+                    assertEquals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM, d.getEcosystem());
+                }
             }
-            assertTrue("Expeced to find PyYAML", found);
+            assertTrue("Expected to find PyYAML", foundPyYAML);
+            assertTrue("Expected to find cryptography", foundCryptography);
         }
     }
 }

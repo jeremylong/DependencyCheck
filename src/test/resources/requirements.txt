@@ -21,3 +21,4 @@ spyne==2.12.14
 suds-jurko==0.6
 urllib3
 Werkzeug>=0.14.1
+cryptography~=1.8.2

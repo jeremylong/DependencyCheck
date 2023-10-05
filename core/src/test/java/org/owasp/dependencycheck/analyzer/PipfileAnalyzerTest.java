@@ -101,17 +101,25 @@ public class PipfileAnalyzerTest extends BaseDBTestCase {
             engine.addDependency(result);
             analyzer.analyze(result, engine);
             assertFalse(ArrayUtils.contains(engine.getDependencies(), result));
-            assertEquals(39, engine.getDependencies().length);
-            boolean found = false;
+            assertEquals(40, engine.getDependencies().length);
+            boolean foundUrllib3 = false;
+            boolean foundCryptography = false;
             for (Dependency d : engine.getDependencies()) {
                 if ("urllib3".equals(d.getName())) {
-                    found = true;
+                    foundUrllib3 = true;
                     assertEquals("1.25.9", d.getVersion());
                     assertThat(d.getDisplayFileName(), equalTo("urllib3:1.25.9"));
                     assertEquals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM, d.getEcosystem());
                 }
+                if ("cryptography".equals(d.getName())) {
+                    foundCryptography = true;
+                    assertEquals("1.8.2", d.getVersion());
+                    assertThat(d.getDisplayFileName(), equalTo("cryptography:1.8.2"));
+                    assertEquals(PythonDistributionAnalyzer.DEPENDENCY_ECOSYSTEM, d.getEcosystem());
+                }
             }
-            assertTrue("Expeced to find urllib3", found);
+            assertTrue("Expeced to find urllib3", foundUrllib3);
+            assertTrue("Expeced to find cryptography", foundCryptography);
         }
     }
 }

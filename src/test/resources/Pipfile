@@ -46,6 +46,7 @@ py-flags = "==1.1.2"
 CacheControl = "==0.12.5"
 prometheus_client = "==0.7.1"
 PyYAML = "==5.3.1"
+cryptography = "~=1.8.2"
 
 [requires]
 python_version = "3.6"
