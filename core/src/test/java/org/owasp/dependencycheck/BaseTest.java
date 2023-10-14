@@ -41,6 +41,9 @@ public abstract class BaseTest {
      */
     @Before
     public void setUp() throws Exception {
+        if (System.getProperty("jcs.logSystem") == null) {
+            System.setProperty("jcs.logSystem", "slf4j");
+        }
         settings = new Settings();
     }
 

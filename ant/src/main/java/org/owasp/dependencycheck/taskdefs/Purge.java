@@ -20,19 +20,17 @@ package org.owasp.dependencycheck.taskdefs;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
-import org.apache.commons.jcs.JCS;
-import org.apache.commons.jcs.access.CacheAccess;
-import org.apache.commons.jcs.engine.CompositeCacheAttributes;
-import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.data.cache.DataCache;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.xml.pom.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.impl.StaticLoggerBinder;
+import org.slf4j.spi.LocationAwareLogger;
 
 /**
  * An Ant task definition to execute dependency-check during an Ant build.
@@ -140,17 +138,54 @@ public class Purge extends Task {
      * the Thread Context Class Loader set to something that can resolve it's classes. Other build tools do this
      * by default but Ant does not.
      *
-     * @throws BuildException throws if there is a problem. See {@link #executeWithContextClassloader()} for details
+     * @throws BuildException throws if there is a problem. See
+     * {@link #executeWithContextClassloader()} for details
      */
     @Override
     public final void execute() throws BuildException {
-        ClassLoader current = Thread.currentThread().getContextClassLoader();
+        muteJCS();
+        final ClassLoader current = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             executeWithContextClassloader();
         } finally {
             Thread.currentThread().setContextClassLoader(current);
+        }
+    }
+
+    /**
+     * Hacky method of muting the noisy logging from JCS. Implemented using a
+     * solution from SO: https://stackoverflow.com/a/50723801
+     */
+    private void muteJCS() {
+        if (System.getProperty("jcs.logSystem") == null) {
+            System.setProperty("jcs.logSystem", "slf4j");
+        }
+
+        final String[] noisyLoggers = {
+            "org.apache.commons.jcs3.auxiliary.disk.AbstractDiskCache",
+            "org.apache.commons.jcs3.engine.memory.AbstractMemoryCache",
+            "org.apache.commons.jcs3.engine.control.CompositeCache",
+            "org.apache.commons.jcs3.auxiliary.disk.indexed.IndexedDiskCache",
+            "org.apache.commons.jcs3.engine.control.CompositeCache",
+            "org.apache.commons.jcs3.engine.memory.AbstractMemoryCache",
+            "org.apache.commons.jcs3.engine.control.event.ElementEventQueue",
+            "org.apache.commons.jcs3.engine.memory.AbstractDoubleLinkedListMemoryCache",
+            "org.apache.commons.jcs3.auxiliary.AuxiliaryCacheConfigurator",
+            "org.apache.commons.jcs3.engine.control.CompositeCacheManager",
+            "org.apache.commons.jcs3.utils.threadpool.ThreadPoolManager",
+            "org.apache.commons.jcs3.engine.control.CompositeCacheConfigurator"};
+        for (String loggerName : noisyLoggers) {
+            try {
+                final Logger l = LoggerFactory.getLogger(loggerName);
+                final Field f = l.getClass().getSuperclass().getDeclaredField("currentLogLevel");
+                f.setAccessible(true);
+                f.set(l, LocationAwareLogger.ERROR_INT);
+            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
+                LoggerFactory.getLogger(Purge.class)
+                        .debug("Failed to reset the log level of " + loggerName + ", it will continue being noisy.");
+            }
         }
     }
 

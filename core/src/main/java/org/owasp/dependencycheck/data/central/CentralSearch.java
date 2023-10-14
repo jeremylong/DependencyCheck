@@ -33,7 +33,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import org.apache.commons.jcs.access.exception.CacheException;
+import org.apache.commons.jcs3.access.exception.CacheException;
 import org.owasp.dependencycheck.data.cache.DataCache;
 import org.owasp.dependencycheck.data.cache.DataCacheFactory;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;

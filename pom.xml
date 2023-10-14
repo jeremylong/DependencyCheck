@@ -146,7 +146,10 @@ Copyright (c) 2012 - Jeremy Long
         <commons-io.version>2.14.0</commons-io.version>
         <commons-lang3.version>3.13.0</commons-lang3.version>
         <commons-text.version>1.10.0</commons-text.version>
-        <commons-jcs-core.version>2.2.1</commons-jcs-core.version>
+        <!-- note that logging will be noisy and broken until we upgrade to 3.2
+            See https://issues.apache.org/jira/browse/JCS-232 and
+            https://github.com/apache/commons-jcs/pull/120 -->
+        <commons-jcs-core.version>3.2</commons-jcs-core.version>
         <aho-corasick-double-array-trie.version>1.2.3</aho-corasick-double-array-trie.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
@@ -1031,8 +1034,13 @@ Copyright (c) 2012 - Jeremy Long
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
-                <artifactId>commons-jcs-core</artifactId>
+                <artifactId>commons-jcs3-core</artifactId>
                 <version>${commons-jcs-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.jeremylong</groupId>
+                <artifactId>jcs3-slf4j</artifactId>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-validator</groupId>

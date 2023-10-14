@@ -31,4 +31,5 @@
     <logger name="org.owasp.dependencycheck.utils.FileUtils" additivity="false" level="OFF">
         <appender-ref ref="console"/>
     </logger>
+    <logger name="org.apache.commons.jcs3" level="ERROR"/>
 </configuration>

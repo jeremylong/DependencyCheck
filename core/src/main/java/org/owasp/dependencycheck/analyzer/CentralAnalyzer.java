@@ -40,7 +40,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
-import org.apache.commons.jcs.access.exception.CacheException;
+import org.apache.commons.jcs3.access.exception.CacheException;
 import org.owasp.dependencycheck.data.cache.DataCache;
 import org.owasp.dependencycheck.data.cache.DataCacheFactory;
 
