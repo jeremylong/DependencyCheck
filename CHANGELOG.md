@@ -1,5 +1,17 @@
 # Change Log
 
+## [Version 8.4.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.4.1) (2023-10-21)
+
+### Fixed
+
+- fix: upgrade to JCS3 (#5114)
+- fix: Support ~= version specifier in requirements.txt and pipfile (#5902)
+- fix: Version of dependency no longer ignored when CPE product has a 'java' suffix in a product name (#5901)
+- fix: Do not filter out evidences added by hints (#5900)
+- fix: fixes FP #5925 (#5927)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/67?closed=1).
+
 ## [Version 8.4.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.4.0) (2023-08-19)
 
 ### Added
