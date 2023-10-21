@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import org.apache.commons.jcs.access.exception.CacheException;
+import org.apache.commons.jcs3.access.exception.CacheException;
 
 import static org.owasp.dependencycheck.analyzer.NodeAuditAnalyzer.DEFAULT_URL;
 
@@ -125,9 +125,9 @@ public class NodeAuditSearch {
 <span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if (cache != null) {</span>
 <span class="fc" id="L126">            key = Checksum.getSHA256Checksum(packageJson.toString());</span>
 <span class="fc" id="L127">            final List&lt;Advisory&gt; cached = cache.get(key);</span>
-<span class="pc bpc" id="L128" title="1 of 2 branches missed.">            if (cached != null) {</span>
-<span class="nc" id="L129">                LOGGER.debug(&quot;cache hit for node audit: &quot; + key);</span>
-<span class="nc" id="L130">                return cached;</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            if (cached != null) {</span>
+<span class="fc" id="L129">                LOGGER.debug(&quot;cache hit for node audit: &quot; + key);</span>
+<span class="fc" id="L130">                return cached;</span>
             }
         }
 <span class="fc" id="L133">        return submitPackage(packageJson, key, 0);</span>
@@ -238,4 +238,4 @@ public class NodeAuditSearch {
 <span class="fc" id="L238">        return sb.toString().substring(0, length);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

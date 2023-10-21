@@ -198,7 +198,7 @@ import org.xml.sax.SAXException;
 <span class="fc bfc" id="L198" title="All 2 branches covered.">            for (VendorDuplicatingHintRule dhr : vendorHints) {</span>
 <span class="fc bfc" id="L199" title="All 2 branches covered.">                if (dhr.getValue().equalsIgnoreCase(e.getValue())) {</span>
 <span class="fc" id="L200">                    dependency.addEvidence(EvidenceType.VENDOR, new Evidence(e.getSource() + &quot; (hint)&quot;,</span>
-<span class="fc" id="L201">                            e.getName(), dhr.getDuplicate(), e.getConfidence()));</span>
+<span class="fc" id="L201">                            e.getName(), dhr.getDuplicate(), e.getConfidence(), true));</span>
                 }
             }
 <span class="fc" id="L204">        }</span>
@@ -334,4 +334,4 @@ import org.xml.sax.SAXException;
 <span class="fc" id="L334">        LOGGER.debug(&quot;{} duplicating hint rules were loaded.&quot;, vendorHints.length);</span>
 <span class="fc" id="L335">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

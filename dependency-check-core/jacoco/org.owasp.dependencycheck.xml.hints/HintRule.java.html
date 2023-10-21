@@ -147,7 +147,7 @@ import org.owasp.dependencycheck.xml.suppression.PropertyType;
      * @param confidence the confidence of the evidence
      */
     public void addAddProduct(String source, String name, String value, Confidence confidence) {
-<span class="fc" id="L150">        addProduct.add(new Evidence(source, name, value, confidence));</span>
+<span class="fc" id="L150">        addProduct.add(new Evidence(source, name, value, confidence, true));</span>
 <span class="fc" id="L151">    }</span>
 
     /**
@@ -168,7 +168,7 @@ import org.owasp.dependencycheck.xml.suppression.PropertyType;
      * @param confidence the confidence of the evidence
      */
     public void addAddVersion(String source, String name, String value, Confidence confidence) {
-<span class="fc" id="L171">        addVersion.add(new Evidence(source, name, value, confidence));</span>
+<span class="fc" id="L171">        addVersion.add(new Evidence(source, name, value, confidence, true));</span>
 <span class="fc" id="L172">    }</span>
 
     /**
@@ -189,7 +189,7 @@ import org.owasp.dependencycheck.xml.suppression.PropertyType;
      * @param confidence the confidence of the evidence
      */
     public void addAddVendor(String source, String name, String value, Confidence confidence) {
-<span class="fc" id="L192">        addVendor.add(new Evidence(source, name, value, confidence));</span>
+<span class="fc" id="L192">        addVendor.add(new Evidence(source, name, value, confidence, true));</span>
 <span class="fc" id="L193">    }</span>
 
     /**
@@ -282,4 +282,4 @@ import org.owasp.dependencycheck.xml.suppression.PropertyType;
 <span class="fc" id="L282">        return givenVersion;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

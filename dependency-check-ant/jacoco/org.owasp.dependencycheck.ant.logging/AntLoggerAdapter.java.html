@@ -63,7 +63,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
     public boolean isTraceEnabled() {
         // Might be a more efficient way to do this, but Ant doesn't enable or disable
         // various levels globally - it just fires things at registered Listeners.
-<span class="fc" id="L66">        return true;</span>
+<span class="nc" id="L66">        return true;</span>
     }
 
     @Override
@@ -134,18 +134,18 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void debug(String format, Object... arguments) {
-<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if (task != null) {</span>
-<span class="nc" id="L138">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
-<span class="nc" id="L139">            task.log(tp.getMessage(), Project.MSG_DEBUG);</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (task != null) {</span>
+<span class="fc" id="L138">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
+<span class="fc" id="L139">            task.log(tp.getMessage(), Project.MSG_DEBUG);</span>
         }
 <span class="fc" id="L141">    }</span>
 
     @Override
     public void debug(String msg, Throwable t) {
-<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (task != null) {</span>
-<span class="nc" id="L146">            task.log(msg, t, Project.MSG_DEBUG);</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if (task != null) {</span>
+<span class="fc" id="L146">            task.log(msg, t, Project.MSG_DEBUG);</span>
         }
-<span class="nc" id="L148">    }</span>
+<span class="fc" id="L148">    }</span>
 
     @Override
     public boolean isInfoEnabled() {
@@ -177,11 +177,11 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void info(String format, Object... arguments) {
-<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (task != null) {</span>
-<span class="nc" id="L181">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
-<span class="nc" id="L182">            task.log(tp.getMessage(), Project.MSG_INFO);</span>
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (task != null) {</span>
+<span class="fc" id="L181">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
+<span class="fc" id="L182">            task.log(tp.getMessage(), Project.MSG_INFO);</span>
         }
-<span class="nc" id="L184">    }</span>
+<span class="fc" id="L184">    }</span>
 
     @Override
     public void info(String msg, Throwable t) {
@@ -263,11 +263,11 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void error(String format, Object... arguments) {
-<span class="nc bnc" id="L266" title="All 2 branches missed.">        if (task != null) {</span>
-<span class="nc" id="L267">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
-<span class="nc" id="L268">            task.log(tp.getMessage(), Project.MSG_ERR);</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">        if (task != null) {</span>
+<span class="fc" id="L267">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
+<span class="fc" id="L268">            task.log(tp.getMessage(), Project.MSG_ERR);</span>
         }
-<span class="nc" id="L270">    }</span>
+<span class="fc" id="L270">    }</span>
 
     @Override
     public void error(String msg, Throwable t) {
@@ -276,4 +276,4 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
         }
 <span class="nc" id="L277">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

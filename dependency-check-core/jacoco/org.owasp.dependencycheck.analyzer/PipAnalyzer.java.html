@@ -74,7 +74,7 @@ import org.slf4j.LoggerFactory;
     /**
      * o * Matches AC_INIT variables in the output configure script.
      */
-<span class="fc" id="L77">    private static final Pattern PACKAGE_VERSION = Pattern.compile(&quot;^([^#].*?)(?:[=&gt;]=([\\.\\*0-9]+?))?$&quot;, Pattern.MULTILINE);</span>
+<span class="fc" id="L77">    private static final Pattern PACKAGE_VERSION = Pattern.compile(&quot;^([^#].*?)(?:[=~&gt;]=([\\.\\*0-9]+?))?$&quot;, Pattern.MULTILINE);</span>
 
     /**
      * The file filter used to determine which files this analyzer supports.
@@ -200,4 +200,4 @@ import org.slf4j.LoggerFactory;
         // No initialization needed.
 <span class="fc" id="L201">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

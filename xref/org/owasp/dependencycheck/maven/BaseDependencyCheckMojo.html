@@ -2465,482 +2465,486 @@
 <a class="jxr_linenumber" name="L2457" href="#L2457">2457</a> <em class="jxr_javadoccomment">     * solution from SO: https://stackoverflow.com/a/50723801</em>
 <a class="jxr_linenumber" name="L2458" href="#L2458">2458</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L2459" href="#L2459">2459</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> muteJCS() {
-<a class="jxr_linenumber" name="L2460" href="#L2460">2460</a>         <strong class="jxr_keyword">final</strong> String[] noisyLoggers = {
-<a class="jxr_linenumber" name="L2461" href="#L2461">2461</a>             <span class="jxr_string">"org.apache.commons.jcs.auxiliary.disk.AbstractDiskCache"</span>,
-<a class="jxr_linenumber" name="L2462" href="#L2462">2462</a>             <span class="jxr_string">"org.apache.commons.jcs.engine.memory.AbstractMemoryCache"</span>,
-<a class="jxr_linenumber" name="L2463" href="#L2463">2463</a>             <span class="jxr_string">"org.apache.commons.jcs.engine.control.CompositeCache"</span>,
-<a class="jxr_linenumber" name="L2464" href="#L2464">2464</a>             <span class="jxr_string">"org.apache.commons.jcs.auxiliary.disk.indexed.IndexedDiskCache"</span>,
-<a class="jxr_linenumber" name="L2465" href="#L2465">2465</a>             <span class="jxr_string">"org.apache.commons.jcs.engine.control.CompositeCache"</span>,
-<a class="jxr_linenumber" name="L2466" href="#L2466">2466</a>             <span class="jxr_string">"org.apache.commons.jcs.engine.memory.AbstractMemoryCache"</span>,
-<a class="jxr_linenumber" name="L2467" href="#L2467">2467</a>             <span class="jxr_string">"org.apache.commons.jcs.engine.control.event.ElementEventQueue"</span>,
-<a class="jxr_linenumber" name="L2468" href="#L2468">2468</a>             <span class="jxr_string">"org.apache.commons.jcs.engine.memory.AbstractDoubleLinkedListMemoryCache"</span>,
-<a class="jxr_linenumber" name="L2469" href="#L2469">2469</a>             <span class="jxr_string">"org.apache.commons.jcs.auxiliary.AuxiliaryCacheConfigurator"</span>,
-<a class="jxr_linenumber" name="L2470" href="#L2470">2470</a>             <span class="jxr_string">"org.apache.commons.jcs.engine.control.CompositeCacheManager"</span>,
-<a class="jxr_linenumber" name="L2471" href="#L2471">2471</a>             <span class="jxr_string">"org.apache.commons.jcs.utils.threadpool.ThreadPoolManager"</span>,
-<a class="jxr_linenumber" name="L2472" href="#L2472">2472</a>             <span class="jxr_string">"org.apache.commons.jcs.engine.control.CompositeCacheConfigurator"</span>};
-<a class="jxr_linenumber" name="L2473" href="#L2473">2473</a>         <strong class="jxr_keyword">for</strong> (String loggerName : noisyLoggers) {
-<a class="jxr_linenumber" name="L2474" href="#L2474">2474</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L2475" href="#L2475">2475</a>                 <em class="jxr_comment">//This is actually a MavenSimpleLogger, but due to various classloader issues, can't work with the directly.</em>
-<a class="jxr_linenumber" name="L2476" href="#L2476">2476</a>                 <strong class="jxr_keyword">final</strong> Logger l = LoggerFactory.getLogger(loggerName);
-<a class="jxr_linenumber" name="L2477" href="#L2477">2477</a>                 <strong class="jxr_keyword">final</strong> Field f = l.getClass().getSuperclass().getDeclaredField(<span class="jxr_string">"currentLogLevel"</span>);
-<a class="jxr_linenumber" name="L2478" href="#L2478">2478</a>                 f.setAccessible(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L2479" href="#L2479">2479</a>                 f.set(l, LocationAwareLogger.ERROR_INT);
-<a class="jxr_linenumber" name="L2480" href="#L2480">2480</a>             } <strong class="jxr_keyword">catch</strong> (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
-<a class="jxr_linenumber" name="L2481" href="#L2481">2481</a>                 getLog().debug(<span class="jxr_string">"Failed to reset the log level of "</span> + loggerName + <span class="jxr_string">", it will continue being noisy."</span>);
-<a class="jxr_linenumber" name="L2482" href="#L2482">2482</a>             }
-<a class="jxr_linenumber" name="L2483" href="#L2483">2483</a>         }
-<a class="jxr_linenumber" name="L2484" href="#L2484">2484</a>     }
-<a class="jxr_linenumber" name="L2485" href="#L2485">2485</a> 
-<a class="jxr_linenumber" name="L2486" href="#L2486">2486</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2487" href="#L2487">2487</a> <em class="jxr_javadoccomment">     * Returns the maven proxy.</em>
-<a class="jxr_linenumber" name="L2488" href="#L2488">2488</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L2489" href="#L2489">2489</a> <em class="jxr_javadoccomment">     * @return the maven proxy</em>
-<a class="jxr_linenumber" name="L2490" href="#L2490">2490</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L2491" href="#L2491">2491</a>     <strong class="jxr_keyword">private</strong> Proxy getMavenProxy() {
-<a class="jxr_linenumber" name="L2492" href="#L2492">2492</a>         <strong class="jxr_keyword">if</strong> (mavenSettings != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2493" href="#L2493">2493</a>             <strong class="jxr_keyword">final</strong> List&lt;Proxy&gt; proxies = mavenSettings.getProxies();
-<a class="jxr_linenumber" name="L2494" href="#L2494">2494</a>             <strong class="jxr_keyword">if</strong> (proxies != <strong class="jxr_keyword">null</strong> &amp;&amp; !proxies.isEmpty()) {
-<a class="jxr_linenumber" name="L2495" href="#L2495">2495</a>                 <strong class="jxr_keyword">if</strong> (mavenSettingsProxyId != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2496" href="#L2496">2496</a>                     <strong class="jxr_keyword">for</strong> (Proxy proxy : proxies) {
-<a class="jxr_linenumber" name="L2497" href="#L2497">2497</a>                         <strong class="jxr_keyword">if</strong> (mavenSettingsProxyId.equalsIgnoreCase(proxy.getId())) {
-<a class="jxr_linenumber" name="L2498" href="#L2498">2498</a>                             <strong class="jxr_keyword">return</strong> proxy;
-<a class="jxr_linenumber" name="L2499" href="#L2499">2499</a>                         }
-<a class="jxr_linenumber" name="L2500" href="#L2500">2500</a>                     }
-<a class="jxr_linenumber" name="L2501" href="#L2501">2501</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2502" href="#L2502">2502</a>                     <strong class="jxr_keyword">for</strong> (Proxy aProxy : proxies) {
-<a class="jxr_linenumber" name="L2503" href="#L2503">2503</a>                         <strong class="jxr_keyword">if</strong> (aProxy.isActive()) {
-<a class="jxr_linenumber" name="L2504" href="#L2504">2504</a>                             <strong class="jxr_keyword">return</strong> aProxy;
-<a class="jxr_linenumber" name="L2505" href="#L2505">2505</a>                         }
-<a class="jxr_linenumber" name="L2506" href="#L2506">2506</a>                     }
-<a class="jxr_linenumber" name="L2507" href="#L2507">2507</a>                 }
-<a class="jxr_linenumber" name="L2508" href="#L2508">2508</a>             }
-<a class="jxr_linenumber" name="L2509" href="#L2509">2509</a>         }
-<a class="jxr_linenumber" name="L2510" href="#L2510">2510</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L2511" href="#L2511">2511</a>     }
-<a class="jxr_linenumber" name="L2512" href="#L2512">2512</a> 
-<a class="jxr_linenumber" name="L2513" href="#L2513">2513</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2514" href="#L2514">2514</a> <em class="jxr_javadoccomment">     * Returns a reference to the current project. This method is used instead</em>
-<a class="jxr_linenumber" name="L2515" href="#L2515">2515</a> <em class="jxr_javadoccomment">     * of auto-binding the project via component annotation in concrete</em>
-<a class="jxr_linenumber" name="L2516" href="#L2516">2516</a> <em class="jxr_javadoccomment">     * implementations of this. If the child has a</em>
-<a class="jxr_linenumber" name="L2517" href="#L2517">2517</a> <em class="jxr_javadoccomment">     * &lt;code&gt;@Component MavenProject project;&lt;/code&gt; defined then the abstract</em>
-<a class="jxr_linenumber" name="L2518" href="#L2518">2518</a> <em class="jxr_javadoccomment">     * class (i.e. this class) will not have access to the current project (just</em>
-<a class="jxr_linenumber" name="L2519" href="#L2519">2519</a> <em class="jxr_javadoccomment">     * the way Maven works with the binding).</em>
-<a class="jxr_linenumber" name="L2520" href="#L2520">2520</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L2521" href="#L2521">2521</a> <em class="jxr_javadoccomment">     * @return returns a reference to the current project</em>
-<a class="jxr_linenumber" name="L2522" href="#L2522">2522</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L2523" href="#L2523">2523</a>     <strong class="jxr_keyword">protected</strong> MavenProject getProject() {
-<a class="jxr_linenumber" name="L2524" href="#L2524">2524</a>         <strong class="jxr_keyword">return</strong> project;
-<a class="jxr_linenumber" name="L2525" href="#L2525">2525</a>     }
-<a class="jxr_linenumber" name="L2526" href="#L2526">2526</a> 
-<a class="jxr_linenumber" name="L2527" href="#L2527">2527</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2528" href="#L2528">2528</a> <em class="jxr_javadoccomment">     * Returns the list of Maven Projects in this build.</em>
-<a class="jxr_linenumber" name="L2529" href="#L2529">2529</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L2530" href="#L2530">2530</a> <em class="jxr_javadoccomment">     * @return the list of Maven Projects in this build</em>
-<a class="jxr_linenumber" name="L2531" href="#L2531">2531</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L2532" href="#L2532">2532</a>     <strong class="jxr_keyword">protected</strong> List&lt;MavenProject&gt; getReactorProjects() {
-<a class="jxr_linenumber" name="L2533" href="#L2533">2533</a>         <strong class="jxr_keyword">return</strong> reactorProjects;
-<a class="jxr_linenumber" name="L2534" href="#L2534">2534</a>     }
-<a class="jxr_linenumber" name="L2535" href="#L2535">2535</a> 
-<a class="jxr_linenumber" name="L2536" href="#L2536">2536</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2537" href="#L2537">2537</a> <em class="jxr_javadoccomment">     * Combines the format and formats properties into a single collection.</em>
-<a class="jxr_linenumber" name="L2538" href="#L2538">2538</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L2539" href="#L2539">2539</a> <em class="jxr_javadoccomment">     * @return the selected report formats</em>
-<a class="jxr_linenumber" name="L2540" href="#L2540">2540</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L2541" href="#L2541">2541</a>     <strong class="jxr_keyword">private</strong> Set&lt;String&gt; getFormats() {
-<a class="jxr_linenumber" name="L2542" href="#L2542">2542</a>         <strong class="jxr_keyword">final</strong> Set&lt;String&gt; invalid = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
-<a class="jxr_linenumber" name="L2543" href="#L2543">2543</a>         <strong class="jxr_keyword">final</strong> Set&lt;String&gt; selectedFormats = formats == <strong class="jxr_keyword">null</strong> || formats.length == 0 ? <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;() : <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;(Arrays.asList(formats));
-<a class="jxr_linenumber" name="L2544" href="#L2544">2544</a>         selectedFormats.forEach((s) -&gt; {
-<a class="jxr_linenumber" name="L2545" href="#L2545">2545</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L2546" href="#L2546">2546</a>                 ReportGenerator.Format.valueOf(s.toUpperCase());
-<a class="jxr_linenumber" name="L2547" href="#L2547">2547</a>             } <strong class="jxr_keyword">catch</strong> (IllegalArgumentException ex) {
-<a class="jxr_linenumber" name="L2548" href="#L2548">2548</a>                 invalid.add(s);
-<a class="jxr_linenumber" name="L2549" href="#L2549">2549</a>             }
-<a class="jxr_linenumber" name="L2550" href="#L2550">2550</a>         });
-<a class="jxr_linenumber" name="L2551" href="#L2551">2551</a>         invalid.forEach((s) -&gt; getLog().warn(<span class="jxr_string">"Invalid report format specified: "</span> + s));
-<a class="jxr_linenumber" name="L2552" href="#L2552">2552</a>         <strong class="jxr_keyword">if</strong> (selectedFormats.contains(<span class="jxr_string">"true"</span>)) {
-<a class="jxr_linenumber" name="L2553" href="#L2553">2553</a>             selectedFormats.remove(<span class="jxr_string">"true"</span>);
-<a class="jxr_linenumber" name="L2554" href="#L2554">2554</a>         }
-<a class="jxr_linenumber" name="L2555" href="#L2555">2555</a>         <strong class="jxr_keyword">if</strong> (format != <strong class="jxr_keyword">null</strong> &amp;&amp; selectedFormats.isEmpty()) {
-<a class="jxr_linenumber" name="L2556" href="#L2556">2556</a>             selectedFormats.add(format);
-<a class="jxr_linenumber" name="L2557" href="#L2557">2557</a>         }
-<a class="jxr_linenumber" name="L2558" href="#L2558">2558</a>         <strong class="jxr_keyword">return</strong> selectedFormats;
-<a class="jxr_linenumber" name="L2559" href="#L2559">2559</a>     }
-<a class="jxr_linenumber" name="L2560" href="#L2560">2560</a> 
-<a class="jxr_linenumber" name="L2561" href="#L2561">2561</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2562" href="#L2562">2562</a> <em class="jxr_javadoccomment">     * Returns the list of excluded artifacts based on either artifact id or</em>
-<a class="jxr_linenumber" name="L2563" href="#L2563">2563</a> <em class="jxr_javadoccomment">     * group id and artifact id.</em>
-<a class="jxr_linenumber" name="L2564" href="#L2564">2564</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L2565" href="#L2565">2565</a> <em class="jxr_javadoccomment">     * @return a list of artifact to exclude</em>
-<a class="jxr_linenumber" name="L2566" href="#L2566">2566</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L2567" href="#L2567">2567</a>     <strong class="jxr_keyword">public</strong> List&lt;String&gt; getExcludes() {
-<a class="jxr_linenumber" name="L2568" href="#L2568">2568</a>         <strong class="jxr_keyword">if</strong> (excludes == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2569" href="#L2569">2569</a>             excludes = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
-<a class="jxr_linenumber" name="L2570" href="#L2570">2570</a>         }
-<a class="jxr_linenumber" name="L2571" href="#L2571">2571</a>         <strong class="jxr_keyword">return</strong> excludes;
-<a class="jxr_linenumber" name="L2572" href="#L2572">2572</a>     }
-<a class="jxr_linenumber" name="L2573" href="#L2573">2573</a> 
-<a class="jxr_linenumber" name="L2574" href="#L2574">2574</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2575" href="#L2575">2575</a> <em class="jxr_javadoccomment">     * Returns the artifact scope excluded filter.</em>
-<a class="jxr_linenumber" name="L2576" href="#L2576">2576</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L2577" href="#L2577">2577</a> <em class="jxr_javadoccomment">     * @return the artifact scope excluded filter</em>
-<a class="jxr_linenumber" name="L2578" href="#L2578">2578</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L2579" href="#L2579">2579</a>     <strong class="jxr_keyword">protected</strong> Filter&lt;String&gt; getArtifactScopeExcluded() {
-<a class="jxr_linenumber" name="L2580" href="#L2580">2580</a>         <strong class="jxr_keyword">return</strong> artifactScopeExcluded;
-<a class="jxr_linenumber" name="L2581" href="#L2581">2581</a>     }
-<a class="jxr_linenumber" name="L2582" href="#L2582">2582</a> 
-<a class="jxr_linenumber" name="L2583" href="#L2583">2583</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2584" href="#L2584">2584</a> <em class="jxr_javadoccomment">     * Returns the configured settings.</em>
-<a class="jxr_linenumber" name="L2585" href="#L2585">2585</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L2586" href="#L2586">2586</a> <em class="jxr_javadoccomment">     * @return the configured settings</em>
-<a class="jxr_linenumber" name="L2587" href="#L2587">2587</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L2588" href="#L2588">2588</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../org/owasp/dependencycheck/utils/Settings.html">Settings</a> getSettings() {
-<a class="jxr_linenumber" name="L2589" href="#L2589">2589</a>         <strong class="jxr_keyword">return</strong> settings;
-<a class="jxr_linenumber" name="L2590" href="#L2590">2590</a>     }
-<a class="jxr_linenumber" name="L2591" href="#L2591">2591</a> 
-<a class="jxr_linenumber" name="L2592" href="#L2592">2592</a>     <em class="jxr_comment">//&lt;editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary"&gt;</em>
-<a class="jxr_linenumber" name="L2593" href="#L2593">2593</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2594" href="#L2594">2594</a> <em class="jxr_javadoccomment">     * Checks to see if a vulnerability has been identified with a CVSS score</em>
-<a class="jxr_linenumber" name="L2595" href="#L2595">2595</a> <em class="jxr_javadoccomment">     * that is above the threshold set in the configuration.</em>
-<a class="jxr_linenumber" name="L2596" href="#L2596">2596</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L2597" href="#L2597">2597</a> <em class="jxr_javadoccomment">     * @param dependencies the list of dependency objects</em>
-<a class="jxr_linenumber" name="L2598" href="#L2598">2598</a> <em class="jxr_javadoccomment">     * @throws MojoFailureException thrown if a CVSS score is found that is</em>
-<a class="jxr_linenumber" name="L2599" href="#L2599">2599</a> <em class="jxr_javadoccomment">     * higher then the threshold set</em>
-<a class="jxr_linenumber" name="L2600" href="#L2600">2600</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L2601" href="#L2601">2601</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> checkForFailure(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a>[] dependencies) <strong class="jxr_keyword">throws</strong> MojoFailureException {
-<a class="jxr_linenumber" name="L2602" href="#L2602">2602</a>         <strong class="jxr_keyword">final</strong> StringBuilder ids = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="L2603" href="#L2603">2603</a>         <strong class="jxr_keyword">for</strong> (Dependency d : dependencies) {
-<a class="jxr_linenumber" name="L2604" href="#L2604">2604</a>             <strong class="jxr_keyword">boolean</strong> addName = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L2605" href="#L2605">2605</a>             <strong class="jxr_keyword">for</strong> (Vulnerability v : d.getVulnerabilities()) {
-<a class="jxr_linenumber" name="L2606" href="#L2606">2606</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">float</strong> cvssV2 = v.getCvssV2() != <strong class="jxr_keyword">null</strong> ? v.getCvssV2().getScore() : -1;
-<a class="jxr_linenumber" name="L2607" href="#L2607">2607</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">float</strong> cvssV3 = v.getCvssV3() != <strong class="jxr_keyword">null</strong> ? v.getCvssV3().getBaseScore() : -1;
-<a class="jxr_linenumber" name="L2608" href="#L2608">2608</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">float</strong> unscoredCvss = v.getUnscoredSeverity() != <strong class="jxr_keyword">null</strong> ? SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) : -1;
-<a class="jxr_linenumber" name="L2609" href="#L2609">2609</a> 
-<a class="jxr_linenumber" name="L2610" href="#L2610">2610</a>                 <strong class="jxr_keyword">if</strong> (failBuildOnAnyVulnerability || cvssV2 &gt;= failBuildOnCVSS
-<a class="jxr_linenumber" name="L2611" href="#L2611">2611</a>                         || cvssV3 &gt;= failBuildOnCVSS
-<a class="jxr_linenumber" name="L2612" href="#L2612">2612</a>                         || unscoredCvss &gt;= failBuildOnCVSS
-<a class="jxr_linenumber" name="L2613" href="#L2613">2613</a>                         <em class="jxr_comment">//safety net to fail on any if for some reason the above misses on 0</em>
-<a class="jxr_linenumber" name="L2614" href="#L2614">2614</a>                         || (failBuildOnCVSS &lt;= 0.0f)) {
-<a class="jxr_linenumber" name="L2615" href="#L2615">2615</a>                     String name = v.getName();
-<a class="jxr_linenumber" name="L2616" href="#L2616">2616</a>                     <strong class="jxr_keyword">if</strong> (cvssV3 &gt;= 0.0f) {
-<a class="jxr_linenumber" name="L2617" href="#L2617">2617</a>                         name += <span class="jxr_string">"("</span> + cvssV3 + <span class="jxr_string">")"</span>;
-<a class="jxr_linenumber" name="L2618" href="#L2618">2618</a>                     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (cvssV2 &gt;= 0.0f) {
-<a class="jxr_linenumber" name="L2619" href="#L2619">2619</a>                         name += <span class="jxr_string">"("</span> + cvssV2 + <span class="jxr_string">")"</span>;
-<a class="jxr_linenumber" name="L2620" href="#L2620">2620</a>                     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (unscoredCvss &gt;= 0.0f) {
-<a class="jxr_linenumber" name="L2621" href="#L2621">2621</a>                         name += <span class="jxr_string">"("</span> + unscoredCvss + <span class="jxr_string">")"</span>;
-<a class="jxr_linenumber" name="L2622" href="#L2622">2622</a>                     }
-<a class="jxr_linenumber" name="L2623" href="#L2623">2623</a>                     <strong class="jxr_keyword">if</strong> (addName) {
-<a class="jxr_linenumber" name="L2624" href="#L2624">2624</a>                         addName = false;
-<a class="jxr_linenumber" name="L2625" href="#L2625">2625</a>                         ids.append(NEW_LINE).append(d.getFileName()).append(<span class="jxr_string">": "</span>);
-<a class="jxr_linenumber" name="L2626" href="#L2626">2626</a>                         ids.append(name);
-<a class="jxr_linenumber" name="L2627" href="#L2627">2627</a>                     } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2628" href="#L2628">2628</a>                         ids.append(<span class="jxr_string">", "</span>).append(name);
-<a class="jxr_linenumber" name="L2629" href="#L2629">2629</a>                     }
-<a class="jxr_linenumber" name="L2630" href="#L2630">2630</a>                 }
-<a class="jxr_linenumber" name="L2631" href="#L2631">2631</a>             }
-<a class="jxr_linenumber" name="L2632" href="#L2632">2632</a>         }
-<a class="jxr_linenumber" name="L2633" href="#L2633">2633</a>         <strong class="jxr_keyword">if</strong> (ids.length() &gt; 0) {
-<a class="jxr_linenumber" name="L2634" href="#L2634">2634</a>             <strong class="jxr_keyword">final</strong> String msg;
-<a class="jxr_linenumber" name="L2635" href="#L2635">2635</a>             <strong class="jxr_keyword">if</strong> (showSummary) {
-<a class="jxr_linenumber" name="L2636" href="#L2636">2636</a>                 <strong class="jxr_keyword">if</strong> (failBuildOnAnyVulnerability) {
-<a class="jxr_linenumber" name="L2637" href="#L2637">2637</a>                     msg = String.format(<span class="jxr_string">"%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n"</span>
-<a class="jxr_linenumber" name="L2638" href="#L2638">2638</a>                             + <span class="jxr_string">"See the dependency-check report for more details.%n%n"</span>, ids);
-<a class="jxr_linenumber" name="L2639" href="#L2639">2639</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2640" href="#L2640">2640</a>                     msg = String.format(<span class="jxr_string">"%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or "</span>
-<a class="jxr_linenumber" name="L2641" href="#L2641">2641</a>                             + <span class="jxr_string">"equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n"</span>, failBuildOnCVSS, ids);
-<a class="jxr_linenumber" name="L2642" href="#L2642">2642</a>                 }
-<a class="jxr_linenumber" name="L2643" href="#L2643">2643</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2644" href="#L2644">2644</a>                 msg = String.format(<span class="jxr_string">"%n%nOne or more dependencies were identified with vulnerabilities.%n%n"</span>
-<a class="jxr_linenumber" name="L2645" href="#L2645">2645</a>                         + <span class="jxr_string">"See the dependency-check report for more details.%n%n"</span>);
-<a class="jxr_linenumber" name="L2646" href="#L2646">2646</a>             }
-<a class="jxr_linenumber" name="L2647" href="#L2647">2647</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> MojoFailureException(msg);
-<a class="jxr_linenumber" name="L2648" href="#L2648">2648</a>         }
-<a class="jxr_linenumber" name="L2649" href="#L2649">2649</a>     }
-<a class="jxr_linenumber" name="L2650" href="#L2650">2650</a> 
-<a class="jxr_linenumber" name="L2651" href="#L2651">2651</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2652" href="#L2652">2652</a> <em class="jxr_javadoccomment">     * Generates a warning message listing a summary of dependencies and their</em>
-<a class="jxr_linenumber" name="L2653" href="#L2653">2653</a> <em class="jxr_javadoccomment">     * associated CPE and CVE entries.</em>
-<a class="jxr_linenumber" name="L2654" href="#L2654">2654</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L2655" href="#L2655">2655</a> <em class="jxr_javadoccomment">     * @param mp the Maven project for which the summary is shown</em>
-<a class="jxr_linenumber" name="L2656" href="#L2656">2656</a> <em class="jxr_javadoccomment">     * @param dependencies a list of dependency objects</em>
-<a class="jxr_linenumber" name="L2657" href="#L2657">2657</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L2658" href="#L2658">2658</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> showSummary(MavenProject mp, <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a>[] dependencies) {
-<a class="jxr_linenumber" name="L2659" href="#L2659">2659</a>         <strong class="jxr_keyword">if</strong> (showSummary) {
-<a class="jxr_linenumber" name="L2660" href="#L2660">2660</a>             DependencyCheckScanAgent.showSummary(mp.getName(), dependencies);
-<a class="jxr_linenumber" name="L2661" href="#L2661">2661</a>         }
-<a class="jxr_linenumber" name="L2662" href="#L2662">2662</a>     }
-<a class="jxr_linenumber" name="L2663" href="#L2663">2663</a> 
-<a class="jxr_linenumber" name="L2664" href="#L2664">2664</a>     <strong class="jxr_keyword">private</strong> String getDefaultCveUrlModified() {
-<a class="jxr_linenumber" name="L2665" href="#L2665">2665</a>         <strong class="jxr_keyword">return</strong> CveUrlParser.newInstance(getSettings())
-<a class="jxr_linenumber" name="L2666" href="#L2666">2666</a>                 .getDefaultCveUrlModified(cveUrlBase);
-<a class="jxr_linenumber" name="L2667" href="#L2667">2667</a>     }
-<a class="jxr_linenumber" name="L2668" href="#L2668">2668</a> 
-<a class="jxr_linenumber" name="L2669" href="#L2669">2669</a>     <em class="jxr_comment">//&lt;/editor-fold&gt;</em>
-<a class="jxr_linenumber" name="L2670" href="#L2670">2670</a>     <em class="jxr_comment">//CSOFF: ParameterNumber</em>
-<a class="jxr_linenumber" name="L2671" href="#L2671">2671</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> scanDependencyNode(DependencyNode dependencyNode, DependencyNode root,
-<a class="jxr_linenumber" name="L2672" href="#L2672">2672</a>             <a href="../../../../org/owasp/dependencycheck/Engine.html">Engine</a> engine, MavenProject project, List&lt;ArtifactResult&gt; allResolvedDeps,
-<a class="jxr_linenumber" name="L2673" href="#L2673">2673</a>             ProjectBuildingRequest buildingRequest, <strong class="jxr_keyword">boolean</strong> aggregate, <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> exceptionCollection) {
-<a class="jxr_linenumber" name="L2674" href="#L2674">2674</a>         <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> exCol = exceptionCollection;
-<a class="jxr_linenumber" name="L2675" href="#L2675">2675</a>         <strong class="jxr_keyword">if</strong> (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
-<a class="jxr_linenumber" name="L2676" href="#L2676">2676</a>                 || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
-<a class="jxr_linenumber" name="L2677" href="#L2677">2677</a>             <strong class="jxr_keyword">return</strong> exCol;
-<a class="jxr_linenumber" name="L2678" href="#L2678">2678</a>         }
-<a class="jxr_linenumber" name="L2679" href="#L2679">2679</a> 
-<a class="jxr_linenumber" name="L2680" href="#L2680">2680</a>         <strong class="jxr_keyword">boolean</strong> isResolved = false;
-<a class="jxr_linenumber" name="L2681" href="#L2681">2681</a>         File artifactFile = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L2682" href="#L2682">2682</a>         String artifactId = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L2683" href="#L2683">2683</a>         String groupId = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L2684" href="#L2684">2684</a>         String version = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L2685" href="#L2685">2685</a>         List&lt;ArtifactVersion&gt; availableVersions = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L2686" href="#L2686">2686</a>         <strong class="jxr_keyword">if</strong> (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
-<a class="jxr_linenumber" name="L2687" href="#L2687">2687</a>             <strong class="jxr_keyword">final</strong> Artifact a = dependencyNode.getArtifact();
-<a class="jxr_linenumber" name="L2688" href="#L2688">2688</a>             <strong class="jxr_keyword">if</strong> (a.isResolved() &amp;&amp; a.getFile().isFile()) {
-<a class="jxr_linenumber" name="L2689" href="#L2689">2689</a>                 artifactFile = a.getFile();
-<a class="jxr_linenumber" name="L2690" href="#L2690">2690</a>                 isResolved = artifactFile.isFile();
-<a class="jxr_linenumber" name="L2691" href="#L2691">2691</a>                 groupId = a.getGroupId();
-<a class="jxr_linenumber" name="L2692" href="#L2692">2692</a>                 artifactId = a.getArtifactId();
-<a class="jxr_linenumber" name="L2693" href="#L2693">2693</a>                 version = a.getVersion();
-<a class="jxr_linenumber" name="L2694" href="#L2694">2694</a>                 availableVersions = a.getAvailableVersions();
-<a class="jxr_linenumber" name="L2695" href="#L2695">2695</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2696" href="#L2696">2696</a>                 <strong class="jxr_keyword">for</strong> (org.apache.maven.model.Dependency d : project.getDependencies()) {
-<a class="jxr_linenumber" name="L2697" href="#L2697">2697</a>                     <strong class="jxr_keyword">if</strong> (d.getSystemPath() != <strong class="jxr_keyword">null</strong> &amp;&amp; artifactsMatch(d, a)) {
-<a class="jxr_linenumber" name="L2698" href="#L2698">2698</a>                         artifactFile = <strong class="jxr_keyword">new</strong> File(d.getSystemPath());
-<a class="jxr_linenumber" name="L2699" href="#L2699">2699</a>                         isResolved = artifactFile.isFile();
-<a class="jxr_linenumber" name="L2700" href="#L2700">2700</a>                         groupId = a.getGroupId();
-<a class="jxr_linenumber" name="L2701" href="#L2701">2701</a>                         artifactId = a.getArtifactId();
-<a class="jxr_linenumber" name="L2702" href="#L2702">2702</a>                         version = a.getVersion();
-<a class="jxr_linenumber" name="L2703" href="#L2703">2703</a>                         availableVersions = a.getAvailableVersions();
-<a class="jxr_linenumber" name="L2704" href="#L2704">2704</a>                         <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L2705" href="#L2705">2705</a>                     }
-<a class="jxr_linenumber" name="L2706" href="#L2706">2706</a>                 }
-<a class="jxr_linenumber" name="L2707" href="#L2707">2707</a>             }
-<a class="jxr_linenumber" name="L2708" href="#L2708">2708</a>             Throwable ignored = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L2709" href="#L2709">2709</a>             <strong class="jxr_keyword">if</strong> (!isResolved) {
-<a class="jxr_linenumber" name="L2710" href="#L2710">2710</a>                 <em class="jxr_comment">// Issue #4969 Tycho appears to add System-scoped libraries in reactor projects in unresolved state</em>
-<a class="jxr_linenumber" name="L2711" href="#L2711">2711</a>                 <em class="jxr_comment">// so attempt to do a resolution for system-scoped too if still nothing found</em>
-<a class="jxr_linenumber" name="L2712" href="#L2712">2712</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L2713" href="#L2713">2713</a>                     tryResolutionOnce(project, allResolvedDeps, buildingRequest);
-<a class="jxr_linenumber" name="L2714" href="#L2714">2714</a>                     <strong class="jxr_keyword">final</strong> Artifact result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
-<a class="jxr_linenumber" name="L2715" href="#L2715">2715</a>                     isResolved = result.isResolved();
-<a class="jxr_linenumber" name="L2716" href="#L2716">2716</a>                     artifactFile = result.getFile();
-<a class="jxr_linenumber" name="L2717" href="#L2717">2717</a>                     groupId = result.getGroupId();
-<a class="jxr_linenumber" name="L2718" href="#L2718">2718</a>                     artifactId = result.getArtifactId();
-<a class="jxr_linenumber" name="L2719" href="#L2719">2719</a>                     version = result.getVersion();
-<a class="jxr_linenumber" name="L2720" href="#L2720">2720</a>                     availableVersions = result.getAvailableVersions();
-<a class="jxr_linenumber" name="L2721" href="#L2721">2721</a>                 } <strong class="jxr_keyword">catch</strong> (DependencyNotFoundException | DependencyResolverException e) {
-<a class="jxr_linenumber" name="L2722" href="#L2722">2722</a>                     getLog().warn(<span class="jxr_string">"Error performing last-resort System-scoped dependency resolution: "</span> + e.getMessage());
-<a class="jxr_linenumber" name="L2723" href="#L2723">2723</a>                     ignored = e;
-<a class="jxr_linenumber" name="L2724" href="#L2724">2724</a>                 }
-<a class="jxr_linenumber" name="L2725" href="#L2725">2725</a>             }
-<a class="jxr_linenumber" name="L2726" href="#L2726">2726</a>             <strong class="jxr_keyword">if</strong> (!isResolved) {
-<a class="jxr_linenumber" name="L2727" href="#L2727">2727</a>                 <strong class="jxr_keyword">final</strong> StringBuilder message = <strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">"Unable to resolve system scoped dependency: "</span>);
-<a class="jxr_linenumber" name="L2728" href="#L2728">2728</a>                 <strong class="jxr_keyword">if</strong> (artifactFile != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2729" href="#L2729">2729</a>                     message.append(dependencyNode.toNodeString()).append(<span class="jxr_string">" at path "</span>).append(artifactFile);
-<a class="jxr_linenumber" name="L2730" href="#L2730">2730</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2731" href="#L2731">2731</a>                     message.append(dependencyNode.toNodeString()).append(<span class="jxr_string">" at path "</span>).append(a.getFile());
-<a class="jxr_linenumber" name="L2732" href="#L2732">2732</a>                 }
-<a class="jxr_linenumber" name="L2733" href="#L2733">2733</a>                 getLog().error(message);
-<a class="jxr_linenumber" name="L2734" href="#L2734">2734</a>                 <strong class="jxr_keyword">if</strong> (exCol == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2735" href="#L2735">2735</a>                     exCol = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a>();
+<a class="jxr_linenumber" name="L2460" href="#L2460">2460</a>         <strong class="jxr_keyword">if</strong> (System.getProperty(<span class="jxr_string">"jcs.logSystem"</span>) == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2461" href="#L2461">2461</a>             System.setProperty(<span class="jxr_string">"jcs.logSystem"</span>, <span class="jxr_string">"slf4j"</span>);
+<a class="jxr_linenumber" name="L2462" href="#L2462">2462</a>         }
+<a class="jxr_linenumber" name="L2463" href="#L2463">2463</a> 
+<a class="jxr_linenumber" name="L2464" href="#L2464">2464</a>         <strong class="jxr_keyword">final</strong> String[] noisyLoggers = {
+<a class="jxr_linenumber" name="L2465" href="#L2465">2465</a>             <span class="jxr_string">"org.apache.commons.jcs3.auxiliary.disk.AbstractDiskCache"</span>,
+<a class="jxr_linenumber" name="L2466" href="#L2466">2466</a>             <span class="jxr_string">"org.apache.commons.jcs3.engine.memory.AbstractMemoryCache"</span>,
+<a class="jxr_linenumber" name="L2467" href="#L2467">2467</a>             <span class="jxr_string">"org.apache.commons.jcs3.engine.control.CompositeCache"</span>,
+<a class="jxr_linenumber" name="L2468" href="#L2468">2468</a>             <span class="jxr_string">"org.apache.commons.jcs3.auxiliary.disk.indexed.IndexedDiskCache"</span>,
+<a class="jxr_linenumber" name="L2469" href="#L2469">2469</a>             <span class="jxr_string">"org.apache.commons.jcs3.engine.control.CompositeCache"</span>,
+<a class="jxr_linenumber" name="L2470" href="#L2470">2470</a>             <span class="jxr_string">"org.apache.commons.jcs3.engine.memory.AbstractMemoryCache"</span>,
+<a class="jxr_linenumber" name="L2471" href="#L2471">2471</a>             <span class="jxr_string">"org.apache.commons.jcs3.engine.control.event.ElementEventQueue"</span>,
+<a class="jxr_linenumber" name="L2472" href="#L2472">2472</a>             <span class="jxr_string">"org.apache.commons.jcs3.engine.memory.AbstractDoubleLinkedListMemoryCache"</span>,
+<a class="jxr_linenumber" name="L2473" href="#L2473">2473</a>             <span class="jxr_string">"org.apache.commons.jcs3.auxiliary.AuxiliaryCacheConfigurator"</span>,
+<a class="jxr_linenumber" name="L2474" href="#L2474">2474</a>             <span class="jxr_string">"org.apache.commons.jcs3.engine.control.CompositeCacheManager"</span>,
+<a class="jxr_linenumber" name="L2475" href="#L2475">2475</a>             <span class="jxr_string">"org.apache.commons.jcs3.utils.threadpool.ThreadPoolManager"</span>,
+<a class="jxr_linenumber" name="L2476" href="#L2476">2476</a>             <span class="jxr_string">"org.apache.commons.jcs3.engine.control.CompositeCacheConfigurator"</span>};
+<a class="jxr_linenumber" name="L2477" href="#L2477">2477</a>         <strong class="jxr_keyword">for</strong> (String loggerName : noisyLoggers) {
+<a class="jxr_linenumber" name="L2478" href="#L2478">2478</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L2479" href="#L2479">2479</a>                 <em class="jxr_comment">//This is actually a MavenSimpleLogger, but due to various classloader issues, can't work with the directly.</em>
+<a class="jxr_linenumber" name="L2480" href="#L2480">2480</a>                 <strong class="jxr_keyword">final</strong> Logger l = LoggerFactory.getLogger(loggerName);
+<a class="jxr_linenumber" name="L2481" href="#L2481">2481</a>                 <strong class="jxr_keyword">final</strong> Field f = l.getClass().getSuperclass().getDeclaredField(<span class="jxr_string">"currentLogLevel"</span>);
+<a class="jxr_linenumber" name="L2482" href="#L2482">2482</a>                 f.setAccessible(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L2483" href="#L2483">2483</a>                 f.set(l, LocationAwareLogger.ERROR_INT);
+<a class="jxr_linenumber" name="L2484" href="#L2484">2484</a>             } <strong class="jxr_keyword">catch</strong> (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
+<a class="jxr_linenumber" name="L2485" href="#L2485">2485</a>                 getLog().debug(<span class="jxr_string">"Failed to reset the log level of "</span> + loggerName + <span class="jxr_string">", it will continue being noisy."</span>);
+<a class="jxr_linenumber" name="L2486" href="#L2486">2486</a>             }
+<a class="jxr_linenumber" name="L2487" href="#L2487">2487</a>         }
+<a class="jxr_linenumber" name="L2488" href="#L2488">2488</a>     }
+<a class="jxr_linenumber" name="L2489" href="#L2489">2489</a> 
+<a class="jxr_linenumber" name="L2490" href="#L2490">2490</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2491" href="#L2491">2491</a> <em class="jxr_javadoccomment">     * Returns the maven proxy.</em>
+<a class="jxr_linenumber" name="L2492" href="#L2492">2492</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L2493" href="#L2493">2493</a> <em class="jxr_javadoccomment">     * @return the maven proxy</em>
+<a class="jxr_linenumber" name="L2494" href="#L2494">2494</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L2495" href="#L2495">2495</a>     <strong class="jxr_keyword">private</strong> Proxy getMavenProxy() {
+<a class="jxr_linenumber" name="L2496" href="#L2496">2496</a>         <strong class="jxr_keyword">if</strong> (mavenSettings != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2497" href="#L2497">2497</a>             <strong class="jxr_keyword">final</strong> List&lt;Proxy&gt; proxies = mavenSettings.getProxies();
+<a class="jxr_linenumber" name="L2498" href="#L2498">2498</a>             <strong class="jxr_keyword">if</strong> (proxies != <strong class="jxr_keyword">null</strong> &amp;&amp; !proxies.isEmpty()) {
+<a class="jxr_linenumber" name="L2499" href="#L2499">2499</a>                 <strong class="jxr_keyword">if</strong> (mavenSettingsProxyId != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2500" href="#L2500">2500</a>                     <strong class="jxr_keyword">for</strong> (Proxy proxy : proxies) {
+<a class="jxr_linenumber" name="L2501" href="#L2501">2501</a>                         <strong class="jxr_keyword">if</strong> (mavenSettingsProxyId.equalsIgnoreCase(proxy.getId())) {
+<a class="jxr_linenumber" name="L2502" href="#L2502">2502</a>                             <strong class="jxr_keyword">return</strong> proxy;
+<a class="jxr_linenumber" name="L2503" href="#L2503">2503</a>                         }
+<a class="jxr_linenumber" name="L2504" href="#L2504">2504</a>                     }
+<a class="jxr_linenumber" name="L2505" href="#L2505">2505</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2506" href="#L2506">2506</a>                     <strong class="jxr_keyword">for</strong> (Proxy aProxy : proxies) {
+<a class="jxr_linenumber" name="L2507" href="#L2507">2507</a>                         <strong class="jxr_keyword">if</strong> (aProxy.isActive()) {
+<a class="jxr_linenumber" name="L2508" href="#L2508">2508</a>                             <strong class="jxr_keyword">return</strong> aProxy;
+<a class="jxr_linenumber" name="L2509" href="#L2509">2509</a>                         }
+<a class="jxr_linenumber" name="L2510" href="#L2510">2510</a>                     }
+<a class="jxr_linenumber" name="L2511" href="#L2511">2511</a>                 }
+<a class="jxr_linenumber" name="L2512" href="#L2512">2512</a>             }
+<a class="jxr_linenumber" name="L2513" href="#L2513">2513</a>         }
+<a class="jxr_linenumber" name="L2514" href="#L2514">2514</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L2515" href="#L2515">2515</a>     }
+<a class="jxr_linenumber" name="L2516" href="#L2516">2516</a> 
+<a class="jxr_linenumber" name="L2517" href="#L2517">2517</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2518" href="#L2518">2518</a> <em class="jxr_javadoccomment">     * Returns a reference to the current project. This method is used instead</em>
+<a class="jxr_linenumber" name="L2519" href="#L2519">2519</a> <em class="jxr_javadoccomment">     * of auto-binding the project via component annotation in concrete</em>
+<a class="jxr_linenumber" name="L2520" href="#L2520">2520</a> <em class="jxr_javadoccomment">     * implementations of this. If the child has a</em>
+<a class="jxr_linenumber" name="L2521" href="#L2521">2521</a> <em class="jxr_javadoccomment">     * &lt;code&gt;@Component MavenProject project;&lt;/code&gt; defined then the abstract</em>
+<a class="jxr_linenumber" name="L2522" href="#L2522">2522</a> <em class="jxr_javadoccomment">     * class (i.e. this class) will not have access to the current project (just</em>
+<a class="jxr_linenumber" name="L2523" href="#L2523">2523</a> <em class="jxr_javadoccomment">     * the way Maven works with the binding).</em>
+<a class="jxr_linenumber" name="L2524" href="#L2524">2524</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L2525" href="#L2525">2525</a> <em class="jxr_javadoccomment">     * @return returns a reference to the current project</em>
+<a class="jxr_linenumber" name="L2526" href="#L2526">2526</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L2527" href="#L2527">2527</a>     <strong class="jxr_keyword">protected</strong> MavenProject getProject() {
+<a class="jxr_linenumber" name="L2528" href="#L2528">2528</a>         <strong class="jxr_keyword">return</strong> project;
+<a class="jxr_linenumber" name="L2529" href="#L2529">2529</a>     }
+<a class="jxr_linenumber" name="L2530" href="#L2530">2530</a> 
+<a class="jxr_linenumber" name="L2531" href="#L2531">2531</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2532" href="#L2532">2532</a> <em class="jxr_javadoccomment">     * Returns the list of Maven Projects in this build.</em>
+<a class="jxr_linenumber" name="L2533" href="#L2533">2533</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L2534" href="#L2534">2534</a> <em class="jxr_javadoccomment">     * @return the list of Maven Projects in this build</em>
+<a class="jxr_linenumber" name="L2535" href="#L2535">2535</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L2536" href="#L2536">2536</a>     <strong class="jxr_keyword">protected</strong> List&lt;MavenProject&gt; getReactorProjects() {
+<a class="jxr_linenumber" name="L2537" href="#L2537">2537</a>         <strong class="jxr_keyword">return</strong> reactorProjects;
+<a class="jxr_linenumber" name="L2538" href="#L2538">2538</a>     }
+<a class="jxr_linenumber" name="L2539" href="#L2539">2539</a> 
+<a class="jxr_linenumber" name="L2540" href="#L2540">2540</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2541" href="#L2541">2541</a> <em class="jxr_javadoccomment">     * Combines the format and formats properties into a single collection.</em>
+<a class="jxr_linenumber" name="L2542" href="#L2542">2542</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L2543" href="#L2543">2543</a> <em class="jxr_javadoccomment">     * @return the selected report formats</em>
+<a class="jxr_linenumber" name="L2544" href="#L2544">2544</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L2545" href="#L2545">2545</a>     <strong class="jxr_keyword">private</strong> Set&lt;String&gt; getFormats() {
+<a class="jxr_linenumber" name="L2546" href="#L2546">2546</a>         <strong class="jxr_keyword">final</strong> Set&lt;String&gt; invalid = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
+<a class="jxr_linenumber" name="L2547" href="#L2547">2547</a>         <strong class="jxr_keyword">final</strong> Set&lt;String&gt; selectedFormats = formats == <strong class="jxr_keyword">null</strong> || formats.length == 0 ? <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;() : <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;(Arrays.asList(formats));
+<a class="jxr_linenumber" name="L2548" href="#L2548">2548</a>         selectedFormats.forEach((s) -&gt; {
+<a class="jxr_linenumber" name="L2549" href="#L2549">2549</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L2550" href="#L2550">2550</a>                 ReportGenerator.Format.valueOf(s.toUpperCase());
+<a class="jxr_linenumber" name="L2551" href="#L2551">2551</a>             } <strong class="jxr_keyword">catch</strong> (IllegalArgumentException ex) {
+<a class="jxr_linenumber" name="L2552" href="#L2552">2552</a>                 invalid.add(s);
+<a class="jxr_linenumber" name="L2553" href="#L2553">2553</a>             }
+<a class="jxr_linenumber" name="L2554" href="#L2554">2554</a>         });
+<a class="jxr_linenumber" name="L2555" href="#L2555">2555</a>         invalid.forEach((s) -&gt; getLog().warn(<span class="jxr_string">"Invalid report format specified: "</span> + s));
+<a class="jxr_linenumber" name="L2556" href="#L2556">2556</a>         <strong class="jxr_keyword">if</strong> (selectedFormats.contains(<span class="jxr_string">"true"</span>)) {
+<a class="jxr_linenumber" name="L2557" href="#L2557">2557</a>             selectedFormats.remove(<span class="jxr_string">"true"</span>);
+<a class="jxr_linenumber" name="L2558" href="#L2558">2558</a>         }
+<a class="jxr_linenumber" name="L2559" href="#L2559">2559</a>         <strong class="jxr_keyword">if</strong> (format != <strong class="jxr_keyword">null</strong> &amp;&amp; selectedFormats.isEmpty()) {
+<a class="jxr_linenumber" name="L2560" href="#L2560">2560</a>             selectedFormats.add(format);
+<a class="jxr_linenumber" name="L2561" href="#L2561">2561</a>         }
+<a class="jxr_linenumber" name="L2562" href="#L2562">2562</a>         <strong class="jxr_keyword">return</strong> selectedFormats;
+<a class="jxr_linenumber" name="L2563" href="#L2563">2563</a>     }
+<a class="jxr_linenumber" name="L2564" href="#L2564">2564</a> 
+<a class="jxr_linenumber" name="L2565" href="#L2565">2565</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2566" href="#L2566">2566</a> <em class="jxr_javadoccomment">     * Returns the list of excluded artifacts based on either artifact id or</em>
+<a class="jxr_linenumber" name="L2567" href="#L2567">2567</a> <em class="jxr_javadoccomment">     * group id and artifact id.</em>
+<a class="jxr_linenumber" name="L2568" href="#L2568">2568</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L2569" href="#L2569">2569</a> <em class="jxr_javadoccomment">     * @return a list of artifact to exclude</em>
+<a class="jxr_linenumber" name="L2570" href="#L2570">2570</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L2571" href="#L2571">2571</a>     <strong class="jxr_keyword">public</strong> List&lt;String&gt; getExcludes() {
+<a class="jxr_linenumber" name="L2572" href="#L2572">2572</a>         <strong class="jxr_keyword">if</strong> (excludes == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2573" href="#L2573">2573</a>             excludes = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
+<a class="jxr_linenumber" name="L2574" href="#L2574">2574</a>         }
+<a class="jxr_linenumber" name="L2575" href="#L2575">2575</a>         <strong class="jxr_keyword">return</strong> excludes;
+<a class="jxr_linenumber" name="L2576" href="#L2576">2576</a>     }
+<a class="jxr_linenumber" name="L2577" href="#L2577">2577</a> 
+<a class="jxr_linenumber" name="L2578" href="#L2578">2578</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2579" href="#L2579">2579</a> <em class="jxr_javadoccomment">     * Returns the artifact scope excluded filter.</em>
+<a class="jxr_linenumber" name="L2580" href="#L2580">2580</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L2581" href="#L2581">2581</a> <em class="jxr_javadoccomment">     * @return the artifact scope excluded filter</em>
+<a class="jxr_linenumber" name="L2582" href="#L2582">2582</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L2583" href="#L2583">2583</a>     <strong class="jxr_keyword">protected</strong> Filter&lt;String&gt; getArtifactScopeExcluded() {
+<a class="jxr_linenumber" name="L2584" href="#L2584">2584</a>         <strong class="jxr_keyword">return</strong> artifactScopeExcluded;
+<a class="jxr_linenumber" name="L2585" href="#L2585">2585</a>     }
+<a class="jxr_linenumber" name="L2586" href="#L2586">2586</a> 
+<a class="jxr_linenumber" name="L2587" href="#L2587">2587</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2588" href="#L2588">2588</a> <em class="jxr_javadoccomment">     * Returns the configured settings.</em>
+<a class="jxr_linenumber" name="L2589" href="#L2589">2589</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L2590" href="#L2590">2590</a> <em class="jxr_javadoccomment">     * @return the configured settings</em>
+<a class="jxr_linenumber" name="L2591" href="#L2591">2591</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L2592" href="#L2592">2592</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../org/owasp/dependencycheck/utils/Settings.html">Settings</a> getSettings() {
+<a class="jxr_linenumber" name="L2593" href="#L2593">2593</a>         <strong class="jxr_keyword">return</strong> settings;
+<a class="jxr_linenumber" name="L2594" href="#L2594">2594</a>     }
+<a class="jxr_linenumber" name="L2595" href="#L2595">2595</a> 
+<a class="jxr_linenumber" name="L2596" href="#L2596">2596</a>     <em class="jxr_comment">//&lt;editor-fold defaultstate="collapsed" desc="Methods to fail build or show summary"&gt;</em>
+<a class="jxr_linenumber" name="L2597" href="#L2597">2597</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2598" href="#L2598">2598</a> <em class="jxr_javadoccomment">     * Checks to see if a vulnerability has been identified with a CVSS score</em>
+<a class="jxr_linenumber" name="L2599" href="#L2599">2599</a> <em class="jxr_javadoccomment">     * that is above the threshold set in the configuration.</em>
+<a class="jxr_linenumber" name="L2600" href="#L2600">2600</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L2601" href="#L2601">2601</a> <em class="jxr_javadoccomment">     * @param dependencies the list of dependency objects</em>
+<a class="jxr_linenumber" name="L2602" href="#L2602">2602</a> <em class="jxr_javadoccomment">     * @throws MojoFailureException thrown if a CVSS score is found that is</em>
+<a class="jxr_linenumber" name="L2603" href="#L2603">2603</a> <em class="jxr_javadoccomment">     * higher then the threshold set</em>
+<a class="jxr_linenumber" name="L2604" href="#L2604">2604</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L2605" href="#L2605">2605</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> checkForFailure(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a>[] dependencies) <strong class="jxr_keyword">throws</strong> MojoFailureException {
+<a class="jxr_linenumber" name="L2606" href="#L2606">2606</a>         <strong class="jxr_keyword">final</strong> StringBuilder ids = <strong class="jxr_keyword">new</strong> StringBuilder();
+<a class="jxr_linenumber" name="L2607" href="#L2607">2607</a>         <strong class="jxr_keyword">for</strong> (Dependency d : dependencies) {
+<a class="jxr_linenumber" name="L2608" href="#L2608">2608</a>             <strong class="jxr_keyword">boolean</strong> addName = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L2609" href="#L2609">2609</a>             <strong class="jxr_keyword">for</strong> (Vulnerability v : d.getVulnerabilities()) {
+<a class="jxr_linenumber" name="L2610" href="#L2610">2610</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">float</strong> cvssV2 = v.getCvssV2() != <strong class="jxr_keyword">null</strong> ? v.getCvssV2().getScore() : -1;
+<a class="jxr_linenumber" name="L2611" href="#L2611">2611</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">float</strong> cvssV3 = v.getCvssV3() != <strong class="jxr_keyword">null</strong> ? v.getCvssV3().getBaseScore() : -1;
+<a class="jxr_linenumber" name="L2612" href="#L2612">2612</a>                 <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">float</strong> unscoredCvss = v.getUnscoredSeverity() != <strong class="jxr_keyword">null</strong> ? SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) : -1;
+<a class="jxr_linenumber" name="L2613" href="#L2613">2613</a> 
+<a class="jxr_linenumber" name="L2614" href="#L2614">2614</a>                 <strong class="jxr_keyword">if</strong> (failBuildOnAnyVulnerability || cvssV2 &gt;= failBuildOnCVSS
+<a class="jxr_linenumber" name="L2615" href="#L2615">2615</a>                         || cvssV3 &gt;= failBuildOnCVSS
+<a class="jxr_linenumber" name="L2616" href="#L2616">2616</a>                         || unscoredCvss &gt;= failBuildOnCVSS
+<a class="jxr_linenumber" name="L2617" href="#L2617">2617</a>                         <em class="jxr_comment">//safety net to fail on any if for some reason the above misses on 0</em>
+<a class="jxr_linenumber" name="L2618" href="#L2618">2618</a>                         || (failBuildOnCVSS &lt;= 0.0f)) {
+<a class="jxr_linenumber" name="L2619" href="#L2619">2619</a>                     String name = v.getName();
+<a class="jxr_linenumber" name="L2620" href="#L2620">2620</a>                     <strong class="jxr_keyword">if</strong> (cvssV3 &gt;= 0.0f) {
+<a class="jxr_linenumber" name="L2621" href="#L2621">2621</a>                         name += <span class="jxr_string">"("</span> + cvssV3 + <span class="jxr_string">")"</span>;
+<a class="jxr_linenumber" name="L2622" href="#L2622">2622</a>                     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (cvssV2 &gt;= 0.0f) {
+<a class="jxr_linenumber" name="L2623" href="#L2623">2623</a>                         name += <span class="jxr_string">"("</span> + cvssV2 + <span class="jxr_string">")"</span>;
+<a class="jxr_linenumber" name="L2624" href="#L2624">2624</a>                     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (unscoredCvss &gt;= 0.0f) {
+<a class="jxr_linenumber" name="L2625" href="#L2625">2625</a>                         name += <span class="jxr_string">"("</span> + unscoredCvss + <span class="jxr_string">")"</span>;
+<a class="jxr_linenumber" name="L2626" href="#L2626">2626</a>                     }
+<a class="jxr_linenumber" name="L2627" href="#L2627">2627</a>                     <strong class="jxr_keyword">if</strong> (addName) {
+<a class="jxr_linenumber" name="L2628" href="#L2628">2628</a>                         addName = false;
+<a class="jxr_linenumber" name="L2629" href="#L2629">2629</a>                         ids.append(NEW_LINE).append(d.getFileName()).append(<span class="jxr_string">": "</span>);
+<a class="jxr_linenumber" name="L2630" href="#L2630">2630</a>                         ids.append(name);
+<a class="jxr_linenumber" name="L2631" href="#L2631">2631</a>                     } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2632" href="#L2632">2632</a>                         ids.append(<span class="jxr_string">", "</span>).append(name);
+<a class="jxr_linenumber" name="L2633" href="#L2633">2633</a>                     }
+<a class="jxr_linenumber" name="L2634" href="#L2634">2634</a>                 }
+<a class="jxr_linenumber" name="L2635" href="#L2635">2635</a>             }
+<a class="jxr_linenumber" name="L2636" href="#L2636">2636</a>         }
+<a class="jxr_linenumber" name="L2637" href="#L2637">2637</a>         <strong class="jxr_keyword">if</strong> (ids.length() &gt; 0) {
+<a class="jxr_linenumber" name="L2638" href="#L2638">2638</a>             <strong class="jxr_keyword">final</strong> String msg;
+<a class="jxr_linenumber" name="L2639" href="#L2639">2639</a>             <strong class="jxr_keyword">if</strong> (showSummary) {
+<a class="jxr_linenumber" name="L2640" href="#L2640">2640</a>                 <strong class="jxr_keyword">if</strong> (failBuildOnAnyVulnerability) {
+<a class="jxr_linenumber" name="L2641" href="#L2641">2641</a>                     msg = String.format(<span class="jxr_string">"%n%nOne or more dependencies were identified with vulnerabilities: %n%s%n%n"</span>
+<a class="jxr_linenumber" name="L2642" href="#L2642">2642</a>                             + <span class="jxr_string">"See the dependency-check report for more details.%n%n"</span>, ids);
+<a class="jxr_linenumber" name="L2643" href="#L2643">2643</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2644" href="#L2644">2644</a>                     msg = String.format(<span class="jxr_string">"%n%nOne or more dependencies were identified with vulnerabilities that have a CVSS score greater than or "</span>
+<a class="jxr_linenumber" name="L2645" href="#L2645">2645</a>                             + <span class="jxr_string">"equal to '%.1f': %n%s%n%nSee the dependency-check report for more details.%n%n"</span>, failBuildOnCVSS, ids);
+<a class="jxr_linenumber" name="L2646" href="#L2646">2646</a>                 }
+<a class="jxr_linenumber" name="L2647" href="#L2647">2647</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2648" href="#L2648">2648</a>                 msg = String.format(<span class="jxr_string">"%n%nOne or more dependencies were identified with vulnerabilities.%n%n"</span>
+<a class="jxr_linenumber" name="L2649" href="#L2649">2649</a>                         + <span class="jxr_string">"See the dependency-check report for more details.%n%n"</span>);
+<a class="jxr_linenumber" name="L2650" href="#L2650">2650</a>             }
+<a class="jxr_linenumber" name="L2651" href="#L2651">2651</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> MojoFailureException(msg);
+<a class="jxr_linenumber" name="L2652" href="#L2652">2652</a>         }
+<a class="jxr_linenumber" name="L2653" href="#L2653">2653</a>     }
+<a class="jxr_linenumber" name="L2654" href="#L2654">2654</a> 
+<a class="jxr_linenumber" name="L2655" href="#L2655">2655</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2656" href="#L2656">2656</a> <em class="jxr_javadoccomment">     * Generates a warning message listing a summary of dependencies and their</em>
+<a class="jxr_linenumber" name="L2657" href="#L2657">2657</a> <em class="jxr_javadoccomment">     * associated CPE and CVE entries.</em>
+<a class="jxr_linenumber" name="L2658" href="#L2658">2658</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L2659" href="#L2659">2659</a> <em class="jxr_javadoccomment">     * @param mp the Maven project for which the summary is shown</em>
+<a class="jxr_linenumber" name="L2660" href="#L2660">2660</a> <em class="jxr_javadoccomment">     * @param dependencies a list of dependency objects</em>
+<a class="jxr_linenumber" name="L2661" href="#L2661">2661</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L2662" href="#L2662">2662</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> showSummary(MavenProject mp, <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a>[] dependencies) {
+<a class="jxr_linenumber" name="L2663" href="#L2663">2663</a>         <strong class="jxr_keyword">if</strong> (showSummary) {
+<a class="jxr_linenumber" name="L2664" href="#L2664">2664</a>             DependencyCheckScanAgent.showSummary(mp.getName(), dependencies);
+<a class="jxr_linenumber" name="L2665" href="#L2665">2665</a>         }
+<a class="jxr_linenumber" name="L2666" href="#L2666">2666</a>     }
+<a class="jxr_linenumber" name="L2667" href="#L2667">2667</a> 
+<a class="jxr_linenumber" name="L2668" href="#L2668">2668</a>     <strong class="jxr_keyword">private</strong> String getDefaultCveUrlModified() {
+<a class="jxr_linenumber" name="L2669" href="#L2669">2669</a>         <strong class="jxr_keyword">return</strong> CveUrlParser.newInstance(getSettings())
+<a class="jxr_linenumber" name="L2670" href="#L2670">2670</a>                 .getDefaultCveUrlModified(cveUrlBase);
+<a class="jxr_linenumber" name="L2671" href="#L2671">2671</a>     }
+<a class="jxr_linenumber" name="L2672" href="#L2672">2672</a> 
+<a class="jxr_linenumber" name="L2673" href="#L2673">2673</a>     <em class="jxr_comment">//&lt;/editor-fold&gt;</em>
+<a class="jxr_linenumber" name="L2674" href="#L2674">2674</a>     <em class="jxr_comment">//CSOFF: ParameterNumber</em>
+<a class="jxr_linenumber" name="L2675" href="#L2675">2675</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> scanDependencyNode(DependencyNode dependencyNode, DependencyNode root,
+<a class="jxr_linenumber" name="L2676" href="#L2676">2676</a>             <a href="../../../../org/owasp/dependencycheck/Engine.html">Engine</a> engine, MavenProject project, List&lt;ArtifactResult&gt; allResolvedDeps,
+<a class="jxr_linenumber" name="L2677" href="#L2677">2677</a>             ProjectBuildingRequest buildingRequest, <strong class="jxr_keyword">boolean</strong> aggregate, <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> exceptionCollection) {
+<a class="jxr_linenumber" name="L2678" href="#L2678">2678</a>         <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> exCol = exceptionCollection;
+<a class="jxr_linenumber" name="L2679" href="#L2679">2679</a>         <strong class="jxr_keyword">if</strong> (artifactScopeExcluded.passes(dependencyNode.getArtifact().getScope())
+<a class="jxr_linenumber" name="L2680" href="#L2680">2680</a>                 || artifactTypeExcluded.passes(dependencyNode.getArtifact().getType())) {
+<a class="jxr_linenumber" name="L2681" href="#L2681">2681</a>             <strong class="jxr_keyword">return</strong> exCol;
+<a class="jxr_linenumber" name="L2682" href="#L2682">2682</a>         }
+<a class="jxr_linenumber" name="L2683" href="#L2683">2683</a> 
+<a class="jxr_linenumber" name="L2684" href="#L2684">2684</a>         <strong class="jxr_keyword">boolean</strong> isResolved = false;
+<a class="jxr_linenumber" name="L2685" href="#L2685">2685</a>         File artifactFile = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L2686" href="#L2686">2686</a>         String artifactId = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L2687" href="#L2687">2687</a>         String groupId = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L2688" href="#L2688">2688</a>         String version = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L2689" href="#L2689">2689</a>         List&lt;ArtifactVersion&gt; availableVersions = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L2690" href="#L2690">2690</a>         <strong class="jxr_keyword">if</strong> (org.apache.maven.artifact.Artifact.SCOPE_SYSTEM.equals(dependencyNode.getArtifact().getScope())) {
+<a class="jxr_linenumber" name="L2691" href="#L2691">2691</a>             <strong class="jxr_keyword">final</strong> Artifact a = dependencyNode.getArtifact();
+<a class="jxr_linenumber" name="L2692" href="#L2692">2692</a>             <strong class="jxr_keyword">if</strong> (a.isResolved() &amp;&amp; a.getFile().isFile()) {
+<a class="jxr_linenumber" name="L2693" href="#L2693">2693</a>                 artifactFile = a.getFile();
+<a class="jxr_linenumber" name="L2694" href="#L2694">2694</a>                 isResolved = artifactFile.isFile();
+<a class="jxr_linenumber" name="L2695" href="#L2695">2695</a>                 groupId = a.getGroupId();
+<a class="jxr_linenumber" name="L2696" href="#L2696">2696</a>                 artifactId = a.getArtifactId();
+<a class="jxr_linenumber" name="L2697" href="#L2697">2697</a>                 version = a.getVersion();
+<a class="jxr_linenumber" name="L2698" href="#L2698">2698</a>                 availableVersions = a.getAvailableVersions();
+<a class="jxr_linenumber" name="L2699" href="#L2699">2699</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2700" href="#L2700">2700</a>                 <strong class="jxr_keyword">for</strong> (org.apache.maven.model.Dependency d : project.getDependencies()) {
+<a class="jxr_linenumber" name="L2701" href="#L2701">2701</a>                     <strong class="jxr_keyword">if</strong> (d.getSystemPath() != <strong class="jxr_keyword">null</strong> &amp;&amp; artifactsMatch(d, a)) {
+<a class="jxr_linenumber" name="L2702" href="#L2702">2702</a>                         artifactFile = <strong class="jxr_keyword">new</strong> File(d.getSystemPath());
+<a class="jxr_linenumber" name="L2703" href="#L2703">2703</a>                         isResolved = artifactFile.isFile();
+<a class="jxr_linenumber" name="L2704" href="#L2704">2704</a>                         groupId = a.getGroupId();
+<a class="jxr_linenumber" name="L2705" href="#L2705">2705</a>                         artifactId = a.getArtifactId();
+<a class="jxr_linenumber" name="L2706" href="#L2706">2706</a>                         version = a.getVersion();
+<a class="jxr_linenumber" name="L2707" href="#L2707">2707</a>                         availableVersions = a.getAvailableVersions();
+<a class="jxr_linenumber" name="L2708" href="#L2708">2708</a>                         <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L2709" href="#L2709">2709</a>                     }
+<a class="jxr_linenumber" name="L2710" href="#L2710">2710</a>                 }
+<a class="jxr_linenumber" name="L2711" href="#L2711">2711</a>             }
+<a class="jxr_linenumber" name="L2712" href="#L2712">2712</a>             Throwable ignored = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L2713" href="#L2713">2713</a>             <strong class="jxr_keyword">if</strong> (!isResolved) {
+<a class="jxr_linenumber" name="L2714" href="#L2714">2714</a>                 <em class="jxr_comment">// Issue #4969 Tycho appears to add System-scoped libraries in reactor projects in unresolved state</em>
+<a class="jxr_linenumber" name="L2715" href="#L2715">2715</a>                 <em class="jxr_comment">// so attempt to do a resolution for system-scoped too if still nothing found</em>
+<a class="jxr_linenumber" name="L2716" href="#L2716">2716</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L2717" href="#L2717">2717</a>                     tryResolutionOnce(project, allResolvedDeps, buildingRequest);
+<a class="jxr_linenumber" name="L2718" href="#L2718">2718</a>                     <strong class="jxr_keyword">final</strong> Artifact result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
+<a class="jxr_linenumber" name="L2719" href="#L2719">2719</a>                     isResolved = result.isResolved();
+<a class="jxr_linenumber" name="L2720" href="#L2720">2720</a>                     artifactFile = result.getFile();
+<a class="jxr_linenumber" name="L2721" href="#L2721">2721</a>                     groupId = result.getGroupId();
+<a class="jxr_linenumber" name="L2722" href="#L2722">2722</a>                     artifactId = result.getArtifactId();
+<a class="jxr_linenumber" name="L2723" href="#L2723">2723</a>                     version = result.getVersion();
+<a class="jxr_linenumber" name="L2724" href="#L2724">2724</a>                     availableVersions = result.getAvailableVersions();
+<a class="jxr_linenumber" name="L2725" href="#L2725">2725</a>                 } <strong class="jxr_keyword">catch</strong> (DependencyNotFoundException | DependencyResolverException e) {
+<a class="jxr_linenumber" name="L2726" href="#L2726">2726</a>                     getLog().warn(<span class="jxr_string">"Error performing last-resort System-scoped dependency resolution: "</span> + e.getMessage());
+<a class="jxr_linenumber" name="L2727" href="#L2727">2727</a>                     ignored = e;
+<a class="jxr_linenumber" name="L2728" href="#L2728">2728</a>                 }
+<a class="jxr_linenumber" name="L2729" href="#L2729">2729</a>             }
+<a class="jxr_linenumber" name="L2730" href="#L2730">2730</a>             <strong class="jxr_keyword">if</strong> (!isResolved) {
+<a class="jxr_linenumber" name="L2731" href="#L2731">2731</a>                 <strong class="jxr_keyword">final</strong> StringBuilder message = <strong class="jxr_keyword">new</strong> StringBuilder(<span class="jxr_string">"Unable to resolve system scoped dependency: "</span>);
+<a class="jxr_linenumber" name="L2732" href="#L2732">2732</a>                 <strong class="jxr_keyword">if</strong> (artifactFile != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2733" href="#L2733">2733</a>                     message.append(dependencyNode.toNodeString()).append(<span class="jxr_string">" at path "</span>).append(artifactFile);
+<a class="jxr_linenumber" name="L2734" href="#L2734">2734</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2735" href="#L2735">2735</a>                     message.append(dependencyNode.toNodeString()).append(<span class="jxr_string">" at path "</span>).append(a.getFile());
 <a class="jxr_linenumber" name="L2736" href="#L2736">2736</a>                 }
-<a class="jxr_linenumber" name="L2737" href="#L2737">2737</a>                 <strong class="jxr_keyword">final</strong> Exception thrown = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/exception/DependencyNotFoundException.html">DependencyNotFoundException</a>(message.toString());
-<a class="jxr_linenumber" name="L2738" href="#L2738">2738</a>                 <strong class="jxr_keyword">if</strong> (ignored != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2739" href="#L2739">2739</a>                     thrown.addSuppressed(ignored);
+<a class="jxr_linenumber" name="L2737" href="#L2737">2737</a>                 getLog().error(message);
+<a class="jxr_linenumber" name="L2738" href="#L2738">2738</a>                 <strong class="jxr_keyword">if</strong> (exCol == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2739" href="#L2739">2739</a>                     exCol = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a>();
 <a class="jxr_linenumber" name="L2740" href="#L2740">2740</a>                 }
-<a class="jxr_linenumber" name="L2741" href="#L2741">2741</a>                 exCol.addException(thrown);
-<a class="jxr_linenumber" name="L2742" href="#L2742">2742</a>             }
-<a class="jxr_linenumber" name="L2743" href="#L2743">2743</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2744" href="#L2744">2744</a>             <strong class="jxr_keyword">final</strong> Artifact dependencyArtifact = dependencyNode.getArtifact();
-<a class="jxr_linenumber" name="L2745" href="#L2745">2745</a>             <strong class="jxr_keyword">final</strong> Artifact result;
-<a class="jxr_linenumber" name="L2746" href="#L2746">2746</a>             <strong class="jxr_keyword">if</strong> (dependencyArtifact.isResolved()) {
-<a class="jxr_linenumber" name="L2747" href="#L2747">2747</a>                 <em class="jxr_comment">//All transitive dependencies, excluding reactor and dependencyManagement artifacts should</em>
-<a class="jxr_linenumber" name="L2748" href="#L2748">2748</a>                 <em class="jxr_comment">//have been resolved by Maven prior to invoking the plugin - resolving the dependencies</em>
-<a class="jxr_linenumber" name="L2749" href="#L2749">2749</a>                 <em class="jxr_comment">//manually is unnecessary, and does not work in some cases (issue-1751)</em>
-<a class="jxr_linenumber" name="L2750" href="#L2750">2750</a>                 getLog().debug(String.format(<span class="jxr_string">"Skipping artifact %s, already resolved"</span>, dependencyArtifact.getArtifactId()));
-<a class="jxr_linenumber" name="L2751" href="#L2751">2751</a>                 result = dependencyArtifact;
-<a class="jxr_linenumber" name="L2752" href="#L2752">2752</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2753" href="#L2753">2753</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L2754" href="#L2754">2754</a>                     tryResolutionOnce(project, allResolvedDeps, buildingRequest);
-<a class="jxr_linenumber" name="L2755" href="#L2755">2755</a>                     result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
-<a class="jxr_linenumber" name="L2756" href="#L2756">2756</a>                 } <strong class="jxr_keyword">catch</strong> (DependencyNotFoundException | DependencyResolverException ex) {
-<a class="jxr_linenumber" name="L2757" href="#L2757">2757</a>                     getLog().debug(String.format(<span class="jxr_string">"Aggregate : %s"</span>, aggregate));
-<a class="jxr_linenumber" name="L2758" href="#L2758">2758</a>                     <strong class="jxr_keyword">boolean</strong> addException = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L2759" href="#L2759">2759</a>                     <em class="jxr_comment">//CSOFF: EmptyBlock</em>
-<a class="jxr_linenumber" name="L2760" href="#L2760">2760</a>                     <strong class="jxr_keyword">if</strong> (!aggregate) {
-<a class="jxr_linenumber" name="L2761" href="#L2761">2761</a>                         <em class="jxr_comment">// do nothing - the exception is to be reported</em>
-<a class="jxr_linenumber" name="L2762" href="#L2762">2762</a>                     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (addReactorDependency(engine, dependencyNode.getArtifact(), project)) {
-<a class="jxr_linenumber" name="L2763" href="#L2763">2763</a>                         <em class="jxr_comment">// successfully resolved as a reactor dependency - swallow the exception</em>
-<a class="jxr_linenumber" name="L2764" href="#L2764">2764</a>                         addException = false;
-<a class="jxr_linenumber" name="L2765" href="#L2765">2765</a>                     }
-<a class="jxr_linenumber" name="L2766" href="#L2766">2766</a>                     <strong class="jxr_keyword">if</strong> (addException) {
-<a class="jxr_linenumber" name="L2767" href="#L2767">2767</a>                         <strong class="jxr_keyword">if</strong> (exCol == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2768" href="#L2768">2768</a>                             exCol = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a>();
-<a class="jxr_linenumber" name="L2769" href="#L2769">2769</a>                         }
-<a class="jxr_linenumber" name="L2770" href="#L2770">2770</a>                         exCol.addException(ex);
-<a class="jxr_linenumber" name="L2771" href="#L2771">2771</a>                     }
-<a class="jxr_linenumber" name="L2772" href="#L2772">2772</a>                     <strong class="jxr_keyword">return</strong> exCol;
-<a class="jxr_linenumber" name="L2773" href="#L2773">2773</a>                 }
-<a class="jxr_linenumber" name="L2774" href="#L2774">2774</a>             }
-<a class="jxr_linenumber" name="L2775" href="#L2775">2775</a>             <strong class="jxr_keyword">if</strong> (aggregate &amp;&amp; virtualSnapshotsFromReactor
-<a class="jxr_linenumber" name="L2776" href="#L2776">2776</a>                     &amp;&amp; dependencyNode.getArtifact().isSnapshot()
-<a class="jxr_linenumber" name="L2777" href="#L2777">2777</a>                     &amp;&amp; addSnapshotReactorDependency(engine, dependencyNode.getArtifact(), project)) {
-<a class="jxr_linenumber" name="L2778" href="#L2778">2778</a>                 <strong class="jxr_keyword">return</strong> exCol;
-<a class="jxr_linenumber" name="L2779" href="#L2779">2779</a>             }
-<a class="jxr_linenumber" name="L2780" href="#L2780">2780</a>             isResolved = result.isResolved();
-<a class="jxr_linenumber" name="L2781" href="#L2781">2781</a>             artifactFile = result.getFile();
-<a class="jxr_linenumber" name="L2782" href="#L2782">2782</a>             groupId = result.getGroupId();
-<a class="jxr_linenumber" name="L2783" href="#L2783">2783</a>             artifactId = result.getArtifactId();
-<a class="jxr_linenumber" name="L2784" href="#L2784">2784</a>             version = result.getVersion();
-<a class="jxr_linenumber" name="L2785" href="#L2785">2785</a>             availableVersions = result.getAvailableVersions();
-<a class="jxr_linenumber" name="L2786" href="#L2786">2786</a>         }
-<a class="jxr_linenumber" name="L2787" href="#L2787">2787</a>         <strong class="jxr_keyword">if</strong> (isResolved &amp;&amp; artifactFile != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2788" href="#L2788">2788</a>             <strong class="jxr_keyword">final</strong> List&lt;Dependency&gt; deps = engine.scan(artifactFile.getAbsoluteFile(),
-<a class="jxr_linenumber" name="L2789" href="#L2789">2789</a>                     createProjectReferenceName(project, dependencyNode));
-<a class="jxr_linenumber" name="L2790" href="#L2790">2790</a>             <strong class="jxr_keyword">if</strong> (deps != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2791" href="#L2791">2791</a>                 processResolvedArtifact(artifactFile, deps, groupId, artifactId, version, root, project, availableVersions, dependencyNode);
-<a class="jxr_linenumber" name="L2792" href="#L2792">2792</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"import"</span>.equals(dependencyNode.getArtifact().getScope())) {
-<a class="jxr_linenumber" name="L2793" href="#L2793">2793</a>                 <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Skipping '%s:%s' in project %s as it uses an `import` scope"</span>,
-<a class="jxr_linenumber" name="L2794" href="#L2794">2794</a>                         dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
-<a class="jxr_linenumber" name="L2795" href="#L2795">2795</a>                 getLog().debug(msg);
-<a class="jxr_linenumber" name="L2796" href="#L2796">2796</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"pom"</span>.equals(dependencyNode.getArtifact().getType())) {
-<a class="jxr_linenumber" name="L2797" href="#L2797">2797</a>                 exCol = processPomArtifact(artifactFile, root, project, engine, exCol);
-<a class="jxr_linenumber" name="L2798" href="#L2798">2798</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2799" href="#L2799">2799</a>                 <strong class="jxr_keyword">if</strong> (!scannedFiles.contains(artifactFile)) {
-<a class="jxr_linenumber" name="L2800" href="#L2800">2800</a>                     <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"No analyzer could be found or the artifact has been scanned twice for '%s:%s' in project %s"</span>,
-<a class="jxr_linenumber" name="L2801" href="#L2801">2801</a>                             dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
-<a class="jxr_linenumber" name="L2802" href="#L2802">2802</a>                     getLog().warn(msg);
-<a class="jxr_linenumber" name="L2803" href="#L2803">2803</a>                 }
-<a class="jxr_linenumber" name="L2804" href="#L2804">2804</a>             }
-<a class="jxr_linenumber" name="L2805" href="#L2805">2805</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2806" href="#L2806">2806</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Unable to resolve '%s' in project %s"</span>,
-<a class="jxr_linenumber" name="L2807" href="#L2807">2807</a>                     dependencyNode.getArtifact().getId(), project.getName());
-<a class="jxr_linenumber" name="L2808" href="#L2808">2808</a>             getLog().debug(msg);
-<a class="jxr_linenumber" name="L2809" href="#L2809">2809</a>             <strong class="jxr_keyword">if</strong> (exCol == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2810" href="#L2810">2810</a>                 exCol = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a>();
-<a class="jxr_linenumber" name="L2811" href="#L2811">2811</a>             }
-<a class="jxr_linenumber" name="L2812" href="#L2812">2812</a>         }
-<a class="jxr_linenumber" name="L2813" href="#L2813">2813</a>         <strong class="jxr_keyword">return</strong> exCol;
-<a class="jxr_linenumber" name="L2814" href="#L2814">2814</a>     }
-<a class="jxr_linenumber" name="L2815" href="#L2815">2815</a> 
-<a class="jxr_linenumber" name="L2816" href="#L2816">2816</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L2817" href="#L2817">2817</a> <em class="jxr_javadoccomment">     * Try resolution of artifacts once, allowing for</em>
-<a class="jxr_linenumber" name="L2818" href="#L2818">2818</a> <em class="jxr_javadoccomment">     * DependencyResolutionException due to reactor-dependencies not being</em>
-<a class="jxr_linenumber" name="L2819" href="#L2819">2819</a> <em class="jxr_javadoccomment">     * resolvable.</em>
-<a class="jxr_linenumber" name="L2820" href="#L2820">2820</a> <em class="jxr_javadoccomment">     * &lt;br&gt;</em>
-<a class="jxr_linenumber" name="L2821" href="#L2821">2821</a> <em class="jxr_javadoccomment">     * The resolution is attempted only if allResolvedDeps is still empty. The</em>
-<a class="jxr_linenumber" name="L2822" href="#L2822">2822</a> <em class="jxr_javadoccomment">     * assumption is that for any given project at least one of the dependencies</em>
-<a class="jxr_linenumber" name="L2823" href="#L2823">2823</a> <em class="jxr_javadoccomment">     * will successfully resolve. If not, resolution will be attempted once for</em>
-<a class="jxr_linenumber" name="L2824" href="#L2824">2824</a> <em class="jxr_javadoccomment">     * every dependency (as allResolvedDeps remains empty).</em>
-<a class="jxr_linenumber" name="L2825" href="#L2825">2825</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L2826" href="#L2826">2826</a> <em class="jxr_javadoccomment">     * @param project The project to dependencies for</em>
-<a class="jxr_linenumber" name="L2827" href="#L2827">2827</a> <em class="jxr_javadoccomment">     * @param allResolvedDeps The collection of successfully resolved</em>
-<a class="jxr_linenumber" name="L2828" href="#L2828">2828</a> <em class="jxr_javadoccomment">     * dependencies, will be filled with the successfully resolved dependencies,</em>
-<a class="jxr_linenumber" name="L2829" href="#L2829">2829</a> <em class="jxr_javadoccomment">     * even in case of resolution failures.</em>
-<a class="jxr_linenumber" name="L2830" href="#L2830">2830</a> <em class="jxr_javadoccomment">     * @param buildingRequest The buildingRequest to hand to Maven's</em>
-<a class="jxr_linenumber" name="L2831" href="#L2831">2831</a> <em class="jxr_javadoccomment">     * DependencyResolver.</em>
-<a class="jxr_linenumber" name="L2832" href="#L2832">2832</a> <em class="jxr_javadoccomment">     * @throws DependencyResolverException For any DependencyResolverException</em>
-<a class="jxr_linenumber" name="L2833" href="#L2833">2833</a> <em class="jxr_javadoccomment">     * other than an Eclipse Aether DependencyResolutionException</em>
-<a class="jxr_linenumber" name="L2834" href="#L2834">2834</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L2835" href="#L2835">2835</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> tryResolutionOnce(MavenProject project, List&lt;ArtifactResult&gt; allResolvedDeps, ProjectBuildingRequest buildingRequest) <strong class="jxr_keyword">throws</strong> DependencyResolverException {
-<a class="jxr_linenumber" name="L2836" href="#L2836">2836</a>         <strong class="jxr_keyword">if</strong> (allResolvedDeps.isEmpty()) { <em class="jxr_comment">// no (partially successful) resolution attempt done</em>
-<a class="jxr_linenumber" name="L2837" href="#L2837">2837</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L2838" href="#L2838">2838</a>                 <strong class="jxr_keyword">final</strong> List&lt;org.apache.maven.model.Dependency&gt; dependencies = project.getDependencies();
-<a class="jxr_linenumber" name="L2839" href="#L2839">2839</a>                 <strong class="jxr_keyword">final</strong> List&lt;org.apache.maven.model.Dependency&gt; managedDependencies = project
-<a class="jxr_linenumber" name="L2840" href="#L2840">2840</a>                         .getDependencyManagement() == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong> : project.getDependencyManagement().getDependencies();
-<a class="jxr_linenumber" name="L2841" href="#L2841">2841</a>                 <strong class="jxr_keyword">final</strong> Iterable&lt;ArtifactResult&gt; allDeps = dependencyResolver
-<a class="jxr_linenumber" name="L2842" href="#L2842">2842</a>                         .resolveDependencies(buildingRequest, dependencies, managedDependencies, <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L2843" href="#L2843">2843</a>                 allDeps.forEach(allResolvedDeps::add);
-<a class="jxr_linenumber" name="L2844" href="#L2844">2844</a>             } <strong class="jxr_keyword">catch</strong> (DependencyResolverException dre) {
-<a class="jxr_linenumber" name="L2845" href="#L2845">2845</a>                 <strong class="jxr_keyword">if</strong> (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
-<a class="jxr_linenumber" name="L2846" href="#L2846">2846</a>                     <strong class="jxr_keyword">final</strong> List&lt;ArtifactResult&gt; successResults = <a href="../../../../org/owasp/dependencycheck/maven/Mshared998Util.html">Mshared998Util</a>
-<a class="jxr_linenumber" name="L2847" href="#L2847">2847</a>                             .getResolutionResults((org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
-<a class="jxr_linenumber" name="L2848" href="#L2848">2848</a>                     allResolvedDeps.addAll(successResults);
-<a class="jxr_linenumber" name="L2849" href="#L2849">2849</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2850" href="#L2850">2850</a>                     <strong class="jxr_keyword">throw</strong> dre;
-<a class="jxr_linenumber" name="L2851" href="#L2851">2851</a>                 }
-<a class="jxr_linenumber" name="L2852" href="#L2852">2852</a>             }
-<a class="jxr_linenumber" name="L2853" href="#L2853">2853</a>         }
-<a class="jxr_linenumber" name="L2854" href="#L2854">2854</a>     }
-<a class="jxr_linenumber" name="L2855" href="#L2855">2855</a>     <em class="jxr_comment">//CSON: ParameterNumber</em>
-<a class="jxr_linenumber" name="L2856" href="#L2856">2856</a> 
-<a class="jxr_linenumber" name="L2857" href="#L2857">2857</a>     <em class="jxr_comment">//CSOFF: ParameterNumber</em>
-<a class="jxr_linenumber" name="L2858" href="#L2858">2858</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processResolvedArtifact(File artifactFile, <strong class="jxr_keyword">final</strong> List&lt;Dependency&gt; deps,
-<a class="jxr_linenumber" name="L2859" href="#L2859">2859</a>             String groupId, String artifactId, String version, DependencyNode root,
-<a class="jxr_linenumber" name="L2860" href="#L2860">2860</a>             MavenProject project1, List&lt;ArtifactVersion&gt; availableVersions,
-<a class="jxr_linenumber" name="L2861" href="#L2861">2861</a>             DependencyNode dependencyNode) {
-<a class="jxr_linenumber" name="L2862" href="#L2862">2862</a>         scannedFiles.add(artifactFile);
-<a class="jxr_linenumber" name="L2863" href="#L2863">2863</a>         <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> d = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L2864" href="#L2864">2864</a>         <strong class="jxr_keyword">if</strong> (deps.size() == 1) {
-<a class="jxr_linenumber" name="L2865" href="#L2865">2865</a>             d = deps.get(0);
-<a class="jxr_linenumber" name="L2866" href="#L2866">2866</a> 
-<a class="jxr_linenumber" name="L2867" href="#L2867">2867</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2868" href="#L2868">2868</a>             <strong class="jxr_keyword">for</strong> (Dependency possible : deps) {
-<a class="jxr_linenumber" name="L2869" href="#L2869">2869</a>                 <strong class="jxr_keyword">if</strong> (artifactFile.getAbsoluteFile().equals(possible.getActualFile())) {
-<a class="jxr_linenumber" name="L2870" href="#L2870">2870</a>                     d = possible;
-<a class="jxr_linenumber" name="L2871" href="#L2871">2871</a>                     <strong class="jxr_keyword">break</strong>;
-<a class="jxr_linenumber" name="L2872" href="#L2872">2872</a>                 }
-<a class="jxr_linenumber" name="L2873" href="#L2873">2873</a>             }
-<a class="jxr_linenumber" name="L2874" href="#L2874">2874</a>             <strong class="jxr_keyword">for</strong> (Dependency dep : deps) {
-<a class="jxr_linenumber" name="L2875" href="#L2875">2875</a>                 <strong class="jxr_keyword">if</strong> (d != <strong class="jxr_keyword">null</strong> &amp;&amp; d != dep) {
-<a class="jxr_linenumber" name="L2876" href="#L2876">2876</a>                     <strong class="jxr_keyword">final</strong> String includedBy = buildReference(groupId, artifactId, version);
-<a class="jxr_linenumber" name="L2877" href="#L2877">2877</a>                     dep.addIncludedBy(includedBy);
-<a class="jxr_linenumber" name="L2878" href="#L2878">2878</a>                 }
-<a class="jxr_linenumber" name="L2879" href="#L2879">2879</a>             }
-<a class="jxr_linenumber" name="L2880" href="#L2880">2880</a>         }
-<a class="jxr_linenumber" name="L2881" href="#L2881">2881</a>         <strong class="jxr_keyword">if</strong> (d != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2882" href="#L2882">2882</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/data/nexus/MavenArtifact.html">MavenArtifact</a> ma = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/data/nexus/MavenArtifact.html">MavenArtifact</a>(groupId, artifactId, version);
-<a class="jxr_linenumber" name="L2883" href="#L2883">2883</a>             d.addAsEvidence(<span class="jxr_string">"pom"</span>, ma, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L2884" href="#L2884">2884</a>             <strong class="jxr_keyword">if</strong> (root != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2885" href="#L2885">2885</a>                 <strong class="jxr_keyword">final</strong> String includedby = buildReference(
-<a class="jxr_linenumber" name="L2886" href="#L2886">2886</a>                         root.getArtifact().getGroupId(),
-<a class="jxr_linenumber" name="L2887" href="#L2887">2887</a>                         root.getArtifact().getArtifactId(),
-<a class="jxr_linenumber" name="L2888" href="#L2888">2888</a>                         root.getArtifact().getVersion());
-<a class="jxr_linenumber" name="L2889" href="#L2889">2889</a>                 d.addIncludedBy(includedby);
-<a class="jxr_linenumber" name="L2890" href="#L2890">2890</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2891" href="#L2891">2891</a>                 <strong class="jxr_keyword">final</strong> String includedby = buildReference(project1.getGroupId(), project1.getArtifactId(), project1.getVersion());
-<a class="jxr_linenumber" name="L2892" href="#L2892">2892</a>                 d.addIncludedBy(includedby);
-<a class="jxr_linenumber" name="L2893" href="#L2893">2893</a>             }
-<a class="jxr_linenumber" name="L2894" href="#L2894">2894</a>             <strong class="jxr_keyword">if</strong> (availableVersions != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2895" href="#L2895">2895</a>                 <strong class="jxr_keyword">for</strong> (ArtifactVersion av : availableVersions) {
-<a class="jxr_linenumber" name="L2896" href="#L2896">2896</a>                     d.addAvailableVersion(av.toString());
-<a class="jxr_linenumber" name="L2897" href="#L2897">2897</a>                 }
-<a class="jxr_linenumber" name="L2898" href="#L2898">2898</a>             }
-<a class="jxr_linenumber" name="L2899" href="#L2899">2899</a>             getLog().debug(String.format(<span class="jxr_string">"Adding project reference %s on dependency %s"</span>, project1.getName(), d.getDisplayFileName()));
-<a class="jxr_linenumber" name="L2900" href="#L2900">2900</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (getLog().isDebugEnabled()) {
-<a class="jxr_linenumber" name="L2901" href="#L2901">2901</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"More than 1 dependency was identified in first pass scan of '%s' in project %s"</span>, dependencyNode.getArtifact().getId(), project1.getName());
-<a class="jxr_linenumber" name="L2902" href="#L2902">2902</a>             getLog().debug(msg);
-<a class="jxr_linenumber" name="L2903" href="#L2903">2903</a>         }
-<a class="jxr_linenumber" name="L2904" href="#L2904">2904</a>     }
-<a class="jxr_linenumber" name="L2905" href="#L2905">2905</a>     <em class="jxr_comment">//CSON: ParameterNumber</em>
-<a class="jxr_linenumber" name="L2906" href="#L2906">2906</a> 
-<a class="jxr_linenumber" name="L2907" href="#L2907">2907</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> processPomArtifact(File artifactFile, DependencyNode root,
-<a class="jxr_linenumber" name="L2908" href="#L2908">2908</a>             MavenProject project1, <a href="../../../../org/owasp/dependencycheck/Engine.html">Engine</a> engine, <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> exCollection) {
-<a class="jxr_linenumber" name="L2909" href="#L2909">2909</a>         <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> exCol = exCollection;
-<a class="jxr_linenumber" name="L2910" href="#L2910">2910</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L2911" href="#L2911">2911</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> d = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a>(artifactFile.getAbsoluteFile());
-<a class="jxr_linenumber" name="L2912" href="#L2912">2912</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/xml/pom/Model.html">Model</a> pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
-<a class="jxr_linenumber" name="L2913" href="#L2913">2913</a>             JarAnalyzer.setPomEvidence(d, pom, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L2914" href="#L2914">2914</a>             <strong class="jxr_keyword">if</strong> (root != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2915" href="#L2915">2915</a>                 <strong class="jxr_keyword">final</strong> String includedby = buildReference(
-<a class="jxr_linenumber" name="L2916" href="#L2916">2916</a>                         root.getArtifact().getGroupId(),
-<a class="jxr_linenumber" name="L2917" href="#L2917">2917</a>                         root.getArtifact().getArtifactId(),
-<a class="jxr_linenumber" name="L2918" href="#L2918">2918</a>                         root.getArtifact().getVersion());
-<a class="jxr_linenumber" name="L2919" href="#L2919">2919</a>                 d.addIncludedBy(includedby);
-<a class="jxr_linenumber" name="L2920" href="#L2920">2920</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L2921" href="#L2921">2921</a>                 <strong class="jxr_keyword">final</strong> String includedby = buildReference(project1.getGroupId(), project1.getArtifactId(), project1.getVersion());
-<a class="jxr_linenumber" name="L2922" href="#L2922">2922</a>                 d.addIncludedBy(includedby);
-<a class="jxr_linenumber" name="L2923" href="#L2923">2923</a>             }
-<a class="jxr_linenumber" name="L2924" href="#L2924">2924</a>             engine.addDependency(d);
-<a class="jxr_linenumber" name="L2925" href="#L2925">2925</a>         } <strong class="jxr_keyword">catch</strong> (AnalysisException ex) {
-<a class="jxr_linenumber" name="L2926" href="#L2926">2926</a>             <strong class="jxr_keyword">if</strong> (exCol == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L2927" href="#L2927">2927</a>                 exCol = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a>();
-<a class="jxr_linenumber" name="L2928" href="#L2928">2928</a>             }
-<a class="jxr_linenumber" name="L2929" href="#L2929">2929</a>             exCol.addException(ex);
-<a class="jxr_linenumber" name="L2930" href="#L2930">2930</a>             getLog().debug(<span class="jxr_string">"Error reading pom "</span> + artifactFile.getAbsoluteFile(), ex);
-<a class="jxr_linenumber" name="L2931" href="#L2931">2931</a>         }
-<a class="jxr_linenumber" name="L2932" href="#L2932">2932</a>         <strong class="jxr_keyword">return</strong> exCol;
-<a class="jxr_linenumber" name="L2933" href="#L2933">2933</a>     }
-<a class="jxr_linenumber" name="L2934" href="#L2934">2934</a> }
-<a class="jxr_linenumber" name="L2935" href="#L2935">2935</a> <em class="jxr_comment">//CSON: FileLength</em>
+<a class="jxr_linenumber" name="L2741" href="#L2741">2741</a>                 <strong class="jxr_keyword">final</strong> Exception thrown = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/exception/DependencyNotFoundException.html">DependencyNotFoundException</a>(message.toString());
+<a class="jxr_linenumber" name="L2742" href="#L2742">2742</a>                 <strong class="jxr_keyword">if</strong> (ignored != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2743" href="#L2743">2743</a>                     thrown.addSuppressed(ignored);
+<a class="jxr_linenumber" name="L2744" href="#L2744">2744</a>                 }
+<a class="jxr_linenumber" name="L2745" href="#L2745">2745</a>                 exCol.addException(thrown);
+<a class="jxr_linenumber" name="L2746" href="#L2746">2746</a>             }
+<a class="jxr_linenumber" name="L2747" href="#L2747">2747</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2748" href="#L2748">2748</a>             <strong class="jxr_keyword">final</strong> Artifact dependencyArtifact = dependencyNode.getArtifact();
+<a class="jxr_linenumber" name="L2749" href="#L2749">2749</a>             <strong class="jxr_keyword">final</strong> Artifact result;
+<a class="jxr_linenumber" name="L2750" href="#L2750">2750</a>             <strong class="jxr_keyword">if</strong> (dependencyArtifact.isResolved()) {
+<a class="jxr_linenumber" name="L2751" href="#L2751">2751</a>                 <em class="jxr_comment">//All transitive dependencies, excluding reactor and dependencyManagement artifacts should</em>
+<a class="jxr_linenumber" name="L2752" href="#L2752">2752</a>                 <em class="jxr_comment">//have been resolved by Maven prior to invoking the plugin - resolving the dependencies</em>
+<a class="jxr_linenumber" name="L2753" href="#L2753">2753</a>                 <em class="jxr_comment">//manually is unnecessary, and does not work in some cases (issue-1751)</em>
+<a class="jxr_linenumber" name="L2754" href="#L2754">2754</a>                 getLog().debug(String.format(<span class="jxr_string">"Skipping artifact %s, already resolved"</span>, dependencyArtifact.getArtifactId()));
+<a class="jxr_linenumber" name="L2755" href="#L2755">2755</a>                 result = dependencyArtifact;
+<a class="jxr_linenumber" name="L2756" href="#L2756">2756</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2757" href="#L2757">2757</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L2758" href="#L2758">2758</a>                     tryResolutionOnce(project, allResolvedDeps, buildingRequest);
+<a class="jxr_linenumber" name="L2759" href="#L2759">2759</a>                     result = findInAllDeps(allResolvedDeps, dependencyNode.getArtifact(), project);
+<a class="jxr_linenumber" name="L2760" href="#L2760">2760</a>                 } <strong class="jxr_keyword">catch</strong> (DependencyNotFoundException | DependencyResolverException ex) {
+<a class="jxr_linenumber" name="L2761" href="#L2761">2761</a>                     getLog().debug(String.format(<span class="jxr_string">"Aggregate : %s"</span>, aggregate));
+<a class="jxr_linenumber" name="L2762" href="#L2762">2762</a>                     <strong class="jxr_keyword">boolean</strong> addException = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L2763" href="#L2763">2763</a>                     <em class="jxr_comment">//CSOFF: EmptyBlock</em>
+<a class="jxr_linenumber" name="L2764" href="#L2764">2764</a>                     <strong class="jxr_keyword">if</strong> (!aggregate) {
+<a class="jxr_linenumber" name="L2765" href="#L2765">2765</a>                         <em class="jxr_comment">// do nothing - the exception is to be reported</em>
+<a class="jxr_linenumber" name="L2766" href="#L2766">2766</a>                     } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (addReactorDependency(engine, dependencyNode.getArtifact(), project)) {
+<a class="jxr_linenumber" name="L2767" href="#L2767">2767</a>                         <em class="jxr_comment">// successfully resolved as a reactor dependency - swallow the exception</em>
+<a class="jxr_linenumber" name="L2768" href="#L2768">2768</a>                         addException = false;
+<a class="jxr_linenumber" name="L2769" href="#L2769">2769</a>                     }
+<a class="jxr_linenumber" name="L2770" href="#L2770">2770</a>                     <strong class="jxr_keyword">if</strong> (addException) {
+<a class="jxr_linenumber" name="L2771" href="#L2771">2771</a>                         <strong class="jxr_keyword">if</strong> (exCol == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2772" href="#L2772">2772</a>                             exCol = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a>();
+<a class="jxr_linenumber" name="L2773" href="#L2773">2773</a>                         }
+<a class="jxr_linenumber" name="L2774" href="#L2774">2774</a>                         exCol.addException(ex);
+<a class="jxr_linenumber" name="L2775" href="#L2775">2775</a>                     }
+<a class="jxr_linenumber" name="L2776" href="#L2776">2776</a>                     <strong class="jxr_keyword">return</strong> exCol;
+<a class="jxr_linenumber" name="L2777" href="#L2777">2777</a>                 }
+<a class="jxr_linenumber" name="L2778" href="#L2778">2778</a>             }
+<a class="jxr_linenumber" name="L2779" href="#L2779">2779</a>             <strong class="jxr_keyword">if</strong> (aggregate &amp;&amp; virtualSnapshotsFromReactor
+<a class="jxr_linenumber" name="L2780" href="#L2780">2780</a>                     &amp;&amp; dependencyNode.getArtifact().isSnapshot()
+<a class="jxr_linenumber" name="L2781" href="#L2781">2781</a>                     &amp;&amp; addSnapshotReactorDependency(engine, dependencyNode.getArtifact(), project)) {
+<a class="jxr_linenumber" name="L2782" href="#L2782">2782</a>                 <strong class="jxr_keyword">return</strong> exCol;
+<a class="jxr_linenumber" name="L2783" href="#L2783">2783</a>             }
+<a class="jxr_linenumber" name="L2784" href="#L2784">2784</a>             isResolved = result.isResolved();
+<a class="jxr_linenumber" name="L2785" href="#L2785">2785</a>             artifactFile = result.getFile();
+<a class="jxr_linenumber" name="L2786" href="#L2786">2786</a>             groupId = result.getGroupId();
+<a class="jxr_linenumber" name="L2787" href="#L2787">2787</a>             artifactId = result.getArtifactId();
+<a class="jxr_linenumber" name="L2788" href="#L2788">2788</a>             version = result.getVersion();
+<a class="jxr_linenumber" name="L2789" href="#L2789">2789</a>             availableVersions = result.getAvailableVersions();
+<a class="jxr_linenumber" name="L2790" href="#L2790">2790</a>         }
+<a class="jxr_linenumber" name="L2791" href="#L2791">2791</a>         <strong class="jxr_keyword">if</strong> (isResolved &amp;&amp; artifactFile != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2792" href="#L2792">2792</a>             <strong class="jxr_keyword">final</strong> List&lt;Dependency&gt; deps = engine.scan(artifactFile.getAbsoluteFile(),
+<a class="jxr_linenumber" name="L2793" href="#L2793">2793</a>                     createProjectReferenceName(project, dependencyNode));
+<a class="jxr_linenumber" name="L2794" href="#L2794">2794</a>             <strong class="jxr_keyword">if</strong> (deps != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2795" href="#L2795">2795</a>                 processResolvedArtifact(artifactFile, deps, groupId, artifactId, version, root, project, availableVersions, dependencyNode);
+<a class="jxr_linenumber" name="L2796" href="#L2796">2796</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"import"</span>.equals(dependencyNode.getArtifact().getScope())) {
+<a class="jxr_linenumber" name="L2797" href="#L2797">2797</a>                 <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Skipping '%s:%s' in project %s as it uses an `import` scope"</span>,
+<a class="jxr_linenumber" name="L2798" href="#L2798">2798</a>                         dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
+<a class="jxr_linenumber" name="L2799" href="#L2799">2799</a>                 getLog().debug(msg);
+<a class="jxr_linenumber" name="L2800" href="#L2800">2800</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"pom"</span>.equals(dependencyNode.getArtifact().getType())) {
+<a class="jxr_linenumber" name="L2801" href="#L2801">2801</a>                 exCol = processPomArtifact(artifactFile, root, project, engine, exCol);
+<a class="jxr_linenumber" name="L2802" href="#L2802">2802</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2803" href="#L2803">2803</a>                 <strong class="jxr_keyword">if</strong> (!scannedFiles.contains(artifactFile)) {
+<a class="jxr_linenumber" name="L2804" href="#L2804">2804</a>                     <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"No analyzer could be found or the artifact has been scanned twice for '%s:%s' in project %s"</span>,
+<a class="jxr_linenumber" name="L2805" href="#L2805">2805</a>                             dependencyNode.getArtifact().getId(), dependencyNode.getArtifact().getScope(), project.getName());
+<a class="jxr_linenumber" name="L2806" href="#L2806">2806</a>                     getLog().warn(msg);
+<a class="jxr_linenumber" name="L2807" href="#L2807">2807</a>                 }
+<a class="jxr_linenumber" name="L2808" href="#L2808">2808</a>             }
+<a class="jxr_linenumber" name="L2809" href="#L2809">2809</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2810" href="#L2810">2810</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Unable to resolve '%s' in project %s"</span>,
+<a class="jxr_linenumber" name="L2811" href="#L2811">2811</a>                     dependencyNode.getArtifact().getId(), project.getName());
+<a class="jxr_linenumber" name="L2812" href="#L2812">2812</a>             getLog().debug(msg);
+<a class="jxr_linenumber" name="L2813" href="#L2813">2813</a>             <strong class="jxr_keyword">if</strong> (exCol == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2814" href="#L2814">2814</a>                 exCol = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a>();
+<a class="jxr_linenumber" name="L2815" href="#L2815">2815</a>             }
+<a class="jxr_linenumber" name="L2816" href="#L2816">2816</a>         }
+<a class="jxr_linenumber" name="L2817" href="#L2817">2817</a>         <strong class="jxr_keyword">return</strong> exCol;
+<a class="jxr_linenumber" name="L2818" href="#L2818">2818</a>     }
+<a class="jxr_linenumber" name="L2819" href="#L2819">2819</a> 
+<a class="jxr_linenumber" name="L2820" href="#L2820">2820</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L2821" href="#L2821">2821</a> <em class="jxr_javadoccomment">     * Try resolution of artifacts once, allowing for</em>
+<a class="jxr_linenumber" name="L2822" href="#L2822">2822</a> <em class="jxr_javadoccomment">     * DependencyResolutionException due to reactor-dependencies not being</em>
+<a class="jxr_linenumber" name="L2823" href="#L2823">2823</a> <em class="jxr_javadoccomment">     * resolvable.</em>
+<a class="jxr_linenumber" name="L2824" href="#L2824">2824</a> <em class="jxr_javadoccomment">     * &lt;br&gt;</em>
+<a class="jxr_linenumber" name="L2825" href="#L2825">2825</a> <em class="jxr_javadoccomment">     * The resolution is attempted only if allResolvedDeps is still empty. The</em>
+<a class="jxr_linenumber" name="L2826" href="#L2826">2826</a> <em class="jxr_javadoccomment">     * assumption is that for any given project at least one of the dependencies</em>
+<a class="jxr_linenumber" name="L2827" href="#L2827">2827</a> <em class="jxr_javadoccomment">     * will successfully resolve. If not, resolution will be attempted once for</em>
+<a class="jxr_linenumber" name="L2828" href="#L2828">2828</a> <em class="jxr_javadoccomment">     * every dependency (as allResolvedDeps remains empty).</em>
+<a class="jxr_linenumber" name="L2829" href="#L2829">2829</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L2830" href="#L2830">2830</a> <em class="jxr_javadoccomment">     * @param project The project to dependencies for</em>
+<a class="jxr_linenumber" name="L2831" href="#L2831">2831</a> <em class="jxr_javadoccomment">     * @param allResolvedDeps The collection of successfully resolved</em>
+<a class="jxr_linenumber" name="L2832" href="#L2832">2832</a> <em class="jxr_javadoccomment">     * dependencies, will be filled with the successfully resolved dependencies,</em>
+<a class="jxr_linenumber" name="L2833" href="#L2833">2833</a> <em class="jxr_javadoccomment">     * even in case of resolution failures.</em>
+<a class="jxr_linenumber" name="L2834" href="#L2834">2834</a> <em class="jxr_javadoccomment">     * @param buildingRequest The buildingRequest to hand to Maven's</em>
+<a class="jxr_linenumber" name="L2835" href="#L2835">2835</a> <em class="jxr_javadoccomment">     * DependencyResolver.</em>
+<a class="jxr_linenumber" name="L2836" href="#L2836">2836</a> <em class="jxr_javadoccomment">     * @throws DependencyResolverException For any DependencyResolverException</em>
+<a class="jxr_linenumber" name="L2837" href="#L2837">2837</a> <em class="jxr_javadoccomment">     * other than an Eclipse Aether DependencyResolutionException</em>
+<a class="jxr_linenumber" name="L2838" href="#L2838">2838</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L2839" href="#L2839">2839</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> tryResolutionOnce(MavenProject project, List&lt;ArtifactResult&gt; allResolvedDeps, ProjectBuildingRequest buildingRequest) <strong class="jxr_keyword">throws</strong> DependencyResolverException {
+<a class="jxr_linenumber" name="L2840" href="#L2840">2840</a>         <strong class="jxr_keyword">if</strong> (allResolvedDeps.isEmpty()) { <em class="jxr_comment">// no (partially successful) resolution attempt done</em>
+<a class="jxr_linenumber" name="L2841" href="#L2841">2841</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L2842" href="#L2842">2842</a>                 <strong class="jxr_keyword">final</strong> List&lt;org.apache.maven.model.Dependency&gt; dependencies = project.getDependencies();
+<a class="jxr_linenumber" name="L2843" href="#L2843">2843</a>                 <strong class="jxr_keyword">final</strong> List&lt;org.apache.maven.model.Dependency&gt; managedDependencies = project
+<a class="jxr_linenumber" name="L2844" href="#L2844">2844</a>                         .getDependencyManagement() == <strong class="jxr_keyword">null</strong> ? <strong class="jxr_keyword">null</strong> : project.getDependencyManagement().getDependencies();
+<a class="jxr_linenumber" name="L2845" href="#L2845">2845</a>                 <strong class="jxr_keyword">final</strong> Iterable&lt;ArtifactResult&gt; allDeps = dependencyResolver
+<a class="jxr_linenumber" name="L2846" href="#L2846">2846</a>                         .resolveDependencies(buildingRequest, dependencies, managedDependencies, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L2847" href="#L2847">2847</a>                 allDeps.forEach(allResolvedDeps::add);
+<a class="jxr_linenumber" name="L2848" href="#L2848">2848</a>             } <strong class="jxr_keyword">catch</strong> (DependencyResolverException dre) {
+<a class="jxr_linenumber" name="L2849" href="#L2849">2849</a>                 <strong class="jxr_keyword">if</strong> (dre.getCause() instanceof org.eclipse.aether.resolution.DependencyResolutionException) {
+<a class="jxr_linenumber" name="L2850" href="#L2850">2850</a>                     <strong class="jxr_keyword">final</strong> List&lt;ArtifactResult&gt; successResults = <a href="../../../../org/owasp/dependencycheck/maven/Mshared998Util.html">Mshared998Util</a>
+<a class="jxr_linenumber" name="L2851" href="#L2851">2851</a>                             .getResolutionResults((org.eclipse.aether.resolution.DependencyResolutionException) dre.getCause());
+<a class="jxr_linenumber" name="L2852" href="#L2852">2852</a>                     allResolvedDeps.addAll(successResults);
+<a class="jxr_linenumber" name="L2853" href="#L2853">2853</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2854" href="#L2854">2854</a>                     <strong class="jxr_keyword">throw</strong> dre;
+<a class="jxr_linenumber" name="L2855" href="#L2855">2855</a>                 }
+<a class="jxr_linenumber" name="L2856" href="#L2856">2856</a>             }
+<a class="jxr_linenumber" name="L2857" href="#L2857">2857</a>         }
+<a class="jxr_linenumber" name="L2858" href="#L2858">2858</a>     }
+<a class="jxr_linenumber" name="L2859" href="#L2859">2859</a>     <em class="jxr_comment">//CSON: ParameterNumber</em>
+<a class="jxr_linenumber" name="L2860" href="#L2860">2860</a> 
+<a class="jxr_linenumber" name="L2861" href="#L2861">2861</a>     <em class="jxr_comment">//CSOFF: ParameterNumber</em>
+<a class="jxr_linenumber" name="L2862" href="#L2862">2862</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> processResolvedArtifact(File artifactFile, <strong class="jxr_keyword">final</strong> List&lt;Dependency&gt; deps,
+<a class="jxr_linenumber" name="L2863" href="#L2863">2863</a>             String groupId, String artifactId, String version, DependencyNode root,
+<a class="jxr_linenumber" name="L2864" href="#L2864">2864</a>             MavenProject project1, List&lt;ArtifactVersion&gt; availableVersions,
+<a class="jxr_linenumber" name="L2865" href="#L2865">2865</a>             DependencyNode dependencyNode) {
+<a class="jxr_linenumber" name="L2866" href="#L2866">2866</a>         scannedFiles.add(artifactFile);
+<a class="jxr_linenumber" name="L2867" href="#L2867">2867</a>         <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> d = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L2868" href="#L2868">2868</a>         <strong class="jxr_keyword">if</strong> (deps.size() == 1) {
+<a class="jxr_linenumber" name="L2869" href="#L2869">2869</a>             d = deps.get(0);
+<a class="jxr_linenumber" name="L2870" href="#L2870">2870</a> 
+<a class="jxr_linenumber" name="L2871" href="#L2871">2871</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2872" href="#L2872">2872</a>             <strong class="jxr_keyword">for</strong> (Dependency possible : deps) {
+<a class="jxr_linenumber" name="L2873" href="#L2873">2873</a>                 <strong class="jxr_keyword">if</strong> (artifactFile.getAbsoluteFile().equals(possible.getActualFile())) {
+<a class="jxr_linenumber" name="L2874" href="#L2874">2874</a>                     d = possible;
+<a class="jxr_linenumber" name="L2875" href="#L2875">2875</a>                     <strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L2876" href="#L2876">2876</a>                 }
+<a class="jxr_linenumber" name="L2877" href="#L2877">2877</a>             }
+<a class="jxr_linenumber" name="L2878" href="#L2878">2878</a>             <strong class="jxr_keyword">for</strong> (Dependency dep : deps) {
+<a class="jxr_linenumber" name="L2879" href="#L2879">2879</a>                 <strong class="jxr_keyword">if</strong> (d != <strong class="jxr_keyword">null</strong> &amp;&amp; d != dep) {
+<a class="jxr_linenumber" name="L2880" href="#L2880">2880</a>                     <strong class="jxr_keyword">final</strong> String includedBy = buildReference(groupId, artifactId, version);
+<a class="jxr_linenumber" name="L2881" href="#L2881">2881</a>                     dep.addIncludedBy(includedBy);
+<a class="jxr_linenumber" name="L2882" href="#L2882">2882</a>                 }
+<a class="jxr_linenumber" name="L2883" href="#L2883">2883</a>             }
+<a class="jxr_linenumber" name="L2884" href="#L2884">2884</a>         }
+<a class="jxr_linenumber" name="L2885" href="#L2885">2885</a>         <strong class="jxr_keyword">if</strong> (d != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2886" href="#L2886">2886</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/data/nexus/MavenArtifact.html">MavenArtifact</a> ma = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/data/nexus/MavenArtifact.html">MavenArtifact</a>(groupId, artifactId, version);
+<a class="jxr_linenumber" name="L2887" href="#L2887">2887</a>             d.addAsEvidence(<span class="jxr_string">"pom"</span>, ma, Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L2888" href="#L2888">2888</a>             <strong class="jxr_keyword">if</strong> (root != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2889" href="#L2889">2889</a>                 <strong class="jxr_keyword">final</strong> String includedby = buildReference(
+<a class="jxr_linenumber" name="L2890" href="#L2890">2890</a>                         root.getArtifact().getGroupId(),
+<a class="jxr_linenumber" name="L2891" href="#L2891">2891</a>                         root.getArtifact().getArtifactId(),
+<a class="jxr_linenumber" name="L2892" href="#L2892">2892</a>                         root.getArtifact().getVersion());
+<a class="jxr_linenumber" name="L2893" href="#L2893">2893</a>                 d.addIncludedBy(includedby);
+<a class="jxr_linenumber" name="L2894" href="#L2894">2894</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2895" href="#L2895">2895</a>                 <strong class="jxr_keyword">final</strong> String includedby = buildReference(project1.getGroupId(), project1.getArtifactId(), project1.getVersion());
+<a class="jxr_linenumber" name="L2896" href="#L2896">2896</a>                 d.addIncludedBy(includedby);
+<a class="jxr_linenumber" name="L2897" href="#L2897">2897</a>             }
+<a class="jxr_linenumber" name="L2898" href="#L2898">2898</a>             <strong class="jxr_keyword">if</strong> (availableVersions != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2899" href="#L2899">2899</a>                 <strong class="jxr_keyword">for</strong> (ArtifactVersion av : availableVersions) {
+<a class="jxr_linenumber" name="L2900" href="#L2900">2900</a>                     d.addAvailableVersion(av.toString());
+<a class="jxr_linenumber" name="L2901" href="#L2901">2901</a>                 }
+<a class="jxr_linenumber" name="L2902" href="#L2902">2902</a>             }
+<a class="jxr_linenumber" name="L2903" href="#L2903">2903</a>             getLog().debug(String.format(<span class="jxr_string">"Adding project reference %s on dependency %s"</span>, project1.getName(), d.getDisplayFileName()));
+<a class="jxr_linenumber" name="L2904" href="#L2904">2904</a>         } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (getLog().isDebugEnabled()) {
+<a class="jxr_linenumber" name="L2905" href="#L2905">2905</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"More than 1 dependency was identified in first pass scan of '%s' in project %s"</span>, dependencyNode.getArtifact().getId(), project1.getName());
+<a class="jxr_linenumber" name="L2906" href="#L2906">2906</a>             getLog().debug(msg);
+<a class="jxr_linenumber" name="L2907" href="#L2907">2907</a>         }
+<a class="jxr_linenumber" name="L2908" href="#L2908">2908</a>     }
+<a class="jxr_linenumber" name="L2909" href="#L2909">2909</a>     <em class="jxr_comment">//CSON: ParameterNumber</em>
+<a class="jxr_linenumber" name="L2910" href="#L2910">2910</a> 
+<a class="jxr_linenumber" name="L2911" href="#L2911">2911</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> processPomArtifact(File artifactFile, DependencyNode root,
+<a class="jxr_linenumber" name="L2912" href="#L2912">2912</a>             MavenProject project1, <a href="../../../../org/owasp/dependencycheck/Engine.html">Engine</a> engine, <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> exCollection) {
+<a class="jxr_linenumber" name="L2913" href="#L2913">2913</a>         <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a> exCol = exCollection;
+<a class="jxr_linenumber" name="L2914" href="#L2914">2914</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L2915" href="#L2915">2915</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> d = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a>(artifactFile.getAbsoluteFile());
+<a class="jxr_linenumber" name="L2916" href="#L2916">2916</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/xml/pom/Model.html">Model</a> pom = PomUtils.readPom(artifactFile.getAbsoluteFile());
+<a class="jxr_linenumber" name="L2917" href="#L2917">2917</a>             JarAnalyzer.setPomEvidence(d, pom, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L2918" href="#L2918">2918</a>             <strong class="jxr_keyword">if</strong> (root != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2919" href="#L2919">2919</a>                 <strong class="jxr_keyword">final</strong> String includedby = buildReference(
+<a class="jxr_linenumber" name="L2920" href="#L2920">2920</a>                         root.getArtifact().getGroupId(),
+<a class="jxr_linenumber" name="L2921" href="#L2921">2921</a>                         root.getArtifact().getArtifactId(),
+<a class="jxr_linenumber" name="L2922" href="#L2922">2922</a>                         root.getArtifact().getVersion());
+<a class="jxr_linenumber" name="L2923" href="#L2923">2923</a>                 d.addIncludedBy(includedby);
+<a class="jxr_linenumber" name="L2924" href="#L2924">2924</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L2925" href="#L2925">2925</a>                 <strong class="jxr_keyword">final</strong> String includedby = buildReference(project1.getGroupId(), project1.getArtifactId(), project1.getVersion());
+<a class="jxr_linenumber" name="L2926" href="#L2926">2926</a>                 d.addIncludedBy(includedby);
+<a class="jxr_linenumber" name="L2927" href="#L2927">2927</a>             }
+<a class="jxr_linenumber" name="L2928" href="#L2928">2928</a>             engine.addDependency(d);
+<a class="jxr_linenumber" name="L2929" href="#L2929">2929</a>         } <strong class="jxr_keyword">catch</strong> (AnalysisException ex) {
+<a class="jxr_linenumber" name="L2930" href="#L2930">2930</a>             <strong class="jxr_keyword">if</strong> (exCol == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L2931" href="#L2931">2931</a>                 exCol = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/exception/ExceptionCollection.html">ExceptionCollection</a>();
+<a class="jxr_linenumber" name="L2932" href="#L2932">2932</a>             }
+<a class="jxr_linenumber" name="L2933" href="#L2933">2933</a>             exCol.addException(ex);
+<a class="jxr_linenumber" name="L2934" href="#L2934">2934</a>             getLog().debug(<span class="jxr_string">"Error reading pom "</span> + artifactFile.getAbsoluteFile(), ex);
+<a class="jxr_linenumber" name="L2935" href="#L2935">2935</a>         }
+<a class="jxr_linenumber" name="L2936" href="#L2936">2936</a>         <strong class="jxr_keyword">return</strong> exCol;
+<a class="jxr_linenumber" name="L2937" href="#L2937">2937</a>     }
+<a class="jxr_linenumber" name="L2938" href="#L2938">2938</a> }
+<a class="jxr_linenumber" name="L2939" href="#L2939">2939</a> <em class="jxr_comment">//CSON: FileLength</em>
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
