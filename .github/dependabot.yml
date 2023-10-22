@@ -11,7 +11,7 @@ updates:
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
-      interval: "daily"
+     interval: "daily"
      ignore:
       # stay .net 3.1
       - dependency-name: "mcr.microsoft.com/dotnet/runtime"

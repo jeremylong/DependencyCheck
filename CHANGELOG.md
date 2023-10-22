@@ -1,5 +1,11 @@
 # Change Log
 
+## [Version 8.4.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.4.2) (2023-10-22)
+
+- fix: correct log configuration in cli (#6002)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/69?closed=1).
+
 ## [Version 8.4.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.4.1) (2023-10-21)
 
 ### Fixed

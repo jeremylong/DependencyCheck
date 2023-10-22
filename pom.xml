@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>8.4.2-SNAPSHOT</version>
+    <version>8.4.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -112,7 +112,7 @@ Copyright (c) 2012 - Jeremy Long
     </licenses>
     <properties>
         <!--reproducible build-->
-        <project.build.outputTimestamp>2023-10-21T13:37:51Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2023-10-22T10:35:45Z</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
