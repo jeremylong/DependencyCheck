@@ -186,13 +186,9 @@ jobs:
           draft: false
           body: |
 
-            - fix: upgrade to JCS3 (#5114)
-            - fix: Support ~= version specifier in requirements.txt and pipfile (#5902)
-            - fix: Version of dependency no longer ignored when CPE product has a 'java' suffix in a product name (#5901)
-            - fix: Do not filter out evidences added by hints (#5900)
-            - fix: fixes FP #5925 (#5927)
+            - fix: correct log configuration in cli (#6002)
             
-            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/67?closed=1).
+            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/69?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
