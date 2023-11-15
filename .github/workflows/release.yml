@@ -185,10 +185,10 @@ jobs:
           prerelease: false
           draft: false
           body: |
+            - fix: bump jcs3 (#6047)
+            - docs: Corrected docs on hostedSuppressions (#6035)
 
-            - fix: correct log configuration in cli (#6002)
-            
-            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/69?closed=1).
+            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/70?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
