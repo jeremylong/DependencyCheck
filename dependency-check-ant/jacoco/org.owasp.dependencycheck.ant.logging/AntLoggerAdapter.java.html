@@ -134,9 +134,9 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void debug(String format, Object... arguments) {
-<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (task != null) {</span>
-<span class="fc" id="L138">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
-<span class="fc" id="L139">            task.log(tp.getMessage(), Project.MSG_DEBUG);</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if (task != null) {</span>
+<span class="nc" id="L138">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
+<span class="nc" id="L139">            task.log(tp.getMessage(), Project.MSG_DEBUG);</span>
         }
 <span class="fc" id="L141">    }</span>
 
@@ -149,7 +149,7 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public boolean isInfoEnabled() {
-<span class="fc" id="L152">        return true;</span>
+<span class="nc" id="L152">        return true;</span>
     }
 
     @Override
@@ -177,11 +177,11 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void info(String format, Object... arguments) {
-<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (task != null) {</span>
-<span class="fc" id="L181">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
-<span class="fc" id="L182">            task.log(tp.getMessage(), Project.MSG_INFO);</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">        if (task != null) {</span>
+<span class="nc" id="L181">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
+<span class="nc" id="L182">            task.log(tp.getMessage(), Project.MSG_INFO);</span>
         }
-<span class="fc" id="L184">    }</span>
+<span class="nc" id="L184">    }</span>
 
     @Override
     public void info(String msg, Throwable t) {
@@ -240,10 +240,10 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void error(String msg) {
-<span class="nc bnc" id="L243" title="All 2 branches missed.">        if (task != null) {</span>
-<span class="nc" id="L244">            task.log(msg, Project.MSG_ERR);</span>
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        if (task != null) {</span>
+<span class="fc" id="L244">            task.log(msg, Project.MSG_ERR);</span>
         }
-<span class="nc" id="L246">    }</span>
+<span class="fc" id="L246">    }</span>
 
     @Override
     public void error(String format, Object arg) {
@@ -263,11 +263,11 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void error(String format, Object... arguments) {
-<span class="pc bpc" id="L266" title="1 of 2 branches missed.">        if (task != null) {</span>
-<span class="fc" id="L267">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
-<span class="fc" id="L268">            task.log(tp.getMessage(), Project.MSG_ERR);</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        if (task != null) {</span>
+<span class="nc" id="L267">            final FormattingTuple tp = MessageFormatter.format(format, arguments);</span>
+<span class="nc" id="L268">            task.log(tp.getMessage(), Project.MSG_ERR);</span>
         }
-<span class="fc" id="L270">    }</span>
+<span class="nc" id="L270">    }</span>
 
     @Override
     public void error(String msg, Throwable t) {
