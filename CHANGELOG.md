@@ -1,5 +1,12 @@
 # Change Log
 
+## [Version 8.4.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.4.3) (2023-11-15)
+
+- fix: bump jcs3 (#6047)
+- docs: Corrected docs on hostedSuppressions (#6035)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/70?closed=1).
+
 ## [Version 8.4.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.4.2) (2023-10-22)
 
 - fix: correct log configuration in cli (#6002)
