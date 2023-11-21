@@ -1372,4 +1372,11 @@
    <packageUrl regex="true">^pkg:nuget/Serilog\.Sinks\.Async@.*$</packageUrl>
    <cpe>cpe:/a:async_project:async</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6041
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.flywaydb/flyway-database-postgresql@.*$</packageUrl>
+   <cpe>cpe:/a:postgresql:postgresql</cpe>
+</suppress>
 </suppressions>
