@@ -118,7 +118,8 @@ public class ReportGenerator {
          */
         SARIF,
         /**
-         * Generate HTML report without script or non-vulnerable libraries for Jenkins.
+         * Generate HTML report without script or non-vulnerable libraries for
+         * Jenkins.
          */
         JENKINS,
         /**
@@ -327,8 +328,8 @@ public class ReportGenerator {
         } else {
             File out = getReportFile(outputLocation, null);
             if (out.isDirectory()) {
-            	out = new File(out, FilenameUtils.getBaseName(format));
-            	LOGGER.warn("Writing non-standard VSL output to a directory using template name as file name.");
+                out = new File(out, FilenameUtils.getBaseName(format));
+                LOGGER.warn("Writing non-standard VSL output to a directory using template name as file name.");
             }
             processTemplate(format, out);
         }
@@ -561,8 +562,7 @@ public class ReportGenerator {
 
         final JsonFactory factory = new JsonFactory();
 
-        try (InputStream is = new FileInputStream(in);
-                OutputStream os = new FileOutputStream(out)) {
+        try (InputStream is = new FileInputStream(in); OutputStream os = new FileOutputStream(out)) {
 
             final JsonParser parser = factory.createParser(is);
             final JsonGenerator generator = factory.createGenerator(os);

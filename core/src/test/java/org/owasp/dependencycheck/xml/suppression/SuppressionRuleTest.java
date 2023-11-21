@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.xml.suppression;
 
 import com.github.packageurl.MalformedPackageURLException;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +28,12 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.dependency.CvssV2;
+
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.naming.CpeIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.CvssUtil;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
 
 /**
@@ -91,12 +93,12 @@ public class SuppressionRuleTest extends BaseTest {
     @Test
     public void testGetCvssBelow() {
         SuppressionRule instance = new SuppressionRule();
-        List<Float> cvss = new ArrayList<>();
+        List<Double> cvss = new ArrayList<>();
         instance.setCvssBelow(cvss);
         assertFalse(instance.hasCvssBelow());
-        instance.addCvssBelow(0.7f);
+        instance.addCvssBelow(0.7);
         assertTrue(instance.hasCvssBelow());
-        List<Float> result = instance.getCvssBelow();
+        List<Double> result = instance.getCvssBelow();
         assertEquals(cvss, result);
     }
 
@@ -435,10 +437,10 @@ public class SuppressionRuleTest extends BaseTest {
         //cvss
         dependency.addVulnerability(v);
         instance = new SuppressionRule();
-        instance.addCvssBelow(5f);
+        instance.addCvssBelow(5.0);
         instance.process(dependency);
         assertEquals(1, dependency.getVulnerabilities().size());
-        instance.addCvssBelow(8f);
+        instance.addCvssBelow(8.0);
         instance.process(dependency);
         assertTrue(dependency.getVulnerabilities().isEmpty());
         assertEquals(1, dependency.getSuppressedVulnerabilities().size());
@@ -564,7 +566,9 @@ public class SuppressionRuleTest extends BaseTest {
         Vulnerability v = new Vulnerability();
         v.addCwe("CWE-287 Improper Authentication");
         v.setName("CVE-2013-1337");
-        v.setCvssV2(new CvssV2(7.5f, "Network", "Low", "None", "Partial", "Partial", "Partial", "High"));
+        
+        CvssV2 cvss = CvssUtil.vectorToCvssV2("/AV:N/AC:L/Au:N/C:P/I:P/A:P", 7.5);
+        v.setCvssV2(cvss);
         return v;
     }
 }

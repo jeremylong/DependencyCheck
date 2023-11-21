@@ -17,22 +17,18 @@
  */
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
-import java.io.File;
-import java.io.IOException;
+import io.github.jeremylong.openvulnerability.client.nvd.Config;
+import io.github.jeremylong.openvulnerability.client.nvd.CpeMatch;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
-import org.owasp.dependencycheck.data.nvd.json.CVEJSON40Min11;
-import org.owasp.dependencycheck.data.nvd.json.DefConfigurations;
-import org.owasp.dependencycheck.data.nvd.json.DefCpeMatch;
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-import org.owasp.dependencycheck.data.nvd.json.DefNode;
-import org.owasp.dependencycheck.data.nvd.json.Description;
-import org.owasp.dependencycheck.data.nvd.json.LangString;
+
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+import io.github.jeremylong.openvulnerability.client.nvd.CveItem;
+import io.github.jeremylong.openvulnerability.client.nvd.LangString;
+import io.github.jeremylong.openvulnerability.client.nvd.Node;
 
 /**
  *
@@ -48,42 +44,28 @@ public class CveEcosystemMapperTest {
         CveEcosystemMapper mapper = new CveEcosystemMapper();
         String value = "There is a vulnerability in some.java file";
         assertEquals(JarAnalyzer.DEPENDENCY_ECOSYSTEM, mapper.getEcosystem(asCve(value)));
+        value = "There is a vulnerability in some file";
         assertNull(mapper.getEcosystem(asCve(value,"cpe:2.3:a:apache:struts:1.2.1:*:*:*:*:*:*:*")));
     }
 
     private DefCveItem asCve(String description, String... cpe) {
-        DefCveItem defCveItem = new DefCveItem();
 
-        Description d = new Description();
+        List<LangString> d = new ArrayList<>();
+        LangString str = new LangString("en", description);
+        d.add(str);
 
-        LangString string = new LangString();
-        string.setLang("en");
-        string.setValue(description);
-
-        d.getDescriptionData().add(string);
-
-        CVEJSON40Min11 cve = new CVEJSON40Min11();
-        cve.setDescription(d);
-
-        defCveItem.setCve(cve);
-
-        final DefConfigurations configurations = new DefConfigurations();
-        final DefNode node = new DefNode();
-        final List<DefCpeMatch> matches = new ArrayList<>();
-        final DefCpeMatch m = new DefCpeMatch();
-        m.setCpe23Uri("cpe:2.3:a:owasp:dependency-check:5.0.0:*:*:*:*:*:*:*");
-        matches.add(m);
+        List<Config> configurations = new ArrayList<>();
+        List<Node> nodes = new ArrayList<>();
+        List<CpeMatch> cpeMatch = new ArrayList<>();
         for (String s : cpe) {
-            final DefCpeMatch cpeMatch = new DefCpeMatch();
-            cpeMatch.setCpe23Uri(s);
-            matches.add(cpeMatch);
+            CpeMatch m = new CpeMatch(Boolean.TRUE, s, null, null, null, null, null);
+            cpeMatch.add(m);
         }
-        node.setCpeMatch(matches);
-        List<DefNode> nodes = new ArrayList<>();
+        Node node = new Node(Node.Operator.OR, Boolean.FALSE, cpeMatch);
         nodes.add(node);
-        configurations.setNodes(nodes);
-
-        defCveItem.setConfigurations(configurations);
+        Config conf = new Config(Config.Operator.AND, Boolean.FALSE, nodes);
+        CveItem cveItem = new CveItem(null, null, null, null, null, null, null, null, null, null, null, null, d, null, null, null, configurations, null);
+        DefCveItem defCveItem = new DefCveItem(cveItem);
 
         return defCveItem;
     }

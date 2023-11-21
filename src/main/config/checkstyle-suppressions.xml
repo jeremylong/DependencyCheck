@@ -19,6 +19,7 @@
     <suppress checks="RegexpHeader" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]utils[\\/]SSLSocketFactoryEx.java" />
     <suppress checks="RegexpHeader" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]xml[\\/]XmlInputStream.java" />
     <suppress checks="RegexpHeader" files=".*[\\/]org[\\/]owasp[\\/]dependencycheck[\\/]xml[\\/]XmlEntity.java" />
+    <suppress checks="FileLength" files=".*Check.java" />
     <suppress checks="FileLength" files=".*BaseDependencyCheckMojo.java" />
     <suppress checks="LineLength" files=".*BaseDependencyCheckMojo.java" />
 </suppressions>

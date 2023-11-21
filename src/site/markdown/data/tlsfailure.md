@@ -1,4 +1,4 @@
-NVD CVE Download Failures
+NVD API Access Failures
 =========================
 In some installations of the JRE (such as  OpenJDK on CentOS/RHEL/Amazon Linux) do not
 have the correct libraries to support EC cryptography. If you run into problems running

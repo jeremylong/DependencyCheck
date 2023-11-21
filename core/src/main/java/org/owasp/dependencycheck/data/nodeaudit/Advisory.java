@@ -17,8 +17,9 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
-import org.owasp.dependencycheck.dependency.CvssV3;
 
+
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;

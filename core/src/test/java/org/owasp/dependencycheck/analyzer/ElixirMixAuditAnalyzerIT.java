@@ -96,7 +96,7 @@ public class ElixirMixAuditAnalyzerIT extends BaseDBTestCase {
             Vulnerability v = d.getVulnerabilities().iterator().next();
             assertEquals("2018-1000883", v.getName());
             assertEquals("Cookie headers were not validated\n", v.getDescription());
-            assertEquals(-1.0f, v.getCvssV2().getScore(), 0.0);
+            assertEquals(-1.0f, v.getCvssV2().getCvssData().getBaseScore(), 0.0);
 
             VulnerableSoftware s = v.getVulnerableSoftware().iterator().next();
             assertEquals("cpe:2.3:a:plug_project:plug:1.3.4:*:*:*:*:*:*:*", s.toString());

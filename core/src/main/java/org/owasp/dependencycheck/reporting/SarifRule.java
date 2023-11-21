@@ -17,8 +17,8 @@
  */
 package org.owasp.dependencycheck.reporting;
 
-import org.owasp.dependencycheck.dependency.CvssV2;
-import org.owasp.dependencycheck.dependency.CvssV3;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3;
 
 /**
  *
@@ -61,7 +61,7 @@ public class SarifRule {
     /**
      * CVSS V2 field.
      */
-    private String cvssv2ConfidentialImpact;
+    private String cvssv2ConfidentialityImpact;
     /**
      * CVSS V2 field.
      */
@@ -161,40 +161,76 @@ public class SarifRule {
         this.fullDescription = fullDescription;
         this.source = source;
         if (cvssV2 != null) {
-            this.cvssv2Score = Float.toString(cvssV2.getScore());
-            this.cvssv2AccessVector = cvssV2.getAccessVector();
-            this.cvssv2AccessComplexity = cvssV2.getAccessComplexity();
-            this.cvssv2Authentication = cvssV2.getAuthentication();
-            this.cvssv2ConfidentialImpact = cvssV2.getConfidentialityImpact();
-            this.cvssv2IntegrityImpact = cvssV2.getIntegrityImpact();
-            this.cvssv2AvailabilityImpact = cvssV2.getAvailabilityImpact();
-            this.cvssv2Severity = cvssV2.getSeverity();
-            this.cvssv2Version = cvssV2.getVersion();
+            if (cvssV2.getCvssData().getBaseScore() != null) {
+                this.cvssv2Score = cvssV2.getCvssData().getBaseScore().toString();
+            }
+            if (cvssV2.getCvssData().getAccessVector() != null) {
+                this.cvssv2AccessVector = cvssV2.getCvssData().getAccessVector().name();
+            }
+            if (cvssV2.getCvssData().getAccessComplexity() != null) {
+                this.cvssv2AccessComplexity = cvssV2.getCvssData().getAccessComplexity().name();
+            }
+            if (cvssV2.getCvssData().getAuthentication() != null) {
+                this.cvssv2Authentication = cvssV2.getCvssData().getAuthentication().name();
+            }
+            if (cvssV2.getCvssData().getConfidentialityImpact() != null) {
+                this.cvssv2ConfidentialityImpact = cvssV2.getCvssData().getConfidentialityImpact().name();
+            }
+            if (cvssV2.getCvssData().getIntegrityImpact() != null) {
+                this.cvssv2IntegrityImpact = cvssV2.getCvssData().getIntegrityImpact().name();
+            }
+            if (cvssV2.getCvssData().getAvailabilityImpact() != null) {
+                this.cvssv2AvailabilityImpact = cvssV2.getCvssData().getAvailabilityImpact().name();
+            }
+            this.cvssv2Severity = cvssV2.getCvssData().getBaseSeverity();
+            if (cvssV2.getCvssData().getVersion() != null) {
+                this.cvssv2Version = cvssV2.getCvssData().getVersion().name();
+            }
             if (cvssV2.getExploitabilityScore() != null) {
-                this.cvssv2ExploitabilityScore = Float.toString(cvssV2.getExploitabilityScore());
+                this.cvssv2ExploitabilityScore = cvssV2.getExploitabilityScore().toString();
             }
             if (cvssV2.getImpactScore() != null) {
-                this.cvssv2ImpactScore = Float.toString(cvssV2.getImpactScore());
+                this.cvssv2ImpactScore = cvssV2.getImpactScore().toString();
             }
         }
         if (cvssV3 != null) {
-            this.cvssv3BaseScore = Float.toString(cvssV3.getBaseScore());
-            this.cvssv3AttackVector = cvssV3.getAttackVector();
-            this.cvssv3AttackComplexity = cvssV3.getAttackComplexity();
-            this.cvssv3PrivilegesRequired = cvssV3.getPrivilegesRequired();
-            this.cvssv3UserInteraction = cvssV3.getUserInteraction();
-            this.cvssv3Scope = cvssV3.getScope();
-            this.cvssv3ConfidentialityImpact = cvssV3.getConfidentialityImpact();
-            this.cvssv3IntegrityImpact = cvssV3.getIntegrityImpact();
-            this.cvssv3AvailabilityImpact = cvssV3.getAvailabilityImpact();
-            this.cvssv3BaseSeverity = cvssV3.getBaseSeverity();
-            if (cvssV3.getexploitabilityScore() != null) {
-                this.cvssv3ExploitabilityScore = Float.toString(cvssV3.getexploitabilityScore());
+            if (cvssV3.getCvssData().getBaseScore() != null) {
+                this.cvssv3BaseScore = cvssV3.getCvssData().getBaseScore().toString();
             }
-            if (cvssV3.getimpactScore() != null) {
-                this.cvssv3ImpactScore = Float.toString(cvssV3.getimpactScore());
+            if (cvssV3.getCvssData().getAttackVector() != null) {
+                this.cvssv3AttackVector = cvssV3.getCvssData().getAttackVector().name();
             }
-            this.cvssv3Version = cvssV3.getVersion();
+            if (cvssV3.getCvssData().getAttackComplexity() != null) {
+                this.cvssv3AttackComplexity = cvssV3.getCvssData().getAttackComplexity().name();
+            }
+            if (cvssV3.getCvssData().getPrivilegesRequired() != null) {
+                this.cvssv3PrivilegesRequired = cvssV3.getCvssData().getPrivilegesRequired().name();
+            }
+            if (cvssV3.getCvssData().getUserInteraction() != null) {
+                this.cvssv3UserInteraction = cvssV3.getCvssData().getUserInteraction().name();
+            }
+            if (cvssV3.getCvssData().getScope() != null) {
+                this.cvssv3Scope = cvssV3.getCvssData().getScope().name();
+            }
+            if (cvssV3.getCvssData().getConfidentialityImpact() != null) {
+                this.cvssv3ConfidentialityImpact = cvssV3.getCvssData().getConfidentialityImpact().name();
+            }
+            if (cvssV3.getCvssData().getIntegrityImpact() != null) {
+                this.cvssv3IntegrityImpact = cvssV3.getCvssData().getIntegrityImpact().name();
+            }
+            if (cvssV3.getCvssData().getAvailabilityImpact() != null) {
+                this.cvssv3AvailabilityImpact = cvssV3.getCvssData().getAvailabilityImpact().name();
+            }
+            if (cvssV3.getCvssData().getBaseSeverity() != null) {
+                this.cvssv3BaseSeverity = cvssV3.getCvssData().getBaseSeverity().name();
+            }
+            if (cvssV3.getExploitabilityScore() != null) {
+                this.cvssv3ExploitabilityScore = cvssV3.getExploitabilityScore().toString();
+            }
+            if (cvssV3.getImpactScore() != null) {
+                this.cvssv3ImpactScore = cvssV3.getImpactScore().toString();
+            }
+            this.cvssv3Version = cvssV3.getCvssData().getVersion().name();
         }
     }
 
@@ -560,21 +596,21 @@ public class SarifRule {
     }
 
     /**
-     * Get the value of CVSS2 Confidential Impact.
+     * Get the value of CVSS2 Confidentiality Impact.
      *
-     * @return the value of CVSS2 Confidential Impact
+     * @return the value of CVSS2 Confidentiality Impact
      */
-    public String getCvssv2ConfidentialImpact() {
-        return cvssv2ConfidentialImpact;
+    public String getCvssv2ConfidentialityImpact() {
+        return cvssv2ConfidentialityImpact;
     }
 
     /**
-     * Set the value of CVSS2 Confidential Impact.
+     * Set the value of CVSS2 Confidentiality Impact.
      *
-     * @param cvssv2ConfidentialImpact new value of CVSS2 Confidential Impact
+     * @param cvssv2ConfidentialityImpact new value of CVSS2 Confidentiality Impact
      */
-    public void setCvssv2ConfidentialImpact(String cvssv2ConfidentialImpact) {
-        this.cvssv2ConfidentialImpact = cvssv2ConfidentialImpact;
+    public void setCvssv2ConfidentialityImpact(String cvssv2ConfidentialityImpact) {
+        this.cvssv2ConfidentialityImpact = cvssv2ConfidentialityImpact;
     }
 
     /**

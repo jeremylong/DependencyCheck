@@ -20,9 +20,8 @@ package org.owasp.dependencycheck.data.nvdcve;
 import org.owasp.dependencycheck.BaseDBTestCase;
 import java.util.Properties;
 import org.junit.After;
-import org.junit.Test;
-import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -66,16 +65,16 @@ public class DatabasePropertiesIT extends BaseDBTestCase {
      */
     @Test
     public void testSave() throws Exception {
-        NvdCveInfo updatedValue = new NvdCveInfo("test","url",1337L);
         String key = "test";
-        long expected = 1337L;
+        String value = "something";
+        String expected = "something";
         DatabaseProperties instance = cveDb.getDatabaseProperties();
-        instance.save(updatedValue);
+        instance.save(key, value);
         instance = cveDb.reloadProperties();
-        long results = Long.parseLong(instance.getProperty("NVD CVE " + key));
+        String results = instance.getProperty(key);
         assertEquals(expected, results);
     }
-
+    
     /**
      * Test of getProperty method, of class DatabaseProperties.
      */

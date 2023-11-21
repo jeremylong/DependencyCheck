@@ -17,13 +17,14 @@
  */
 package org.owasp.dependencycheck.data.nvdcve;
 
+import io.github.jeremylong.openvulnerability.client.nvd.Config;
 import java.util.stream.Collectors;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
-import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
 
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-import org.owasp.dependencycheck.data.nvd.json.LangString;
-import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+import io.github.jeremylong.openvulnerability.client.nvd.LangString;
+import io.github.jeremylong.openvulnerability.client.nvd.Node;
+import java.util.List;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
 
 /**
@@ -57,7 +58,7 @@ public class CveItemOperator {
      * @return the English descriptions from the CVE object
      */
     public String extractDescription(DefCveItem cve) {
-        return cve.getCve().getDescription().getDescriptionData().stream().filter((desc)
+        return cve.getCve().getDescriptions().stream().filter((desc)
                 -> "en".equals(desc.getLang())).map(LangString::getValue).collect(Collectors.joining(" "));
     }
 
@@ -216,11 +217,16 @@ public class CveItemOperator {
      * configured CPE Starts with filter
      */
     protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
-        //cycle through to see if this is a CPE we care about (use the CPE filters
-        return cve.getConfigurations().getNodes().stream()
-                .collect(NodeFlatteningCollector.getInstance())
-                .collect(CpeMatchStreamCollector.getInstance())
-                .filter(cpe -> cpe.getCpe23Uri() != null)
-                .anyMatch(cpe -> cpe.getCpe23Uri().startsWith(cpeStartsWithFilter));
+        if (cve.getCve().getConfigurations() != null) {
+            //cycle through to see if this is a CPE we care about (use the CPE filters
+            return cve.getCve().getConfigurations().stream()
+                    .map(Config::getNodes)
+                    .flatMap(List::stream)
+                    .map(Node::getCpeMatch)
+                    .flatMap(List::stream)
+                    .filter(cpe -> cpe.getCriteria() != null)
+                    .anyMatch(cpe -> cpe.getCriteria().startsWith(cpeStartsWithFilter));
+        }
+        return false;
     }
 }

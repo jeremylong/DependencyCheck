@@ -27,7 +27,6 @@ import java.util.Properties;
 import java.util.TreeMap;
 import javax.annotation.concurrent.ThreadSafe;
 
-import org.owasp.dependencycheck.data.update.nvd.NvdCveInfo;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,26 +45,21 @@ public class DatabaseProperties {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseProperties.class);
     /**
-     * Modified key word, used as a key to store information about the modified
-     * file (i.e. the containing the last 8 days of updates)..
+     * The last modified request data for the NVD API.
      */
-    public static final String MODIFIED = "Modified";
+    public static final String NVD_API_LAST_MODIFIED = "nvd.api.last.modified";
     /**
-     * The properties file key for the last checked field - used to store the
-     * last check time of the Modified NVD CVE xml file.
+     * The date the NVD API was last checked for an update.
      */
-    public static final String LAST_CHECKED = "NVD CVE Checked";
+    public static final String NVD_API_LAST_CHECKED = "nvd.api.last.checked";
     /**
-     * The properties file key for the last updated field - used to store the
-     * last updated time of the Modified NVD CVE xml file.
+     * The date the NVD cache was last checked for an update.
      */
-    public static final String LAST_UPDATED = "NVD CVE Modified";
+    public static final String NVD_CACHE_LAST_CHECKED = "nvd.cache.last.checked";
     /**
-     * Stores the last updated time for each of the NVD CVE files. These
-     * timestamps should be updated if we process the modified file within 7
-     * days of the last update.
+     * The date the NVD cache data was last modified/updated.
      */
-    public static final String LAST_UPDATED_BASE = "NVD CVE ";
+    public static final String NVD_CACHE_LAST_MODIFIED = "nvd.cache.last.modified";
     /**
      * The key for the last time the CPE data was updated.
      */
@@ -74,7 +68,6 @@ public class DatabaseProperties {
      * The key for the database schema version.
      */
     public static final String VERSION = "version";
-
     /**
      * The key for the last check time for the Known Exploited Vulnerabilities.
      */
@@ -83,7 +76,6 @@ public class DatabaseProperties {
      * The key for the version the Known Exploited Vulnerabilities.
      */
     public static final String KEV_VERSION = "kev.version";
-
     /**
      * A collection of properties about the data.
      */
@@ -110,19 +102,6 @@ public class DatabaseProperties {
      */
     public synchronized boolean isEmpty() {
         return properties == null || properties.isEmpty();
-    }
-
-    /**
-     * Saves the last updated information to the properties file.
-     *
-     * @param updatedValue the updated NVD CVE entry
-     * @throws UpdateException is thrown if there is an update exception
-     */
-    public synchronized void save(NvdCveInfo updatedValue) throws UpdateException {
-        if (updatedValue == null) {
-            return;
-        }
-        save(LAST_UPDATED_BASE + updatedValue.getId(), String.valueOf(updatedValue.getTimestamp()));
     }
 
     /**
@@ -198,4 +177,43 @@ public class DatabaseProperties {
         }
         return map;
     }
+
+    /**
+     * Retrieves a zoned date time.
+     *
+     * @param key the property key
+     * @return the zoned date time
+     */
+    public ZonedDateTime getTimestamp(String key) {
+        return DatabaseProperties.getTimestamp(properties, key);
+    }
+
+    /**
+     * Stores a timestamp.
+     *
+     * @param key the property key
+     * @param timestamp the zoned date time
+     */
+    public void save(String key, ZonedDateTime timestamp) throws UpdateException {
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssX");
+        save(key, dtf.format(timestamp));
+    }
+
+    /**
+     * Retrieves a zoned date time.
+     *
+     * @param properties the properties file containing the date time
+     * @param key the property key
+     * @return the zoned date time
+     */
+    public static ZonedDateTime getTimestamp(Properties properties, String key) {
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssX");
+        final String val = properties.getProperty(key);
+        if (val != null) {
+            final String value = properties.getProperty(key);
+            return ZonedDateTime.parse(value, dtf);
+        }
+        return null;
+    }
+
 }

@@ -33,7 +33,6 @@ The following properties can be set on the dependency-check task.
 Property              | Description                                                                                                                                                                                                    | Default Value
 ----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------
 autoUpdate            | Sets whether auto-updating of the NVD CVE/CPE data is enabled. It is not recommended that this be turned to false.                                                                                             | true
-cveValidForHours      | Sets the number of hours to wait before checking for new updates from the NVD                                                                                                                                  | 4
 failOnError           | Whether the build should fail if there is an error executing the dependency-check analysis                                                                                                                     | true
 failBuildOnCVSS       | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11 which means since the CVSS scores are 0-10, by default the build will never fail. More information on CVSS scores can be found at the [NVD](https://nvd.nist.gov/vuln-metrics/cvss)| 11
 junitFailOnCVSS       | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.                                                                                               | 0
@@ -140,15 +139,16 @@ pathToGo                            | The path to `go`.                         
 
 Advanced Configuration
 ====================
-The following properties can be configured in the plugin. However, they are less frequently changed. One exception
-may be the cvedUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
+The following properties can be configured in the plugin. However, they are less frequently changed.
 
-Property             | Description                                                              | Default Value
----------------------|--------------------------------------------------------------------------|------------------
-cveUrlModified       | URL for the modified CVE JSON data feed. When mirroring the NVD you must mirror the *.json.gz and the *.meta files. Optional if your custom cveUrlBase is just a domain name change.  | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz
-cveUrlBase           | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                          | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz
-cveWaitTime          | The time in milliseconds to wait between downloads from the NVD.                                             | 4000
-cveStartYear         | The first year of NVD CVE data to download from the NVD.                                                     | 2002
+Property             | Description                                                                                                  | Default Value
+---------------------|--------------------------------------------------------------------------------------------------------------|------------------
+nvdApiKey            | The API Key to access the NVD API; obtained from https://nvd.nist.gov/developers/request-an-api-key          | &nbsp;
+nvdApiDelay          | The number of milliseconds to wait between calls to the NVD API.                                             | &nbsp;
+nvdDatafeedUrl       | The URL for the NVD API Data feed that can be generated using https://github.com/jeremylong/Open-Vulnerability-Project/tree/main/vulnz#caching-the-nvd-cve-data - example value `https://internal.server/cache/nvdcve-{0}.json.gz` | &nbsp;
+nvdUser              | Credentials used for basic authentication for the NVD API Data feed.                                         | &nbsp;
+nvdPassword          | Credentials used for basic authentication for the NVD API Data feed.                                         | &nbsp;
+nvdValidForHours     | The number of hours to wait before checking for new updates from the NVD. The default is 4 hours.            | 4
 dataDirectory        | Data directory that is used to store the local copy of the NVD. This should generally not be changed.        | data
 databaseDriverName   | The name of the database driver. Example: org.h2.Driver.                                                     | &nbsp;
 databaseDriverPath   | The path to the database driver JAR file; only used if the driver is not in the class path.                  | &nbsp;

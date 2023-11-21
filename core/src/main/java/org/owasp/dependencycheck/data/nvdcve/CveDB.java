@@ -20,6 +20,8 @@ package org.owasp.dependencycheck.data.nvdcve;
 
 import com.google.common.io.Resources;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.github.jeremylong.openvulnerability.client.nvd.Config;
+import io.github.jeremylong.openvulnerability.client.nvd.CpeMatch;
 import org.apache.commons.collections.map.ReferenceMap;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -46,20 +48,18 @@ import static org.apache.commons.collections.map.AbstractReferenceMap.HARD;
 import static org.apache.commons.collections.map.AbstractReferenceMap.SOFT;
 import org.owasp.dependencycheck.analyzer.exception.LambdaExceptionWrapper;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
-import org.owasp.dependencycheck.data.nvd.json.BaseMetricV2;
-import org.owasp.dependencycheck.data.nvd.json.BaseMetricV3;
-import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
-import org.owasp.dependencycheck.data.nvd.json.DefCpeMatch;
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-import org.owasp.dependencycheck.data.nvd.json.LangString;
-import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
-import org.owasp.dependencycheck.data.nvd.json.ProblemtypeDatum;
-import org.owasp.dependencycheck.data.nvd.json.Reference;
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
 import static org.owasp.dependencycheck.data.nvdcve.CveDB.PreparedStatementCveDb.*;
 import org.owasp.dependencycheck.data.update.cpe.CpeEcosystemCache;
 import org.owasp.dependencycheck.data.update.cpe.CpePlus;
-import org.owasp.dependencycheck.dependency.CvssV2;
-import org.owasp.dependencycheck.dependency.CvssV3;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3Data;
+import io.github.jeremylong.openvulnerability.client.nvd.LangString;
+import io.github.jeremylong.openvulnerability.client.nvd.Node;
+import io.github.jeremylong.openvulnerability.client.nvd.Reference;
+import io.github.jeremylong.openvulnerability.client.nvd.Weakness;
 import org.owasp.dependencycheck.dependency.VulnerableSoftwareBuilder;
 import us.springett.parsers.cpe.Cpe;
 import us.springett.parsers.cpe.CpeBuilder;
@@ -143,8 +143,7 @@ public final class CveDB implements AutoCloseable {
             final URL url = Resources.getResource(DB_ECOSYSTEM_CACHE);
             final List<String> sql = Resources.readLines(url, StandardCharsets.UTF_8);
 
-            try (Connection conn = databaseManager.getConnection();
-                    Statement statement = conn.createStatement()) {
+            try (Connection conn = databaseManager.getConnection(); Statement statement = conn.createStatement()) {
                 for (String single : sql) {
                     updateCount += statement.executeUpdate(single);
                 }
@@ -461,8 +460,7 @@ public final class CveDB implements AutoCloseable {
      */
     public Set<CpePlus> getCPEs(String vendor, String product) {
         final Set<CpePlus> cpe = new HashSet<>();
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement ps = getPreparedStatement(conn, SELECT_CPE_ENTRIES)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement ps = getPreparedStatement(conn, SELECT_CPE_ENTRIES)) {
             //part, vendor, product, version, update_version, edition,
             //lang, sw_edition, target_sw, target_hw, other, ecosystem
             ps.setString(1, vendor);
@@ -567,8 +565,7 @@ public final class CveDB implements AutoCloseable {
      */
     public void saveProperty(String key, String value) {
         clearCache();
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement mergeProperty = getPreparedStatement(conn, MERGE_PROPERTY)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement mergeProperty = getPreparedStatement(conn, MERGE_PROPERTY)) {
             if (mergeProperty != null) {
                 mergeProperty.setString(1, key);
                 mergeProperty.setString(2, value);
@@ -623,8 +620,7 @@ public final class CveDB implements AutoCloseable {
         }
 
         final List<Vulnerability> vulnerabilities = new ArrayList<>();
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement ps = getPreparedStatement(conn, SELECT_CVE_FROM_SOFTWARE)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement ps = getPreparedStatement(conn, SELECT_CVE_FROM_SOFTWARE)) {
             ps.setString(1, cpe.getVendor());
             ps.setString(2, cpe.getProduct());
             try (ResultSet rs = ps.executeQuery()) {
@@ -714,8 +710,7 @@ public final class CveDB implements AutoCloseable {
         final VulnerableSoftwareBuilder vulnerableSoftwareBuilder = new VulnerableSoftwareBuilder();
         Vulnerability vuln = null;
         try {
-            try (PreparedStatement psV = getPreparedStatement(conn, SELECT_VULNERABILITY, cve);
-                    ResultSet rsV = psV.executeQuery()) {
+            try (PreparedStatement psV = getPreparedStatement(conn, SELECT_VULNERABILITY, cve); ResultSet rsV = psV.executeQuery()) {
                 if (rsV.next()) {
                     //1.id, 2.description,
                     cveId = rsV.getInt(1);
@@ -729,23 +724,77 @@ public final class CveDB implements AutoCloseable {
                     //12.v2AccessVector, 13.v2AccessComplexity, 14.v2Authentication, 15.v2ConfidentialityImpact,
                     //16.v2IntegrityImpact, 17.v2AvailabilityImpact, 18.v2Version,
                     if (rsV.getObject(11) != null) {
-                        final CvssV2 cvss = new CvssV2(rsV.getFloat(11), rsV.getString(12),
-                                rsV.getString(13), rsV.getString(14), rsV.getString(15),
-                                rsV.getString(16), rsV.getString(17), rsV.getString(3),
-                                getFloatValue(rsV, 4), getFloatValue(rsV, 5),
-                                getBooleanValue(rsV, 6), getBooleanValue(rsV, 7), getBooleanValue(rsV, 8),
-                                getBooleanValue(rsV, 9), getBooleanValue(rsV, 10), rsV.getString(18));
+
+                        final CvssV2Data.AccessVectorType accessVector = CvssV2Data.AccessVectorType.fromValue(rsV.getString(12));
+                        final CvssV2Data.AccessComplexityType accessComplexity = CvssV2Data.AccessComplexityType.fromValue(rsV.getString(13));
+                        final CvssV2Data.AuthenticationType authentication = CvssV2Data.AuthenticationType.fromValue(rsV.getString(14));
+                        final CvssV2Data.CiaType confidentialityImpact = CvssV2Data.CiaType.fromValue(rsV.getString(15));
+                        final CvssV2Data.CiaType integrityImpact = CvssV2Data.CiaType.fromValue(rsV.getString(16));
+                        final CvssV2Data.CiaType availabilityImpact = CvssV2Data.CiaType.fromValue(rsV.getString(17));
+                        final String vector = String.format("/AV:%s/AC:%s/Au:%s/C:%s/I:%s/A:%s",
+                                accessVector == null ? "" : accessVector.value().substring(0, 1),
+                                accessComplexity == null ? "" : accessComplexity.value().substring(0, 1),
+                                authentication == null ? "" : authentication.value().substring(0, 1),
+                                confidentialityImpact == null ? "" : confidentialityImpact.value().substring(0, 1),
+                                integrityImpact == null ? "" : integrityImpact.value().substring(0, 1),
+                                availabilityImpact == null ? "" : availabilityImpact.value().substring(0, 1));
+
+                        //some older test data may not correctly have the version set.
+                        String cveVersion = "2.0";
+                        if (rsV.getString(18) != null) {
+                            cveVersion = rsV.getString(18);
+                        }
+                        final CvssV2Data cvssData = new CvssV2Data(cveVersion, vector, accessVector,
+                                accessComplexity, authentication, confidentialityImpact,
+                                integrityImpact, availabilityImpact, rsV.getDouble(11), rsV.getString(3),
+                                null, null, null, null, null, null, null, null, null, null);
+                        final CvssV2 cvss = new CvssV2(null, CvssV2.Type.PRIMARY, cvssData, rsV.getString(3),
+                                rsV.getDouble(4), rsV.getDouble(5), rsV.getBoolean(6), rsV.getBoolean(7),
+                                rsV.getBoolean(8), rsV.getBoolean(9), rsV.getBoolean(10));
                         vuln.setCvssV2(cvss);
                     }
                     //19.v3ExploitabilityScore, 20.v3ImpactScore, 21.v3AttackVector, 22.v3AttackComplexity, 23.v3PrivilegesRequired,
                     //24.v3UserInteraction, 25.v3Scope, 26.v3ConfidentialityImpact, 27.v3IntegrityImpact, 28.v3AvailabilityImpact,
-                    //29.v3BaseScore, 30.v3BaseSeverity, 21.v3Version
+                    //29.v3BaseScore, 30.v3BaseSeverity, 31.v3Version
                     if (rsV.getObject(21) != null) {
-                        final CvssV3 cvss = new CvssV3(rsV.getString(21), rsV.getString(22),
-                                rsV.getString(23), rsV.getString(24), rsV.getString(25),
-                                rsV.getString(26), rsV.getString(27), rsV.getString(28),
-                                rsV.getFloat(29), rsV.getString(30), getFloatValue(rsV, 19),
-                                getFloatValue(rsV, 20), rsV.getString(31));
+                        //some older test data may not correctly have the version set.
+                        String cveVersion = "3.1";
+                        if (rsV.getString(31) != null) {
+                            cveVersion = rsV.getString(31);
+                        }
+                        final CvssV3Data.Version version = CvssV3Data.Version.fromValue(cveVersion);
+                        final CvssV3Data.AttackVectorType attackVector = CvssV3Data.AttackVectorType.fromValue(rsV.getString(21));
+                        final CvssV3Data.AttackComplexityType attackComplexity = CvssV3Data.AttackComplexityType.fromValue(rsV.getString(22));
+                        final CvssV3Data.PrivilegesRequiredType privilegesRequired = CvssV3Data.PrivilegesRequiredType.fromValue(rsV.getString(23));
+                        final CvssV3Data.UserInteractionType userInteraction = CvssV3Data.UserInteractionType.fromValue(rsV.getString(24));
+                        final CvssV3Data.ScopeType scope = CvssV3Data.ScopeType.fromValue(rsV.getString(25));
+                        final CvssV3Data.CiaType confidentialityImpact = CvssV3Data.CiaType.fromValue(rsV.getString(26));
+                        final CvssV3Data.CiaType integrityImpact = CvssV3Data.CiaType.fromValue(rsV.getString(27));
+                        final CvssV3Data.CiaType availabilityImpact = CvssV3Data.CiaType.fromValue(rsV.getString(28));
+                        final CvssV3Data.SeverityType baseSeverity = CvssV3Data.SeverityType.fromValue(rsV.getString(30));
+                        final String vector = String.format("CVSS:%s/AV:%s/AC:%s/PR:%s/UI:%s/S:%s/C:%s/I:%s/A:%s",
+                                version == null ? "" : version,
+                                attackVector == null ? "" : attackVector.value().substring(0, 1),
+                                attackComplexity == null ? "" : attackComplexity.value().substring(0, 1),
+                                privilegesRequired == null ? "" : privilegesRequired.value().substring(0, 1),
+                                userInteraction == null ? "" : userInteraction.value().substring(0, 1),
+                                scope == null ? "" : scope.value().substring(0, 1),
+                                confidentialityImpact == null ? "" : confidentialityImpact.value().substring(0, 1),
+                                integrityImpact == null ? "" : integrityImpact.value().substring(0, 1),
+                                availabilityImpact == null ? "" : availabilityImpact.value().substring(0, 1));
+
+                        final CvssV3Data cvssData = new CvssV3Data(version, vector, attackVector, attackComplexity, privilegesRequired,
+                                userInteraction, scope, confidentialityImpact, integrityImpact, availabilityImpact,
+                                rsV.getDouble(29), baseSeverity, CvssV3Data.ExploitCodeMaturityType.PROOF_OF_CONCEPT,
+                                CvssV3Data.RemediationLevelType.NOT_DEFINED, CvssV3Data.ConfidenceType.REASONABLE, 0.0,
+                                CvssV3Data.SeverityType.MEDIUM, CvssV3Data.CiaRequirementType.NOT_DEFINED,
+                                CvssV3Data.CiaRequirementType.NOT_DEFINED, CvssV3Data.CiaRequirementType.NOT_DEFINED,
+                                CvssV3Data.ModifiedAttackVectorType.ADJACENT_NETWORK, CvssV3Data.ModifiedAttackComplexityType.NOT_DEFINED,
+                                CvssV3Data.ModifiedPrivilegesRequiredType.NOT_DEFINED, CvssV3Data.ModifiedUserInteractionType.NOT_DEFINED,
+                                CvssV3Data.ModifiedScopeType.NOT_DEFINED, CvssV3Data.ModifiedCiaType.NOT_DEFINED,
+                                CvssV3Data.ModifiedCiaType.NOT_DEFINED, CvssV3Data.ModifiedCiaType.NOT_DEFINED, 1.0,
+                                CvssV3Data.SeverityType.NONE);
+                        final CvssV3 cvss = new CvssV3(null, null, cvssData, rsV.getDouble(19), rsV.getDouble(20));
                         vuln.setCvssV3(cvss);
                     }
                 } else {
@@ -753,20 +802,17 @@ public final class CveDB implements AutoCloseable {
                     return null;
                 }
             }
-            try (PreparedStatement psCWE = getPreparedStatement(conn, SELECT_VULNERABILITY_CWE, cveId);
-                    ResultSet rsC = psCWE.executeQuery()) {
+            try (PreparedStatement psCWE = getPreparedStatement(conn, SELECT_VULNERABILITY_CWE, cveId); ResultSet rsC = psCWE.executeQuery()) {
                 while (rsC.next()) {
                     vuln.addCwe(rsC.getString(1));
                 }
             }
-            try (PreparedStatement psR = getPreparedStatement(conn, SELECT_REFERENCES, cveId);
-                    ResultSet rsR = psR.executeQuery()) {
+            try (PreparedStatement psR = getPreparedStatement(conn, SELECT_REFERENCES, cveId); ResultSet rsR = psR.executeQuery()) {
                 while (rsR.next()) {
                     vuln.addReference(rsR.getString(1), rsR.getString(2), rsR.getString(3));
                 }
             }
-            try (PreparedStatement psS = getPreparedStatement(conn, SELECT_SOFTWARE, cveId);
-                    ResultSet rsS = psS.executeQuery()) {
+            try (PreparedStatement psS = getPreparedStatement(conn, SELECT_SOFTWARE, cveId); ResultSet rsS = psS.executeQuery()) {
                 //1 part, 2 vendor, 3 product, 4 version, 5 update_version, 6 edition, 7 lang,
                 //8 sw_edition, 9 target_sw, 10 target_hw, 11 other, 12 versionEndExcluding,
                 //13 versionEndIncluding, 14 versionStartExcluding, 15 versionStartIncluding, 16 vulnerable
@@ -810,13 +856,13 @@ public final class CveDB implements AutoCloseable {
      */
     public void updateVulnerability(DefCveItem cve, String baseEcosystem) {
         clearCache();
-        final String cveId = cve.getCve().getCVEDataMeta().getId();
+        final String cveId = cve.getCve().getId();
         try {
-            final String description = cveItemConverter.extractDescription(cve);
-            if (cveItemConverter.isRejected(description)) {
+            if (cve.getCve().getVulnStatus().toUpperCase().startsWith("REJECT")) {
                 deleteVulnerability(cveId);
             } else {
                 if (cveItemConverter.testCveCpeStartWithFilter(cve)) {
+                    final String description = cveItemConverter.extractDescription(cve);
                     final int vulnerabilityId = updateOrInsertVulnerability(cve, description);
                     updateVulnerabilityInsertCwe(vulnerabilityId, cve);
                     updateVulnerabilityInsertReferences(vulnerabilityId, cve);
@@ -825,7 +871,6 @@ public final class CveDB implements AutoCloseable {
                     updateVulnerabilityInsertSoftware(vulnerabilityId, cveId, software, baseEcosystem);
                 }
             }
-
         } catch (SQLException ex) {
             final String msg = String.format("Error updating '%s'", cveId);
             LOGGER.debug(msg, ex);
@@ -858,8 +903,7 @@ public final class CveDB implements AutoCloseable {
     private void saveCpeEcosystemCache() {
         final Map<Pair<String, String>, String> map = CpeEcosystemCache.getChanged();
         if (map != null && !map.isEmpty()) {
-            try (Connection conn = databaseManager.getConnection();
-                    PreparedStatement ps = getPreparedStatement(conn, MERGE_CPE_ECOSYSTEM)) {
+            try (Connection conn = databaseManager.getConnection(); PreparedStatement ps = getPreparedStatement(conn, MERGE_CPE_ECOSYSTEM)) {
                 for (Map.Entry<Pair<String, String>, String> entry : map.entrySet()) {
                     ps.setString(1, entry.getKey().getLeft());
                     ps.setString(2, entry.getKey().getRight());
@@ -894,8 +938,7 @@ public final class CveDB implements AutoCloseable {
             loadCpeEcosystemCache();
         }
         final int vulnerabilityId;
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement callUpdate = getPreparedStatement(conn, UPDATE_VULNERABILITY)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement callUpdate = getPreparedStatement(conn, UPDATE_VULNERABILITY)) {
 //            String 1.cve, String 2.description, String 3.v2Severity, Float 4.v2ExploitabilityScore,
 //            Float 5.v2ImpactScore, Boolean 6.v2AcInsufInfo, Boolean 7.v2ObtainAllPrivilege,
 //            Boolean 8.v2ObtainUserPrivilege, Boolean 9.v2ObtainOtherPrivilege, Boolean 10.v2UserInteractionRequired,
@@ -906,79 +949,91 @@ public final class CveDB implements AutoCloseable {
 //            String 23.v3PrivilegesRequired, String 24.v3UserInteraction, String 25.v3Scope,
 //            String 26.v3ConfidentialityImpact, String 27.v3IntegrityImpact, String 28.v3AvailabilityImpact,
 //            Float 29.v3BaseScore, String 30.v3BaseSeverity, String 31.v3Version
-            callUpdate.setString(1, cve.getCve().getCVEDataMeta().getId());
+            callUpdate.setString(1, cve.getCve().getId());
             callUpdate.setString(2, description);
-            if (cve.getImpact().getBaseMetricV2() != null) {
-                final BaseMetricV2 cvssv2 = cve.getImpact().getBaseMetricV2();
-                Map<String, Object> props = cvssv2.getAdditionalProperties();
-                callUpdate.setString(3, cvssv2.getSeverity());
-                setFloatValue(callUpdate, 4, props, "exploitabilityScore");
-                setFloatValue(callUpdate, 5, props, "impactScore");
-                setBooleanValue(callUpdate, 6, props, "acInsufInfo");
-                setBooleanValue(callUpdate, 7, props, "obtainAllPrivilege");
-                setBooleanValue(callUpdate, 8, props, "obtainUserPrivilege");
-                setBooleanValue(callUpdate, 9, props, "obtainOtherPrivilege");
-                setBooleanValue(callUpdate, 10, props, "userInteractionRequired");
-                callUpdate.setFloat(11, cvssv2.getCvssV2().getBaseScore().floatValue());
-                callUpdate.setString(12, cvssv2.getCvssV2().getAccessVector().value());
-                callUpdate.setString(13, cvssv2.getCvssV2().getAccessComplexity().value());
-                callUpdate.setString(14, cvssv2.getCvssV2().getAuthentication().value());
-                callUpdate.setString(15, cvssv2.getCvssV2().getConfidentialityImpact().value());
-                callUpdate.setString(16, cvssv2.getCvssV2().getIntegrityImpact().value());
-                callUpdate.setString(17, cvssv2.getCvssV2().getAvailabilityImpact().value());
-                props = cvssv2.getCvssV2().getAdditionalProperties();
-                setStringValue(callUpdate, 18, props, "version");
-            } else {
-                callUpdate.setNull(3, java.sql.Types.NULL);
-                callUpdate.setNull(4, java.sql.Types.NULL);
-                callUpdate.setNull(5, java.sql.Types.NULL);
-                callUpdate.setNull(6, java.sql.Types.NULL);
-                callUpdate.setNull(7, java.sql.Types.NULL);
-                callUpdate.setNull(8, java.sql.Types.NULL);
-                callUpdate.setNull(9, java.sql.Types.NULL);
-                callUpdate.setNull(10, java.sql.Types.NULL);
-                callUpdate.setNull(11, java.sql.Types.NULL);
-                callUpdate.setNull(12, java.sql.Types.NULL);
-                callUpdate.setNull(13, java.sql.Types.NULL);
-                callUpdate.setNull(14, java.sql.Types.NULL);
-                callUpdate.setNull(15, java.sql.Types.NULL);
-                callUpdate.setNull(16, java.sql.Types.NULL);
-                callUpdate.setNull(17, java.sql.Types.NULL);
-                callUpdate.setNull(18, java.sql.Types.NULL);
+            Optional<CvssV2> optCvssv2 = null;
+            if (cve.getCve().getMetrics() != null && cve.getCve().getMetrics().getCvssMetricV2() != null) {
+                optCvssv2 = cve.getCve().getMetrics().getCvssMetricV2().stream().sorted(Comparator.comparing(CvssV2::getType)).findFirst();
             }
-            if (cve.getImpact().getBaseMetricV3() != null) {
-                final BaseMetricV3 cvssv3 = cve.getImpact().getBaseMetricV3();
-                Map<String, Object> props = cvssv3.getAdditionalProperties();
-                setFloatValue(callUpdate, 19, props, "exploitabilityScore");
-                setFloatValue(callUpdate, 20, props, "impactScore");
-
-                callUpdate.setString(21, cvssv3.getCvssV3().getAttackVector().value());
-                callUpdate.setString(22, cvssv3.getCvssV3().getAttackComplexity().value());
-                callUpdate.setString(23, cvssv3.getCvssV3().getPrivilegesRequired().value());
-                callUpdate.setString(24, cvssv3.getCvssV3().getUserInteraction().value());
-                callUpdate.setString(25, cvssv3.getCvssV3().getScope().value());
-                callUpdate.setString(26, cvssv3.getCvssV3().getConfidentialityImpact().value());
-                callUpdate.setString(27, cvssv3.getCvssV3().getIntegrityImpact().value());
-                callUpdate.setString(28, cvssv3.getCvssV3().getAvailabilityImpact().value());
-                callUpdate.setFloat(29, cvssv3.getCvssV3().getBaseScore().floatValue());
-                callUpdate.setString(30, cvssv3.getCvssV3().getBaseSeverity().value());
-
-                props = cvssv3.getCvssV3().getAdditionalProperties();
-                setStringValue(callUpdate, 31, props, "version");
+            if (optCvssv2 != null && optCvssv2.isPresent()) {
+                final CvssV2 cvssv2 = optCvssv2.get();
+                setUpdateColumn(callUpdate, 3, cvssv2.getBaseSeverity());
+                setUpdateColumn(callUpdate, 4, cvssv2.getExploitabilityScore());
+                setUpdateColumn(callUpdate, 5, cvssv2.getImpactScore());
+                setUpdateColumn(callUpdate, 6, cvssv2.getAcInsufInfo());
+                setUpdateColumn(callUpdate, 7, cvssv2.getObtainAllPrivilege());
+                setUpdateColumn(callUpdate, 8, cvssv2.getObtainUserPrivilege());
+                setUpdateColumn(callUpdate, 9, cvssv2.getObtainOtherPrivilege());
+                setUpdateColumn(callUpdate, 10, cvssv2.getUserInteractionRequired());
+                setUpdateColumn(callUpdate, 11, cvssv2.getCvssData().getBaseScore());
+                setUpdateColumn(callUpdate, 12, cvssv2.getCvssData().getAccessVector());
+                setUpdateColumn(callUpdate, 13, cvssv2.getCvssData().getAccessComplexity());
+                setUpdateColumn(callUpdate, 14, cvssv2.getCvssData().getAuthentication());
+                setUpdateColumn(callUpdate, 15, cvssv2.getCvssData().getConfidentialityImpact());
+                setUpdateColumn(callUpdate, 16, cvssv2.getCvssData().getIntegrityImpact());
+                setUpdateColumn(callUpdate, 17, cvssv2.getCvssData().getAvailabilityImpact());
+                setUpdateColumn(callUpdate, 18, cvssv2.getCvssData().getVersion());
             } else {
-                callUpdate.setNull(19, java.sql.Types.NULL);
-                callUpdate.setNull(20, java.sql.Types.NULL);
-                callUpdate.setNull(21, java.sql.Types.NULL);
-                callUpdate.setNull(22, java.sql.Types.NULL);
-                callUpdate.setNull(23, java.sql.Types.NULL);
-                callUpdate.setNull(24, java.sql.Types.NULL);
-                callUpdate.setNull(25, java.sql.Types.NULL);
-                callUpdate.setNull(26, java.sql.Types.NULL);
-                callUpdate.setNull(27, java.sql.Types.NULL);
-                callUpdate.setNull(28, java.sql.Types.NULL);
-                callUpdate.setNull(29, java.sql.Types.NULL);
-                callUpdate.setNull(30, java.sql.Types.NULL);
-                callUpdate.setNull(31, java.sql.Types.NULL);
+                callUpdate.setNull(3, java.sql.Types.VARCHAR);
+                callUpdate.setNull(4, java.sql.Types.DOUBLE);
+                callUpdate.setNull(5, java.sql.Types.DOUBLE);
+                callUpdate.setNull(6, java.sql.Types.VARCHAR);
+                callUpdate.setNull(7, java.sql.Types.BOOLEAN);
+                callUpdate.setNull(8, java.sql.Types.BOOLEAN);
+                callUpdate.setNull(9, java.sql.Types.BOOLEAN);
+                callUpdate.setNull(10, java.sql.Types.BOOLEAN);
+                callUpdate.setNull(11, java.sql.Types.DOUBLE);
+                callUpdate.setNull(12, java.sql.Types.VARCHAR);
+                callUpdate.setNull(13, java.sql.Types.VARCHAR);
+                callUpdate.setNull(14, java.sql.Types.VARCHAR);
+                callUpdate.setNull(15, java.sql.Types.VARCHAR);
+                callUpdate.setNull(16, java.sql.Types.VARCHAR);
+                callUpdate.setNull(17, java.sql.Types.VARCHAR);
+                callUpdate.setNull(18, java.sql.Types.VARCHAR);
+            }
+            Optional<CvssV3> optCvssv30 = Optional.empty();
+            if (cve.getCve().getMetrics() != null && cve.getCve().getMetrics().getCvssMetricV30() != null) {
+                optCvssv30 = cve.getCve().getMetrics().getCvssMetricV30().stream().sorted(Comparator.comparing(CvssV3::getType)).findFirst();
+            }
+            Optional<CvssV3> optCvssv31 = Optional.empty();
+            if (cve.getCve().getMetrics() != null && cve.getCve().getMetrics().getCvssMetricV31() != null) {
+                optCvssv31 = cve.getCve().getMetrics().getCvssMetricV31().stream().sorted(Comparator.comparing(CvssV3::getType)).findFirst();
+            }
+
+            CvssV3 cvssv3 = null;
+            if (optCvssv31.isPresent()) {
+                cvssv3 = optCvssv31.get();
+            } else if (optCvssv30.isPresent()) {
+                cvssv3 = optCvssv30.get();
+            }
+            if (cvssv3 != null) {
+                setUpdateColumn(callUpdate, 19, cvssv3.getExploitabilityScore());
+                setUpdateColumn(callUpdate, 20, cvssv3.getImpactScore());
+                setUpdateColumn(callUpdate, 21, cvssv3.getCvssData().getAttackVector());
+                setUpdateColumn(callUpdate, 22, cvssv3.getCvssData().getAttackComplexity());
+                setUpdateColumn(callUpdate, 23, cvssv3.getCvssData().getPrivilegesRequired());
+                setUpdateColumn(callUpdate, 24, cvssv3.getCvssData().getUserInteraction());
+                setUpdateColumn(callUpdate, 25, cvssv3.getCvssData().getScope());
+                setUpdateColumn(callUpdate, 26, cvssv3.getCvssData().getConfidentialityImpact());
+                setUpdateColumn(callUpdate, 27, cvssv3.getCvssData().getIntegrityImpact());
+                setUpdateColumn(callUpdate, 28, cvssv3.getCvssData().getAvailabilityImpact());
+                setUpdateColumn(callUpdate, 29, cvssv3.getCvssData().getBaseScore());
+                setUpdateColumn(callUpdate, 30, cvssv3.getCvssData().getBaseSeverity());
+                setUpdateColumn(callUpdate, 31, cvssv3.getCvssData().getVersion());
+            } else {
+                callUpdate.setNull(19, java.sql.Types.DOUBLE);
+                callUpdate.setNull(20, java.sql.Types.DOUBLE);
+                callUpdate.setNull(21, java.sql.Types.VARCHAR);
+                callUpdate.setNull(22, java.sql.Types.VARCHAR);
+                callUpdate.setNull(23, java.sql.Types.VARCHAR);
+                callUpdate.setNull(24, java.sql.Types.VARCHAR);
+                callUpdate.setNull(25, java.sql.Types.VARCHAR);
+                callUpdate.setNull(26, java.sql.Types.VARCHAR);
+                callUpdate.setNull(27, java.sql.Types.VARCHAR);
+                callUpdate.setNull(28, java.sql.Types.VARCHAR);
+                callUpdate.setNull(29, java.sql.Types.DOUBLE);
+                callUpdate.setNull(30, java.sql.Types.VARCHAR);
+                callUpdate.setNull(31, java.sql.Types.VARCHAR);
             }
             if (isOracle) {
                 try {
@@ -987,7 +1042,7 @@ public final class CveDB implements AutoCloseable {
                     cs.executeUpdate();
                     vulnerabilityId = cs.getInt(32);
                 } catch (SQLException ex) {
-                    final String msg = String.format("Unable to retrieve id for new vulnerability for '%s'", cve.getCve().getCVEDataMeta().getId());
+                    final String msg = String.format("Unable to retrieve id for new vulnerability for '%s'", cve.getCve().getId());
                     throw new DatabaseException(msg, ex);
                 }
             } else {
@@ -995,7 +1050,7 @@ public final class CveDB implements AutoCloseable {
                     rs.next();
                     vulnerabilityId = rs.getInt(1);
                 } catch (SQLException ex) {
-                    final String msg = String.format("Unable to retrieve id for new vulnerability for '%s'", cve.getCve().getCVEDataMeta().getId());
+                    final String msg = String.format("Unable to retrieve id for new vulnerability for '%s'", cve.getCve().getId());
                     throw new DatabaseException(msg, ex);
                 }
             }
@@ -1013,22 +1068,24 @@ public final class CveDB implements AutoCloseable {
      * @throws SQLException thrown if there is an error inserting the data
      */
     private void updateVulnerabilityInsertCwe(int vulnerabilityId, DefCveItem cve) throws SQLException {
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement insertCWE = getPreparedStatement(conn, INSERT_CWE, vulnerabilityId)) {
-            for (ProblemtypeDatum datum : cve.getCve().getProblemtype().getProblemtypeData()) {
-                for (LangString desc : datum.getDescription()) {
-                    if ("en".equals(desc.getLang())) {
-                        insertCWE.setString(2, desc.getValue());
-                        if (isBatchInsertEnabled()) {
-                            insertCWE.addBatch();
-                        } else {
-                            insertCWE.execute();
+        if (cve.getCve() != null && cve.getCve().getWeaknesses() != null) {
+            try (Connection conn = databaseManager.getConnection();
+                    PreparedStatement insertCWE = getPreparedStatement(conn, INSERT_CWE, vulnerabilityId)) {
+                for (Weakness weakness : cve.getCve().getWeaknesses()) {
+                    for (LangString desc : weakness.getDescription()) {
+                        if ("en".equals(desc.getLang())) {
+                            insertCWE.setString(2, desc.getValue());
+                            if (isBatchInsertEnabled()) {
+                                insertCWE.addBatch();
+                            } else {
+                                insertCWE.execute();
+                            }
                         }
                     }
                 }
-            }
-            if (isBatchInsertEnabled()) {
-                insertCWE.executeBatch();
+                if (isBatchInsertEnabled()) {
+                    insertCWE.executeBatch();
+                }
             }
         }
     }
@@ -1112,8 +1169,7 @@ public final class CveDB implements AutoCloseable {
     private void updateVulnerabilityInsertSoftware(int vulnerabilityId, String cveId,
             List<VulnerableSoftware> software, String baseEcosystem)
             throws DatabaseException, SQLException {
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement insertSoftware = getPreparedStatement(conn, INSERT_SOFTWARE)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement insertSoftware = getPreparedStatement(conn, INSERT_SOFTWARE)) {
             for (VulnerableSoftware parsedCpe : software) {
                 insertSoftware.setInt(1, vulnerabilityId);
                 insertSoftware.setString(2, parsedCpe.getPart().getAbbreviation());
@@ -1167,14 +1223,29 @@ public final class CveDB implements AutoCloseable {
      * @throws SQLException thrown if there is an error inserting the data
      */
     private void updateVulnerabilityInsertReferences(int vulnerabilityId, DefCveItem cve) throws SQLException {
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement insertReference = getPreparedStatement(conn, INSERT_REFERENCE)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement insertReference = getPreparedStatement(conn, INSERT_REFERENCE)) {
             if (cve.getCve().getReferences() != null) {
-                for (Reference r : cve.getCve().getReferences().getReferenceData()) {
+                for (Reference r : cve.getCve().getReferences()) {
                     insertReference.setInt(1, vulnerabilityId);
-                    insertReference.setString(2, r.getName());
-                    insertReference.setString(3, r.getUrl());
-                    insertReference.setString(4, r.getRefsource());
+                    Optional<String> name = Optional.empty();
+                    if (r.getTags() != null) {
+                        name = r.getTags().stream().sorted().findFirst();
+                    }
+                    if (name.isPresent()) {
+                        insertReference.setString(2, name.get());
+                    } else {
+                        insertReference.setNull(2, java.sql.Types.VARCHAR);
+                    }
+                    if (r.getUrl() != null && !r.getUrl().isEmpty()) {
+                        insertReference.setString(3, r.getUrl());
+                    } else {
+                        insertReference.setNull(3, java.sql.Types.VARCHAR);
+                    }
+                    if (r.getSource() != null && !r.getSource().isEmpty()) {
+                        insertReference.setString(4, r.getSource());
+                    } else {
+                        insertReference.setNull(4, java.sql.Types.VARCHAR);
+                    }
                     if (isBatchInsertEnabled()) {
                         insertReference.addBatch();
                     } else {
@@ -1198,20 +1269,23 @@ public final class CveDB implements AutoCloseable {
      */
     private List<VulnerableSoftware> parseCpes(DefCveItem cve) throws CpeValidationException {
         final List<VulnerableSoftware> software = new ArrayList<>();
-        final List<DefCpeMatch> cpeEntries = cve.getConfigurations().getNodes().stream()
-                .collect(NodeFlatteningCollector.getInstance())
-                .collect(CpeMatchStreamCollector.getInstance())
-                .filter(predicate -> predicate.getCpe23Uri() != null)
-                .filter(predicate -> predicate.getCpe23Uri().startsWith(cpeStartsWithFilter))
+
+        final List<CpeMatch> cpeEntries = cve.getCve().getConfigurations().stream()
+                .map(Config::getNodes)
+                .flatMap(List::stream)
+                .map(Node::getCpeMatch)
+                .flatMap(List::stream)
+                .filter(predicate -> predicate.getCriteria() != null)
+                .filter(predicate -> predicate.getCriteria().startsWith(cpeStartsWithFilter))
                 //this single CPE entry causes nearly 100% FP - so filtering it at the source.
-                .filter(entry -> !("CVE-2009-0754".equals(cve.getCve().getCVEDataMeta().getId())
-                && "cpe:2.3:a:apache:apache:*:*:*:*:*:*:*:*".equals(entry.getCpe23Uri())))
+                .filter(entry -> !("CVE-2009-0754".equals(cve.getCve().getId())
+                && "cpe:2.3:a:apache:apache:*:*:*:*:*:*:*:*".equals(entry.getCriteria())))
                 .collect(Collectors.toList());
         final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();
 
         try {
             cpeEntries.forEach(entry -> {
-                builder.cpe(parseCpe(entry, cve.getCve().getCVEDataMeta().getId()))
+                builder.cpe(parseCpe(entry, cve.getCve().getId()))
                         .versionEndExcluding(entry.getVersionEndExcluding())
                         .versionStartExcluding(entry.getVersionStartExcluding())
                         .versionEndIncluding(entry.getVersionEndIncluding())
@@ -1240,22 +1314,14 @@ public final class CveDB implements AutoCloseable {
      * @throws DatabaseException thrown if there is an error converting the
      * CpeMatch into a CPE object
      */
-    private Cpe parseCpe(DefCpeMatch cpe, String cveId) throws DatabaseException {
-        Cpe parsedCpe;
+    private Cpe parseCpe(CpeMatch cpe, String cveId) throws DatabaseException {
+        final Cpe parsedCpe;
         try {
             //the replace is a hack as the NVD does not properly escape backslashes in their JSON
-            parsedCpe = CpeParser.parse(cpe.getCpe23Uri(), true);
+            parsedCpe = CpeParser.parse(cpe.getCriteria(), true);
         } catch (CpeParsingException ex) {
-            LOGGER.debug("NVD (" + cveId + ") contain an invalid 2.3 CPE: " + cpe.getCpe23Uri());
-            if (cpe.getCpe22Uri() != null && !cpe.getCpe22Uri().isEmpty()) {
-                try {
-                    parsedCpe = CpeParser.parse(cpe.getCpe22Uri(), true);
-                } catch (CpeParsingException ex2) {
-                    throw new DatabaseException("Unable to parse CPE: " + cpe.getCpe23Uri(), ex);
-                }
-            } else {
-                throw new DatabaseException("Unable to parse CPE: " + cpe.getCpe23Uri(), ex);
-            }
+            LOGGER.debug("NVD (" + cveId + ") contain an invalid 2.3 CPE: " + cpe.getCriteria());
+            throw new DatabaseException("Unable to parse CPE: " + cpe.getCriteria(), ex);
         }
         return parsedCpe;
     }
@@ -1399,8 +1465,7 @@ public final class CveDB implements AutoCloseable {
     public void defrag() {
         if (isH2) {
             final long start = System.currentTimeMillis();
-            try (Connection conn = databaseManager.getConnection();
-                    CallableStatement psCompaxt = conn.prepareCall("SHUTDOWN DEFRAG")) {
+            try (Connection conn = databaseManager.getConnection(); CallableStatement psCompaxt = conn.prepareCall("SHUTDOWN DEFRAG")) {
                 LOGGER.info("Begin database defrag");
                 psCompaxt.execute();
                 final long millis = System.currentTimeMillis() - start;
@@ -1447,8 +1512,7 @@ public final class CveDB implements AutoCloseable {
      */
     public void deleteUnusedCpe() {
         clearCache();
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement ps = getPreparedStatement(conn, DELETE_UNUSED_DICT_CPE)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement ps = getPreparedStatement(conn, DELETE_UNUSED_DICT_CPE)) {
             ps.executeUpdate();
         } catch (SQLException ex) {
             LOGGER.error("Unable to delete CPE dictionary entries", ex);
@@ -1468,8 +1532,7 @@ public final class CveDB implements AutoCloseable {
      */
     public void addCpe(String cpe, String vendor, String product) {
         clearCache();
-        try (Connection conn = databaseManager.getConnection();
-                PreparedStatement ps = getPreparedStatement(conn, ADD_DICT_CPE)) {
+        try (Connection conn = databaseManager.getConnection(); PreparedStatement ps = getPreparedStatement(conn, ADD_DICT_CPE)) {
             ps.setString(1, cpe);
             ps.setString(2, vendor);
             ps.setString(3, product);
@@ -1528,6 +1591,134 @@ public final class CveDB implements AutoCloseable {
         }
     }
 
+    private void setUpdateColumn(PreparedStatement ps, int i, Double value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.DOUBLE);
+        } else {
+            ps.setDouble(i, value);
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV2Data.AuthenticationType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV2Data.CiaType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV2Data.Version value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV2Data.AccessComplexityType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV2Data.AccessVectorType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, String value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value);
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, Boolean value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.BOOLEAN);
+        } else {
+            ps.setBoolean(i, value);
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV3Data.AttackVectorType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV3Data.AttackComplexityType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV3Data.PrivilegesRequiredType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV3Data.UserInteractionType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV3Data.ScopeType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV3Data.SeverityType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV3Data.CiaType value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
+    private void setUpdateColumn(PreparedStatement ps, int i, CvssV3Data.Version value) throws SQLException {
+        if (value == null) {
+            ps.setNull(i, java.sql.Types.VARCHAR);
+        } else {
+            ps.setString(i, value.value());
+        }
+    }
+
     /**
      * Sets the float parameter on a prepared statement from a properties map.
      *
@@ -1542,10 +1733,10 @@ public final class CveDB implements AutoCloseable {
             try {
                 ps.setFloat(i, Float.parseFloat(props.get(key).toString()));
             } catch (NumberFormatException nfe) {
-                ps.setNull(i, java.sql.Types.NULL);
+                ps.setNull(i, java.sql.Types.FLOAT);
             }
         } else {
-            ps.setNull(i, java.sql.Types.NULL);
+            ps.setNull(i, java.sql.Types.FLOAT);
         }
     }
 
@@ -1562,7 +1753,7 @@ public final class CveDB implements AutoCloseable {
         if (props != null && props.containsKey(key)) {
             ps.setString(i, props.get(key).toString());
         } else {
-            ps.setNull(i, java.sql.Types.NULL);
+            ps.setNull(i, java.sql.Types.VARCHAR);
         }
     }
 
@@ -1579,7 +1770,7 @@ public final class CveDB implements AutoCloseable {
         if (props != null && props.containsKey(key)) {
             ps.setBoolean(i, Boolean.parseBoolean(props.get(key).toString()));
         } else {
-            ps.setNull(i, java.sql.Types.NULL);
+            ps.setNull(i, java.sql.Types.BOOLEAN);
         }
     }
 

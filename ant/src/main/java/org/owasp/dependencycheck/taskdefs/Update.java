@@ -17,14 +17,11 @@
  */
 package org.owasp.dependencycheck.taskdefs;
 
-import java.util.Optional;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.utils.CveUrlParser;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -39,6 +36,31 @@ import org.slf4j.impl.StaticLoggerBinder;
 //on unrelated ODC clients (the DependencyCheckScanAgent).
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Update extends Purge {
+
+    /**
+     * The NVD API Key.
+     */
+    private String nvdApiKey;
+    /**
+     * The number of hours to wait before checking for new updates from the NVD.
+     */
+    private Integer nvdValidForHours;
+    /**
+     * The NVD API Data Feed URL.
+     */
+    private String nvdDatafeedUrl;
+    /**
+     * The username for basic auth to the NVD Data Feed.
+     */
+    private String nvdUser;
+    /**
+     * The password for basic auth to the NVD Data Feed.
+     */
+    private String nvdPassword;
+    /**
+     * The time in milliseconds to wait between downloading NVD API data.
+     */
+    private int nvdApiDelay = 0;
 
     /**
      * The Proxy Server.
@@ -89,38 +111,19 @@ public class Update extends Purge {
      */
     private String databasePassword;
     /**
-     * The URL for the modified NVD CVE JSON file.
-     */
-    private String cveUrlModified;
-    /**
-     * Base Data Mirror URL for CVE JSON files.
-     */
-    private String cveUrlBase;
-    /**
-     * The wait time in milliseconds between downloads from the NVD.
-     */
-    private String cveWaitTime;
-    /**
-     * The number of hours to wait before re-checking for updates.
-     */
-    private Integer cveValidForHours;
-    /**
-     * The number of hours to wait before re-checking hosted suppressions file for updates.
+     * The number of hours to wait before re-checking hosted suppressions file
+     * for updates.
      */
     private Integer hostedSuppressionsValidForHours;
     /**
-     * Whether the hosted suppressions file will be updated regardless of the `autoupdate` settings. Defaults to false.
+     * Whether the hosted suppressions file will be updated regardless of the
+     * `autoupdate` settings. Defaults to false.
      */
     private Boolean hostedSuppressionsForceUpdate;
     /**
      * Whether the hosted suppressions file will be used. Defaults to true.
      */
     private Boolean hostedSuppressionsEnabled;
-
-    /**
-     * Specify the first year of NVD CVE data to download; default is 2002.
-     */
-    private Integer cveStartYear;
 
     /**
      * Construct a new UpdateTask.
@@ -130,6 +133,114 @@ public class Update extends Purge {
         // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
         // core end up coming through this tasks logger
         StaticLoggerBinder.getSingleton().setTask(this);
+    }
+
+    /**
+     * Get the value of nvdApiKey.
+     *
+     * @return the value of nvdApiKey
+     */
+    public String getNvdApiKey() {
+        return nvdApiKey;
+    }
+
+    /**
+     * Set the value of nvdApiKey.
+     *
+     * @param nvdApiKey new value of nvdApiKey
+     */
+    public void setNvdApiKey(String nvdApiKey) {
+        this.nvdApiKey = nvdApiKey;
+    }
+
+    /**
+     * Get the value of nvdValidForHours.
+     *
+     * @return the value of nvdValidForHours
+     */
+    public int getNvdValidForHours() {
+        return nvdValidForHours;
+    }
+
+    /**
+     * Set the value of nvdValidForHours.
+     *
+     * @param nvdValidForHours new value of nvdValidForHours
+     */
+    public void setNvdValidForHours(int nvdValidForHours) {
+        this.nvdValidForHours = nvdValidForHours;
+    }
+
+    /**
+     * Get the value of nvdDatafeedUrl.
+     *
+     * @return the value of nvdDatafeedUrl
+     */
+    public String getNvdDatafeedUrl() {
+        return nvdDatafeedUrl;
+    }
+
+    /**
+     * Set the value of nvdDatafeedUrl.
+     *
+     * @param nvdDatafeedUrl new value of nvdDatafeedUrl
+     */
+    public void setNvdDatafeedUrl(String nvdDatafeedUrl) {
+        this.nvdDatafeedUrl = nvdDatafeedUrl;
+    }
+
+    /**
+     * Get the value of nvdUser.
+     *
+     * @return the value of nvdUser
+     */
+    public String getNvdUser() {
+        return nvdUser;
+    }
+
+    /**
+     * Set the value of nvdUser.
+     *
+     * @param nvdUser new value of nvdUser
+     */
+    public void setNvdUser(String nvdUser) {
+        this.nvdUser = nvdUser;
+    }
+
+    /**
+     * Get the value of nvdPassword.
+     *
+     * @return the value of nvdPassword
+     */
+    public String getNvdPassword() {
+        return nvdPassword;
+    }
+
+    /**
+     * Set the value of nvdPassword.
+     *
+     * @param nvdPassword new value of nvdPassword
+     */
+    public void setNvdPassword(String nvdPassword) {
+        this.nvdPassword = nvdPassword;
+    }
+
+    /**
+     * Get the value of nvdApiDelay.
+     *
+     * @return the value of nvdApiDelay
+     */
+    public int getNvdApiDelay() {
+        return nvdApiDelay;
+    }
+
+    /**
+     * Set the value of nvdApiDelay.
+     *
+     * @param nvdApiDelay new value of nvdApiDelay
+     */
+    public void setNvdApiDelay(int nvdApiDelay) {
+        this.nvdApiDelay = nvdApiDelay;
     }
 
     /**
@@ -349,101 +460,6 @@ public class Update extends Purge {
     }
 
     /**
-     * Set the value of cveUrlModified.
-     *
-     * @param cveUrlModified new value of cveUrlModified
-     */
-    public void setCveUrlModified(String cveUrlModified) {
-        this.cveUrlModified = cveUrlModified;
-    }
-
-    /**
-     * Get the value of cveUrlModified.
-     *
-     * @return the value of cveUrlModified
-     */
-    public String getCveUrlModified() {
-        return cveUrlModified;
-    }
-
-    /**
-     * Get the value of cveUrlBase.
-     *
-     * @return the value of cveUrlBase
-     */
-    public String getCveUrlBase() {
-        return cveUrlBase;
-    }
-
-    /**
-     * Set the value of cveUrlBase.
-     *
-     * @param cveUrlBase new value of cveUrlBase
-     */
-    public void setCveUrlBase(String cveUrlBase) {
-        this.cveUrlBase = cveUrlBase;
-    }
-
-    /**
-     * Get the value of cveUrlBase.
-     *
-     * @return the value of cveUrlBase
-     */
-    public String getCveWaitTime() {
-        return cveWaitTime;
-    }
-
-    /**
-     * Set the value of cveWaitTime.
-     *
-     * @param cveWaitTime new value of cveWaitTime
-     */
-    public void setCveWaitTime(String cveWaitTime) {
-        this.cveWaitTime = cveWaitTime;
-    }
-
-    /**
-     * Get the value of cveValidForHours.
-     *
-     * @return the value of cveValidForHours
-     */
-    public Integer getCveValidForHours() {
-        return cveValidForHours;
-    }
-
-    /**
-     * Set the value of cveValidForHours.
-     *
-     * @param cveValidForHours new value of cveValidForHours
-     */
-    public void setCveValidForHours(Integer cveValidForHours) {
-        this.cveValidForHours = cveValidForHours;
-    }
-
-    /**
-     * Get the value of cveStartYear.
-     *
-     * @return the value of cveStartYear
-     */
-    public Integer getCveStartYear() {
-        return cveStartYear;
-    }
-
-    /**
-     * Set the value of cveStartYear.
-     *
-     * @param cveStartYear new value of cveStartYear
-     */
-    public void setCveStartYear(Integer cveStartYear) {
-        if (cveStartYear != null && cveStartYear < 2002) {
-            log("Invalid Configuration: cveStartYear must be 2002 or greater", Project.MSG_ERR);
-            this.cveStartYear = 2002;
-        } else {
-            this.cveStartYear = cveStartYear;
-        }
-    }
-
-    /**
      * Get the value of hostedSuppressionsValidForHours.
      *
      * @return the value of hostedSuppressionsValidForHours
@@ -455,7 +471,8 @@ public class Update extends Purge {
     /**
      * Set the value of hostedSuppressionsValidForHours.
      *
-     * @param hostedSuppressionsValidForHours new value of hostedSuppressionsValidForHours
+     * @param hostedSuppressionsValidForHours new value of
+     * hostedSuppressionsValidForHours
      */
     public void setHostedSuppressionsValidForHours(final Integer hostedSuppressionsValidForHours) {
         this.hostedSuppressionsValidForHours = hostedSuppressionsValidForHours;
@@ -473,7 +490,8 @@ public class Update extends Purge {
     /**
      * Set the value of hostedSuppressionsForceUpdate.
      *
-     * @param hostedSuppressionsForceUpdate new value of hostedSuppressionsForceUpdate
+     * @param hostedSuppressionsForceUpdate new value of
+     * hostedSuppressionsForceUpdate
      */
     public void setHostedSuppressionsForceUpdate(final Boolean hostedSuppressionsForceUpdate) {
         this.hostedSuppressionsForceUpdate = hostedSuppressionsForceUpdate;
@@ -487,6 +505,7 @@ public class Update extends Purge {
     public Boolean isHostedSuppressionsEnabled() {
         return hostedSuppressionsEnabled;
     }
+
     /**
      * Set the value of hostedSuppressionsEnabled.
      *
@@ -550,28 +569,21 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
-
-        final String cveModifiedJson = Optional.ofNullable(cveUrlModified)
-                .filter(url -> !url.isEmpty())
-                .orElseGet(this::getDefaultCveUrlModified);
-        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);
-        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);
-        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, cveWaitTime);
-        getSettings().setIntIfNotNull(Settings.KEYS.CVE_START_YEAR, cveStartYear);
         getSettings().setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);
         getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);
         getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);
-        if (cveValidForHours != null) {
-            if (cveValidForHours >= 0) {
-                getSettings().setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);
+
+        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);
+        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, nvdApiDelay);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, nvdUser);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_PASSWORD, nvdPassword);
+        if (nvdValidForHours != null) {
+            if (nvdValidForHours >= 0) {
+                getSettings().setInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);
             } else {
-                throw new BuildException("Invalid setting: `cpeValidForHours` must be 0 or greater");
+                throw new BuildException("Invalid setting: `nvdValidForHours` must be 0 or greater");
             }
         }
-    }
-
-    private String getDefaultCveUrlModified() {
-        return CveUrlParser.newInstance(getSettings())
-                .getDefaultCveUrlModified(cveUrlBase);
     }
 }

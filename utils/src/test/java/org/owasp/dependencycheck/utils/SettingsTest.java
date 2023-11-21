@@ -43,7 +43,7 @@ public class SettingsTest extends BaseTest {
      */
     @Test
     public void testGetString() {
-        String key = Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS;
+        String key = Settings.KEYS.NVD_API_DATAFEED_VALID_FOR_DAYS;
         String expResult = "7";
         String result = getSettings().getString(key);
         Assert.assertTrue(result.endsWith(expResult));
@@ -323,11 +323,11 @@ public class SettingsTest extends BaseTest {
         assertThat("password should be masked",
                 getSettings().getPrintableValue("odc.database.password", "s3Cr3t!"),
                 equalTo("********"));
-        
+
         assertThat("tokens should be masked",
                 getSettings().getPrintableValue("odc.api.token", "asf4b$3428vasd84$#$45asda"),
                 equalTo("********"));
-        
+
         assertThat("other keys should not be masked",
                 getSettings().getPrintableValue("odc.version", "5.0.0"),
                 equalTo("5.0.0"));

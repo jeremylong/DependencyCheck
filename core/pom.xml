@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>8.4.4-SNAPSHOT</version>
+        <version>9.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
@@ -105,7 +105,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
 
                 <executions>
-                    <execution>
+                    <!--                    <execution>
                         <id>generate-nvd</id>
                         <phase>generate-sources</phase>
                         <goals>
@@ -118,7 +118,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                             <annotationStyle>jackson</annotationStyle>
                             <targetPackage>org.owasp.dependencycheck.data.nvd.json</targetPackage>
                         </configuration>
-                    </execution>
+                    </execution>-->
                     <execution>
                         <id>generate-knownexploited</id>
                         <phase>generate-sources</phase>
@@ -184,6 +184,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
         </plugins>
     </build>
     <dependencies>
+        <dependency>
+            <groupId>io.github.jeremylong</groupId>
+            <artifactId>open-vulnerability-clients</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.anarres.jdiagnostics</groupId>
             <artifactId>jdiagnostics</artifactId>
@@ -290,6 +294,10 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-afterburner</artifactId>
         </dependency>
@@ -380,20 +388,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <systemProperties>
-                                <property>
-                                    <name>data.driver_path</name>
-                                    <value>${driver_path}</value>
-                                </property>
-                                <property>
-                                    <name>data.driver_name</name>
-                                    <value>${driver_name}</value>
-                                </property>
-                                <property>
-                                    <name>data.connection_string</name>
-                                    <value>${connection_string}</value>
-                                </property>
-                            </systemProperties>
+                            <systemPropertyVariables>
+                                <data.driver_path>${driver_path}</data.driver_path>
+                                <data.driver_name>${driver_name}</data.driver_name>
+                                <data.connection_string>${connection_string}</data.connection_string>
+                            </systemPropertyVariables>
                             <includes>
                                 <include>**/*MySqlIT.java</include>
                             </includes>
@@ -430,20 +429,11 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <systemProperties>
-                                <property>
-                                    <name>data.driver_path</name>
-                                    <value>${driver_path}</value>
-                                </property>
-                                <property>
-                                    <name>data.driver_name</name>
-                                    <value>${driver_name}</value>
-                                </property>
-                                <property>
-                                    <name>data.connection_string</name>
-                                    <value>${connection_string}</value>
-                                </property>
-                            </systemProperties>
+                            <systemPropertyVariables>
+                                <data.driver_path>${driver_path}</data.driver_path>
+                                <data.driver_name>${driver_name}</data.driver_name>
+                                <data.connection_string>${connection_string}</data.connection_string>
+                            </systemPropertyVariables>
                             <includes>
                                 <include>**/*MySqlIT.java</include>
                             </includes>

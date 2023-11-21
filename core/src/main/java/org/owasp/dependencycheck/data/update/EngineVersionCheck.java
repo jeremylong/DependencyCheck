@@ -123,14 +123,14 @@ public class EngineVersionCheck implements CachedWebDataSource {
             final CveDB db = engine.getDatabase();
             final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
             final boolean enabled = settings.getBoolean(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, true);
-            final String original = settings.getString(Settings.KEYS.CVE_ORIGINAL_JSON);
-            final String current = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);
+            final String datafeed = settings.getString(Settings.KEYS.NVD_API_DATAFEED_URL);
             /*
              * Only update if auto-update is enabled, the engine check is
-             * enabled, and the NVD CVE URLs have not been modified (i.e. the
-             * user has not configured them to point to an internal source).
+             * enabled, and the NVD DataFeed is being used (i.e. the user
+             * is likely on a private network). This check is not really needed
+             * so we are okay skipping it.
              */
-            if (enabled && autoupdate && original != null && original.equals(current)) {
+            if (enabled && autoupdate && datafeed != null) {
                 LOGGER.debug("Begin Engine Version Check");
 
                 final DatabaseProperties properties = db.getDatabaseProperties();

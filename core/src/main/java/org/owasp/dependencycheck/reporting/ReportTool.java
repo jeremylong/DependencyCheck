@@ -79,7 +79,7 @@ public class ReportTool {
      * @param severity the text representation of a score
      * @return the estimated score
      */
-    public float estimateSeverity(String severity) {
+    public Double estimateSeverity(String severity) {
         return SeverityUtil.estimateCvssV2(severity);
     }
 
@@ -110,33 +110,33 @@ public class ReportTool {
     private String determineScore(Vulnerability vuln) {
         if (vuln.getUnscoredSeverity() != null) {
             if ("0.0".equals(vuln.getUnscoredSeverity())) {
-                return "Unknown";
+                return "unknown";
             } else {
                 return normalizeSeverity(vuln.getUnscoredSeverity().toLowerCase());
             }
-        } else if (vuln.getCvssV3() != null && vuln.getCvssV3().getBaseSeverity() != null) {
-            return normalizeSeverity(vuln.getCvssV3().getBaseSeverity().toLowerCase());
-        } else if (vuln.getCvssV2() != null && vuln.getCvssV2().getSeverity() != null) {
-            return normalizeSeverity(vuln.getCvssV2().getSeverity());
+        } else if (vuln.getCvssV3() != null && vuln.getCvssV3().getCvssData().getBaseSeverity() != null) {
+            return normalizeSeverity(vuln.getCvssV3().getCvssData().getBaseSeverity().value().toLowerCase());
+        } else if (vuln.getCvssV2() != null && vuln.getCvssV2().getCvssData().getBaseSeverity() != null) {
+            return normalizeSeverity(vuln.getCvssV2().getCvssData().getBaseSeverity());
         }
-        return "Unknown";
+        return "unknown";
     }
 
-    public String normalizeSeverity(String sev) {
-        switch (sev) {
+    private String normalizeSeverity(String sev) {
+        switch (sev.toLowerCase()) {
             case "critical":
-                return "Critical";
+                return "critical";
             case "high":
-                return "High";
+                return "high";
             case "medium":
             case "moderate":
-                return "Medium";
+                return "medium";
             case "low":
             case "informational":
             case "info":
-                return "Low";
+                return "low";
             default:
-                return "Unknown";
+                return "unknown";
         }
     }
 

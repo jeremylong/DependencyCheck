@@ -191,10 +191,10 @@ public class SuppressionHandler extends DefaultHandler {
                     rule.addVulnerabilityName(processPropertyType());
                     break;
                 case NOTES:
-                    rule.addNotes(currentText.toString().trim());
+                    rule.setNotes(currentText.toString().trim());
                     break;
                 case CVSS_BELOW:
-                    final float cvss = Float.parseFloat(currentText.toString().trim());
+                    final Double cvss = Double.valueOf(currentText.toString().trim());
                     rule.addCvssBelow(cvss);
                     break;
                 default:

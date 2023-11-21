@@ -20,7 +20,7 @@ package org.owasp.dependencycheck.data.update.cpe;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.owasp.dependencycheck.data.update.nvd.NvdCveParser;
+
 import org.owasp.dependencycheck.utils.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +50,7 @@ public final class CpeEcosystemCache {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(NvdCveParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CpeEcosystemCache.class);
 
     //CSOFF: EmptyBlock
     /**

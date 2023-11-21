@@ -41,8 +41,8 @@ import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.SeverityUtil;
 import org.slf4j.impl.StaticLoggerBinder;
-//CSOFF: MethodCount
 
+//CSOFF: MethodCount
 /**
  * An Ant task definition to execute dependency-check during an Ant build.
  *
@@ -882,7 +882,7 @@ public class Check extends Update {
      */
     public Boolean isNugetconfAnalyzerEnabled() {
         return nugetconfAnalyzerEnabled;
-    }    
+    }
 
     /**
      * Sets whether or not the analyzer is enabled.
@@ -2217,8 +2217,8 @@ public class Check extends Update {
         for (Dependency d : dependencies) {
             boolean addName = true;
             for (Vulnerability v : d.getVulnerabilities()) {
-                if ((v.getCvssV2() != null && v.getCvssV2().getScore() >= failBuildOnCVSS)
-                        || (v.getCvssV3() != null && v.getCvssV3().getBaseScore() >= failBuildOnCVSS)
+                if ((v.getCvssV2() != null && v.getCvssV2().getCvssData().getBaseScore() >= failBuildOnCVSS)
+                        || (v.getCvssV3() != null && v.getCvssV3().getCvssData().getBaseScore() >= failBuildOnCVSS)
                         || (v.getUnscoredSeverity() != null && SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) >= failBuildOnCVSS)
                         //safety net to fail on any if for some reason the above misses on 0
                         || (failBuildOnCVSS <= 0.0f)) {

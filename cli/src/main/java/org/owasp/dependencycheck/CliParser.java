@@ -114,26 +114,26 @@ public final class CliParser {
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isUpdateOnly() || isRunScan()) {
-            String value = line.getOptionValue(ARGUMENT.CVE_VALID_FOR_HOURS);
+            String value = line.getOptionValue(ARGUMENT.NVD_API_VALID_FOR_HOURS);
             if (value != null) {
                 try {
                     final int i = Integer.parseInt(value);
                     if (i < 0) {
-                        throw new ParseException("Invalid Setting: cveValidForHours must be a number greater than or equal to 0.");
+                        throw new ParseException("Invalid Setting: nvdValidForHours must be a number greater than or equal to 0.");
                     }
                 } catch (NumberFormatException ex) {
-                    throw new ParseException("Invalid Setting: cveValidForHours must be a number greater than or equal to 0.");
+                    throw new ParseException("Invalid Setting: nvdValidForHours must be a number greater than or equal to 0.");
                 }
             }
-            value = line.getOptionValue(ARGUMENT.CVE_START_YEAR);
+            value = line.getOptionValue(ARGUMENT.NVD_API_DELAY);
             if (value != null) {
                 try {
                     final int i = Integer.parseInt(value);
-                    if (i < 2002) {
-                        throw new ParseException("Invalid Setting: cveStartYear must be a number greater than or equal to 2002.");
+                    if (i < 0) {
+                        throw new ParseException("Invalid Setting: nvdApiDelay must be a number greater than or equal to 0.");
                     }
                 } catch (NumberFormatException ex) {
-                    throw new ParseException("Invalid Setting: cveStartYear must be a number greater than or equal to 2002.");
+                    throw new ParseException("Invalid Setting: nvdApiDelay must be a number greater than or equal to 0.");
                 }
             }
         }
@@ -154,12 +154,6 @@ public final class CliParser {
                         throw new ParseException(msg);
                     }
                 }
-            }
-            final String base = getStringArgument(ARGUMENT.CVE_BASE_URL);
-            final String modified = getStringArgument(ARGUMENT.CVE_MODIFIED_URL);
-            if ((base != null && modified == null) || (base == null && modified != null)) {
-                final String msg = "If one of the CVE URLs is specified they must all be specified; please add the missing CVE URL.";
-                throw new ParseException(msg);
             }
             if (line.hasOption(ARGUMENT.SYM_LINK_DEPTH)) {
                 try {
@@ -325,6 +319,7 @@ public final class CliParser {
                 .addOptionGroup(newOptionGroup(newOptionWithArg(ARGUMENT.SUPPRESSION_FILES, "file",
                         "The file path to the suppression XML file. This can be specified more then once to utilize multiple suppression files")))
                 .addOption(newOption(ARGUMENT.EXPERIMENTAL, "Enables the experimental analyzers."))
+                .addOption(newOptionWithArg(ARGUMENT.NVD_API_KEY, "apiKey", "The API Key to access the NVD API."))
                 .addOption(newOptionWithArg(ARGUMENT.FAIL_ON_CVSS, "score",
                         "Specifies if the build should be failed if a CVSS score above a specified level is identified. The default is 11; "
                         + "since the CVSS scores are 0-10, by default the build will never fail."))
@@ -344,16 +339,16 @@ public final class CliParser {
         options
                 .addOption(newOption(ARGUMENT.UPDATE_ONLY,
                         "Only update the local NVD data cache; no scan will be executed."))
-                .addOption(newOptionWithArg(ARGUMENT.CVE_BASE_URL, "url",
-                        "Base URL for each year’s CVE files (json.gz), the %d will be replaced with the year."))
-                .addOption(newOptionWithArg(ARGUMENT.CVE_MODIFIED_URL, "url",
-                        "URL for the modified CVE (json.gz)."))
-                .addOption(newOptionWithArg(ARGUMENT.CVE_DOWNLOAD_WAIT_TIME, "milliseconds",
+                .addOption(newOptionWithArg(ARGUMENT.NVD_API_DELAY, "milliseconds",
                         "Time in milliseconds to wait between downloading from the NVD."))
-                .addOption(newOptionWithArg(ARGUMENT.CVE_USER, "user",
-                        "Credentials for basic authentication to the CVE data."))
-                .addOption(newOptionWithArg(ARGUMENT.CVE_PASSWORD, "password",
-                        "Credentials for basic authentication to the CVE data."))
+                .addOption(newOptionWithArg(ARGUMENT.NVD_API_DATAFEED_URL, "url",
+                        "The URL to the NVD API Datafeed."))
+                .addOption(newOptionWithArg(ARGUMENT.NVD_API_DATAFEED_USER, "user",
+                        "Credentials for basic authentication to the NVD API Datafeed."))
+                .addOption(newOptionWithArg(ARGUMENT.NVD_API_DATAFEED_PASSWORD, "password",
+                        "Credentials for basic authentication to the NVD API Datafeed."))
+                .addOption(newOptionWithArg(ARGUMENT.NVD_API_VALID_FOR_HOURS, "hours",
+                        "The number of hours to wait before checking for new updates from the NVD."))
                 .addOption(newOptionWithArg(ARGUMENT.PROXY_PORT, "port",
                         "The proxy port to use when downloading resources."))
                 .addOption(newOptionWithArg(ARGUMENT.PROXY_SERVER, "server",
@@ -429,10 +424,6 @@ public final class CliParser {
                         "The path to the `yarn` executable."))
                 .addOption(newOptionWithArg(ARGUMENT.PATH_TO_PNPM, "path",
                         "The path to the `pnpm` executable."))
-                .addOption(newOptionWithArg(ARGUMENT.CVE_VALID_FOR_HOURS, "hours",
-                        "The number of hours to wait before checking for new updates from the NVD."))
-                .addOption(newOptionWithArg(ARGUMENT.CVE_START_YEAR, "year",
-                        "The first year to retrieve NVD CVE data for; default is 2002."))
                 .addOption(newOptionWithArg(ARGUMENT.RETIREJS_FILTERS, "pattern",
                         "Specify Retire JS content filter used to exclude files from analysis based on their content; "
                         + "most commonly used to exclude based on your applications own copyright line. This "
@@ -503,11 +494,11 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.PURGE_NVD, "Purges the local NVD data cache"))
                 .addOption(newOption(ARGUMENT.DISABLE_HOSTED_SUPPRESSIONS, "Disable the usage of the hosted suppressions file"))
                 .addOption(newOption(ARGUMENT.HOSTED_SUPPRESSIONS_FORCEUPDATE, "Force the hosted suppressions file to update even"
-                                                                               + " if autoupdate is disabled"))
+                        + " if autoupdate is disabled"))
                 .addOption(newOptionWithArg(ARGUMENT.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, "hours",
-                                            "The number of hours to wait before checking for new updates of the the hosted suppressions file."))
+                        "The number of hours to wait before checking for new updates of the the hosted suppressions file."))
                 .addOption(newOptionWithArg(ARGUMENT.HOSTED_SUPPRESSIONS_URL, "url",
-                                            "The URL for a mirrored hosted suppressions file"));
+                        "The URL for a mirrored hosted suppressions file"));
 
     }
 
@@ -1125,15 +1116,28 @@ public final class CliParser {
         /**
          * The CLI argument name for setting the URL for the CVE Data Files.
          */
-        public static final String CVE_MODIFIED_URL = "cveUrlModified";
+        public static final String NVD_API_KEY = "nvdApiKey";
         /**
-         * The CLI argument name for setting the URL for the CVE Data Files.
+         * The CLI argument name for setting the number of hours to wait before
+         * checking for new updates from the NVD.
          */
-        public static final String CVE_BASE_URL = "cveUrlBase";
+        public static final String NVD_API_VALID_FOR_HOURS = "nvdValidForHours";
         /**
-         * The time in milliseconds to wait between downloading NVD CVE data.
+         * The CLI argument name for the NVD API Data Feed URL.
          */
-        public static final String CVE_DOWNLOAD_WAIT_TIME = "cveDownloadWait";
+        public static final String NVD_API_DATAFEED_URL = "nvdDatafeed";
+        /**
+         * The username for basic auth to the CVE data.
+         */
+        public static final String NVD_API_DATAFEED_USER = "nvdUser";
+        /**
+         * The password for basic auth to the CVE data.
+         */
+        public static final String NVD_API_DATAFEED_PASSWORD = "nvdPassword";
+        /**
+         * The time in milliseconds to wait between downloading NVD API data.
+         */
+        public static final String NVD_API_DELAY = "nvdApiDelay";
         /**
          * The short CLI argument name for setting the location of the data
          * directory.
@@ -1162,24 +1166,6 @@ public final class CliParser {
          * The CLI argument name for setting the location of the hint file.
          */
         public static final String HINTS_FILE = "hints";
-        /**
-         * The CLI argument name for setting the number of hours to wait before
-         * checking for new updates from the NVD.
-         */
-        public static final String CVE_VALID_FOR_HOURS = "cveValidForHours";
-        /**
-         * The CLI argument name for setting the first year to retrieve NVD
-         * data.
-         */
-        public static final String CVE_START_YEAR = "cveStartYear";
-        /**
-         * The username for basic auth to the CVE data.
-         */
-        public static final String CVE_USER = "cveUser";
-        /**
-         * The password for basic auth to the CVE data.
-         */
-        public static final String CVE_PASSWORD = "cvePassword";
         /**
          * Disables the Jar Analyzer.
          */
@@ -1529,20 +1515,23 @@ public final class CliParser {
          */
         public static final String FAIL_JUNIT_ON_CVSS = "junitFailOnCVSS";
         /**
-         * The CLI argument to set the number of hours to wait before re-checking hosted suppressions file for updates.
+         * The CLI argument to set the number of hours to wait before
+         * re-checking hosted suppressions file for updates.
          */
         public static final String DISABLE_HOSTED_SUPPRESSIONS = "disableHostedSuppressions";
         /**
-         * The CLI argument to set the number of hours to wait before re-checking hosted suppressions file for updates.
+         * The CLI argument to set the number of hours to wait before
+         * re-checking hosted suppressions file for updates.
          */
         public static final String HOSTED_SUPPRESSIONS_VALID_FOR_HOURS = "hostedSuppressionsValidForHours";
         /**
-         * The CLI argument to set Whether the hosted suppressions file will update regardless of the `noupdate` argument.
+         * The CLI argument to set Whether the hosted suppressions file will
+         * update regardless of the `noupdate` argument.
          */
         public static final String HOSTED_SUPPRESSIONS_FORCEUPDATE = "hostedSuppressionsForceUpdate";
         /**
-         * The CLI argument to set the location of a mirrored hosted suppressions
-         * file .
+         * The CLI argument to set the location of a mirrored hosted
+         * suppressions file .
          */
         public static final String HOSTED_SUPPRESSIONS_URL = "hostedSuppressionsUrl";
     }

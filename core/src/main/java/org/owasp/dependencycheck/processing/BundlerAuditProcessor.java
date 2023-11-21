@@ -20,6 +20,8 @@ package org.owasp.dependencycheck.processing;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +42,6 @@ import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.VERSION
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.dependency.CvssV2;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.Reference;
@@ -124,8 +125,7 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
         final Map<String, Dependency> map = new HashMap<>();
         boolean appendToDescription = false;
 
-        try (InputStreamReader ir = new InputStreamReader(getInput(), StandardCharsets.UTF_8);
-                BufferedReader br = new BufferedReader(ir)) {
+        try (InputStreamReader ir = new InputStreamReader(getInput(), StandardCharsets.UTF_8); BufferedReader br = new BufferedReader(ir)) {
 
             String nextLine;
             while ((nextLine = br.readLine()) != null) {
@@ -216,7 +216,7 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
     private void addCriticalityToVulnerability(String parentName, Vulnerability vulnerability, String nextLine) {
         if (null != vulnerability) {
             final String criticality = nextLine.substring(CRITICALITY.length()).trim();
-            float score = -1.0f;
+            Double score = -1.0;
             Vulnerability v = null;
             final CveDB cvedb = engine.getDatabase();
             if (cvedb != null) {
@@ -235,13 +235,17 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
                 }
             } else {
                 if ("High".equalsIgnoreCase(criticality)) {
-                    score = 8.5f;
+                    score = 8.5;
                 } else if ("Medium".equalsIgnoreCase(criticality)) {
-                    score = 5.5f;
+                    score = 5.5;
                 } else if ("Low".equalsIgnoreCase(criticality)) {
-                    score = 2.0f;
+                    score = 2.0;
                 }
-                vulnerability.setCvssV2(new CvssV2(score, "-", "-", "-", "-", "-", "-", criticality));
+                final CvssV2Data cvssData = new CvssV2Data(null, null, null, null, null, null, null, null, score, criticality.toUpperCase(),
+                        null, null, null, null, null, null, null, null, null, null);
+                final CvssV2 cvssV2 = new CvssV2(null, null, cvssData, criticality.toUpperCase(), null, null, null, null, null, null, null);
+                vulnerability.setCvssV2(cvssV2);
+                vulnerability.setUnscoredSeverity(null);
             }
         }
         LOGGER.debug("bundle-audit ({}): {}", parentName, nextLine);
@@ -289,7 +293,7 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
                     .version(version).build();
             vulnerability.addVulnerableSoftware(vs);
             vulnerability.setMatchedVulnerableSoftware(vs);
-            vulnerability.setCvssV2(new CvssV2(-1, "-", "-", "-", "-", "-", "-", "unknown"));
+            vulnerability.setUnscoredSeverity("UNKNOWN");
         }
         LOGGER.debug("bundle-audit ({}): {}", parentName, nextLine);
         return vulnerability;

@@ -196,46 +196,46 @@
                 },
                 #end
                 #if($vuln.UnscoredSeverity)"unscored": "true", "severity" : "#if($vuln.unscoredSeverity.equals("0.0"))Unknown#else$enc.json($vuln.unscoredSeverity)#end",
-#elseif($vuln.cvssV3 && $vuln.cvssV3.baseSeverity)
-                    "severity" : "$enc.json($vuln.cvssV3.baseSeverity)",
-#elseif($vuln.cvssV2 && $vuln.cvssV2.severity)
-                    "severity" : "$enc.json($vuln.cvssV2.severity)",
+#elseif($vuln.cvssV3 && $vuln.cvssV3.cvssData && $vuln.cvssV3.cvssData.baseSeverity)
+                    "severity" : "$enc.json($vuln.cvssV3.cvssData.baseSeverity)",
+#elseif($vuln.cvssV2 && $vuln.cvssV2.cvssData && $vuln.cvssV2.cvssData.baseSeverity)
+                    "severity" : "$enc.json($vuln.cvssV2.cvssData.baseSeverity)",
 #end
 #if($vuln.cvssV2)
                     "cvssv2": {
-                        "score": $vuln.cvssV2.score
-                        ,"accessVector": "$enc.json($vuln.cvssV2.accessVector)"
-                        ,"accessComplexity": "$enc.json($vuln.cvssV2.accessComplexity)"
-                        ,"authenticationr": "$enc.json($vuln.cvssV2.authentication)"
-                        ,"confidentialImpact": "$enc.json($vuln.cvssV2.confidentialityImpact)"
-                        ,"integrityImpact": "$enc.json($vuln.cvssV2.integrityImpact)"
-                        ,"availabilityImpact": "$enc.json($vuln.cvssV2.availabilityImpact)"
-                        ,"severity": "$enc.json($vuln.cvssV2.severity)"
-#if($vuln.cvssV2.version),"version": "$enc.json($vuln.cvssV2.version)"#end
-#if($vuln.cvssV2.exploitabilityScore),"exploitabilityScore": "$enc.json($vuln.cvssV2.exploitabilityScore)"#end
-#if($vuln.cvssV2.impactScore),"impactScore": "$enc.json($vuln.cvssV2.impactScore)"#end
-#if($vuln.cvssV2.acInsufInfo),"acInsufInfo": "$enc.json($vuln.cvssV2.acInsufInfo)"#end
-#if($vuln.cvssV2.obtainAllPrivilege),"obtainAllPrivilege": "$enc.json($vuln.cvssV2.obtainAllPrivilege)"#end
-#if($vuln.cvssV2.obtainUserPrivilege),"obtainUserPrivilege": "$enc.json($vuln.cvssV2.obtainUserPrivilege)"#end
-#if($vuln.cvssV2.obtainOtherPrivilege),"obtainOtherPrivilege": "$enc.json($vuln.cvssV2.obtainOtherPrivilege)"#end
-#if($vuln.cvssV2.userInteractionRequired),"userInteractionRequired": "$enc.json($vuln.cvssV2.userInteractionRequired)"#end
+                        "score": $vuln.cvssV2.cvssData.baseScore
+                        ,"accessVector": "$enc.json($vuln.cvssV2.cvssData.accessVector)"
+                        ,"accessComplexity": "$enc.json($vuln.cvssV2.cvssData.accessComplexity)"
+                        ,"authenticationr": "$enc.json($vuln.cvssV2.cvssData.authentication)"
+                        ,"confidentialityImpact": "$enc.json($vuln.cvssV2.cvssData.confidentialityImpact)"
+                        ,"integrityImpact": "$enc.json($vuln.cvssV2.cvssData.integrityImpact)"
+                        ,"availabilityImpact": "$enc.json($vuln.cvssV2.cvssData.availabilityImpact)"
+                        ,"severity": "$enc.json($vuln.cvssV2.cvssData.baseSeverity)"
+#if($vuln.cvssV2.cvssData.version),"version": "$enc.json($vuln.cvssV2.cvssData.version)"#end
+#if($vuln.cvssV2.cvssData.exploitabilityScore),"exploitabilityScore": "$enc.json($vuln.cvssV2.cvssData.exploitabilityScore)"#end
+#if($vuln.cvssV2.cvssData.impactScore),"impactScore": "$enc.json($vuln.cvssV2.cvssData.impactScore)"#end
+#if($vuln.cvssV2.cvssData.acInsufInfo),"acInsufInfo": "$enc.json($vuln.cvssV2.cvssData.acInsufInfo)"#end
+#if($vuln.cvssV2.cvssData.obtainAllPrivilege),"obtainAllPrivilege": "$enc.json($vuln.cvssV2.cvssData.obtainAllPrivilege)"#end
+#if($vuln.cvssV2.cvssData.obtainUserPrivilege),"obtainUserPrivilege": "$enc.json($vuln.cvssV2.cvssData.obtainUserPrivilege)"#end
+#if($vuln.cvssV2.cvssData.obtainOtherPrivilege),"obtainOtherPrivilege": "$enc.json($vuln.cvssV2.cvssData.obtainOtherPrivilege)"#end
+#if($vuln.cvssV2.cvssData.userInteractionRequired),"userInteractionRequired": "$enc.json($vuln.cvssV2.cvssData.userInteractionRequired)"#end
                     },
 #end
 #if($vuln.cvssV3)
                     "cvssv3": {
-                        "baseScore": $vuln.cvssV3.baseScore
-                        ,"attackVector": "$enc.json($vuln.cvssV3.attackVector)"
-                        ,"attackComplexity": "$enc.json($vuln.cvssV3.attackComplexity)"
-                        ,"privilegesRequired": "$enc.json($vuln.cvssV3.privilegesRequired)"
-                        ,"userInteraction": "$enc.json($vuln.cvssV3.userInteraction)"
-                        ,"scope": "$enc.json($vuln.cvssV3.scope)"
-                        ,"confidentialityImpact": "$enc.json($vuln.cvssV3.confidentialityImpact)"
-                        ,"integrityImpact": "$enc.json($vuln.cvssV3.integrityImpact)"
-                        ,"availabilityImpact": "$enc.json($vuln.cvssV3.availabilityImpact)"
-                        ,"baseSeverity": "$enc.json($vuln.cvssV3.baseSeverity)"
-#if($vuln.cvssV3.exploitabilityScore),"exploitabilityScore": "$enc.json($vuln.cvssV3.exploitabilityScore)"#end
-#if($vuln.cvssV3.impactScore),"impactScore": "$enc.json($vuln.cvssV3.impactScore)"#end
-#if($vuln.cvssV3.version),"version": "$enc.json($vuln.cvssV3.version)"#end
+                        "baseScore": $vuln.cvssV3.cvssData.baseScore
+                        ,"attackVector": "$enc.json($vuln.cvssV3.cvssData.attackVector)"
+                        ,"attackComplexity": "$enc.json($vuln.cvssV3.cvssData.attackComplexity)"
+                        ,"privilegesRequired": "$enc.json($vuln.cvssV3.cvssData.privilegesRequired)"
+                        ,"userInteraction": "$enc.json($vuln.cvssV3.cvssData.userInteraction)"
+                        ,"scope": "$enc.json($vuln.cvssV3.cvssData.scope)"
+                        ,"confidentialityImpact": "$enc.json($vuln.cvssV3.cvssData.confidentialityImpact)"
+                        ,"integrityImpact": "$enc.json($vuln.cvssV3.cvssData.integrityImpact)"
+                        ,"availabilityImpact": "$enc.json($vuln.cvssV3.cvssData.availabilityImpact)"
+                        ,"baseSeverity": "$enc.json($vuln.cvssV3.cvssData.baseSeverity)"
+#if($vuln.cvssV3.cvssData.exploitabilityScore),"exploitabilityScore": "$enc.json($vuln.cvssV3.cvssData.exploitabilityScore)"#end
+#if($vuln.cvssV3.cvssData.impactScore),"impactScore": "$enc.json($vuln.cvssV3.cvssData.impactScore)"#end
+#if($vuln.cvssV3.cvssData.version),"version": "$enc.json($vuln.cvssV3.cvssData.version)"#end
                     },
 #end
 #if (!$vuln.cwe.cwes.isEmpty())
@@ -280,39 +280,39 @@
                 "name": "$enc.json($vuln.name)",
 #if($vuln.cvssV2)
                     "cvssv2": {
-                        "score": $vuln.cvssV2.score
-                        ,"accessVector": "$enc.json($vuln.cvssV2.accessVector)"
-                        ,"accessComplexity": "$enc.json($vuln.cvssV2.accessComplexity)"
-                        ,"authenticationr": "$enc.json($vuln.cvssV2.authentication)"
-                        ,"confidentialImpact": "$enc.json($vuln.cvssV2.confidentialityImpact)"
-                        ,"integrityImpact": "$enc.json($vuln.cvssV2.integrityImpact)"
-                        ,"availabilityImpact": "$enc.json($vuln.cvssV2.availabilityImpact)"
-                        ,"severity": "$enc.json($vuln.cvssV2.severity)"
-#if($vuln.cvssV2.version),"version": "$enc.json($vuln.cvssV2.version)"#end
-#if($vuln.cvssV2.exploitabilityScore),"exploitabilityScore": "$enc.json($vuln.cvssV2.exploitabilityScore)"#end
-#if($vuln.cvssV2.impactScore),"impactScore": "$enc.json($vuln.cvssV2.impactScore)"#end
-#if($vuln.cvssV2.acInsufInfo),"acInsufInfo": "$enc.json($vuln.cvssV2.acInsufInfo)"#end
-#if($vuln.cvssV2.obtainAllPrivilege),"obtainAllPrivilege": "$enc.json($vuln.cvssV2.obtainAllPrivilege)"#end
-#if($vuln.cvssV2.obtainUserPrivilege),"obtainUserPrivilege": "$enc.json($vuln.cvssV2.obtainUserPrivilege)"#end
-#if($vuln.cvssV2.obtainOtherPrivilege),"obtainOtherPrivilege": "$enc.json($vuln.cvssV2.obtainOtherPrivilege)"#end
-#if($vuln.cvssV2.userInteractionRequired),"userInteractionRequired": "$enc.json($vuln.cvssV2.userInteractionRequired)"#end
+                        "score": $vuln.cvssV2.cvssData.baseScore
+                        ,"accessVector": "$enc.json($vuln.cvssV2.cvssData.accessVector)"
+                        ,"accessComplexity": "$enc.json($vuln.cvssV2.cvssData.accessComplexity)"
+                        ,"authenticationr": "$enc.json($vuln.cvssV2.cvssData.authentication)"
+                        ,"confidentialityImpact": "$enc.json($vuln.cvssV2.cvssData.confidentialityImpact)"
+                        ,"integrityImpact": "$enc.json($vuln.cvssV2.cvssData.integrityImpact)"
+                        ,"availabilityImpact": "$enc.json($vuln.cvssV2.cvssData.availabilityImpact)"
+                        ,"severity": "$enc.json($vuln.cvssV2.cvssData.baseSeverity)"
+#if($vuln.cvssV2.cvssData.version),"version": "$enc.json($vuln.cvssV2.cvssData.version)"#end
+#if($vuln.cvssV2.cvssData.exploitabilityScore),"exploitabilityScore": "$enc.json($vuln.cvssV2.cvssData.exploitabilityScore)"#end
+#if($vuln.cvssV2.cvssData.impactScore),"impactScore": "$enc.json($vuln.cvssV2.cvssData.impactScore)"#end
+#if($vuln.cvssV2.cvssData.acInsufInfo),"acInsufInfo": "$enc.json($vuln.cvssV2.cvssData.acInsufInfo)"#end
+#if($vuln.cvssV2.cvssData.obtainAllPrivilege),"obtainAllPrivilege": "$enc.json($vuln.cvssV2.cvssData.obtainAllPrivilege)"#end
+#if($vuln.cvssV2.cvssData.obtainUserPrivilege),"obtainUserPrivilege": "$enc.json($vuln.cvssV2.cvssData.obtainUserPrivilege)"#end
+#if($vuln.cvssV2.cvssData.obtainOtherPrivilege),"obtainOtherPrivilege": "$enc.json($vuln.cvssV2.cvssData.obtainOtherPrivilege)"#end
+#if($vuln.cvssV2.cvssData.userInteractionRequired),"userInteractionRequired": "$enc.json($vuln.cvssV2.cvssData.userInteractionRequired)"#end
                     },
 #end
 #if($vuln.cvssV3)
                     "cvssv3": {
-                        "baseScore": $vuln.cvssV3.baseScore
-                        ,"attackVector": "$enc.json($vuln.cvssV3.attackVector)"
-                        ,"attackComplexity": "$enc.json($vuln.cvssV3.attackComplexity)"
-                        ,"privilegesRequired": "$enc.json($vuln.cvssV3.privilegesRequired)"
-                        ,"userInteraction": "$enc.json($vuln.cvssV3.userInteraction)"
-                        ,"scope": "$enc.json($vuln.cvssV3.scope)"
-                        ,"confidentialityImpact": "$enc.json($vuln.cvssV3.confidentialityImpact)"
-                        ,"integrityImpact": "$enc.json($vuln.cvssV3.integrityImpact)"
-                        ,"availabilityImpact": "$enc.json($vuln.cvssV3.availabilityImpact)"
-                        ,"baseSeverity": "$enc.json($vuln.cvssV3.baseSeverity)"
-#if($vuln.cvssV3.exploitabilityScore),"exploitabilityScore": "$enc.json($vuln.cvssV3.exploitabilityScore)"#end
-#if($vuln.cvssV3.impactScore),"impactScore": "$enc.json($vuln.cvssV3.impactScore)"#end
-#if($vuln.cvssV3.version),"version": "$enc.json($vuln.cvssV3.version)"#end
+                        "baseScore": $vuln.cvssV3.cvssData.baseScore
+                        ,"attackVector": "$enc.json($vuln.cvssV3.cvssData.attackVector)"
+                        ,"attackComplexity": "$enc.json($vuln.cvssV3.cvssData.attackComplexity)"
+                        ,"privilegesRequired": "$enc.json($vuln.cvssV3.cvssData.privilegesRequired)"
+                        ,"userInteraction": "$enc.json($vuln.cvssV3.cvssData.userInteraction)"
+                        ,"scope": "$enc.json($vuln.cvssV3.cvssData.scope)"
+                        ,"confidentialityImpact": "$enc.json($vuln.cvssV3.cvssData.confidentialityImpact)"
+                        ,"integrityImpact": "$enc.json($vuln.cvssV3.cvssData.integrityImpact)"
+                        ,"availabilityImpact": "$enc.json($vuln.cvssV3.cvssData.availabilityImpact)"
+                        ,"baseSeverity": "$enc.json($vuln.cvssV3.cvssData.baseSeverity)"
+#if($vuln.cvssV3.cvssData.exploitabilityScore),"exploitabilityScore": "$enc.json($vuln.cvssV3.cvssData.exploitabilityScore)"#end
+#if($vuln.cvssV3.cvssData.impactScore),"impactScore": "$enc.json($vuln.cvssV3.cvssData.impactScore)"#end
+#if($vuln.cvssV3.cvssData.version),"version": "$enc.json($vuln.cvssV3.cvssData.version)"#end
                     },
 #end
 #if (!$vuln.cwes.isEmpty())

@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ * Copyright (c) 2023 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
+import io.github.jeremylong.openvulnerability.client.nvd.Config;
+import io.github.jeremylong.openvulnerability.client.nvd.CpeMatch;
+import io.github.jeremylong.openvulnerability.client.nvd.Node;
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.concurrent.NotThreadSafe;
-import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
-import org.owasp.dependencycheck.data.nvd.json.DefCpeMatch;
-
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 
 /**
  * Utility for mapping CVEs to their ecosystems.
@@ -83,17 +82,21 @@ public class CveEcosystemMapper {
      * <code>null</code>
      */
     private boolean hasMultipleVendorProductConfigurations(DefCveItem cve) {
-        final List<DefCpeMatch> cpeEntries = cve.getConfigurations().getNodes().stream()
-                .collect(NodeFlatteningCollector.getInstance())
-                .collect(CpeMatchStreamCollector.getInstance())
-                .filter(defCpeMatch -> defCpeMatch.getCpe23Uri() != null)
-                .collect(Collectors.toList());
-        if (!cpeEntries.isEmpty() && cpeEntries.size() > 1) {
-            final DefCpeMatch firstMatch = cpeEntries.get(0);
-            final String uri = firstMatch.getCpe23Uri();
-            final int pos = uri.indexOf(":", uri.indexOf(":", 10) + 1);
-            final String match = uri.substring(0, pos + 1);
-            return !cpeEntries.stream().allMatch(e -> e.getCpe23Uri().startsWith(match));
+        if (cve.getCve().getConfigurations() != null) {
+            final List<CpeMatch> cpeEntries = cve.getCve().getConfigurations().stream()
+                    .map(Config::getNodes)
+                    .flatMap(List::stream)
+                    .map(Node::getCpeMatch)
+                    .flatMap(List::stream)
+                    .filter(match -> match.getCriteria() != null)
+                    .collect(Collectors.toList());
+            if (!cpeEntries.isEmpty() && cpeEntries.size() > 1) {
+                final CpeMatch firstMatch = cpeEntries.get(0);
+                final String uri = firstMatch.getCriteria();
+                final int pos = uri.indexOf(":", uri.indexOf(":", 10) + 1);
+                final String match = uri.substring(0, pos + 1);
+                return !cpeEntries.stream().allMatch(e -> e.getCriteria().startsWith(match));
+            }
         }
         return false;
     }

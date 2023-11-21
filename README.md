@@ -8,15 +8,25 @@ Dependency-Check is a Software Composition Analysis (SCA) tool that attempts to 
 
 Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/). Additionally, more information about the architecture and ways to extend dependency-check can be found on the [wiki].
 
-## 8.0.0 Upgrade Notice
+## 9.0.0 Upgrade Notice
 
-8.0.0 contains breaking changes which requires updates to the database. If using
+### NVD API Key Highly Recommended
+
+With 9.0.0 dependency-check has moved from using the NVD data-feed to the NVD API.
+Users of dependency-check are **highly** encouraged to obtain an NVD API Key; see https://nvd.nist.gov/developers/request-an-api-key
+Without an NVD API Key dependency-check's updates will be **extremely slow**.
+Please see the documentation for the cli, maven, gradle, or ant integrations on
+how to set the NVD API key.
+
+### Breaking Changes
+
+9.0.0 contains breaking changes which requires updates to the database. If using
 an externally hosted database the schema will need to be updated. When using the
-embedded H2 database the schema should be upgraded automatically. However, if
+embedded H2 database, the schema should be upgraded automatically. However, if
 issues arise you may need to purge the database:
 
 - gradle: `./gradlew dependencyCheckPurge`
-- maven: `mvn org.owasp:dependency-check-maven:8.0.0:purge`
+- maven: `mvn org.owasp:dependency-check-maven:9.0.0:purge`
 - cli: `dependency-check.sh --purge`
 
 ## Requirements

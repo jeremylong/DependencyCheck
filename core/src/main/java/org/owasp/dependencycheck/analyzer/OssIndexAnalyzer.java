@@ -17,20 +17,19 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
 import org.sonatype.ossindex.service.api.componentreport.ComponentReport;
 import org.sonatype.ossindex.service.api.componentreport.ComponentReportVulnerability;
 import org.sonatype.ossindex.service.api.cvss.Cvss2Severity;
 import org.sonatype.ossindex.service.api.cvss.Cvss2Vector;
-import org.sonatype.ossindex.service.api.cvss.Cvss3Severity;
-import org.sonatype.ossindex.service.api.cvss.Cvss3Vector;
 import org.sonatype.ossindex.service.api.cvss.CvssVector;
 import org.sonatype.ossindex.service.api.cvss.CvssVectorFactory;
 import org.sonatype.ossindex.service.client.OssindexClient;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.ossindex.OssindexClientFactory;
-import org.owasp.dependencycheck.dependency.CvssV2;
-import org.owasp.dependencycheck.dependency.CvssV3;
+
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.dependency.VulnerableSoftware;
@@ -58,6 +57,7 @@ import java.net.SocketTimeoutException;
 
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
+import org.owasp.dependencycheck.utils.CvssUtil;
 import org.sonatype.goodies.packageurl.InvalidException;
 import org.sonatype.ossindex.service.client.transport.Transport.TransportException;
 
@@ -318,34 +318,61 @@ public class OssIndexAnalyzer extends AbstractAnalyzer {
         result.setDescription(source.getDescription());
         result.addCwe(source.getCwe());
 
-        final float cvssScore = source.getCvssScore() != null ? source.getCvssScore() : -1;
+        final double cvssScore = source.getCvssScore() != null ? source.getCvssScore().doubleValue() : -1;
 
         if (source.getCvssVector() != null) {
             if (source.getCvssVector().startsWith("CVSS:3")) {
-                result.setCvssV3(new CvssV3(source.getCvssVector(), cvssScore));
+                result.setCvssV3(CvssUtil.vectorToCvssV3(source.getCvssVector(), cvssScore));
             } else {
                 // convert cvss details
                 final CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());
                 final Map<String, String> metrics = cvssVector.getMetrics();
                 if (cvssVector instanceof Cvss2Vector) {
-                    result.setCvssV2(new CvssV2(
-                            cvssScore,
-                            metrics.get(Cvss2Vector.ACCESS_VECTOR),
-                            metrics.get(Cvss2Vector.ACCESS_COMPLEXITY),
-                            metrics.get(Cvss2Vector.AUTHENTICATION),
-                            metrics.get(Cvss2Vector.CONFIDENTIALITY_IMPACT),
-                            metrics.get(Cvss2Vector.INTEGRITY_IMPACT),
-                            metrics.get(Cvss2Vector.AVAILABILITY_IMPACT),
-                            Cvss2Severity.of(cvssScore).name()
-                    ));
+                    String tmp = metrics.get(Cvss2Vector.ACCESS_VECTOR);
+                    CvssV2Data.AccessVectorType accessVector = null;
+                    if (tmp != null) {
+                        accessVector = CvssV2Data.AccessVectorType.fromValue(tmp);
+                    }
+                    tmp = metrics.get(Cvss2Vector.ACCESS_COMPLEXITY);
+                    CvssV2Data.AccessComplexityType accessComplexity = null;
+                    if (tmp != null) {
+                        accessComplexity = CvssV2Data.AccessComplexityType.fromValue(tmp);
+                    }
+                    tmp = metrics.get(Cvss2Vector.AUTHENTICATION);
+                    CvssV2Data.AuthenticationType authentication = null;
+                    if (tmp != null) {
+                        authentication = CvssV2Data.AuthenticationType.fromValue(tmp);
+                    }
+                    tmp = metrics.get(Cvss2Vector.CONFIDENTIALITY_IMPACT);
+                    CvssV2Data.CiaType confidentialityImpact = null;
+                    if (tmp != null) {
+                        confidentialityImpact = CvssV2Data.CiaType.fromValue(tmp);
+                    }
+                    tmp = metrics.get(Cvss2Vector.INTEGRITY_IMPACT);
+                    CvssV2Data.CiaType integrityImpact = null;
+                    if (tmp != null) {
+                        integrityImpact = CvssV2Data.CiaType.fromValue(tmp);
+                    }
+                    tmp = metrics.get(Cvss2Vector.AVAILABILITY_IMPACT);
+                    CvssV2Data.CiaType availabilityImpact = null;
+                    if (tmp != null) {
+                        availabilityImpact = CvssV2Data.CiaType.fromValue(tmp);
+                    }
+                    final String severity = Cvss2Severity.of((float) cvssScore).name().toUpperCase();
+                    final CvssV2Data cvssData = new CvssV2Data("2.0", source.getCvssVector(), accessVector,
+                            accessComplexity, authentication, confidentialityImpact,
+                            integrityImpact, availabilityImpact, cvssScore,
+                            severity, null, null, null, null, null, null, null, null, null, null);
+                    final CvssV2 cvssV2 = new CvssV2(null, null, cvssData, severity, null, null, null, null, null, null, null);
+                    result.setCvssV2(cvssV2);
                 } else {
                     LOG.warn("Unsupported CVSS vector: {}", cvssVector);
-                    result.setUnscoredSeverity(Float.toString(cvssScore));
+                    result.setUnscoredSeverity(Double.toString(cvssScore));
                 }
             }
         } else {
             LOG.debug("OSS has no vector for {}", result.getName());
-            result.setUnscoredSeverity(Float.toString(cvssScore));
+            result.setUnscoredSeverity(Double.toString(cvssScore));
         }
         // generate a reference to the vulnerability details on OSS Index
         result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());

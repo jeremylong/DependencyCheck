@@ -34,7 +34,7 @@ For more information see [How dependency-check works](https://jeremylong.github.
                     "cvssv2_accessVector": "$enc.json($rule.cvssv2AccessVector)",
                     "cvssv2_accessComplexity": "$enc.json($rule.cvssv2AccessComplexity)",
                     "cvssv2_authenticationr": "$enc.json($rule.cvssv2Authentication)",
-                    "cvssv2_confidentialImpact": "$enc.json($rule.cvssv2ConfidentialityImpact)",
+                    "cvssv2_confidentialityImpact": "$enc.json($rule.cvssv2ConfidentialityImpact)",
                     "cvssv2_integrityImpact": "$enc.json($rule.cvssv2IntegrityImpact)",
                     "cvssv2_availabilityImpact": "$enc.json($rule.cvssv2AvailabilityImpact)",
                     "cvssv2_severity": "$enc.json($rule.cvssv2Severity)",

@@ -183,7 +183,7 @@ public class LibmanAnalyzer extends AbstractFileTypeAnalyzer {
             final JsonArray libraries = json.getJsonArray("libraries");
 
             libraries.forEach(e -> {
-                JsonObject reference = (JsonObject) e;
+                final JsonObject reference = (JsonObject) e;
 
                 final String provider = reference.getString("provider", defaultProvider);
                 final String library = reference.getString("library");

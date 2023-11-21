@@ -15,7 +15,6 @@ The following properties can be set on the dependency-check-maven plugin.
 Property                    | Description                        | Default Value
 ----------------------------|------------------------------------|------------------
 autoUpdate                  | Sets whether auto-updating of the NVD CVE/CPE, retireJS and hosted suppressions data is enabled. It is not recommended that this be turned to false. | true
-cveValidForHours            | Sets the number of hours to wait before checking for new updates from the NVD.                                     | 4
 format                      | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL). This configuration is ignored if `formats` is defined. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | HTML
 formats                     | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL). This configuration overrides the value from `format`. This configuration option has no affect if using this within the Site plugin unless the externalReport is set to true. | &nbsp;
 junitFailOnCVSS             | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.   | 0
@@ -139,23 +138,23 @@ filterNonVulnerable | A boolean controlling whether or not the Retire JS Analyze
 
 Advanced Configuration
 ====================
-The following properties can be configured in the plugin. However, they are less frequently changed. One exception
-may be the cveUrl properties, which can be used to host a mirror of the NVD within an enterprise environment.
+The following properties can be configured in the plugin. However, they are less frequently changed.
 
 Property                 | Description                                                                                                                                | Default Value                                                       |
 -------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-cveUrlModified           | URL for the modified CVE JSON data feed.  When mirroring the NVD you must mirror the *.json.gz and the *.meta files. Optional if your custom cveUrlBase is just a domain name change. | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-modified.json.gz |
-cveUrlBase               | Base URL for each year's CVE JSON data feed, the %d will be replaced with the year.                                                        | https://nvd.nist.gov/feeds/json/cve/1.1/nvdcve-1.1-%d.json.gz       |
-cveServerId              | The id of a server defined in the settings.xml that configures the credentials (username and password) for accessing the cveUrl.           | &nbsp;                                                              |
-cveUser                  | The username used when connecting to the cveUrl. Must be empty if cveServerId is specified and should be used.                             | &nbsp;                                                              |
-cvePassword              | The password used when connecting to the cveUrl. Must be empty if cveServerId is specified and should be used.                             | &nbsp;                                                              |
-cveWaitTime              | The time in milliseconds to wait between downloads from the NVD.                                                                           | 4000                                                                |
-cveStartYear             | The first year of NVD CVE data to download from the NVD.                                                                                   | 2002
+nvdApiKey                | The API Key to access the NVD API; obtained from https://nvd.nist.gov/developers/request-an-api-key                                        | &nbsp;                                                              |
+nvdApiServerId           | The id of a server defined in the settings.xml that configures the credentials (password is used as ApiKey) for accessing the NVD API.     | &nbsp;                                                              |
+nvdApiDelay              | The number of milliseconds to wait between calls to the NVD API.                                                                           | &nbsp;                                                              |
+nvdDatafeedUrl           | The URL for the NVD API Data feed that can be generated using https://github.com/jeremylong/Open-Vulnerability-Project/tree/main/vulnz#caching-the-nvd-cve-data - example value `https://internal.server/cache/nvdcve-{0}.json.gz` | &nbsp;                                         |
+nvdDatafeedServerId      | The id of a server defined in the settings.xml that configures the credentials (username and password) for accessing the NVD API Data feed.| &nbsp;                                                              |
+nvdUser                  | Credentials used for basic authentication for the NVD API Data feed.                                                                       | &nbsp;                                                              |
+nvdPassword              | Credentials used for basic authentication for the NVD API Data feed.                                                                       | &nbsp;                                                              |
+nvdValidForHours         | The number of hours to wait before checking for new updates from the NVD. The default is 4 hours.                                          | 4                                                                   |
 suppressionFileServerId  | The id of a server defined in the settings.xml that configures the credentials (username and password) for accessing the suppressionFiles. | &nbsp;                                                              |
 suppressionFileUser      | The username used when connecting to the suppressionFiles. Must be empty if suppressionFileServerId is specified and should be used.       | &nbsp;                                                              |
 suppressionFilePassword  | The password used when connecting to the suppressionFiles. Must be empty if suppressionFileServerId is specified and should be used.       | &nbsp;                                                              |
-connectionTimeout        | Sets the URL Connection Timeout (in milliseconds) used when downloading external data.                                                                                                                        | 10000                                                               |
-readTimeout              | Sets the URL Read Timeout  (in milliseconds) used when downloading external data.                                                                                                                             | 60000                                                               |
+connectionTimeout        | Sets the URL Connection Timeout (in milliseconds) used when downloading external data.                                                     | 10000                                                               |
+readTimeout              | Sets the URL Read Timeout  (in milliseconds) used when downloading external data.                                                          | 60000                                                               |
 dataDirectory            | Sets the data directory to hold SQL CVEs contents. This should generally not be changed.                                                   | ~/.m2/repository/org/owasp/dependency-check-data/                   |
 databaseDriverName       | The name of the database driver. Example: org.h2.Driver.                                                                                   | &nbsp;                                                              |
 databaseDriverPath       | The path to the database driver JAR file; only used if the driver is not in the class path.                                                | &nbsp;                                                              |

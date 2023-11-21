@@ -1,14 +1,16 @@
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
+import io.github.jeremylong.openvulnerability.client.nvd.CveItem;
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+import io.github.jeremylong.openvulnerability.client.nvd.Reference;
+import java.util.ArrayList;
+import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.analyzer.PythonPackageAnalyzer;
-import org.owasp.dependencycheck.data.nvd.json.CVEJSON40Min11;
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-import org.owasp.dependencycheck.data.nvd.json.Reference;
-import org.owasp.dependencycheck.data.nvd.json.References;
+
 
 public class UrlEcosystemMapperTest {
 
@@ -21,19 +23,12 @@ public class UrlEcosystemMapperTest {
     }
 
     private DefCveItem asCve(String url) {
-        DefCveItem defCveItem = new DefCveItem();
         
-        References references = new References();
-        
-        Reference reference = new Reference();
-        reference.setUrl(url);
-        
-        references.getReferenceData().add(reference);
-        
-        CVEJSON40Min11 cve = new CVEJSON40Min11();
-        cve.setReferences(references);
-        
-        defCveItem.setCve(cve);
+        List<Reference> references  = new ArrayList<>();
+        Reference ref = new Reference(url, null, null);
+        references.add(ref);
+        CveItem cveItem = new CveItem(null, null, null, null, null, null, null, null, null, null, null, null, null, references, null, null, null, null);
+        DefCveItem defCveItem = new DefCveItem(cveItem);
         
         return defCveItem;
     }
@@ -43,13 +38,11 @@ public class UrlEcosystemMapperTest {
         // Given
         UrlEcosystemMapper mapper = new UrlEcosystemMapper();
 
-        CVEJSON40Min11 cve = new CVEJSON40Min11();
-
-        DefCveItem cveItem = new DefCveItem();
-        cveItem.setCve(cve);
+        CveItem cveItem = new CveItem();
+        DefCveItem defCveItem = new DefCveItem(cveItem);
 
         // When
-        String output = mapper.getEcosystem(cveItem);
+        String output = mapper.getEcosystem(defCveItem);
 
         // Then
         assertNull(output);

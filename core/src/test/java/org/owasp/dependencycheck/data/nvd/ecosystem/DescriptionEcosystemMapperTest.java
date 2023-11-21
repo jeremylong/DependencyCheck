@@ -1,5 +1,6 @@
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
+import io.github.jeremylong.openvulnerability.client.nvd.CveItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -15,10 +16,11 @@ import java.util.Map.Entry;
 
 import org.junit.Test;
 import org.owasp.dependencycheck.analyzer.JarAnalyzer;
-import org.owasp.dependencycheck.data.nvd.json.CVEJSON40Min11;
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-import org.owasp.dependencycheck.data.nvd.json.Description;
-import org.owasp.dependencycheck.data.nvd.json.LangString;
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+import io.github.jeremylong.openvulnerability.client.nvd.LangString;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DescriptionEcosystemMapperTest {
 
@@ -97,21 +99,13 @@ public class DescriptionEcosystemMapperTest {
         assertNull(mapper.getEcosystem(asCve(value)));
     }
 
-    private DefCveItem asCve(String description, String... cpe) {
-        DefCveItem defCveItem = new DefCveItem();
-
-        Description d = new Description();
-
-        LangString string = new LangString();
-        string.setLang("en");
-        string.setValue(description);
-
-        d.getDescriptionData().add(string);
-
-        CVEJSON40Min11 cve = new CVEJSON40Min11();
-        cve.setDescription(d);
-
-        defCveItem.setCve(cve);
+    private DefCveItem asCve(String description) {
+        
+        List<LangString> descriptions = new ArrayList<>();
+        LangString desc = new LangString("en",description);
+        descriptions.add(desc);
+        CveItem cveItem = new CveItem(null, null, null, null, null, null, null, null, null, null, null, null, descriptions, null, null, null, null, null);
+        DefCveItem defCveItem = new DefCveItem(cveItem);
 
         return defCveItem;
     }

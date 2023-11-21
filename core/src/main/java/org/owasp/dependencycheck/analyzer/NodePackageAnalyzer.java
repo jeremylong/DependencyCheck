@@ -93,7 +93,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      */
     public static final String SHRINKWRAP_JSON = "npm-shrinkwrap.json";
     /**
-     * The name of the directory that contains node modules
+     * The name of the directory that contains node modules.
      */
     public static final String NODE_MODULES_DIRNAME = "node_modules";
     /**

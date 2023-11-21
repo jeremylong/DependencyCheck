@@ -5,19 +5,35 @@ is called Evidence; there are three types of evidence collected: vendor, product
 JarAnalyzer will collect information from the Manifest, pom.xml, and the package names within the JAR files scanned and
 it has heuristics to place the information from the various sources into one or more buckets of evidence.
 
-Within the NVD CVE Data (schema can be found [here](http://nvd.nist.gov/schema/nvd-cve-feed_2.0.xsd)) each CVE Entry has
+Within the NVD API CVE Data (schema can be found [here](https://csrc.nist.gov/schema/nvd/api/2.0/cve_api_json_2.0.schema)) each CVE Entry has
 a list of vulnerable software:
 
-```xml
-  <entry id="CVE-2012-5055">
-  ...
-    <vuln:vulnerable-software-list>
-      <vuln:product>cpe:/a:vmware:springsource_spring_security:3.1.2</vuln:product>
-      <vuln:product>cpe:/a:vmware:springsource_spring_security:2.0.4</vuln:product>
-      <vuln:product>cpe:/a:vmware:springsource_spring_security:3.0.1</vuln:product>
-    </vuln:vulnerable-software-list>
-  ...
-  </entry>
+```json
+"cve": {
+    "id": "CVE-2008-3909",
+
+    ...
+
+    "cpeMatch": [
+      {
+        "vulnerable": true,
+        "criteria": "cpe:2.3:a:django_project:django:0.91:*:*:*:*:*:*:*",
+        "matchCriteriaId": "B1CE5394-8883-47DB-9214-CCDD05811179"
+      },
+      {
+        "vulnerable": true,
+        "criteria": "cpe:2.3:a:django_project:django:0.95:*:*:*:*:*:*:*",
+        "matchCriteriaId": "1D617048-648D-4EA1-A779-F6B157AB641E"
+      },
+      {
+        "vulnerable": true,
+        "criteria": "cpe:2.3:a:django_project:django:0.96:*:*:*:*:*:*:*",
+        "matchCriteriaId": "3F54F75F-B2BC-4A44-B93B-DB75856BEC45"
+      }
+    ]
+
+    ...
+}
 ```
 
 These CPE entries are read "cpe:/[Entry Type]:[Vendor]:[Product]:[Version]:[Revision]:...". The CPE data is collected

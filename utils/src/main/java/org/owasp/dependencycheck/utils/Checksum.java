@@ -103,9 +103,9 @@ public final class Checksum {
                     read = stream.read(buffer, 0, BUFFER_SIZE);
                 }
                 fileChecksums = new FileChecksums(
-                    getHex(md5Digest.digest()),
-                    getHex(sha1Digest.digest()),
-                    getHex(sha256Digest.digest())
+                        getHex(md5Digest.digest()),
+                        getHex(sha1Digest.digest()),
+                        getHex(sha256Digest.digest())
                 );
                 CHECKSUM_CACHE.put(file, fileChecksums);
             }
@@ -255,11 +255,21 @@ public final class Checksum {
      * File checksums for each supported algorithm
      */
     private static class FileChecksums {
+
+        /**
+         * MD5.
+         */
         private final String md5;
+        /**
+         * SHA1.
+         */
         private final String sha1;
+        /**
+         * SHA256.
+         */
         private final String sha256;
 
-        public FileChecksums(String md5, String sha1, String sha256) {
+        FileChecksums(String md5, String sha1, String sha256) {
             this.md5 = md5;
             this.sha1 = sha1;
             this.sha256 = sha256;

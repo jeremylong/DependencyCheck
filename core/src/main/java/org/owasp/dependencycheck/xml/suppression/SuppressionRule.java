@@ -62,7 +62,7 @@ public class SuppressionRule {
     /**
      * The list of cvssBelow scores.
      */
-    private List<Float> cvssBelow = new ArrayList<>();
+    private List<Double> cvssBelow = new ArrayList<>();
     /**
      * The list of CWE entries to suppress.
      */
@@ -230,7 +230,7 @@ public class SuppressionRule {
      *
      * @return the value of cvssBelow
      */
-    public List<Float> getCvssBelow() {
+    public List<Double> getCvssBelow() {
         return cvssBelow;
     }
 
@@ -239,7 +239,7 @@ public class SuppressionRule {
      *
      * @param cvssBelow new value of cvssBelow
      */
-    public void setCvssBelow(List<Float> cvssBelow) {
+    public void setCvssBelow(List<Double> cvssBelow) {
         this.cvssBelow = cvssBelow;
     }
 
@@ -248,14 +248,14 @@ public class SuppressionRule {
      *
      * @param cvss the CVSS to add
      */
-    public void addCvssBelow(Float cvss) {
+    public void addCvssBelow(Double cvss) {
         this.cvssBelow.add(cvss);
     }
 
     /**
-     * Returns whether or not this suppression rule has CVSS suppressions.
+     * Returns whether or not this suppression rule has CVSS suppression criteria.
      *
-     * @return whether or not this suppression rule has CVSS suppressions
+     * @return whether or not this suppression rule has CVSS suppression criteria.
      */
     public boolean hasCvssBelow() {
         return !cvssBelow.isEmpty();
@@ -273,18 +273,9 @@ public class SuppressionRule {
     /**
      * Set the value of notes.
      *
-     * @param notes new value of cve
+     * @param notes new value of notes
      */
     public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    /**
-     * Adds the notes to the cve list.
-     *
-     * @param notes the cve to add
-     */
-    public void addNotes(String notes) {
         this.notes = notes;
     }
 
@@ -294,7 +285,7 @@ public class SuppressionRule {
      * @return whether this suppression rule has notes entries
      */
     public boolean hasNotes() {
-        return !cve.isEmpty();
+        return !notes.isEmpty();
     }
 
     /**
@@ -534,13 +525,14 @@ public class SuppressionRule {
                     }
                 }
                 if (!remove) {
-                    for (float cvss : this.cvssBelow) {
-                        if (v.getCvssV2() != null && v.getCvssV2().getScore() < cvss) {
+                    for (Double cvss : this.cvssBelow) {
+                        //TODO validate this comparison
+                        if (v.getCvssV2() != null && v.getCvssV2().getCvssData().getBaseScore().compareTo(cvss) < 0) {
                             remove = true;
                             removeVulns.add(v);
                             break;
                         }
-                        if (v.getCvssV3() != null && v.getCvssV3().getBaseScore() < cvss) {
+                        if (v.getCvssV3() != null && v.getCvssV3().getCvssData().getBaseScore().compareTo(cvss) < 0) {
                             remove = true;
                             removeVulns.add(v);
                             break;

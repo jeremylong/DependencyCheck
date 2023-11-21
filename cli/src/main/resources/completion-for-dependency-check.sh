@@ -19,13 +19,6 @@ _odc_completions()
             --bundleAuditWorkingDirectory
         -c --connectiontimeout
             --connectionString
-            --cveUrlBase
-            --cveUrlModified
-            --cveValidForHours <hours>
-            --cveStartYear <year>
-            --cveUser <user>
-            --cvePassword <password>
-            --cveDownloadWait <milliseconds>
         -d --data
             --dbDriverName
             --dbDriverPath
@@ -94,6 +87,12 @@ _odc_completions()
             --nodeAuditSkipDevDependencies
             --nodePackageSkipDevDependencies
             --nonProxyHosts <list>
+            --nvdApiKey <apiKey>
+            --nvdDatafeed <url>
+            --nvdUser <user>
+            --nvdPassword <password>
+            --nvdApiDelay <ms>
+            --nvdValidForHours <hours>
         -o --out
             --ossIndexPassword <password>
             --ossIndexUsername <username>

@@ -15,6 +15,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 
 import static org.junit.Assert.assertEquals;
@@ -44,6 +45,24 @@ public class DateUtilTest extends BaseTest {
         assertEquals(expResult, result);
 
         lastRun = c.getTimeInMillis() / 1000 - (8 * (60 * 60 * 24));
+        expResult = false;
+        result = DateUtil.withinDateRange(lastRun, current, range);
+        assertEquals(expResult, result);
+    }
+    
+       /**
+     * Test of withinDateRange method, of class DateUtil.
+     */
+    @Test
+    public void testWithinZonedDateRange() {
+        ZonedDateTime lastRun = ZonedDateTime.parse("2023-11-15T11:15:03Z");
+        ZonedDateTime current = ZonedDateTime.parse("2023-11-17T11:15:03Z");
+        int range = 5;
+        boolean expResult = true;
+        boolean result = DateUtil.withinDateRange(lastRun, current, range);
+        assertEquals(expResult, result);
+
+        current = ZonedDateTime.parse("2023-11-21T11:15:03Z");
         expResult = false;
         result = DateUtil.withinDateRange(lastRun, current, range);
         assertEquals(expResult, result);

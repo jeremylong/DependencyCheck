@@ -108,7 +108,8 @@ public final class NpmPayloadBuilder {
         }
 
         if (dependencies != null) {
-            dependencies.forEach((key, value) -> {
+            dependencies.forEach((k, value) -> {
+                String key = k;
                 final int indexOfNodeModule = key.lastIndexOf(NodePackageAnalyzer.NODE_MODULES_DIRNAME + "/");
                 if (indexOfNodeModule >= 0) {
                     key = key.substring(indexOfNodeModule + NodePackageAnalyzer.NODE_MODULES_DIRNAME.length() + 1);
@@ -249,7 +250,7 @@ public final class NpmPayloadBuilder {
                 if (NodePackageAnalyzer.shouldSkipDependency(key, ((JsonString) value).getString())) {
                     return;
                 }
-    
+
                 requiresBuilder.add(key, value);
             });
             depBuilder.add("requires", requiresBuilder.build());

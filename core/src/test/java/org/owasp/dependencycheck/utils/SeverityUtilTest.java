@@ -33,67 +33,67 @@ public class SeverityUtilTest {
     @Test
     public void testEstimateCvssV2() {
         String severity = null;
-        float expResult = 3.9F;
-        float result = SeverityUtil.estimateCvssV2(severity);
+        double expResult = 0.0;
+        Double result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));
 
         severity = "garbage";
-        expResult = 3.9F;
+        expResult = 3.9;
         result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));
 
         severity = "Critical";
-        expResult = 10.0F;
+        expResult = 10.0;
         result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));
 
         severity = "HIGH";
-        expResult = 10.0F;
+        expResult = 10.0;
         result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));
 
         severity = "moderate";
-        expResult = 6.9F;
+        expResult = 6.9;
         result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));
 
         severity = "medium";
-        expResult = 6.9F;
+        expResult = 6.9;
         result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));
 
         severity = "info";
-        expResult = 0.0F;
+        expResult = 0.0;
         result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));
 
         severity = "informational";
-        expResult = 0.0F;
+        expResult = 0.0;
         result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));
 
         severity = "low";
-        expResult = 3.9F;
+        expResult = 3.9;
         result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));
 
         severity = "unknown";
-        expResult = 3.9F;
+        expResult = 3.9;
         result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));
 
         severity = "none";
-        expResult = 3.9F;
+        expResult = 0.0;
         result = SeverityUtil.estimateCvssV2(severity);
         assertThat(String.format("Expected %s to be %f", severity, expResult),
                 result, Matchers.equalTo(expResult));

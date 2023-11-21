@@ -23,13 +23,13 @@ import java.util.TreeMap;
 
 import javax.annotation.concurrent.NotThreadSafe;
 
-import org.owasp.dependencycheck.data.nvd.json.CVEJSON40Min11;
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-import org.owasp.dependencycheck.data.nvd.json.Reference;
-import org.owasp.dependencycheck.data.nvd.json.References;
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+import io.github.jeremylong.openvulnerability.client.nvd.Reference;
 
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
 import com.hankcs.algorithm.AhoCorasickDoubleArrayTrie.Hit;
+import io.github.jeremylong.openvulnerability.client.nvd.CveItem;
+import java.util.List;
 
 @NotThreadSafe
 public class UrlEcosystemMapper {
@@ -69,14 +69,13 @@ public class UrlEcosystemMapper {
      * @return the ecosystem
      */
     public String getEcosystem(DefCveItem cve) {
-        final References references = Optional.ofNullable(cve)
+        final List<Reference> references = Optional.ofNullable(cve)
                 .map(DefCveItem::getCve)
-                .map(CVEJSON40Min11::getReferences)
+                .map(CveItem::getReferences)
                 .orElse(null);
 
         if (Objects.nonNull(references)) {
-            for (Reference r : references.getReferenceData()) {
-
+            for (Reference r : references) {
                 final Hit<String> ecosystem = search.findFirst(r.getUrl());
                 if (ecosystem != null) {
                     return ecosystem.value;

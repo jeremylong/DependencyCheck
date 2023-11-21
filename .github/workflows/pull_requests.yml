@@ -73,6 +73,8 @@ jobs:
           version: 6.0.2
       - name: Regression Test Maven Plugin
         id: build
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
             mvn -s settings.xml -pl utils,core,maven -am compile verify -DtestMavenPlugin -DreleaseTesting --no-transfer-progress --batch-mode
       - name: Archive IT test logs
