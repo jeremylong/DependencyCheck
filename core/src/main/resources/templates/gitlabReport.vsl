@@ -1,0 +1,152 @@
+{
+    "version": "15.0.6",
+    "schema": "https://gitlab.com/gitlab-org/security-products/security-report-schemas/-/raw/v15.0.6/dist/dependency-scanning-report-format.json?ref_type=tags", ##todo
+    "scan": {
+        ## this describes the tool responsible for scanning
+        "scanner": {
+            "id": "org.owasp.dependency-check",
+            "name": "Dependency-Check Core",
+            "version": "$enc.json($version)",
+            "vendor": {
+                "name": "OWASP"
+            },
+
+            ## optional properties
+            "url": "https://github.com/jeremylong/DependencyCheck/"
+        },
+        ## this describes the tool responsible for interpreting the scan result
+        ## in our case it's the same as the scanner
+        "analyzer": {
+            "id": "org.owasp.dependency-check",
+            "name": "Dependency-Check Core",
+            "version": "$enc.json($version)",
+            "vendor": {
+                "name": "OWASP"
+            },
+
+            ## optional properties
+            "url": "https://github.com/jeremylong/DependencyCheck/"
+        },
+
+        "end_time": "$enc.json($scanDateGitLab)",
+        ## we don't acutally have the real start time, so this is the best we can do
+        "start_time": "$enc.json($scanDateGitLab)",
+        ## we only generate a scan report, if the scan has successfully finished
+        "status": #if($exceptions) "failure" #else "success" #end ,
+        ## this is the only type of scan there is according to the format definition
+        "type": "dependency_scanning"
+
+        ## optional properties
+        ## "messages": [], --> not implemented
+        ##"options": [], --> not implemented
+        ##"primary_identifiers": [], --> not implemented
+    },
+    "vulnerabilities": [
+        #set( $vulnerability_first = true )
+        #foreach( $dependency in $dependencies )
+            #if( $dependency.vulnerabilities.size() != 0 )
+                #foreach( $vulnerability in $dependency.getVulnerabilities(true) )
+                    ## make sure to insert comma between array elements
+                    #if( $vulnerability_first == true )
+                        #set( $vulnerability_first = false )
+                    #else
+                    ,
+                    #end
+                    ##    ((List<Dependency>)context.get("dependencies")).get(5).getVulnerabilities().stream().collect(Collectors.toList()).get(0)
+                    {
+                        "id": "$enc.json($vulnerability.name)",
+                        "identifiers": [
+                            {
+                                "type": "$enc.json($vulnerability.getSource().name())"
+                                #if( $vulnerability.getSource().name().equals("NVD") )
+                                    , "name": "$enc.json($vulnerability.name)"
+                                #elseif( $vulnerability.getSource().name().equals("NPM") )
+                                    , "name": "$enc.json($vulnerability.name) (NPM)"
+                                #else
+                                    , "name": "$enc.json($vulnerability.name)"
+                                #end
+                                , "value": "$enc.json($dependency.Sha1sum)"
+
+                                ## optional properties
+                                #if( $vulnerability.getSource().name().equals("NVD") )
+                                    , "url": "https://web.nvd.nist.gov/view/vuln/detail?vulnId=$enc.url($vulnerability.name)"
+                                #elseif( $vulnerability.getSource().name().equals("NPM") )
+                                    , "url": "https://github.com/advisories/$enc.url($vulnerability.name)"
+                                #end
+                            }
+                        ],
+                        "location": {
+                            "file": "$enc.json($dependency.filePath)",
+                            "dependency": {
+                                "package": {
+                                    "name": "$enc.json($dependency.name)"
+                                },
+                                "version": "$enc.json($dependency.version)"
+                                ## optional properties
+                                ## "iid": "", --> not implemented
+                                ## "direct": false, --> not implemented
+                                ## we don't have a good way of assigning iids, so this won't work
+                                ##"dependency_path": [
+                                ##    #foreach( $inc in $dependency.includedBy )
+                                ##        {
+                                ##            "iid":
+                                ##        }
+                                ##        #if( $foreach.hasNext ),#end
+                                ##    #end
+                                ##]
+                            }
+                        },
+
+                        ## optional properties
+                        "name": "$enc.json($vulnerability.name)",
+                        "description": "$enc.json($vulnerability.description)",
+                        "severity": "$rpt.normalizeSeverity($vulnerability.cvssV3.getBaseSeverity().toLowerCase())",
+                        ## "solution": "" --> not implemented
+                        "links": [
+                            #foreach( $ref in $vulnerability.getReferences(true) )
+                                {
+                                    "name": "$enc.json($ref.name)",
+
+                                    ## optional properties
+                                    "url": "$enc.json($ref.url)"
+                                }
+                                #if( $foreach.hasNext ),#end
+                            #end
+                        ]
+                        ## "details": [], --> not implemented
+                        ## "tracking": {}, --> not implemented
+                        ## "flags": [], --> not implemented.
+                    }
+                #end
+            #end
+        #end
+    ],
+    "dependency_files": [
+        ## for lack of better knowledge, we just assume we have only scanned a single pom.xml file…
+        {
+            "path": "pom.xml",
+            "package_manager": "maven",
+            "dependencies": [
+                #foreach( $dependency in $dependencies )
+                    {
+                        "package": {
+                            "name": "$enc.json($dependency.name)"
+                        },
+                        "version": "$enc.json($dependency.version)"
+
+                        ## optional properties
+                        ## "iid": number, --> not implemtend
+                        ##"direct": false, --> not implemeten
+                        ##"dependency_path": [] --> not implemented
+                    }
+                    #if( $foreach.hasNext ),#end
+                #end
+            ]
+            ## no optional properties
+        }
+    ],
+
+    ## optional properties
+    "remediations": [] ## not implemented
+
+}

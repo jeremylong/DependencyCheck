@@ -124,7 +124,13 @@ public class ReportGenerator {
         /**
          * Generate JUNIT report.
          */
-        JUNIT
+        JUNIT,
+        /**
+         * Generate Report in GitLab dependency check format:
+         * @see <a href="https://gitlab.com/gitlab-org/security-products/security-report-schemas/-/blob/master/dist/dependency-scanning-report-format.json">format definition</a>
+         * @see <a href="https://docs.gitlab.com/ee/development/integrations/secure.html">additional explantions on the format</a>
+         */
+        GITLAB
     }
 
     /**
@@ -251,6 +257,7 @@ public class ReportGenerator {
         final String scanDate = DateTimeFormatter.RFC_1123_DATE_TIME.format(dt);
         final String scanDateXML = DateTimeFormatter.ISO_INSTANT.format(dt);
         final String scanDateJunit = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dt);
+        final String scanDateGitLab = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dt.withNano(0));
 
         final VelocityContext ctxt = new VelocityContext();
         ctxt.put("applicationName", applicationName);
@@ -261,6 +268,7 @@ public class ReportGenerator {
         ctxt.put("scanDate", scanDate);
         ctxt.put("scanDateXML", scanDateXML);
         ctxt.put("scanDateJunit", scanDateJunit);
+        ctxt.put("scanDateGitLab", scanDateGitLab);
         ctxt.put("enc", new EscapeTool());
         ctxt.put("rpt", new ReportTool());
         ctxt.put("checksum", Checksum.class);
@@ -393,6 +401,9 @@ public class ReportGenerator {
         }
         if (format == Format.SARIF && !pathToCheck.endsWith(".sarif")) {
             return new File(outFile, "dependency-check-report.sarif");
+        }
+        if (format == Format.GITLAB && !pathToCheck.endsWith(".json")) {
+            return new File(outFile, "dependency-check-gitlab.json");
         }
         return outFile;
     }
