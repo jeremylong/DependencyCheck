@@ -54,7 +54,7 @@ import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.h2.util.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
