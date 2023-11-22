@@ -63,8 +63,7 @@ docker run --rm \
     --project "test scan" \
     --out /report \
     --log /report/odc.log \
-    --cveDownloadWait 20000 \
-    --cveStartYear 2021
+    --nvdDatafeed https://jeremylong.github.io/DependencyCheck/hb_nvd/
 
 # return to original working directory
 cd -
