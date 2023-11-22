@@ -2,6 +2,8 @@
 
 ## [Version 9.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.0.0) (2023-11-22)
 
+**breaking changes**: See the [upgrade notice](https://github.com/jeremylong/DependencyCheck#900-upgrade-notice)
+
 - feat: Utilize NVD API (#5978)
 - feat: gitlab dependency scanner report format #5919 (#5920)
 - fix: Use ASCII apostrophe for console message (#6076)
