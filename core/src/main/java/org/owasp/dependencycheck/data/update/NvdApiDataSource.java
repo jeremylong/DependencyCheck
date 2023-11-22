@@ -298,7 +298,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
         try {
             delay = settings.getLong(Settings.KEYS.NVD_API_DELAY);
         } catch (InvalidSettingException ex) {
-            LOGGER.debug("Invalid setting `NVD_API_DELAY`?");
+            LOGGER.warn("Invalid setting `NVD_API_DELAY`? ({}), using default delay", settings.getString(Settings.KEYS.NVD_API_DELAY));
         }
         if (delay > 0) {
             builder.withDelay(delay);
