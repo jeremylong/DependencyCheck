@@ -23,6 +23,8 @@ More information about dependency-check can be found here:
 * [How does dependency-check work](general/internals.html)
 * [How to read the report](general/thereport.html)
 
+**This product uses the NVD API but is not endorsed or certified by the NVD.**
+
 OWASP dependency-check's core analysis engine can be used as:
 
 - [Ant Task](dependency-check-ant/index.html)
