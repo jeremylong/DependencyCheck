@@ -2324,7 +2324,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setIntIfNotNull(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);
 
         if (nvdApiKey == null && nvdApiServerId != null) {
-            configureServerCredentialsApiKey(nvdApiServerId, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
+            configureServerCredentialsApiKey(nvdApiServerId, Settings.KEYS.NVD_API_KEY);
         } else {
             settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);
         }
