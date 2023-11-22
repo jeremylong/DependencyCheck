@@ -119,7 +119,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
                 String pattern = null;
                 if (nvdDataFeedUrl.endsWith(".json.gz")) {
                     final int lio = nvdDataFeedUrl.lastIndexOf("/");
-                    pattern = nvdDataFeedUrl.substring(lio);
+                    pattern = nvdDataFeedUrl.substring(lio + 1);
                     url = nvdDataFeedUrl.substring(0, lio);
                 } else {
                     url = nvdDataFeedUrl;
