@@ -320,6 +320,8 @@ Permission to modify and redistribute is granted under the terms of the Apache 2
 
 Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt][notices] file for more information.
 
+This product uses the NVD API but is not endorsed or certified by the NVD.
+
 Copyright (c) 2012-2023 Jeremy Long. All Rights Reserved.
 
   [wiki]: https://github.com/jeremylong/DependencyCheck/wiki
