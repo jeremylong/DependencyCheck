@@ -41,8 +41,8 @@ import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.SeverityUtil;
 import org.slf4j.impl.StaticLoggerBinder;
-//CSOFF: MethodCount
 
+//CSOFF: MethodCount
 /**
  * An Ant task definition to execute dependency-check during an Ant build.
  *
@@ -882,7 +882,7 @@ public class Check extends Update {
      */
     public Boolean isNugetconfAnalyzerEnabled() {
 <span class="nc" id="L884">        return nugetconfAnalyzerEnabled;</span>
-    }    
+    }
 
     /**
      * Sets whether or not the analyzer is enabled.
@@ -2217,8 +2217,8 @@ public class Check extends Update {
 <span class="fc bfc" id="L2217" title="All 2 branches covered.">        for (Dependency d : dependencies) {</span>
 <span class="fc" id="L2218">            boolean addName = true;</span>
 <span class="fc bfc" id="L2219" title="All 2 branches covered.">            for (Vulnerability v : d.getVulnerabilities()) {</span>
-<span class="pc bpc" id="L2220" title="2 of 4 branches missed.">                if ((v.getCvssV2() != null &amp;&amp; v.getCvssV2().getScore() &gt;= failBuildOnCVSS)</span>
-<span class="nc bnc" id="L2221" title="All 4 branches missed.">                        || (v.getCvssV3() != null &amp;&amp; v.getCvssV3().getBaseScore() &gt;= failBuildOnCVSS)</span>
+<span class="pc bpc" id="L2220" title="2 of 4 branches missed.">                if ((v.getCvssV2() != null &amp;&amp; v.getCvssV2().getCvssData().getBaseScore() &gt;= failBuildOnCVSS)</span>
+<span class="nc bnc" id="L2221" title="All 4 branches missed.">                        || (v.getCvssV3() != null &amp;&amp; v.getCvssV3().getCvssData().getBaseScore() &gt;= failBuildOnCVSS)</span>
 <span class="nc bnc" id="L2222" title="All 6 branches missed.">                        || (v.getUnscoredSeverity() != null &amp;&amp; SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) &gt;= failBuildOnCVSS)</span>
                         //safety net to fail on any if for some reason the above misses on 0
                         || (failBuildOnCVSS &lt;= 0.0f)) {

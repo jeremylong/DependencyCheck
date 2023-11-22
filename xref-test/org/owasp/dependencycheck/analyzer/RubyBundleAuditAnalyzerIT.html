@@ -166,7 +166,7 @@
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>                 <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"CVE-2015-3225"</span>.equals(vulnerability.getName())) {
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>                     found = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>                     <em class="jxr_comment">// validate that the score is from NVD rather than translated from the Bundle Audit severity text</em>
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>                     assertEquals(5.0f, vulnerability.getCvssV2().getScore(), 0.0);
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>                     assertEquals(5.0, vulnerability.getCvssV2().getCvssData().getBaseScore(), 0.0);
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>                     <strong class="jxr_keyword">break</strong>;
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>                 }
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>             }

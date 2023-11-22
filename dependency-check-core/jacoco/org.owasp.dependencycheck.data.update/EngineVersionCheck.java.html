@@ -123,14 +123,14 @@ public class EngineVersionCheck implements CachedWebDataSource {
 <span class="fc" id="L123">            final CveDB db = engine.getDatabase();</span>
 <span class="fc" id="L124">            final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
 <span class="fc" id="L125">            final boolean enabled = settings.getBoolean(Settings.KEYS.UPDATE_VERSION_CHECK_ENABLED, true);</span>
-<span class="fc" id="L126">            final String original = settings.getString(Settings.KEYS.CVE_ORIGINAL_JSON);</span>
-<span class="fc" id="L127">            final String current = settings.getString(Settings.KEYS.CVE_MODIFIED_JSON);</span>
+<span class="fc" id="L126">            final String datafeed = settings.getString(Settings.KEYS.NVD_API_DATAFEED_URL);</span>
             /*
              * Only update if auto-update is enabled, the engine check is
-             * enabled, and the NVD CVE URLs have not been modified (i.e. the
-             * user has not configured them to point to an internal source).
+             * enabled, and the NVD DataFeed is being used (i.e. the user
+             * is likely on a private network). This check is not really needed
+             * so we are okay skipping it.
              */
-<span class="pc bpc" id="L133" title="6 of 8 branches missed.">            if (enabled &amp;&amp; autoupdate &amp;&amp; original != null &amp;&amp; original.equals(current)) {</span>
+<span class="pc bpc" id="L133" title="4 of 6 branches missed.">            if (enabled &amp;&amp; autoupdate &amp;&amp; datafeed != null) {</span>
 <span class="nc" id="L134">                LOGGER.debug(&quot;Begin Engine Version Check&quot;);</span>
 
 <span class="nc" id="L136">                final DatabaseProperties properties = db.getDatabaseProperties();</span>

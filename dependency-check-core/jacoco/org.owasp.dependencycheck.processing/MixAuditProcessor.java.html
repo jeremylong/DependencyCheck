@@ -31,7 +31,7 @@ import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.elixir.MixAuditJsonParser;
 import org.owasp.dependencycheck.data.elixir.MixAuditResult;
 import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.dependency.CvssV2;
+
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.Vulnerability;
@@ -197,7 +197,7 @@ public class MixAuditProcessor extends Processor&lt;InputStream&gt; {
 <span class="nc" id="L197">        vulnerability.addVulnerableSoftware(vs);</span>
 <span class="nc" id="L198">        vulnerability.setMatchedVulnerableSoftware(vs);</span>
 
-<span class="nc" id="L200">        vulnerability.setCvssV2(new CvssV2(-1, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;-&quot;, &quot;unknown&quot;));</span>
+<span class="nc" id="L200">        vulnerability.setUnscoredSeverity(&quot;UNKOWN&quot;);</span>
 <span class="nc" id="L201">        vulnerability.setDescription(result.getDescription());</span>
 <span class="nc" id="L202">        vulnerability.setName(result.getCve());</span>
 

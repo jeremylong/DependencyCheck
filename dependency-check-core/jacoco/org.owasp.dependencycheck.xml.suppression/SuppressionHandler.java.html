@@ -191,10 +191,10 @@ import org.xml.sax.helpers.DefaultHandler;
 <span class="fc" id="L191">                    rule.addVulnerabilityName(processPropertyType());</span>
 <span class="fc" id="L192">                    break;</span>
                 case NOTES:
-<span class="fc" id="L194">                    rule.addNotes(currentText.toString().trim());</span>
+<span class="fc" id="L194">                    rule.setNotes(currentText.toString().trim());</span>
 <span class="fc" id="L195">                    break;</span>
                 case CVSS_BELOW:
-<span class="fc" id="L197">                    final float cvss = Float.parseFloat(currentText.toString().trim());</span>
+<span class="fc" id="L197">                    final Double cvss = Double.valueOf(currentText.toString().trim());</span>
 <span class="fc" id="L198">                    rule.addCvssBelow(cvss);</span>
 <span class="fc" id="L199">                    break;</span>
                 default:

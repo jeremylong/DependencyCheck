@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>      @Test
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testGetString() {
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>          String key = Settings.KEYS.CVE_MODIFIED_VALID_FOR_DAYS;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>          String key = Settings.KEYS.NVD_API_DATAFEED_VALID_FOR_DAYS;
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>          String expResult = <span class="jxr_string">"7"</span>;
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          String result = getSettings().getString(key);
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          Assert.assertTrue(result.endsWith(expResult));
@@ -331,11 +331,11 @@
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>         assertThat(<span class="jxr_string">"password should be masked"</span>,
 <a class="jxr_linenumber" name="L324" href="#L324">324</a>                 getSettings().getPrintableValue(<span class="jxr_string">"odc.database.password"</span>, <span class="jxr_string">"s3Cr3t!"</span>),
 <a class="jxr_linenumber" name="L325" href="#L325">325</a>                 equalTo(<span class="jxr_string">"********"</span>));
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>         
+<a class="jxr_linenumber" name="L326" href="#L326">326</a> 
 <a class="jxr_linenumber" name="L327" href="#L327">327</a>         assertThat(<span class="jxr_string">"tokens should be masked"</span>,
 <a class="jxr_linenumber" name="L328" href="#L328">328</a>                 getSettings().getPrintableValue(<span class="jxr_string">"odc.api.token"</span>, <span class="jxr_string">"asf4b$3428vasd84$#$45asda"</span>),
 <a class="jxr_linenumber" name="L329" href="#L329">329</a>                 equalTo(<span class="jxr_string">"********"</span>));
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>         
+<a class="jxr_linenumber" name="L330" href="#L330">330</a> 
 <a class="jxr_linenumber" name="L331" href="#L331">331</a>         assertThat(<span class="jxr_string">"other keys should not be masked"</span>,
 <a class="jxr_linenumber" name="L332" href="#L332">332</a>                 getSettings().getPrintableValue(<span class="jxr_string">"odc.version"</span>, <span class="jxr_string">"5.0.0"</span>),
 <a class="jxr_linenumber" name="L333" href="#L333">333</a>                 equalTo(<span class="jxr_string">"5.0.0"</span>));

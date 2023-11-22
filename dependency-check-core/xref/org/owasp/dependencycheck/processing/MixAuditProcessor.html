@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.elixir.MixAuditJsonParser;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.elixir.MixAuditResult;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.Confidence;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.CvssV2;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.Dependency;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.EvidenceType;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.Vulnerability;
@@ -205,7 +205,7 @@
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>         vulnerability.addVulnerableSoftware(vs);
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>         vulnerability.setMatchedVulnerableSoftware(vs);
 <a class="jxr_linenumber" name="L199" href="#L199">199</a> 
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>         vulnerability.setCvssV2(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/CvssV2.html">CvssV2</a>(-1, <span class="jxr_string">"-"</span>, <span class="jxr_string">"-"</span>, <span class="jxr_string">"-"</span>, <span class="jxr_string">"-"</span>, <span class="jxr_string">"-"</span>, <span class="jxr_string">"-"</span>, <span class="jxr_string">"unknown"</span>));
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         vulnerability.setUnscoredSeverity(<span class="jxr_string">"UNKOWN"</span>);
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>         vulnerability.setDescription(result.getDescription());
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>         vulnerability.setName(result.getCve());
 <a class="jxr_linenumber" name="L203" href="#L203">203</a> 

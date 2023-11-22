@@ -26,7 +26,7 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">package</strong> org.owasp.dependencycheck.data.nvd.ecosystem;
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.StringUtils;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
@@ -187,7 +187,7 @@
 <a class="jxr_linenumber" name="L179" href="#L179">179</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>     <strong class="jxr_keyword">public</strong> String getEcosystem(DefCveItem cve) {
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong>[] ecosystemMap = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">int</strong>[ECOSYSTEMS.length];
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>         cve.getCve().getDescription().getDescriptionData().stream()
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         cve.getCve().getDescriptions().stream()
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>                 .filter((langString) -&gt; (langString.getLang().equals(<span class="jxr_string">"en"</span>)))
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>                 .forEachOrdered((langString) -&gt; search(langString.getValue(), ecosystemMap));
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">return</strong> getResult(ecosystemMap);

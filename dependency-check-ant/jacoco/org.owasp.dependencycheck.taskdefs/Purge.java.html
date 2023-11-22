@@ -133,37 +133,40 @@ public class Purge extends Task {
 <span class="nc" id="L133">    }</span>
 
     /**
-     * Sets the {@link Thread#getContextClassLoader() Thread Context Class Loader} to the one for this class,
-     * and then calls {@link #executeWithContextClassloader()}. This is done because the JCS cache needs to have
-     * the Thread Context Class Loader set to something that can resolve it's classes. Other build tools do this
-     * by default but Ant does not.
+     * Sets the
+     * {@link Thread#getContextClassLoader() Thread Context Class Loader} to the
+     * one for this class, and then calls
+     * {@link #executeWithContextClassloader()}. This is done because the JCS
+     * cache needs to have the Thread Context Class Loader set to something that
+     * can resolve it's classes. Other build tools do this by default but Ant
+     * does not.
      *
      * @throws BuildException throws if there is a problem. See
      * {@link #executeWithContextClassloader()} for details
      */
     @Override
     public final void execute() throws BuildException {
-<span class="fc" id="L146">        muteJCS();</span>
-<span class="fc" id="L147">        final ClassLoader current = Thread.currentThread().getContextClassLoader();</span>
+<span class="fc" id="L149">        muteJCS();</span>
+<span class="fc" id="L150">        final ClassLoader current = Thread.currentThread().getContextClassLoader();</span>
         try {
-<span class="fc" id="L149">            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());</span>
+<span class="fc" id="L152">            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());</span>
 
-<span class="fc" id="L151">            executeWithContextClassloader();</span>
+<span class="fc" id="L154">            executeWithContextClassloader();</span>
         } finally {
-<span class="fc" id="L153">            Thread.currentThread().setContextClassLoader(current);</span>
+<span class="fc" id="L156">            Thread.currentThread().setContextClassLoader(current);</span>
         }
-<span class="fc" id="L155">    }</span>
+<span class="fc" id="L158">    }</span>
 
     /**
      * Hacky method of muting the noisy logging from JCS. Implemented using a
      * solution from SO: https://stackoverflow.com/a/50723801
      */
     private void muteJCS() {
-<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        if (System.getProperty(&quot;jcs.logSystem&quot;) == null) {</span>
-<span class="nc" id="L163">            System.setProperty(&quot;jcs.logSystem&quot;, &quot;slf4j&quot;);</span>
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">        if (System.getProperty(&quot;jcs.logSystem&quot;) == null) {</span>
+<span class="nc" id="L166">            System.setProperty(&quot;jcs.logSystem&quot;, &quot;slf4j&quot;);</span>
         }
 
-<span class="fc" id="L166">        final String[] noisyLoggers = {</span>
+<span class="fc" id="L169">        final String[] noisyLoggers = {</span>
             &quot;org.apache.commons.jcs3.auxiliary.disk.AbstractDiskCache&quot;,
             &quot;org.apache.commons.jcs3.engine.memory.AbstractMemoryCache&quot;,
             &quot;org.apache.commons.jcs3.engine.control.CompositeCache&quot;,
@@ -176,18 +179,18 @@ public class Purge extends Task {
             &quot;org.apache.commons.jcs3.engine.control.CompositeCacheManager&quot;,
             &quot;org.apache.commons.jcs3.utils.threadpool.ThreadPoolManager&quot;,
             &quot;org.apache.commons.jcs3.engine.control.CompositeCacheConfigurator&quot;};
-<span class="fc bfc" id="L179" title="All 2 branches covered.">        for (String loggerName : noisyLoggers) {</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        for (String loggerName : noisyLoggers) {</span>
             try {
-<span class="fc" id="L181">                final Logger l = LoggerFactory.getLogger(loggerName);</span>
-<span class="nc" id="L182">                final Field f = l.getClass().getSuperclass().getDeclaredField(&quot;currentLogLevel&quot;);</span>
-<span class="nc" id="L183">                f.setAccessible(true);</span>
-<span class="nc" id="L184">                f.set(l, LocationAwareLogger.ERROR_INT);</span>
-<span class="fc" id="L185">            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {</span>
-<span class="fc" id="L186">                LoggerFactory.getLogger(Purge.class)</span>
-<span class="fc" id="L187">                        .debug(&quot;Failed to reset the log level of &quot; + loggerName + &quot;, it will continue being noisy.&quot;);</span>
-<span class="nc" id="L188">            }</span>
+<span class="fc" id="L184">                final Logger l = LoggerFactory.getLogger(loggerName);</span>
+<span class="nc" id="L185">                final Field f = l.getClass().getSuperclass().getDeclaredField(&quot;currentLogLevel&quot;);</span>
+<span class="nc" id="L186">                f.setAccessible(true);</span>
+<span class="nc" id="L187">                f.set(l, LocationAwareLogger.ERROR_INT);</span>
+<span class="fc" id="L188">            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {</span>
+<span class="fc" id="L189">                LoggerFactory.getLogger(Purge.class)</span>
+<span class="fc" id="L190">                        .debug(&quot;Failed to reset the log level of &quot; + loggerName + &quot;, it will continue being noisy.&quot;);</span>
+<span class="nc" id="L191">            }</span>
         }
-<span class="fc" id="L190">    }</span>
+<span class="fc" id="L193">    }</span>
 
     /**
      * Executes the dependency-check purge to delete the existing local copy of
@@ -198,13 +201,13 @@ public class Purge extends Task {
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     protected void executeWithContextClassloader() throws BuildException {
-<span class="nc" id="L201">        populateSettings();</span>
-<span class="nc" id="L202">        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {</span>
-<span class="nc" id="L203">            engine.purge();</span>
+<span class="nc" id="L204">        populateSettings();</span>
+<span class="nc" id="L205">        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {</span>
+<span class="nc" id="L206">            engine.purge();</span>
         } finally {
-<span class="nc" id="L205">            settings.cleanup(true);</span>
+<span class="nc" id="L208">            settings.cleanup(true);</span>
         }
-<span class="nc" id="L207">    }</span>
+<span class="nc" id="L210">    }</span>
 
     /**
      * Takes the properties supplied and updates the dependency-check settings.
@@ -216,26 +219,26 @@ public class Purge extends Task {
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     protected void populateSettings() throws BuildException {
-<span class="fc" id="L219">        settings = new Settings();</span>
-<span class="fc" id="L220">        try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {</span>
-<span class="fc" id="L221">            settings.mergeProperties(taskProperties);</span>
-<span class="nc" id="L222">        } catch (IOException ex) {</span>
-<span class="nc" id="L223">            final String msg = &quot;Unable to load the dependency-check ant task.properties file.&quot;;</span>
-<span class="nc bnc" id="L224" title="All 2 branches missed.">            if (this.failOnError) {</span>
-<span class="nc" id="L225">                throw new BuildException(msg, ex);</span>
+<span class="fc" id="L222">        settings = new Settings();</span>
+<span class="fc" id="L223">        try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {</span>
+<span class="fc" id="L224">            settings.mergeProperties(taskProperties);</span>
+<span class="nc" id="L225">        } catch (IOException ex) {</span>
+<span class="nc" id="L226">            final String msg = &quot;Unable to load the dependency-check ant task.properties file.&quot;;</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">            if (this.failOnError) {</span>
+<span class="nc" id="L228">                throw new BuildException(msg, ex);</span>
             }
-<span class="nc" id="L227">            log(msg, ex, Project.MSG_WARN);</span>
-<span class="fc" id="L228">        }</span>
-<span class="fc" id="L229">        settings.setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);</span>
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
-<span class="nc" id="L231">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
+<span class="nc" id="L230">            log(msg, ex, Project.MSG_WARN);</span>
+<span class="fc" id="L231">        }</span>
+<span class="fc" id="L232">        settings.setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);</span>
+<span class="pc bpc" id="L233" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
+<span class="nc" id="L234">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
         } else {
-<span class="fc" id="L233">            final File jarPath = new File(Purge.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
-<span class="fc" id="L234">            final File base = jarPath.getParentFile();</span>
-<span class="fc" id="L235">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
-<span class="fc" id="L236">            final File dataDir = new File(base, sub);</span>
-<span class="fc" id="L237">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
+<span class="fc" id="L236">            final File jarPath = new File(Purge.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
+<span class="fc" id="L237">            final File base = jarPath.getParentFile();</span>
+<span class="fc" id="L238">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
+<span class="fc" id="L239">            final File dataDir = new File(base, sub);</span>
+<span class="fc" id="L240">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
         }
-<span class="fc" id="L239">    }</span>
+<span class="fc" id="L242">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

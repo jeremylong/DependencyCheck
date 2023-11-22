@@ -16,14 +16,13 @@ org.owasp.dependencycheck.data.nexus
 org.owasp.dependencycheck.data.nodeaudit
 org.owasp.dependencycheck.data.nuget
 org.owasp.dependencycheck.data.nvd.ecosystem
-org.owasp.dependencycheck.data.nvd.json
 org.owasp.dependencycheck.data.nvdcve
 org.owasp.dependencycheck.data.ossindex
 org.owasp.dependencycheck.data.update
 org.owasp.dependencycheck.data.update.cisa
 org.owasp.dependencycheck.data.update.cpe
 org.owasp.dependencycheck.data.update.exception
-org.owasp.dependencycheck.data.update.nvd
+org.owasp.dependencycheck.data.update.nvd.api
 org.owasp.dependencycheck.dependency
 org.owasp.dependencycheck.dependency.naming
 org.owasp.dependencycheck.exception

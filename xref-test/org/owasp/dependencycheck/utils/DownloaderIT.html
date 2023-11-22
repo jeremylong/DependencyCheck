@@ -54,9 +54,9 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      @Test
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testFetchFile() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>          URL url = <strong class="jxr_keyword">new</strong> URL(getSettings().getString(Settings.KEYS.CVE_MODIFIED_JSON));
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>          File outputPath = <strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"target/downloaded_cve.xml"</span>);
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          <strong class="jxr_keyword">final</strong> String str = getSettings().getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, <span class="jxr_string">"https://jeremylong.github.io/DependencyCheck/current.txt"</span>);
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          URL url = <strong class="jxr_keyword">new</strong> URL(str);
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          File outputPath = <strong class="jxr_keyword">new</strong> File(<span class="jxr_string">"target/current.txt"</span>);
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          Downloader downloader = <strong class="jxr_keyword">new</strong> Downloader(getSettings());
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          downloader.fetchFile(url, outputPath);
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          assertTrue(outputPath.isFile());

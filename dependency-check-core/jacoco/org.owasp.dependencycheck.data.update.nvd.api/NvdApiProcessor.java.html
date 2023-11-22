@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NvdApiProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.update.nvd.api</a> &gt; <span class="el_source">NvdApiProcessor.java</span></div><h1>NvdApiProcessor.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2023 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.update.nvd.api;
+
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+import java.util.Collection;
+import java.util.concurrent.Callable;
+import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
+import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Stores a collection of NVD CVE Data from the NVD API into the database.
+ *
+ * @author Jeremy Long
+ */
+public class NvdApiProcessor implements Callable&lt;NvdApiProcessor&gt; {
+
+    /**
+     * The Logger for use throughout the class.
+     */
+<span class="nc" id="L38">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdApiProcessor.class);</span>
+    /**
+     * A reference to the database.
+     */
+    private final CveDB cveDB;
+    /**
+     * The collection of NVD API data to add to the database.
+     */
+    private Collection&lt;DefCveItem&gt; data;
+    /**
+     * Reference to the CVE Ecosystem Mapper object.
+     */
+<span class="nc" id="L50">    private final CveEcosystemMapper mapper = new CveEcosystemMapper();</span>
+    /**
+     * The start time.
+     */
+    private final long startTime;
+    /**
+     * The end time.
+     */
+<span class="nc" id="L58">    private long endTime = 0;</span>
+
+    /**
+     * Create a new processor to put the NVD data into the database.
+     *
+     * @param cveDB a reference to the database
+     * @param data the data to add to the database
+     * @param startTime the start time of the update process.
+     */
+<span class="nc" id="L67">    public NvdApiProcessor(final CveDB cveDB, Collection&lt;DefCveItem&gt; data, long startTime) {</span>
+<span class="nc" id="L68">        this.cveDB = cveDB;</span>
+<span class="nc" id="L69">        this.data = data;</span>
+<span class="nc" id="L70">        this.startTime = startTime;</span>
+<span class="nc" id="L71">    }</span>
+
+    /**
+     * Create a new processor to put the NVD data into the database.
+     *
+     * @param cveDB a reference to the database
+     * @param data the data to add to the database
+     */
+    public NvdApiProcessor(final CveDB cveDB, Collection&lt;DefCveItem&gt; data) {
+<span class="nc" id="L80">        this(cveDB, data, System.currentTimeMillis());</span>
+<span class="nc" id="L81">    }</span>
+
+    @Override
+    public NvdApiProcessor call() throws Exception {
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        for (DefCveItem entry : data) {</span>
+            try {
+<span class="nc" id="L87">            cveDB.updateVulnerability(entry, mapper.getEcosystem(entry));</span>
+<span class="nc" id="L88">            } catch (Exception ex) {</span>
+<span class="nc" id="L89">                LOGGER.error(&quot;Failed to process &quot; + entry.getCve().getId(), ex);</span>
+<span class="nc" id="L90">            }</span>
+<span class="nc" id="L91">        }</span>
+<span class="nc" id="L92">        endTime = System.currentTimeMillis();</span>
+<span class="nc" id="L93">        data = null;</span>
+<span class="nc" id="L94">        return this;</span>
+    }
+
+    /**
+     * Calculates how long the update process took.
+     *
+     * @return the number of milliseconds that the update process took
+     */
+    public long getDurationMillis() {
+<span class="nc" id="L103">        return endTime - startTime;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

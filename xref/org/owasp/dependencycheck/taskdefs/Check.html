@@ -49,8 +49,8 @@
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.utils.Settings;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.utils.SeverityUtil;
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> org.slf4j.impl.StaticLoggerBinder;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_comment">//CSOFF: MethodCount</em>
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_comment">//CSOFF: MethodCount</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment"> * An Ant task definition to execute dependency-check during an Ant build.</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment"> *</em>
@@ -890,7 +890,7 @@
 <a class="jxr_linenumber" name="L882" href="#L882">882</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L883" href="#L883">883</a>     <strong class="jxr_keyword">public</strong> Boolean isNugetconfAnalyzerEnabled() {
 <a class="jxr_linenumber" name="L884" href="#L884">884</a>         <strong class="jxr_keyword">return</strong> nugetconfAnalyzerEnabled;
-<a class="jxr_linenumber" name="L885" href="#L885">885</a>     }    
+<a class="jxr_linenumber" name="L885" href="#L885">885</a>     }
 <a class="jxr_linenumber" name="L886" href="#L886">886</a> 
 <a class="jxr_linenumber" name="L887" href="#L887">887</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L888" href="#L888">888</a> <em class="jxr_javadoccomment">     * Sets whether or not the analyzer is enabled.</em>
@@ -2225,8 +2225,8 @@
 <a class="jxr_linenumber" name="L2217" href="#L2217">2217</a>         <strong class="jxr_keyword">for</strong> (Dependency d : dependencies) {
 <a class="jxr_linenumber" name="L2218" href="#L2218">2218</a>             <strong class="jxr_keyword">boolean</strong> addName = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L2219" href="#L2219">2219</a>             <strong class="jxr_keyword">for</strong> (Vulnerability v : d.getVulnerabilities()) {
-<a class="jxr_linenumber" name="L2220" href="#L2220">2220</a>                 <strong class="jxr_keyword">if</strong> ((v.getCvssV2() != <strong class="jxr_keyword">null</strong> &amp;&amp; v.getCvssV2().getScore() &gt;= failBuildOnCVSS)
-<a class="jxr_linenumber" name="L2221" href="#L2221">2221</a>                         || (v.getCvssV3() != <strong class="jxr_keyword">null</strong> &amp;&amp; v.getCvssV3().getBaseScore() &gt;= failBuildOnCVSS)
+<a class="jxr_linenumber" name="L2220" href="#L2220">2220</a>                 <strong class="jxr_keyword">if</strong> ((v.getCvssV2() != <strong class="jxr_keyword">null</strong> &amp;&amp; v.getCvssV2().getCvssData().getBaseScore() &gt;= failBuildOnCVSS)
+<a class="jxr_linenumber" name="L2221" href="#L2221">2221</a>                         || (v.getCvssV3() != <strong class="jxr_keyword">null</strong> &amp;&amp; v.getCvssV3().getCvssData().getBaseScore() &gt;= failBuildOnCVSS)
 <a class="jxr_linenumber" name="L2222" href="#L2222">2222</a>                         || (v.getUnscoredSeverity() != <strong class="jxr_keyword">null</strong> &amp;&amp; SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) &gt;= failBuildOnCVSS)
 <a class="jxr_linenumber" name="L2223" href="#L2223">2223</a>                         <em class="jxr_comment">//safety net to fail on any if for some reason the above misses on 0</em>
 <a class="jxr_linenumber" name="L2224" href="#L2224">2224</a>                         || (failBuildOnCVSS &lt;= 0.0f)) {

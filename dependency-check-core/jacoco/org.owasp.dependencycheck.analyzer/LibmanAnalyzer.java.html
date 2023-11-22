@@ -183,7 +183,7 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L183">            final JsonArray libraries = json.getJsonArray(&quot;libraries&quot;);</span>
 
 <span class="fc" id="L185">            libraries.forEach(e -&gt; {</span>
-<span class="fc" id="L186">                JsonObject reference = (JsonObject) e;</span>
+<span class="fc" id="L186">                final JsonObject reference = (JsonObject) e;</span>
 
 <span class="fc" id="L188">                final String provider = reference.getString(&quot;provider&quot;, defaultProvider);</span>
 <span class="fc" id="L189">                final String library = reference.getString(&quot;library&quot;);</span>

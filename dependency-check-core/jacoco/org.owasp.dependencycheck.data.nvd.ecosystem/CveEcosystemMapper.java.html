@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Copyright (c) 2020 The OWASP Foundation. All Rights Reserved.
+ * Copyright (c) 2023 Jeremy Long. All Rights Reserved.
  */
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
+import io.github.jeremylong.openvulnerability.client.nvd.Config;
+import io.github.jeremylong.openvulnerability.client.nvd.CpeMatch;
+import io.github.jeremylong.openvulnerability.client.nvd.Node;
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.concurrent.NotThreadSafe;
-import org.owasp.dependencycheck.data.nvd.json.CpeMatchStreamCollector;
-import org.owasp.dependencycheck.data.nvd.json.DefCpeMatch;
-
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
 
 /**
  * Utility for mapping CVEs to their ecosystems.
@@ -41,16 +40,16 @@ import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
  * @author skjolber
  */
 @NotThreadSafe
-<span class="fc" id="L44">public class CveEcosystemMapper {</span>
+<span class="fc" id="L43">public class CveEcosystemMapper {</span>
 
     /**
      * A reference to the Description Ecosystem Mapper.
      */
-<span class="fc" id="L49">    private final DescriptionEcosystemMapper descriptionEcosystemMapper = new DescriptionEcosystemMapper();</span>
+<span class="fc" id="L48">    private final DescriptionEcosystemMapper descriptionEcosystemMapper = new DescriptionEcosystemMapper();</span>
     /**
      * A reference to the URL Ecosystem Mapper.
      */
-<span class="fc" id="L53">    private final UrlEcosystemMapper urlEcosystemMapper = new UrlEcosystemMapper();</span>
+<span class="fc" id="L52">    private final UrlEcosystemMapper urlEcosystemMapper = new UrlEcosystemMapper();</span>
 
     /**
      * Analyzes the description and associated URLs to determine if the
@@ -64,14 +63,14 @@ import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
     public String getEcosystem(DefCveItem cve) {
         //if there are multiple vendor/product pairs we don't know if they are
         //all the same ecosystem.
-<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (hasMultipleVendorProductConfigurations(cve)) {</span>
-<span class="fc" id="L68">            return null;</span>
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if (hasMultipleVendorProductConfigurations(cve)) {</span>
+<span class="nc" id="L67">            return null;</span>
         }
-<span class="fc" id="L70">        final String ecosystem = descriptionEcosystemMapper.getEcosystem(cve);</span>
-<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if (ecosystem != null) {</span>
-<span class="fc" id="L72">            return ecosystem;</span>
+<span class="fc" id="L69">        final String ecosystem = descriptionEcosystemMapper.getEcosystem(cve);</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (ecosystem != null) {</span>
+<span class="fc" id="L71">            return ecosystem;</span>
         }
-<span class="nc" id="L74">        return urlEcosystemMapper.getEcosystem(cve);</span>
+<span class="fc" id="L73">        return urlEcosystemMapper.getEcosystem(cve);</span>
     }
 
     /**
@@ -83,19 +82,23 @@ import org.owasp.dependencycheck.data.nvd.json.NodeFlatteningCollector;
      * &lt;code&gt;null&lt;/code&gt;
      */
     private boolean hasMultipleVendorProductConfigurations(DefCveItem cve) {
-<span class="fc" id="L86">        final List&lt;DefCpeMatch&gt; cpeEntries = cve.getConfigurations().getNodes().stream()</span>
-<span class="fc" id="L87">                .collect(NodeFlatteningCollector.getInstance())</span>
-<span class="fc" id="L88">                .collect(CpeMatchStreamCollector.getInstance())</span>
-<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                .filter(defCpeMatch -&gt; defCpeMatch.getCpe23Uri() != null)</span>
-<span class="fc" id="L90">                .collect(Collectors.toList());</span>
-<span class="pc bpc" id="L91" title="1 of 4 branches missed.">        if (!cpeEntries.isEmpty() &amp;&amp; cpeEntries.size() &gt; 1) {</span>
-<span class="fc" id="L92">            final DefCpeMatch firstMatch = cpeEntries.get(0);</span>
-<span class="fc" id="L93">            final String uri = firstMatch.getCpe23Uri();</span>
-<span class="fc" id="L94">            final int pos = uri.indexOf(&quot;:&quot;, uri.indexOf(&quot;:&quot;, 10) + 1);</span>
-<span class="fc" id="L95">            final String match = uri.substring(0, pos + 1);</span>
-<span class="pc bpc" id="L96" title="1 of 2 branches missed.">            return !cpeEntries.stream().allMatch(e -&gt; e.getCpe23Uri().startsWith(match));</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        if (cve.getCve().getConfigurations() != null) {</span>
+<span class="fc" id="L86">            final List&lt;CpeMatch&gt; cpeEntries = cve.getCve().getConfigurations().stream()</span>
+<span class="fc" id="L87">                    .map(Config::getNodes)</span>
+<span class="fc" id="L88">                    .flatMap(List::stream)</span>
+<span class="fc" id="L89">                    .map(Node::getCpeMatch)</span>
+<span class="fc" id="L90">                    .flatMap(List::stream)</span>
+<span class="pc bnc" id="L91" title="All 2 branches missed.">                    .filter(match -&gt; match.getCriteria() != null)</span>
+<span class="fc" id="L92">                    .collect(Collectors.toList());</span>
+<span class="pc bpc" id="L93" title="3 of 4 branches missed.">            if (!cpeEntries.isEmpty() &amp;&amp; cpeEntries.size() &gt; 1) {</span>
+<span class="nc" id="L94">                final CpeMatch firstMatch = cpeEntries.get(0);</span>
+<span class="nc" id="L95">                final String uri = firstMatch.getCriteria();</span>
+<span class="nc" id="L96">                final int pos = uri.indexOf(&quot;:&quot;, uri.indexOf(&quot;:&quot;, 10) + 1);</span>
+<span class="nc" id="L97">                final String match = uri.substring(0, pos + 1);</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">                return !cpeEntries.stream().allMatch(e -&gt; e.getCriteria().startsWith(match));</span>
+            }
         }
-<span class="fc" id="L98">        return false;</span>
+<span class="fc" id="L101">        return false;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

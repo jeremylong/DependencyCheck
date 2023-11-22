@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CvssUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">CvssUtil.java</span></div><h1>CvssUtil.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2023 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3Data;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import org.sonatype.ossindex.service.api.cvss.Cvss3Severity;
+
+/**
+ * Utility class to create CVSS Objects.
+ *
+ * @author Jeremy Long
+ */
+public final class CvssUtil {
+
+    private CvssUtil() {
+        //empty constructor for utility class.
+    }
+    /**
+     * The CVSS v3 Base Metrics (that are required by the spec for any CVSS v3
+     * Vector String)
+     */
+<span class="fc" id="L43">    private static final List&lt;String&gt; BASE_METRICS_V3 = Arrays.asList(&quot;AV&quot;, &quot;AC&quot;, &quot;PR&quot;, &quot;UI&quot;, &quot;S&quot;, &quot;C&quot;, &quot;I&quot;, &quot;A&quot;);</span>
+
+    /**
+     * The CVSS V2 Metrics required for the vector string to be complete.
+     */
+<span class="fc" id="L48">    private static final List&lt;String&gt; BASE_METRICS_V2 = Arrays.asList(&quot;AV&quot;, &quot;AC&quot;, &quot;Au&quot;, &quot;C&quot;, &quot;I&quot;, &quot;A&quot;);</span>
+    /**
+     * ZERO.
+     */
+<span class="fc" id="L52">    private static final Double ZERO = 0.0;</span>
+    /**
+     * ONE.
+     */
+<span class="fc" id="L56">    private static final Double ONE = 1.0;</span>
+    /**
+     * FOUR.
+     */
+<span class="fc" id="L60">    private static final Double FOUR = 4.0;</span>
+    /**
+     * SEVEN.
+     */
+<span class="fc" id="L64">    private static final Double SEVEN = 7.0;</span>
+    /**
+     * NINE.
+     */
+<span class="fc" id="L68">    private static final Double NINE = 9.0;</span>
+    /**
+     * TEN.
+     */
+<span class="fc" id="L72">    private static final Double TEN = 10.0;</span>
+    /**
+     * UNKNOWN.
+     */
+    private static final String UNKNOWN = &quot;UNKNOWN&quot;;
+    /**
+     * HIGH.
+     */
+    private static final String HIGH = &quot;HIGH&quot;;
+    /**
+     * MEDIUM.
+     */
+    private static final String MEDIUM = &quot;MEDIUM&quot;;
+    /**
+     * LOW.
+     */
+    private static final String LOW = &quot;LOW&quot;;
+
+    /**
+     * Convert a CVSSv2 vector String into a CvssV3 Object.
+     *
+     * @param vectorString the vector string
+     * @param baseScore the base score
+     * @return the CVSSv2 object
+     */
+    public static CvssV2 vectorToCvssV2(String vectorString, Double baseScore) {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (vectorString.startsWith(&quot;CVSS:&quot;)) {</span>
+<span class="nc" id="L99">            throw new IllegalArgumentException(&quot;Not a valid CVSSv2 vector string: &quot; + vectorString);</span>
+        }
+<span class="fc" id="L101">        final String[] metricStrings = vectorString.substring(vectorString.indexOf('/') + 1).split(&quot;/&quot;);</span>
+<span class="fc" id="L102">        final HashMap&lt;String, String&gt; metrics = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        for (int i = 0; i &lt; metricStrings.length; i++) {</span>
+<span class="fc" id="L104">            final String[] metricKeyVal = metricStrings[i].split(&quot;:&quot;);</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">            if (metricKeyVal.length != 2) {</span>
+<span class="nc" id="L106">                throw new IllegalArgumentException(</span>
+<span class="nc" id="L107">                        String.format(&quot;Not a valid CVSSv2 vector string '%s', invalid metric component '%s'&quot;,</span>
+                                vectorString, metricStrings[i]));
+            }
+<span class="fc" id="L110">            metrics.put(metricKeyVal[0], metricKeyVal[1]);</span>
+        }
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        if (!metrics.keySet().containsAll(BASE_METRICS_V2)) {</span>
+<span class="nc" id="L113">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L114">                    String.format(&quot;Not a valid CVSSv2 vector string '%s'; missing one or more required Metrics;&quot;,</span>
+                            vectorString));
+        }
+
+<span class="fc" id="L118">        final String version = CvssV2Data.Version._2_0.value();</span>
+        //&quot;AV:L/AC:L/Au:N/C:N/I:N/A:C&quot;
+<span class="fc" id="L120">        final CvssV2Data.AccessVectorType accessVector = CvssV2Data.AccessVectorType.fromValue(metrics.get(&quot;AV&quot;));</span>
+<span class="fc" id="L121">        final CvssV2Data.AccessComplexityType attackComplexity = CvssV2Data.AccessComplexityType.fromValue(metrics.get(&quot;AC&quot;));</span>
+<span class="fc" id="L122">        final CvssV2Data.AuthenticationType authentication = CvssV2Data.AuthenticationType.fromValue(metrics.get(&quot;Au&quot;));</span>
+<span class="fc" id="L123">        final CvssV2Data.CiaType confidentialityImpact = CvssV2Data.CiaType.fromValue(metrics.get(&quot;C&quot;));</span>
+<span class="fc" id="L124">        final CvssV2Data.CiaType integrityImpact = CvssV2Data.CiaType.fromValue(metrics.get(&quot;I&quot;));</span>
+<span class="fc" id="L125">        final CvssV2Data.CiaType availabilityImpact = CvssV2Data.CiaType.fromValue(metrics.get(&quot;A&quot;));</span>
+
+<span class="fc" id="L127">        final String baseSeverity = cvssV2ScoreToSeverity(baseScore);</span>
+<span class="fc" id="L128">        final CvssV2Data data = new CvssV2Data(version, vectorString, accessVector, attackComplexity,</span>
+                authentication, confidentialityImpact, integrityImpact, availabilityImpact, baseScore, baseSeverity,
+                null, null, null, null, null, null, null, null, null, null);
+<span class="fc" id="L131">        final CvssV2 cvss = new CvssV2(null, null, data, baseSeverity, null, null, null, null, null, null, null);</span>
+<span class="fc" id="L132">        return cvss;</span>
+
+    }
+
+    /**
+     * Determines the severity from the score.
+     *
+     * @param score the score
+     * @return the severity
+     */
+    public static String cvssV2ScoreToSeverity(Double score) {
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        if (score != null) {</span>
+<span class="fc bfc" id="L144" title="All 4 branches covered.">            if (ZERO.compareTo(score) &lt;= 0 &amp;&amp; FOUR.compareTo(score) &gt; 0) {</span>
+<span class="fc" id="L145">                return LOW;</span>
+<span class="fc bfc" id="L146" title="All 4 branches covered.">            } else if (FOUR.compareTo(score) &lt;= 0 &amp;&amp; SEVEN.compareTo(score) &gt; 0) {</span>
+<span class="fc" id="L147">                return MEDIUM;</span>
+<span class="fc bfc" id="L148" title="All 4 branches covered.">            } else if (SEVEN.compareTo(score) &lt;= 0 &amp;&amp; TEN.compareTo(score) &gt;= 0) {</span>
+<span class="fc" id="L149">                return HIGH;</span>
+            }
+        }
+<span class="fc" id="L152">        return UNKNOWN;</span>
+    }
+
+    /**
+     * Determines the severity from the score.
+     *
+     * @param score the score
+     * @return the severity
+     */
+    public static CvssV3Data.SeverityType cvssV3ScoreToSeverity(Double score) {
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        if (score != null) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (ZERO.compareTo(score) == 0) {</span>
+<span class="fc" id="L164">                return CvssV3Data.SeverityType.NONE;</span>
+<span class="fc bfc" id="L165" title="All 4 branches covered.">            } else if (ZERO.compareTo(score) &lt;= 0 &amp;&amp; FOUR.compareTo(score) &gt; 0) {</span>
+<span class="fc" id="L166">                return CvssV3Data.SeverityType.LOW;</span>
+<span class="fc bfc" id="L167" title="All 4 branches covered.">            } else if (FOUR.compareTo(score) &lt;= 0 &amp;&amp; SEVEN.compareTo(score) &gt; 0) {</span>
+<span class="fc" id="L168">                return CvssV3Data.SeverityType.MEDIUM;</span>
+<span class="fc bfc" id="L169" title="All 4 branches covered.">            } else if (SEVEN.compareTo(score) &lt;= 0 &amp;&amp; NINE.compareTo(score) &gt; 0) {</span>
+<span class="fc" id="L170">                return CvssV3Data.SeverityType.HIGH;</span>
+<span class="fc bfc" id="L171" title="All 4 branches covered.">            } else if (NINE.compareTo(score) &lt;= 0 &amp;&amp; TEN.compareTo(score) &gt;= 0) {</span>
+<span class="fc" id="L172">                return CvssV3Data.SeverityType.CRITICAL;</span>
+            }
+        }
+<span class="fc" id="L175">        return null;</span>
+    }
+
+    /**
+     * Convert a CVSSv3 vector String into a CvssV3 Object.
+     *
+     * @param vectorString the vector string
+     * @param baseScore the base score
+     * @return the CVSSv3 object
+     */
+    public static CvssV3 vectorToCvssV3(String vectorString, Double baseScore) {
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (!vectorString.startsWith(&quot;CVSS:3&quot;)) {</span>
+<span class="nc" id="L187">            throw new IllegalArgumentException(&quot;Not a valid CVSSv3 vector string: &quot; + vectorString);</span>
+        }
+<span class="fc" id="L189">        final String versionString = vectorString.substring(5, vectorString.indexOf('/'));</span>
+<span class="fc" id="L190">        final String[] metricStrings = vectorString.substring(vectorString.indexOf('/') + 1).split(&quot;/&quot;);</span>
+<span class="fc" id="L191">        final HashMap&lt;String, String&gt; metrics = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        for (int i = 0; i &lt; metricStrings.length; i++) {</span>
+<span class="fc" id="L193">            final String[] metricKeyVal = metricStrings[i].split(&quot;:&quot;);</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            if (metricKeyVal.length != 2) {</span>
+<span class="nc" id="L195">                throw new IllegalArgumentException(</span>
+<span class="nc" id="L196">                        String.format(&quot;Not a valid CVSSv3 vector string '%s', invalid metric component '%s'&quot;,</span>
+                                vectorString, metricStrings[i]));
+            }
+<span class="fc" id="L199">            metrics.put(metricKeyVal[0], metricKeyVal[1]);</span>
+        }
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">        if (!metrics.keySet().containsAll(BASE_METRICS_V3)) {</span>
+<span class="nc" id="L202">            throw new IllegalArgumentException(</span>
+<span class="nc" id="L203">                    String.format(&quot;Not a valid CVSSv3 vector string '%s'; missing one or more required Base Metrics;&quot;,</span>
+                            vectorString));
+        }
+
+<span class="fc" id="L207">        final CvssV3Data.Version version = CvssV3Data.Version.fromValue(versionString);</span>
+        //&quot;CVSS:3.1\/AV:L\/AC:L\/PR:L\/UI:N\/S:U\/C:N\/I:N\/A:H&quot;
+<span class="fc" id="L209">        final CvssV3Data.AttackVectorType attackVector = CvssV3Data.AttackVectorType.fromValue(metrics.get(&quot;AV&quot;));</span>
+<span class="fc" id="L210">        final CvssV3Data.AttackComplexityType attackComplexity = CvssV3Data.AttackComplexityType.fromValue(metrics.get(&quot;AC&quot;));</span>
+<span class="fc" id="L211">        final CvssV3Data.PrivilegesRequiredType privilegesRequired = CvssV3Data.PrivilegesRequiredType.fromValue(metrics.get(&quot;PR&quot;));</span>
+<span class="fc" id="L212">        final CvssV3Data.UserInteractionType userInteraction = CvssV3Data.UserInteractionType.fromValue(metrics.get(&quot;UI&quot;));</span>
+<span class="fc" id="L213">        final CvssV3Data.ScopeType scope = CvssV3Data.ScopeType.fromValue(metrics.get(&quot;S&quot;));</span>
+<span class="fc" id="L214">        final CvssV3Data.CiaType confidentialityImpact = CvssV3Data.CiaType.fromValue(metrics.get(&quot;C&quot;));</span>
+<span class="fc" id="L215">        final CvssV3Data.CiaType integrityImpact = CvssV3Data.CiaType.fromValue(metrics.get(&quot;I&quot;));</span>
+<span class="fc" id="L216">        final CvssV3Data.CiaType availabilityImpact = CvssV3Data.CiaType.fromValue(metrics.get(&quot;A&quot;));</span>
+
+<span class="fc" id="L218">        final String baseSeverityString = Cvss3Severity.of(baseScore.floatValue()).name();</span>
+<span class="fc" id="L219">        final CvssV3Data.SeverityType baseSeverity = CvssV3Data.SeverityType.fromValue(baseSeverityString);</span>
+<span class="fc" id="L220">        final CvssV3Data data = new CvssV3Data(version, vectorString, attackVector, attackComplexity,</span>
+                privilegesRequired, userInteraction, scope, confidentialityImpact, integrityImpact, availabilityImpact, baseScore,
+                baseSeverity, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+<span class="fc" id="L223">        final CvssV3 cvss = new CvssV3(null, null, data, null, null);</span>
+<span class="fc" id="L224">        return cvss;</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

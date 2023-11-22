@@ -25,47 +25,47 @@
 <a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">package</strong> org.owasp.dependencycheck.analyzer;
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  
-<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.componentreport.ComponentReport;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.componentreport.ComponentReportVulnerability;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.cvss.Cvss2Severity;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.cvss.Cvss2Vector;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.cvss.Cvss3Severity;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.cvss.Cvss3Vector;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.componentreport.ComponentReport;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.componentreport.ComponentReportVulnerability;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.cvss.Cvss2Severity;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.cvss.Cvss2Vector;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.cvss.CvssVector;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.api.cvss.CvssVectorFactory;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.client.OssindexClient;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.Engine;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.ossindex.OssindexClientFactory;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.CvssV2;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.CvssV3;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.Dependency;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.Vulnerability;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.VulnerableSoftware;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.VulnerableSoftwareBuilder;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.naming.Identifier;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.utils.Settings;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> us.springett.parsers.cpe.exceptions.CpeValidationException;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> us.springett.parsers.cpe.values.Part;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> org.sonatype.goodies.packageurl.PackageUrl;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> java.util.List;
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.TimeUnit;
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> java.util.regex.Matcher;
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <strong class="jxr_keyword">import</strong> java.util.regex.Pattern;
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <strong class="jxr_keyword">import</strong> java.net.SocketTimeoutException;
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">import</strong> javax.annotation.Nullable;
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.StringUtils;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.Dependency;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.Vulnerability;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.VulnerableSoftware;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.VulnerableSoftwareBuilder;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.naming.Identifier;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.utils.Settings;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> us.springett.parsers.cpe.exceptions.CpeValidationException;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> us.springett.parsers.cpe.values.Part;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> org.sonatype.goodies.packageurl.PackageUrl;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> java.util.concurrent.TimeUnit;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> java.util.regex.Matcher;
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> java.util.regex.Pattern;
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">import</strong> java.net.SocketTimeoutException;
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">import</strong> javax.annotation.Nullable;
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.StringUtils;
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.utils.CvssUtil;
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <strong class="jxr_keyword">import</strong> org.sonatype.goodies.packageurl.InvalidException;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <strong class="jxr_keyword">import</strong> org.sonatype.ossindex.service.client.transport.Transport.TransportException;
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  
@@ -326,62 +326,89 @@
 <a class="jxr_linenumber" name="L318" href="#L318">318</a>         result.setDescription(source.getDescription());
 <a class="jxr_linenumber" name="L319" href="#L319">319</a>         result.addCwe(source.getCwe());
 <a class="jxr_linenumber" name="L320" href="#L320">320</a> 
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">float</strong> cvssScore = source.getCvssScore() != <strong class="jxr_keyword">null</strong> ? source.getCvssScore() : -1;
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">double</strong> cvssScore = source.getCvssScore() != <strong class="jxr_keyword">null</strong> ? source.getCvssScore().doubleValue() : -1;
 <a class="jxr_linenumber" name="L322" href="#L322">322</a> 
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>         <strong class="jxr_keyword">if</strong> (source.getCvssVector() != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L324" href="#L324">324</a>             <strong class="jxr_keyword">if</strong> (source.getCvssVector().startsWith(<span class="jxr_string">"CVSS:3"</span>)) {
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>                 result.setCvssV3(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/CvssV3.html">CvssV3</a>(source.getCvssVector(), cvssScore));
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>                 result.setCvssV3(CvssUtil.vectorToCvssV3(source.getCvssVector(), cvssScore));
 <a class="jxr_linenumber" name="L326" href="#L326">326</a>             } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L327" href="#L327">327</a>                 <em class="jxr_comment">// convert cvss details</em>
 <a class="jxr_linenumber" name="L328" href="#L328">328</a>                 <strong class="jxr_keyword">final</strong> CvssVector cvssVector = CvssVectorFactory.create(source.getCvssVector());
 <a class="jxr_linenumber" name="L329" href="#L329">329</a>                 <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; metrics = cvssVector.getMetrics();
 <a class="jxr_linenumber" name="L330" href="#L330">330</a>                 <strong class="jxr_keyword">if</strong> (cvssVector instanceof Cvss2Vector) {
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>                     result.setCvssV2(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/CvssV2.html">CvssV2</a>(
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>                             cvssScore,
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>                             metrics.get(Cvss2Vector.ACCESS_VECTOR),
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>                             metrics.get(Cvss2Vector.ACCESS_COMPLEXITY),
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>                             metrics.get(Cvss2Vector.AUTHENTICATION),
-<a class="jxr_linenumber" name="L336" href="#L336">336</a>                             metrics.get(Cvss2Vector.CONFIDENTIALITY_IMPACT),
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>                             metrics.get(Cvss2Vector.INTEGRITY_IMPACT),
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>                             metrics.get(Cvss2Vector.AVAILABILITY_IMPACT),
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>                             Cvss2Severity.of(cvssScore).name()
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>                     ));
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L342" href="#L342">342</a>                     LOG.warn(<span class="jxr_string">"Unsupported CVSS vector: {}"</span>, cvssVector);
-<a class="jxr_linenumber" name="L343" href="#L343">343</a>                     result.setUnscoredSeverity(Float.toString(cvssScore));
-<a class="jxr_linenumber" name="L344" href="#L344">344</a>                 }
-<a class="jxr_linenumber" name="L345" href="#L345">345</a>             }
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L347" href="#L347">347</a>             LOG.debug(<span class="jxr_string">"OSS has no vector for {}"</span>, result.getName());
-<a class="jxr_linenumber" name="L348" href="#L348">348</a>             result.setUnscoredSeverity(Float.toString(cvssScore));
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>         }
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>         <em class="jxr_comment">// generate a reference to the vulnerability details on OSS Index</em>
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>         result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());
-<a class="jxr_linenumber" name="L352" href="#L352">352</a> 
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>         <em class="jxr_comment">// generate references to other references reported by OSS Index</em>
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>         source.getExternalReferences().forEach(externalReference
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>                 -&gt; result.addReference(<span class="jxr_string">"OSSIndex"</span>, externalReference.toString(), externalReference.toString()));
-<a class="jxr_linenumber" name="L356" href="#L356">356</a> 
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>         <em class="jxr_comment">// attach vulnerable software details as best we can</em>
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>         <strong class="jxr_keyword">final</strong> PackageUrl purl = report.getCoordinates();
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L360" href="#L360">360</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftwareBuilder.html">VulnerableSoftwareBuilder</a> builder = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftwareBuilder.html">VulnerableSoftwareBuilder</a>()
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>                     .part(Part.APPLICATION)
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>                     .vendor(purl.getNamespaceAsString())
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>                     .product(purl.getName())
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>                     .version(purl.getVersion());
-<a class="jxr_linenumber" name="L365" href="#L365">365</a> 
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>             <em class="jxr_comment">// TODO: consider if we want/need to extract version-ranges to apply to vulnerable-software?</em>
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftware.html">VulnerableSoftware</a> software = builder.build();
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>             result.addVulnerableSoftware(software);
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>             result.setMatchedVulnerableSoftware(software);
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>         } <strong class="jxr_keyword">catch</strong> (CpeValidationException e) {
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>             LOG.warn(<span class="jxr_string">"Unable to construct vulnerable-software for: {}"</span>, purl, e);
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>         }
-<a class="jxr_linenumber" name="L373" href="#L373">373</a> 
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>         <strong class="jxr_keyword">return</strong> result;
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>     }
-<a class="jxr_linenumber" name="L376" href="#L376">376</a> }
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>                     String tmp = metrics.get(Cvss2Vector.ACCESS_VECTOR);
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>                     CvssV2Data.AccessVectorType accessVector = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>                     <strong class="jxr_keyword">if</strong> (tmp != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>                         accessVector = CvssV2Data.AccessVectorType.fromValue(tmp);
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>                     }
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>                     tmp = metrics.get(Cvss2Vector.ACCESS_COMPLEXITY);
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>                     CvssV2Data.AccessComplexityType accessComplexity = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>                     <strong class="jxr_keyword">if</strong> (tmp != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>                         accessComplexity = CvssV2Data.AccessComplexityType.fromValue(tmp);
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>                     }
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>                     tmp = metrics.get(Cvss2Vector.AUTHENTICATION);
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>                     CvssV2Data.AuthenticationType authentication = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>                     <strong class="jxr_keyword">if</strong> (tmp != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>                         authentication = CvssV2Data.AuthenticationType.fromValue(tmp);
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>                     }
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>                     tmp = metrics.get(Cvss2Vector.CONFIDENTIALITY_IMPACT);
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>                     CvssV2Data.CiaType confidentialityImpact = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>                     <strong class="jxr_keyword">if</strong> (tmp != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>                         confidentialityImpact = CvssV2Data.CiaType.fromValue(tmp);
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>                     }
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>                     tmp = metrics.get(Cvss2Vector.INTEGRITY_IMPACT);
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>                     CvssV2Data.CiaType integrityImpact = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>                     <strong class="jxr_keyword">if</strong> (tmp != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>                         integrityImpact = CvssV2Data.CiaType.fromValue(tmp);
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>                     }
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>                     tmp = metrics.get(Cvss2Vector.AVAILABILITY_IMPACT);
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>                     CvssV2Data.CiaType availabilityImpact = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>                     <strong class="jxr_keyword">if</strong> (tmp != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>                         availabilityImpact = CvssV2Data.CiaType.fromValue(tmp);
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>                     }
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>                     <strong class="jxr_keyword">final</strong> String severity = Cvss2Severity.of((<strong class="jxr_keyword">float</strong>) cvssScore).name().toUpperCase();
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>                     <strong class="jxr_keyword">final</strong> CvssV2Data cvssData = <strong class="jxr_keyword">new</strong> CvssV2Data(<span class="jxr_string">"2.0"</span>, source.getCvssVector(), accessVector,
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>                             accessComplexity, authentication, confidentialityImpact,
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>                             integrityImpact, availabilityImpact, cvssScore,
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>                             severity, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>                     <strong class="jxr_keyword">final</strong> CvssV2 cvssV2 = <strong class="jxr_keyword">new</strong> CvssV2(<strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, cvssData, severity, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>                     result.setCvssV2(cvssV2);
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>                     LOG.warn(<span class="jxr_string">"Unsupported CVSS vector: {}"</span>, cvssVector);
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>                     result.setUnscoredSeverity(Double.toString(cvssScore));
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>                 }
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>             }
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>             LOG.debug(<span class="jxr_string">"OSS has no vector for {}"</span>, result.getName());
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>             result.setUnscoredSeverity(Double.toString(cvssScore));
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>         }
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>         <em class="jxr_comment">// generate a reference to the vulnerability details on OSS Index</em>
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>         result.addReference(REFERENCE_TYPE, source.getTitle(), source.getReference().toString());
+<a class="jxr_linenumber" name="L379" href="#L379">379</a> 
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>         <em class="jxr_comment">// generate references to other references reported by OSS Index</em>
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>         source.getExternalReferences().forEach(externalReference
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>                 -&gt; result.addReference(<span class="jxr_string">"OSSIndex"</span>, externalReference.toString(), externalReference.toString()));
+<a class="jxr_linenumber" name="L383" href="#L383">383</a> 
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>         <em class="jxr_comment">// attach vulnerable software details as best we can</em>
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>         <strong class="jxr_keyword">final</strong> PackageUrl purl = report.getCoordinates();
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftwareBuilder.html">VulnerableSoftwareBuilder</a> builder = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftwareBuilder.html">VulnerableSoftwareBuilder</a>()
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>                     .part(Part.APPLICATION)
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>                     .vendor(purl.getNamespaceAsString())
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>                     .product(purl.getName())
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>                     .version(purl.getVersion());
+<a class="jxr_linenumber" name="L392" href="#L392">392</a> 
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>             <em class="jxr_comment">// TODO: consider if we want/need to extract version-ranges to apply to vulnerable-software?</em>
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftware.html">VulnerableSoftware</a> software = builder.build();
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>             result.addVulnerableSoftware(software);
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>             result.setMatchedVulnerableSoftware(software);
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>         } <strong class="jxr_keyword">catch</strong> (CpeValidationException e) {
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>             LOG.warn(<span class="jxr_string">"Unable to construct vulnerable-software for: {}"</span>, purl, e);
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>         }
+<a class="jxr_linenumber" name="L400" href="#L400">400</a> 
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>         <strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>     }
+<a class="jxr_linenumber" name="L403" href="#L403">403</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

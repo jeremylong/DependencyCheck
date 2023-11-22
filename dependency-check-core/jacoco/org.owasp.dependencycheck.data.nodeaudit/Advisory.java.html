@@ -17,8 +17,9 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
-import org.owasp.dependencycheck.dependency.CvssV3;
 
+
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
@@ -30,7 +31,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author Steve Springett
  */
 @ThreadSafe
-<span class="fc" id="L33">public class Advisory implements Serializable {</span>
+<span class="fc" id="L34">public class Advisory implements Serializable {</span>
 
     /**
      * Serial version UID.
@@ -130,147 +131,147 @@ import javax.annotation.concurrent.ThreadSafe;
     private CvssV3 cvssV3;
 
     public String getCreated() {
-<span class="nc" id="L133">        return created;</span>
+<span class="nc" id="L134">        return created;</span>
     }
 
     public void setCreated(String created) {
-<span class="fc" id="L137">        this.created = created;</span>
-<span class="fc" id="L138">    }</span>
+<span class="fc" id="L138">        this.created = created;</span>
+<span class="fc" id="L139">    }</span>
 
     public String getUpdated() {
-<span class="nc" id="L141">        return updated;</span>
+<span class="nc" id="L142">        return updated;</span>
     }
 
     public void setUpdated(String updated) {
-<span class="fc" id="L145">        this.updated = updated;</span>
-<span class="fc" id="L146">    }</span>
+<span class="fc" id="L146">        this.updated = updated;</span>
+<span class="fc" id="L147">    }</span>
 
     public String getTitle() {
-<span class="nc" id="L149">        return title;</span>
+<span class="nc" id="L150">        return title;</span>
     }
 
     public void setTitle(String title) {
-<span class="fc" id="L153">        this.title = title;</span>
-<span class="fc" id="L154">    }</span>
+<span class="fc" id="L154">        this.title = title;</span>
+<span class="fc" id="L155">    }</span>
 
     public String getOverview() {
-<span class="fc" id="L157">        return overview;</span>
+<span class="fc" id="L158">        return overview;</span>
     }
 
     public void setOverview(String overview) {
-<span class="fc" id="L161">        this.overview = overview;</span>
-<span class="fc" id="L162">    }</span>
+<span class="fc" id="L162">        this.overview = overview;</span>
+<span class="fc" id="L163">    }</span>
 
     public String getRecommendation() {
-<span class="nc" id="L165">        return recommendation;</span>
+<span class="nc" id="L166">        return recommendation;</span>
     }
 
     public void setRecommendation(String recommendation) {
-<span class="fc" id="L169">        this.recommendation = recommendation;</span>
-<span class="fc" id="L170">    }</span>
+<span class="fc" id="L170">        this.recommendation = recommendation;</span>
+<span class="fc" id="L171">    }</span>
 
     public String getFoundBy() {
-<span class="nc" id="L173">        return foundBy;</span>
+<span class="nc" id="L174">        return foundBy;</span>
     }
 
     public void setFoundBy(String foundBy) {
-<span class="nc" id="L177">        this.foundBy = foundBy;</span>
-<span class="nc" id="L178">    }</span>
+<span class="nc" id="L178">        this.foundBy = foundBy;</span>
+<span class="nc" id="L179">    }</span>
 
     public String getReportedBy() {
-<span class="nc" id="L181">        return reportedBy;</span>
+<span class="nc" id="L182">        return reportedBy;</span>
     }
 
     public void setReportedBy(String reportedBy) {
-<span class="nc" id="L185">        this.reportedBy = reportedBy;</span>
-<span class="nc" id="L186">    }</span>
+<span class="nc" id="L186">        this.reportedBy = reportedBy;</span>
+<span class="nc" id="L187">    }</span>
 
     public String getModuleName() {
-<span class="fc" id="L189">        return moduleName;</span>
+<span class="fc" id="L190">        return moduleName;</span>
     }
 
     public void setModuleName(String moduleName) {
-<span class="fc" id="L193">        this.moduleName = moduleName;</span>
-<span class="fc" id="L194">    }</span>
+<span class="fc" id="L194">        this.moduleName = moduleName;</span>
+<span class="fc" id="L195">    }</span>
 
     public String getVersion() {
-<span class="fc" id="L197">        return version;</span>
+<span class="fc" id="L198">        return version;</span>
     }
 
     public void setVersion(String version) {
-<span class="fc" id="L201">        this.version = version;</span>
-<span class="fc" id="L202">    }</span>
+<span class="fc" id="L202">        this.version = version;</span>
+<span class="fc" id="L203">    }</span>
 
     public List&lt;String&gt; getCves() {
-<span class="nc" id="L205">        return cves;</span>
+<span class="nc" id="L206">        return cves;</span>
     }
 
     public void setCves(List&lt;String&gt; cves) {
-<span class="fc" id="L209">        this.cves = cves;</span>
-<span class="fc" id="L210">    }</span>
+<span class="fc" id="L210">        this.cves = cves;</span>
+<span class="fc" id="L211">    }</span>
 
     public String getVulnerableVersions() {
-<span class="fc" id="L213">        return vulnerableVersions;</span>
+<span class="fc" id="L214">        return vulnerableVersions;</span>
     }
 
     public void setVulnerableVersions(String vulnerableVersions) {
-<span class="fc" id="L217">        this.vulnerableVersions = vulnerableVersions;</span>
-<span class="fc" id="L218">    }</span>
+<span class="fc" id="L218">        this.vulnerableVersions = vulnerableVersions;</span>
+<span class="fc" id="L219">    }</span>
 
     public String getPatchedVersions() {
-<span class="nc" id="L221">        return patchedVersions;</span>
+<span class="nc" id="L222">        return patchedVersions;</span>
     }
 
     public void setPatchedVersions(String patchedVersions) {
-<span class="fc" id="L225">        this.patchedVersions = patchedVersions;</span>
-<span class="fc" id="L226">    }</span>
+<span class="fc" id="L226">        this.patchedVersions = patchedVersions;</span>
+<span class="fc" id="L227">    }</span>
 
     public String getReferences() {
-<span class="fc" id="L229">        return references;</span>
+<span class="fc" id="L230">        return references;</span>
     }
 
     public void setReferences(String references) {
-<span class="fc" id="L233">        this.references = references;</span>
-<span class="fc" id="L234">    }</span>
+<span class="fc" id="L234">        this.references = references;</span>
+<span class="fc" id="L235">    }</span>
 
     public String getAccess() {
-<span class="nc" id="L237">        return access;</span>
+<span class="nc" id="L238">        return access;</span>
     }
 
     public void setAccess(String access) {
-<span class="fc" id="L241">        this.access = access;</span>
-<span class="fc" id="L242">    }</span>
+<span class="fc" id="L242">        this.access = access;</span>
+<span class="fc" id="L243">    }</span>
 
     public String getSeverity() {
-<span class="fc" id="L245">        return severity;</span>
+<span class="fc" id="L246">        return severity;</span>
     }
 
     public void setSeverity(String severity) {
-<span class="fc" id="L249">        this.severity = severity;</span>
-<span class="fc" id="L250">    }</span>
+<span class="fc" id="L250">        this.severity = severity;</span>
+<span class="fc" id="L251">    }</span>
 
     public List&lt;String&gt; getCwes() {
-<span class="fc" id="L253">        return cwes;</span>
+<span class="fc" id="L254">        return cwes;</span>
     }
 
     public void setCwes(List&lt;String&gt; cwes) {
-<span class="fc" id="L257">        this.cwes = cwes;</span>
-<span class="fc" id="L258">    }</span>
+<span class="fc" id="L258">        this.cwes = cwes;</span>
+<span class="fc" id="L259">    }</span>
 
     public String getGhsaId() {
-<span class="fc" id="L261">        return ghsaId;</span>
+<span class="fc" id="L262">        return ghsaId;</span>
     }
 
     public void setGhsaId(String ghsaId) {
-<span class="fc" id="L265">        this.ghsaId = ghsaId;</span>
-<span class="fc" id="L266">    }</span>
+<span class="fc" id="L266">        this.ghsaId = ghsaId;</span>
+<span class="fc" id="L267">    }</span>
 
     public CvssV3 getCvssV3() {
-<span class="fc" id="L269">        return cvssV3;</span>
+<span class="fc" id="L270">        return cvssV3;</span>
     }
 
     public void setCvssV3(CvssV3 cvssV3) {
-<span class="fc" id="L273">        this.cvssV3 = cvssV3;</span>
-<span class="fc" id="L274">    }</span>
+<span class="fc" id="L274">        this.cvssV3 = cvssV3;</span>
+<span class="fc" id="L275">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

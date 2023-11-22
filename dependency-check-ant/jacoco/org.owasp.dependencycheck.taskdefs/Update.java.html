@@ -17,14 +17,11 @@
  */
 package org.owasp.dependencycheck.taskdefs;
 
-import java.util.Optional;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
-import org.owasp.dependencycheck.utils.CveUrlParser;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -39,6 +36,31 @@ import org.slf4j.impl.StaticLoggerBinder;
 //on unrelated ODC clients (the DependencyCheckScanAgent).
 @SuppressWarnings(&quot;common-java:DuplicatedBlocks&quot;)
 public class Update extends Purge {
+
+    /**
+     * The NVD API Key.
+     */
+    private String nvdApiKey;
+    /**
+     * The number of hours to wait before checking for new updates from the NVD.
+     */
+    private Integer nvdValidForHours;
+    /**
+     * The NVD API Data Feed URL.
+     */
+    private String nvdDatafeedUrl;
+    /**
+     * The username for basic auth to the NVD Data Feed.
+     */
+    private String nvdUser;
+    /**
+     * The password for basic auth to the NVD Data Feed.
+     */
+    private String nvdPassword;
+    /**
+     * The time in milliseconds to wait between downloading NVD API data.
+     */
+<span class="fc" id="L63">    private int nvdApiDelay = 0;</span>
 
     /**
      * The Proxy Server.
@@ -89,27 +111,13 @@ public class Update extends Purge {
      */
     private String databasePassword;
     /**
-     * The URL for the modified NVD CVE JSON file.
-     */
-    private String cveUrlModified;
-    /**
-     * Base Data Mirror URL for CVE JSON files.
-     */
-    private String cveUrlBase;
-    /**
-     * The wait time in milliseconds between downloads from the NVD.
-     */
-    private String cveWaitTime;
-    /**
-     * The number of hours to wait before re-checking for updates.
-     */
-    private Integer cveValidForHours;
-    /**
-     * The number of hours to wait before re-checking hosted suppressions file for updates.
+     * The number of hours to wait before re-checking hosted suppressions file
+     * for updates.
      */
     private Integer hostedSuppressionsValidForHours;
     /**
-     * Whether the hosted suppressions file will be updated regardless of the `autoupdate` settings. Defaults to false.
+     * Whether the hosted suppressions file will be updated regardless of the
+     * `autoupdate` settings. Defaults to false.
      */
     private Boolean hostedSuppressionsForceUpdate;
     /**
@@ -118,19 +126,122 @@ public class Update extends Purge {
     private Boolean hostedSuppressionsEnabled;
 
     /**
-     * Specify the first year of NVD CVE data to download; default is 2002.
-     */
-    private Integer cveStartYear;
-
-    /**
      * Construct a new UpdateTask.
      */
     public Update() {
-<span class="fc" id="L129">        super();</span>
+<span class="fc" id="L132">        super();</span>
         // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
         // core end up coming through this tasks logger
-<span class="fc" id="L132">        StaticLoggerBinder.getSingleton().setTask(this);</span>
-<span class="fc" id="L133">    }</span>
+<span class="fc" id="L135">        StaticLoggerBinder.getSingleton().setTask(this);</span>
+<span class="fc" id="L136">    }</span>
+
+    /**
+     * Get the value of nvdApiKey.
+     *
+     * @return the value of nvdApiKey
+     */
+    public String getNvdApiKey() {
+<span class="nc" id="L144">        return nvdApiKey;</span>
+    }
+
+    /**
+     * Set the value of nvdApiKey.
+     *
+     * @param nvdApiKey new value of nvdApiKey
+     */
+    public void setNvdApiKey(String nvdApiKey) {
+<span class="nc" id="L153">        this.nvdApiKey = nvdApiKey;</span>
+<span class="nc" id="L154">    }</span>
+
+    /**
+     * Get the value of nvdValidForHours.
+     *
+     * @return the value of nvdValidForHours
+     */
+    public int getNvdValidForHours() {
+<span class="nc" id="L162">        return nvdValidForHours;</span>
+    }
+
+    /**
+     * Set the value of nvdValidForHours.
+     *
+     * @param nvdValidForHours new value of nvdValidForHours
+     */
+    public void setNvdValidForHours(int nvdValidForHours) {
+<span class="nc" id="L171">        this.nvdValidForHours = nvdValidForHours;</span>
+<span class="nc" id="L172">    }</span>
+
+    /**
+     * Get the value of nvdDatafeedUrl.
+     *
+     * @return the value of nvdDatafeedUrl
+     */
+    public String getNvdDatafeedUrl() {
+<span class="nc" id="L180">        return nvdDatafeedUrl;</span>
+    }
+
+    /**
+     * Set the value of nvdDatafeedUrl.
+     *
+     * @param nvdDatafeedUrl new value of nvdDatafeedUrl
+     */
+    public void setNvdDatafeedUrl(String nvdDatafeedUrl) {
+<span class="nc" id="L189">        this.nvdDatafeedUrl = nvdDatafeedUrl;</span>
+<span class="nc" id="L190">    }</span>
+
+    /**
+     * Get the value of nvdUser.
+     *
+     * @return the value of nvdUser
+     */
+    public String getNvdUser() {
+<span class="nc" id="L198">        return nvdUser;</span>
+    }
+
+    /**
+     * Set the value of nvdUser.
+     *
+     * @param nvdUser new value of nvdUser
+     */
+    public void setNvdUser(String nvdUser) {
+<span class="nc" id="L207">        this.nvdUser = nvdUser;</span>
+<span class="nc" id="L208">    }</span>
+
+    /**
+     * Get the value of nvdPassword.
+     *
+     * @return the value of nvdPassword
+     */
+    public String getNvdPassword() {
+<span class="nc" id="L216">        return nvdPassword;</span>
+    }
+
+    /**
+     * Set the value of nvdPassword.
+     *
+     * @param nvdPassword new value of nvdPassword
+     */
+    public void setNvdPassword(String nvdPassword) {
+<span class="nc" id="L225">        this.nvdPassword = nvdPassword;</span>
+<span class="nc" id="L226">    }</span>
+
+    /**
+     * Get the value of nvdApiDelay.
+     *
+     * @return the value of nvdApiDelay
+     */
+    public int getNvdApiDelay() {
+<span class="nc" id="L234">        return nvdApiDelay;</span>
+    }
+
+    /**
+     * Set the value of nvdApiDelay.
+     *
+     * @param nvdApiDelay new value of nvdApiDelay
+     */
+    public void setNvdApiDelay(int nvdApiDelay) {
+<span class="nc" id="L243">        this.nvdApiDelay = nvdApiDelay;</span>
+<span class="nc" id="L244">    }</span>
 
     /**
      * Get the value of proxyServer.
@@ -138,7 +249,7 @@ public class Update extends Purge {
      * @return the value of proxyServer
      */
     public String getProxyServer() {
-<span class="nc" id="L141">        return proxyServer;</span>
+<span class="nc" id="L252">        return proxyServer;</span>
     }
 
     /**
@@ -147,8 +258,8 @@ public class Update extends Purge {
      * @param server new value of proxyServer
      */
     public void setProxyServer(String server) {
-<span class="nc" id="L150">        this.proxyServer = server;</span>
-<span class="nc" id="L151">    }</span>
+<span class="nc" id="L261">        this.proxyServer = server;</span>
+<span class="nc" id="L262">    }</span>
 
     /**
      * Get the value of proxyPort.
@@ -156,7 +267,7 @@ public class Update extends Purge {
      * @return the value of proxyPort
      */
     public String getProxyPort() {
-<span class="nc" id="L159">        return proxyPort;</span>
+<span class="nc" id="L270">        return proxyPort;</span>
     }
 
     /**
@@ -165,8 +276,8 @@ public class Update extends Purge {
      * @param proxyPort new value of proxyPort
      */
     public void setProxyPort(String proxyPort) {
-<span class="nc" id="L168">        this.proxyPort = proxyPort;</span>
-<span class="nc" id="L169">    }</span>
+<span class="nc" id="L279">        this.proxyPort = proxyPort;</span>
+<span class="nc" id="L280">    }</span>
 
     /**
      * Get the value of proxyUsername.
@@ -174,7 +285,7 @@ public class Update extends Purge {
      * @return the value of proxyUsername
      */
     public String getProxyUsername() {
-<span class="nc" id="L177">        return proxyUsername;</span>
+<span class="nc" id="L288">        return proxyUsername;</span>
     }
 
     /**
@@ -183,8 +294,8 @@ public class Update extends Purge {
      * @param proxyUsername new value of proxyUsername
      */
     public void setProxyUsername(String proxyUsername) {
-<span class="nc" id="L186">        this.proxyUsername = proxyUsername;</span>
-<span class="nc" id="L187">    }</span>
+<span class="nc" id="L297">        this.proxyUsername = proxyUsername;</span>
+<span class="nc" id="L298">    }</span>
 
     /**
      * Get the value of proxyPassword.
@@ -192,7 +303,7 @@ public class Update extends Purge {
      * @return the value of proxyPassword
      */
     public String getProxyPassword() {
-<span class="nc" id="L195">        return proxyPassword;</span>
+<span class="nc" id="L306">        return proxyPassword;</span>
     }
 
     /**
@@ -201,8 +312,8 @@ public class Update extends Purge {
      * @param proxyPassword new value of proxyPassword
      */
     public void setProxyPassword(String proxyPassword) {
-<span class="nc" id="L204">        this.proxyPassword = proxyPassword;</span>
-<span class="nc" id="L205">    }</span>
+<span class="nc" id="L315">        this.proxyPassword = proxyPassword;</span>
+<span class="nc" id="L316">    }</span>
 
     /**
      * Get the value of nonProxyHosts.
@@ -210,7 +321,7 @@ public class Update extends Purge {
      * @return the value of nonProxyHosts
      */
     public String getNonProxyHosts() {
-<span class="nc" id="L213">        return nonProxyHosts;</span>
+<span class="nc" id="L324">        return nonProxyHosts;</span>
     }
 
     /**
@@ -219,8 +330,8 @@ public class Update extends Purge {
      * @param nonProxyHosts new value of nonProxyHosts
      */
     public void setNonProxyHosts(String nonProxyHosts) {
-<span class="nc" id="L222">        this.nonProxyHosts = nonProxyHosts;</span>
-<span class="nc" id="L223">    }</span>
+<span class="nc" id="L333">        this.nonProxyHosts = nonProxyHosts;</span>
+<span class="nc" id="L334">    }</span>
 
     /**
      * Get the value of connectionTimeout.
@@ -228,7 +339,7 @@ public class Update extends Purge {
      * @return the value of connectionTimeout
      */
     public String getConnectionTimeout() {
-<span class="nc" id="L231">        return connectionTimeout;</span>
+<span class="nc" id="L342">        return connectionTimeout;</span>
     }
 
     /**
@@ -237,8 +348,8 @@ public class Update extends Purge {
      * @param connectionTimeout new value of connectionTimeout
      */
     public void setConnectionTimeout(String connectionTimeout) {
-<span class="nc" id="L240">        this.connectionTimeout = connectionTimeout;</span>
-<span class="nc" id="L241">    }</span>
+<span class="nc" id="L351">        this.connectionTimeout = connectionTimeout;</span>
+<span class="nc" id="L352">    }</span>
 
     /**
      * Get the value of readTimeout.
@@ -246,7 +357,7 @@ public class Update extends Purge {
      * @return the value of readTimeout
      */
     public String getReadTimeout() {
-<span class="nc" id="L249">        return readTimeout;</span>
+<span class="nc" id="L360">        return readTimeout;</span>
     }
 
     /**
@@ -255,8 +366,8 @@ public class Update extends Purge {
      * @param readTimeout new value of readTimeout
      */
     public void setReadTimeout(String readTimeout) {
-<span class="nc" id="L258">        this.readTimeout = readTimeout;</span>
-<span class="nc" id="L259">    }</span>
+<span class="nc" id="L369">        this.readTimeout = readTimeout;</span>
+<span class="nc" id="L370">    }</span>
 
     /**
      * Get the value of databaseDriverName.
@@ -264,7 +375,7 @@ public class Update extends Purge {
      * @return the value of databaseDriverName
      */
     public String getDatabaseDriverName() {
-<span class="nc" id="L267">        return databaseDriverName;</span>
+<span class="nc" id="L378">        return databaseDriverName;</span>
     }
 
     /**
@@ -273,8 +384,8 @@ public class Update extends Purge {
      * @param databaseDriverName new value of databaseDriverName
      */
     public void setDatabaseDriverName(String databaseDriverName) {
-<span class="nc" id="L276">        this.databaseDriverName = databaseDriverName;</span>
-<span class="nc" id="L277">    }</span>
+<span class="nc" id="L387">        this.databaseDriverName = databaseDriverName;</span>
+<span class="nc" id="L388">    }</span>
 
     /**
      * Get the value of databaseDriverPath.
@@ -282,7 +393,7 @@ public class Update extends Purge {
      * @return the value of databaseDriverPath
      */
     public String getDatabaseDriverPath() {
-<span class="nc" id="L285">        return databaseDriverPath;</span>
+<span class="nc" id="L396">        return databaseDriverPath;</span>
     }
 
     /**
@@ -291,8 +402,8 @@ public class Update extends Purge {
      * @param databaseDriverPath new value of databaseDriverPath
      */
     public void setDatabaseDriverPath(String databaseDriverPath) {
-<span class="nc" id="L294">        this.databaseDriverPath = databaseDriverPath;</span>
-<span class="nc" id="L295">    }</span>
+<span class="nc" id="L405">        this.databaseDriverPath = databaseDriverPath;</span>
+<span class="nc" id="L406">    }</span>
 
     /**
      * Get the value of connectionString.
@@ -300,7 +411,7 @@ public class Update extends Purge {
      * @return the value of connectionString
      */
     public String getConnectionString() {
-<span class="nc" id="L303">        return connectionString;</span>
+<span class="nc" id="L414">        return connectionString;</span>
     }
 
     /**
@@ -309,8 +420,8 @@ public class Update extends Purge {
      * @param connectionString new value of connectionString
      */
     public void setConnectionString(String connectionString) {
-<span class="nc" id="L312">        this.connectionString = connectionString;</span>
-<span class="nc" id="L313">    }</span>
+<span class="nc" id="L423">        this.connectionString = connectionString;</span>
+<span class="nc" id="L424">    }</span>
 
     /**
      * Get the value of databaseUser.
@@ -318,7 +429,7 @@ public class Update extends Purge {
      * @return the value of databaseUser
      */
     public String getDatabaseUser() {
-<span class="nc" id="L321">        return databaseUser;</span>
+<span class="nc" id="L432">        return databaseUser;</span>
     }
 
     /**
@@ -327,8 +438,8 @@ public class Update extends Purge {
      * @param databaseUser new value of databaseUser
      */
     public void setDatabaseUser(String databaseUser) {
-<span class="nc" id="L330">        this.databaseUser = databaseUser;</span>
-<span class="nc" id="L331">    }</span>
+<span class="nc" id="L441">        this.databaseUser = databaseUser;</span>
+<span class="nc" id="L442">    }</span>
 
     /**
      * Get the value of databasePassword.
@@ -336,7 +447,7 @@ public class Update extends Purge {
      * @return the value of databasePassword
      */
     public String getDatabasePassword() {
-<span class="nc" id="L339">        return databasePassword;</span>
+<span class="nc" id="L450">        return databasePassword;</span>
     }
 
     /**
@@ -345,103 +456,8 @@ public class Update extends Purge {
      * @param databasePassword new value of databasePassword
      */
     public void setDatabasePassword(String databasePassword) {
-<span class="nc" id="L348">        this.databasePassword = databasePassword;</span>
-<span class="nc" id="L349">    }</span>
-
-    /**
-     * Set the value of cveUrlModified.
-     *
-     * @param cveUrlModified new value of cveUrlModified
-     */
-    public void setCveUrlModified(String cveUrlModified) {
-<span class="fc" id="L357">        this.cveUrlModified = cveUrlModified;</span>
-<span class="fc" id="L358">    }</span>
-
-    /**
-     * Get the value of cveUrlModified.
-     *
-     * @return the value of cveUrlModified
-     */
-    public String getCveUrlModified() {
-<span class="nc" id="L366">        return cveUrlModified;</span>
-    }
-
-    /**
-     * Get the value of cveUrlBase.
-     *
-     * @return the value of cveUrlBase
-     */
-    public String getCveUrlBase() {
-<span class="nc" id="L375">        return cveUrlBase;</span>
-    }
-
-    /**
-     * Set the value of cveUrlBase.
-     *
-     * @param cveUrlBase new value of cveUrlBase
-     */
-    public void setCveUrlBase(String cveUrlBase) {
-<span class="fc" id="L384">        this.cveUrlBase = cveUrlBase;</span>
-<span class="fc" id="L385">    }</span>
-
-    /**
-     * Get the value of cveUrlBase.
-     *
-     * @return the value of cveUrlBase
-     */
-    public String getCveWaitTime() {
-<span class="nc" id="L393">        return cveWaitTime;</span>
-    }
-
-    /**
-     * Set the value of cveWaitTime.
-     *
-     * @param cveWaitTime new value of cveWaitTime
-     */
-    public void setCveWaitTime(String cveWaitTime) {
-<span class="nc" id="L402">        this.cveWaitTime = cveWaitTime;</span>
-<span class="nc" id="L403">    }</span>
-
-    /**
-     * Get the value of cveValidForHours.
-     *
-     * @return the value of cveValidForHours
-     */
-    public Integer getCveValidForHours() {
-<span class="nc" id="L411">        return cveValidForHours;</span>
-    }
-
-    /**
-     * Set the value of cveValidForHours.
-     *
-     * @param cveValidForHours new value of cveValidForHours
-     */
-    public void setCveValidForHours(Integer cveValidForHours) {
-<span class="nc" id="L420">        this.cveValidForHours = cveValidForHours;</span>
-<span class="nc" id="L421">    }</span>
-
-    /**
-     * Get the value of cveStartYear.
-     *
-     * @return the value of cveStartYear
-     */
-    public Integer getCveStartYear() {
-<span class="nc" id="L429">        return cveStartYear;</span>
-    }
-
-    /**
-     * Set the value of cveStartYear.
-     *
-     * @param cveStartYear new value of cveStartYear
-     */
-    public void setCveStartYear(Integer cveStartYear) {
-<span class="nc bnc" id="L438" title="All 4 branches missed.">        if (cveStartYear != null &amp;&amp; cveStartYear &lt; 2002) {</span>
-<span class="nc" id="L439">            log(&quot;Invalid Configuration: cveStartYear must be 2002 or greater&quot;, Project.MSG_ERR);</span>
-<span class="nc" id="L440">            this.cveStartYear = 2002;</span>
-        } else {
-<span class="nc" id="L442">            this.cveStartYear = cveStartYear;</span>
-        }
-<span class="nc" id="L444">    }</span>
+<span class="nc" id="L459">        this.databasePassword = databasePassword;</span>
+<span class="nc" id="L460">    }</span>
 
     /**
      * Get the value of hostedSuppressionsValidForHours.
@@ -449,17 +465,18 @@ public class Update extends Purge {
      * @return the value of hostedSuppressionsValidForHours
      */
     public Integer getHostedSuppressionsValidForHours() {
-<span class="nc" id="L452">        return hostedSuppressionsValidForHours;</span>
+<span class="nc" id="L468">        return hostedSuppressionsValidForHours;</span>
     }
 
     /**
      * Set the value of hostedSuppressionsValidForHours.
      *
-     * @param hostedSuppressionsValidForHours new value of hostedSuppressionsValidForHours
+     * @param hostedSuppressionsValidForHours new value of
+     * hostedSuppressionsValidForHours
      */
     public void setHostedSuppressionsValidForHours(final Integer hostedSuppressionsValidForHours) {
-<span class="nc" id="L461">        this.hostedSuppressionsValidForHours = hostedSuppressionsValidForHours;</span>
-<span class="nc" id="L462">    }</span>
+<span class="nc" id="L478">        this.hostedSuppressionsValidForHours = hostedSuppressionsValidForHours;</span>
+<span class="nc" id="L479">    }</span>
 
     /**
      * Get the value of hostedSuppressionsForceUpdate.
@@ -467,17 +484,18 @@ public class Update extends Purge {
      * @return the value of hostedSuppressionsForceUpdate
      */
     public Boolean isHostedSuppressionsForceUpdate() {
-<span class="nc" id="L470">        return hostedSuppressionsForceUpdate;</span>
+<span class="nc" id="L487">        return hostedSuppressionsForceUpdate;</span>
     }
 
     /**
      * Set the value of hostedSuppressionsForceUpdate.
      *
-     * @param hostedSuppressionsForceUpdate new value of hostedSuppressionsForceUpdate
+     * @param hostedSuppressionsForceUpdate new value of
+     * hostedSuppressionsForceUpdate
      */
     public void setHostedSuppressionsForceUpdate(final Boolean hostedSuppressionsForceUpdate) {
-<span class="nc" id="L479">        this.hostedSuppressionsForceUpdate = hostedSuppressionsForceUpdate;</span>
-<span class="nc" id="L480">    }</span>
+<span class="nc" id="L497">        this.hostedSuppressionsForceUpdate = hostedSuppressionsForceUpdate;</span>
+<span class="nc" id="L498">    }</span>
 
     /**
      * Get the value of hostedSuppressionsEnabled.
@@ -485,16 +503,17 @@ public class Update extends Purge {
      * @return the value of hostedSuppressionsEnabled
      */
     public Boolean isHostedSuppressionsEnabled() {
-<span class="nc" id="L488">        return hostedSuppressionsEnabled;</span>
+<span class="nc" id="L506">        return hostedSuppressionsEnabled;</span>
     }
+
     /**
      * Set the value of hostedSuppressionsEnabled.
      *
      * @param hostedSuppressionsEnabled new value of hostedSuppressionsEnabled
      */
     public void setHostedSuppressionsEnabled(Boolean hostedSuppressionsEnabled) {
-<span class="nc" id="L496">        this.hostedSuppressionsEnabled = hostedSuppressionsEnabled;</span>
-<span class="nc" id="L497">    }</span>
+<span class="nc" id="L515">        this.hostedSuppressionsEnabled = hostedSuppressionsEnabled;</span>
+<span class="nc" id="L516">    }</span>
 
     /**
      * Executes the update by initializing the settings, downloads the NVD XML
@@ -507,24 +526,24 @@ public class Update extends Purge {
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     @Override
     protected void executeWithContextClassloader() throws BuildException {
-<span class="nc" id="L510">        populateSettings();</span>
-<span class="nc" id="L511">        try (Engine engine = new Engine(Update.class.getClassLoader(), getSettings())) {</span>
-<span class="nc" id="L512">            engine.doUpdates();</span>
-<span class="nc" id="L513">        } catch (UpdateException ex) {</span>
-<span class="nc bnc" id="L514" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
-<span class="nc" id="L515">                throw new BuildException(ex);</span>
+<span class="nc" id="L529">        populateSettings();</span>
+<span class="nc" id="L530">        try (Engine engine = new Engine(Update.class.getClassLoader(), getSettings())) {</span>
+<span class="nc" id="L531">            engine.doUpdates();</span>
+<span class="nc" id="L532">        } catch (UpdateException ex) {</span>
+<span class="nc bnc" id="L533" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
+<span class="nc" id="L534">                throw new BuildException(ex);</span>
             }
-<span class="nc" id="L517">            log(ex.getMessage(), Project.MSG_ERR);</span>
-<span class="nc" id="L518">        } catch (DatabaseException ex) {</span>
-<span class="nc" id="L519">            final String msg = &quot;Unable to connect to the dependency-check database; unable to update the NVD data&quot;;</span>
-<span class="nc bnc" id="L520" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
-<span class="nc" id="L521">                throw new BuildException(msg, ex);</span>
+<span class="nc" id="L536">            log(ex.getMessage(), Project.MSG_ERR);</span>
+<span class="nc" id="L537">        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L538">            final String msg = &quot;Unable to connect to the dependency-check database; unable to update the NVD data&quot;;</span>
+<span class="nc bnc" id="L539" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
+<span class="nc" id="L540">                throw new BuildException(msg, ex);</span>
             }
-<span class="nc" id="L523">            log(msg, Project.MSG_ERR);</span>
+<span class="nc" id="L542">            log(msg, Project.MSG_ERR);</span>
         } finally {
-<span class="nc" id="L525">            getSettings().cleanup();</span>
+<span class="nc" id="L544">            getSettings().cleanup();</span>
         }
-<span class="nc" id="L527">    }</span>
+<span class="nc" id="L546">    }</span>
 
     /**
      * Takes the properties supplied and updates the dependency-check settings.
@@ -537,42 +556,35 @@ public class Update extends Purge {
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     @Override
     protected void populateSettings() throws BuildException {
-<span class="fc" id="L540">        super.populateSettings();</span>
-<span class="fc" id="L541">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);</span>
-<span class="fc" id="L542">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);</span>
-<span class="fc" id="L543">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);</span>
-<span class="fc" id="L544">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);</span>
-<span class="fc" id="L545">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS, nonProxyHosts);</span>
-<span class="fc" id="L546">        getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);</span>
-<span class="fc" id="L547">        getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_READ_TIMEOUT, readTimeout);</span>
-<span class="fc" id="L548">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);</span>
-<span class="fc" id="L549">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);</span>
-<span class="fc" id="L550">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
-<span class="fc" id="L551">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
-<span class="fc" id="L552">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
+<span class="fc" id="L559">        super.populateSettings();</span>
+<span class="fc" id="L560">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);</span>
+<span class="fc" id="L561">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);</span>
+<span class="fc" id="L562">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);</span>
+<span class="fc" id="L563">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);</span>
+<span class="fc" id="L564">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS, nonProxyHosts);</span>
+<span class="fc" id="L565">        getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);</span>
+<span class="fc" id="L566">        getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_READ_TIMEOUT, readTimeout);</span>
+<span class="fc" id="L567">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);</span>
+<span class="fc" id="L568">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);</span>
+<span class="fc" id="L569">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
+<span class="fc" id="L570">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
+<span class="fc" id="L571">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
+<span class="fc" id="L572">        getSettings().setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);</span>
+<span class="fc" id="L573">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);</span>
+<span class="fc" id="L574">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);</span>
 
-<span class="fc" id="L554">        final String cveModifiedJson = Optional.ofNullable(cveUrlModified)</span>
-<span class="fc bfc" id="L555" title="All 2 branches covered.">                .filter(url -&gt; !url.isEmpty())</span>
-<span class="fc" id="L556">                .orElseGet(this::getDefaultCveUrlModified);</span>
-<span class="fc" id="L557">        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_MODIFIED_JSON, cveModifiedJson);</span>
-<span class="fc" id="L558">        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_BASE_JSON, cveUrlBase);</span>
-<span class="fc" id="L559">        getSettings().setStringIfNotEmpty(Settings.KEYS.CVE_DOWNLOAD_WAIT_TIME, cveWaitTime);</span>
-<span class="fc" id="L560">        getSettings().setIntIfNotNull(Settings.KEYS.CVE_START_YEAR, cveStartYear);</span>
-<span class="fc" id="L561">        getSettings().setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);</span>
-<span class="fc" id="L562">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);</span>
-<span class="fc" id="L563">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);</span>
-<span class="pc bpc" id="L564" title="1 of 2 branches missed.">        if (cveValidForHours != null) {</span>
-<span class="nc bnc" id="L565" title="All 2 branches missed.">            if (cveValidForHours &gt;= 0) {</span>
-<span class="nc" id="L566">                getSettings().setInt(Settings.KEYS.CVE_CHECK_VALID_FOR_HOURS, cveValidForHours);</span>
+<span class="fc" id="L576">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);</span>
+<span class="fc" id="L577">        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, nvdApiDelay);</span>
+<span class="fc" id="L578">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);</span>
+<span class="fc" id="L579">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, nvdUser);</span>
+<span class="fc" id="L580">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_PASSWORD, nvdPassword);</span>
+<span class="pc bpc" id="L581" title="1 of 2 branches missed.">        if (nvdValidForHours != null) {</span>
+<span class="nc bnc" id="L582" title="All 2 branches missed.">            if (nvdValidForHours &gt;= 0) {</span>
+<span class="nc" id="L583">                getSettings().setInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);</span>
             } else {
-<span class="nc" id="L568">                throw new BuildException(&quot;Invalid setting: `cpeValidForHours` must be 0 or greater&quot;);</span>
+<span class="nc" id="L585">                throw new BuildException(&quot;Invalid setting: `nvdValidForHours` must be 0 or greater&quot;);</span>
             }
         }
-<span class="fc" id="L571">    }</span>
-
-    private String getDefaultCveUrlModified() {
-<span class="fc" id="L574">        return CveUrlParser.newInstance(getSettings())</span>
-<span class="fc" id="L575">                .getDefaultCveUrlModified(cveUrlBase);</span>
-    }
+<span class="fc" id="L588">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

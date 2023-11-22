@@ -17,8 +17,8 @@
  */
 package org.owasp.dependencycheck.reporting;
 
-import org.owasp.dependencycheck.dependency.CvssV2;
-import org.owasp.dependencycheck.dependency.CvssV3;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
+import io.github.jeremylong.openvulnerability.client.nvd.CvssV3;
 
 /**
  *
@@ -61,7 +61,7 @@ public class SarifRule {
     /**
      * CVSS V2 field.
      */
-    private String cvssv2ConfidentialImpact;
+    private String cvssv2ConfidentialityImpact;
     /**
      * CVSS V2 field.
      */
@@ -161,42 +161,78 @@ public class SarifRule {
 <span class="fc" id="L161">        this.fullDescription = fullDescription;</span>
 <span class="fc" id="L162">        this.source = source;</span>
 <span class="fc bfc" id="L163" title="All 2 branches covered.">        if (cvssV2 != null) {</span>
-<span class="fc" id="L164">            this.cvssv2Score = Float.toString(cvssV2.getScore());</span>
-<span class="fc" id="L165">            this.cvssv2AccessVector = cvssV2.getAccessVector();</span>
-<span class="fc" id="L166">            this.cvssv2AccessComplexity = cvssV2.getAccessComplexity();</span>
-<span class="fc" id="L167">            this.cvssv2Authentication = cvssV2.getAuthentication();</span>
-<span class="fc" id="L168">            this.cvssv2ConfidentialImpact = cvssV2.getConfidentialityImpact();</span>
-<span class="fc" id="L169">            this.cvssv2IntegrityImpact = cvssV2.getIntegrityImpact();</span>
-<span class="fc" id="L170">            this.cvssv2AvailabilityImpact = cvssV2.getAvailabilityImpact();</span>
-<span class="fc" id="L171">            this.cvssv2Severity = cvssV2.getSeverity();</span>
-<span class="fc" id="L172">            this.cvssv2Version = cvssV2.getVersion();</span>
-<span class="pc bpc" id="L173" title="1 of 2 branches missed.">            if (cvssV2.getExploitabilityScore() != null) {</span>
-<span class="nc" id="L174">                this.cvssv2ExploitabilityScore = Float.toString(cvssV2.getExploitabilityScore());</span>
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">            if (cvssV2.getCvssData().getBaseScore() != null) {</span>
+<span class="fc" id="L165">                this.cvssv2Score = cvssV2.getCvssData().getBaseScore().toString();</span>
             }
-<span class="pc bpc" id="L176" title="1 of 2 branches missed.">            if (cvssV2.getImpactScore() != null) {</span>
-<span class="nc" id="L177">                this.cvssv2ImpactScore = Float.toString(cvssV2.getImpactScore());</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">            if (cvssV2.getCvssData().getAccessVector() != null) {</span>
+<span class="fc" id="L168">                this.cvssv2AccessVector = cvssV2.getCvssData().getAccessVector().name();</span>
+            }
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">            if (cvssV2.getCvssData().getAccessComplexity() != null) {</span>
+<span class="fc" id="L171">                this.cvssv2AccessComplexity = cvssV2.getCvssData().getAccessComplexity().name();</span>
+            }
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">            if (cvssV2.getCvssData().getAuthentication() != null) {</span>
+<span class="fc" id="L174">                this.cvssv2Authentication = cvssV2.getCvssData().getAuthentication().name();</span>
+            }
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">            if (cvssV2.getCvssData().getConfidentialityImpact() != null) {</span>
+<span class="fc" id="L177">                this.cvssv2ConfidentialityImpact = cvssV2.getCvssData().getConfidentialityImpact().name();</span>
+            }
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">            if (cvssV2.getCvssData().getIntegrityImpact() != null) {</span>
+<span class="fc" id="L180">                this.cvssv2IntegrityImpact = cvssV2.getCvssData().getIntegrityImpact().name();</span>
+            }
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">            if (cvssV2.getCvssData().getAvailabilityImpact() != null) {</span>
+<span class="fc" id="L183">                this.cvssv2AvailabilityImpact = cvssV2.getCvssData().getAvailabilityImpact().name();</span>
+            }
+<span class="fc" id="L185">            this.cvssv2Severity = cvssV2.getCvssData().getBaseSeverity();</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">            if (cvssV2.getCvssData().getVersion() != null) {</span>
+<span class="fc" id="L187">                this.cvssv2Version = cvssV2.getCvssData().getVersion().name();</span>
+            }
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">            if (cvssV2.getExploitabilityScore() != null) {</span>
+<span class="fc" id="L190">                this.cvssv2ExploitabilityScore = cvssV2.getExploitabilityScore().toString();</span>
+            }
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">            if (cvssV2.getImpactScore() != null) {</span>
+<span class="fc" id="L193">                this.cvssv2ImpactScore = cvssV2.getImpactScore().toString();</span>
             }
         }
-<span class="fc bfc" id="L180" title="All 2 branches covered.">        if (cvssV3 != null) {</span>
-<span class="fc" id="L181">            this.cvssv3BaseScore = Float.toString(cvssV3.getBaseScore());</span>
-<span class="fc" id="L182">            this.cvssv3AttackVector = cvssV3.getAttackVector();</span>
-<span class="fc" id="L183">            this.cvssv3AttackComplexity = cvssV3.getAttackComplexity();</span>
-<span class="fc" id="L184">            this.cvssv3PrivilegesRequired = cvssV3.getPrivilegesRequired();</span>
-<span class="fc" id="L185">            this.cvssv3UserInteraction = cvssV3.getUserInteraction();</span>
-<span class="fc" id="L186">            this.cvssv3Scope = cvssV3.getScope();</span>
-<span class="fc" id="L187">            this.cvssv3ConfidentialityImpact = cvssV3.getConfidentialityImpact();</span>
-<span class="fc" id="L188">            this.cvssv3IntegrityImpact = cvssV3.getIntegrityImpact();</span>
-<span class="fc" id="L189">            this.cvssv3AvailabilityImpact = cvssV3.getAvailabilityImpact();</span>
-<span class="fc" id="L190">            this.cvssv3BaseSeverity = cvssV3.getBaseSeverity();</span>
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">            if (cvssV3.getexploitabilityScore() != null) {</span>
-<span class="nc" id="L192">                this.cvssv3ExploitabilityScore = Float.toString(cvssV3.getexploitabilityScore());</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (cvssV3 != null) {</span>
+<span class="pc bpc" id="L197" title="1 of 2 branches missed.">            if (cvssV3.getCvssData().getBaseScore() != null) {</span>
+<span class="fc" id="L198">                this.cvssv3BaseScore = cvssV3.getCvssData().getBaseScore().toString();</span>
             }
-<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            if (cvssV3.getimpactScore() != null) {</span>
-<span class="nc" id="L195">                this.cvssv3ImpactScore = Float.toString(cvssV3.getimpactScore());</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">            if (cvssV3.getCvssData().getAttackVector() != null) {</span>
+<span class="fc" id="L201">                this.cvssv3AttackVector = cvssV3.getCvssData().getAttackVector().name();</span>
             }
-<span class="fc" id="L197">            this.cvssv3Version = cvssV3.getVersion();</span>
+<span class="pc bpc" id="L203" title="1 of 2 branches missed.">            if (cvssV3.getCvssData().getAttackComplexity() != null) {</span>
+<span class="fc" id="L204">                this.cvssv3AttackComplexity = cvssV3.getCvssData().getAttackComplexity().name();</span>
+            }
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">            if (cvssV3.getCvssData().getPrivilegesRequired() != null) {</span>
+<span class="fc" id="L207">                this.cvssv3PrivilegesRequired = cvssV3.getCvssData().getPrivilegesRequired().name();</span>
+            }
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">            if (cvssV3.getCvssData().getUserInteraction() != null) {</span>
+<span class="fc" id="L210">                this.cvssv3UserInteraction = cvssV3.getCvssData().getUserInteraction().name();</span>
+            }
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">            if (cvssV3.getCvssData().getScope() != null) {</span>
+<span class="fc" id="L213">                this.cvssv3Scope = cvssV3.getCvssData().getScope().name();</span>
+            }
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (cvssV3.getCvssData().getConfidentialityImpact() != null) {</span>
+<span class="fc" id="L216">                this.cvssv3ConfidentialityImpact = cvssV3.getCvssData().getConfidentialityImpact().name();</span>
+            }
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">            if (cvssV3.getCvssData().getIntegrityImpact() != null) {</span>
+<span class="fc" id="L219">                this.cvssv3IntegrityImpact = cvssV3.getCvssData().getIntegrityImpact().name();</span>
+            }
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            if (cvssV3.getCvssData().getAvailabilityImpact() != null) {</span>
+<span class="fc" id="L222">                this.cvssv3AvailabilityImpact = cvssV3.getCvssData().getAvailabilityImpact().name();</span>
+            }
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">            if (cvssV3.getCvssData().getBaseSeverity() != null) {</span>
+<span class="fc" id="L225">                this.cvssv3BaseSeverity = cvssV3.getCvssData().getBaseSeverity().name();</span>
+            }
+<span class="fc bfc" id="L227" title="All 2 branches covered.">            if (cvssV3.getExploitabilityScore() != null) {</span>
+<span class="fc" id="L228">                this.cvssv3ExploitabilityScore = cvssV3.getExploitabilityScore().toString();</span>
+            }
+<span class="fc bfc" id="L230" title="All 2 branches covered.">            if (cvssV3.getImpactScore() != null) {</span>
+<span class="fc" id="L231">                this.cvssv3ImpactScore = cvssV3.getImpactScore().toString();</span>
+            }
+<span class="fc" id="L233">            this.cvssv3Version = cvssV3.getCvssData().getVersion().name();</span>
         }
-<span class="fc" id="L199">    }</span>
+<span class="fc" id="L235">    }</span>
 
     /**
      * Get the value of source.
@@ -204,7 +240,7 @@ public class SarifRule {
      * @return the value of source
      */
     public String getSource() {
-<span class="fc" id="L207">        return source;</span>
+<span class="fc" id="L243">        return source;</span>
     }
 
     /**
@@ -213,8 +249,8 @@ public class SarifRule {
      * @param source new value of source
      */
     public void setSource(String source) {
-<span class="nc" id="L216">        this.source = source;</span>
-<span class="nc" id="L217">    }</span>
+<span class="nc" id="L252">        this.source = source;</span>
+<span class="nc" id="L253">    }</span>
 
     /**
      * Get the value of CVSS3 Version.
@@ -222,7 +258,7 @@ public class SarifRule {
      * @return the value of CVSS3 Version
      */
     public String getCvssv3Version() {
-<span class="fc" id="L225">        return cvssv3Version;</span>
+<span class="fc" id="L261">        return cvssv3Version;</span>
     }
 
     /**
@@ -231,8 +267,8 @@ public class SarifRule {
      * @param cvssv3Version new value of CVSS3 Version
      */
     public void setCvssv3Version(String cvssv3Version) {
-<span class="nc" id="L234">        this.cvssv3Version = cvssv3Version;</span>
-<span class="nc" id="L235">    }</span>
+<span class="nc" id="L270">        this.cvssv3Version = cvssv3Version;</span>
+<span class="nc" id="L271">    }</span>
 
     /**
      * Get the value of CVSS3 Impact Score.
@@ -240,7 +276,7 @@ public class SarifRule {
      * @return the value of CVSS3 Impact Score
      */
     public String getCvssv3ImpactScore() {
-<span class="fc" id="L243">        return cvssv3ImpactScore;</span>
+<span class="fc" id="L279">        return cvssv3ImpactScore;</span>
     }
 
     /**
@@ -249,8 +285,8 @@ public class SarifRule {
      * @param cvssv3ImpactScore new value of CVSS3 Impact Score
      */
     public void setCvssv3ImpactScore(String cvssv3ImpactScore) {
-<span class="nc" id="L252">        this.cvssv3ImpactScore = cvssv3ImpactScore;</span>
-<span class="nc" id="L253">    }</span>
+<span class="nc" id="L288">        this.cvssv3ImpactScore = cvssv3ImpactScore;</span>
+<span class="nc" id="L289">    }</span>
 
     /**
      * Get the value of CVSS3 Exploitability Score.
@@ -258,7 +294,7 @@ public class SarifRule {
      * @return the value of CVSS3 Exploitability Score
      */
     public String getCvssv3ExploitabilityScore() {
-<span class="fc" id="L261">        return cvssv3ExploitabilityScore;</span>
+<span class="fc" id="L297">        return cvssv3ExploitabilityScore;</span>
     }
 
     /**
@@ -267,8 +303,8 @@ public class SarifRule {
      * @param cvssv3ExploitabilityScore new value of CVSS3 Exploitability Score
      */
     public void setCvssv3ExploitabilityScore(String cvssv3ExploitabilityScore) {
-<span class="nc" id="L270">        this.cvssv3ExploitabilityScore = cvssv3ExploitabilityScore;</span>
-<span class="nc" id="L271">    }</span>
+<span class="nc" id="L306">        this.cvssv3ExploitabilityScore = cvssv3ExploitabilityScore;</span>
+<span class="nc" id="L307">    }</span>
 
     /**
      * Get the value of CVSS3 Base Severity.
@@ -276,7 +312,7 @@ public class SarifRule {
      * @return the value of CVSS3 Base Severity
      */
     public String getCvssv3BaseSeverity() {
-<span class="fc" id="L279">        return cvssv3BaseSeverity;</span>
+<span class="fc" id="L315">        return cvssv3BaseSeverity;</span>
     }
 
     /**
@@ -285,8 +321,8 @@ public class SarifRule {
      * @param cvssv3BaseSeverity new value of CVSS3 Base Severity
      */
     public void setCvssv3BaseSeverity(String cvssv3BaseSeverity) {
-<span class="nc" id="L288">        this.cvssv3BaseSeverity = cvssv3BaseSeverity;</span>
-<span class="nc" id="L289">    }</span>
+<span class="nc" id="L324">        this.cvssv3BaseSeverity = cvssv3BaseSeverity;</span>
+<span class="nc" id="L325">    }</span>
 
     /**
      * Get the value of CVSS3 Availability Impact.
@@ -294,7 +330,7 @@ public class SarifRule {
      * @return the value of CVSS3 Availability Impact
      */
     public String getCvssv3AvailabilityImpact() {
-<span class="fc" id="L297">        return cvssv3AvailabilityImpact;</span>
+<span class="fc" id="L333">        return cvssv3AvailabilityImpact;</span>
     }
 
     /**
@@ -303,8 +339,8 @@ public class SarifRule {
      * @param cvssv3AvailabilityImpact new value of CVSS3 Availability Impact
      */
     public void setCvssv3AvailabilityImpact(String cvssv3AvailabilityImpact) {
-<span class="nc" id="L306">        this.cvssv3AvailabilityImpact = cvssv3AvailabilityImpact;</span>
-<span class="nc" id="L307">    }</span>
+<span class="nc" id="L342">        this.cvssv3AvailabilityImpact = cvssv3AvailabilityImpact;</span>
+<span class="nc" id="L343">    }</span>
 
     /**
      * Get the value of CVSS3 Integrity Impact.
@@ -312,7 +348,7 @@ public class SarifRule {
      * @return the value of CVSS3 Integrity Impact
      */
     public String getCvssv3IntegrityImpact() {
-<span class="fc" id="L315">        return cvssv3IntegrityImpact;</span>
+<span class="fc" id="L351">        return cvssv3IntegrityImpact;</span>
     }
 
     /**
@@ -321,8 +357,8 @@ public class SarifRule {
      * @param cvssv3IntegrityImpact new value of CVSS3 Integrity Impact
      */
     public void setCvssv3IntegrityImpact(String cvssv3IntegrityImpact) {
-<span class="nc" id="L324">        this.cvssv3IntegrityImpact = cvssv3IntegrityImpact;</span>
-<span class="nc" id="L325">    }</span>
+<span class="nc" id="L360">        this.cvssv3IntegrityImpact = cvssv3IntegrityImpact;</span>
+<span class="nc" id="L361">    }</span>
 
     /**
      * Get the value of CVSS3 Confidentiality Impact.
@@ -330,7 +366,7 @@ public class SarifRule {
      * @return the value of CVSS3 Confidentiality Impact
      */
     public String getCvssv3ConfidentialityImpact() {
-<span class="fc" id="L333">        return cvssv3ConfidentialityImpact;</span>
+<span class="fc" id="L369">        return cvssv3ConfidentialityImpact;</span>
     }
 
     /**
@@ -340,8 +376,8 @@ public class SarifRule {
      * Impact
      */
     public void setCvssv3ConfidentialityImpact(String cvssv3ConfidentialityImpact) {
-<span class="nc" id="L343">        this.cvssv3ConfidentialityImpact = cvssv3ConfidentialityImpact;</span>
-<span class="nc" id="L344">    }</span>
+<span class="nc" id="L379">        this.cvssv3ConfidentialityImpact = cvssv3ConfidentialityImpact;</span>
+<span class="nc" id="L380">    }</span>
 
     /**
      * Get the value of CVSS3 Scope.
@@ -349,7 +385,7 @@ public class SarifRule {
      * @return the value of CVSS3 Scope
      */
     public String getCvssv3Scope() {
-<span class="fc" id="L352">        return cvssv3Scope;</span>
+<span class="fc" id="L388">        return cvssv3Scope;</span>
     }
 
     /**
@@ -358,8 +394,8 @@ public class SarifRule {
      * @param cvssv3Scope new value of CVSS3 Scope
      */
     public void setCvssv3Scope(String cvssv3Scope) {
-<span class="nc" id="L361">        this.cvssv3Scope = cvssv3Scope;</span>
-<span class="nc" id="L362">    }</span>
+<span class="nc" id="L397">        this.cvssv3Scope = cvssv3Scope;</span>
+<span class="nc" id="L398">    }</span>
 
     /**
      * Get the value of CVSS3 User Interaction.
@@ -367,7 +403,7 @@ public class SarifRule {
      * @return the value of CVSS3 User Interaction
      */
     public String getCvssv3UserInteraction() {
-<span class="fc" id="L370">        return cvssv3UserInteraction;</span>
+<span class="fc" id="L406">        return cvssv3UserInteraction;</span>
     }
 
     /**
@@ -376,8 +412,8 @@ public class SarifRule {
      * @param cvssv3UserInteraction new value of CVSS3 User Interaction
      */
     public void setCvssv3UserInteraction(String cvssv3UserInteraction) {
-<span class="nc" id="L379">        this.cvssv3UserInteraction = cvssv3UserInteraction;</span>
-<span class="nc" id="L380">    }</span>
+<span class="nc" id="L415">        this.cvssv3UserInteraction = cvssv3UserInteraction;</span>
+<span class="nc" id="L416">    }</span>
 
     /**
      * Get the value of CVSS3 Privileges Required.
@@ -385,7 +421,7 @@ public class SarifRule {
      * @return the value of CVSS3 Privileges Required
      */
     public String getCvssv3PrivilegesRequired() {
-<span class="fc" id="L388">        return cvssv3PrivilegesRequired;</span>
+<span class="fc" id="L424">        return cvssv3PrivilegesRequired;</span>
     }
 
     /**
@@ -394,8 +430,8 @@ public class SarifRule {
      * @param cvssv3PrivilegesRequired new value of CVSS3 Privileges Required
      */
     public void setCvssv3PrivilegesRequired(String cvssv3PrivilegesRequired) {
-<span class="nc" id="L397">        this.cvssv3PrivilegesRequired = cvssv3PrivilegesRequired;</span>
-<span class="nc" id="L398">    }</span>
+<span class="nc" id="L433">        this.cvssv3PrivilegesRequired = cvssv3PrivilegesRequired;</span>
+<span class="nc" id="L434">    }</span>
 
     /**
      * Get the value of CVSS3 Attack Complexity.
@@ -403,7 +439,7 @@ public class SarifRule {
      * @return the value of CVSS3 Attack Complexity
      */
     public String getCvssv3AttackComplexity() {
-<span class="fc" id="L406">        return cvssv3AttackComplexity;</span>
+<span class="fc" id="L442">        return cvssv3AttackComplexity;</span>
     }
 
     /**
@@ -412,8 +448,8 @@ public class SarifRule {
      * @param cvssv3AttackComplexity new value of CVSS3 Attack Complexity
      */
     public void setCvssv3AttackComplexity(String cvssv3AttackComplexity) {
-<span class="nc" id="L415">        this.cvssv3AttackComplexity = cvssv3AttackComplexity;</span>
-<span class="nc" id="L416">    }</span>
+<span class="nc" id="L451">        this.cvssv3AttackComplexity = cvssv3AttackComplexity;</span>
+<span class="nc" id="L452">    }</span>
 
     /**
      * Get the value of CVSS3 Attack Vector.
@@ -421,7 +457,7 @@ public class SarifRule {
      * @return the value of CVSS3 Attack Vector
      */
     public String getCvssv3AttackVector() {
-<span class="fc" id="L424">        return cvssv3AttackVector;</span>
+<span class="fc" id="L460">        return cvssv3AttackVector;</span>
     }
 
     /**
@@ -430,8 +466,8 @@ public class SarifRule {
      * @param cvssv3AttackVector new value of CVSS3 Attack Vector
      */
     public void setCvssv3AttackVector(String cvssv3AttackVector) {
-<span class="nc" id="L433">        this.cvssv3AttackVector = cvssv3AttackVector;</span>
-<span class="nc" id="L434">    }</span>
+<span class="nc" id="L469">        this.cvssv3AttackVector = cvssv3AttackVector;</span>
+<span class="nc" id="L470">    }</span>
 
     /**
      * Get the value of CVSS3 Base Score.
@@ -439,7 +475,7 @@ public class SarifRule {
      * @return the value of CVSS3 Base Score
      */
     public String getCvssv3BaseScore() {
-<span class="fc" id="L442">        return cvssv3BaseScore;</span>
+<span class="fc" id="L478">        return cvssv3BaseScore;</span>
     }
 
     /**
@@ -448,8 +484,8 @@ public class SarifRule {
      * @param cvssv3BaseScore new value of CVSS3 Base Score
      */
     public void setCvssv3BaseScore(String cvssv3BaseScore) {
-<span class="nc" id="L451">        this.cvssv3BaseScore = cvssv3BaseScore;</span>
-<span class="nc" id="L452">    }</span>
+<span class="nc" id="L487">        this.cvssv3BaseScore = cvssv3BaseScore;</span>
+<span class="nc" id="L488">    }</span>
 
     /**
      * Get the value of CVSS2 Impact Score.
@@ -457,7 +493,7 @@ public class SarifRule {
      * @return the value of CVSS2 Impact Score
      */
     public String getCvssv2ImpactScore() {
-<span class="nc" id="L460">        return cvssv2ImpactScore;</span>
+<span class="nc" id="L496">        return cvssv2ImpactScore;</span>
     }
 
     /**
@@ -466,8 +502,8 @@ public class SarifRule {
      * @param cvssv2ImpactScore new value of CVSS2 Impact Score
      */
     public void setCvssv2ImpactScore(String cvssv2ImpactScore) {
-<span class="nc" id="L469">        this.cvssv2ImpactScore = cvssv2ImpactScore;</span>
-<span class="nc" id="L470">    }</span>
+<span class="nc" id="L505">        this.cvssv2ImpactScore = cvssv2ImpactScore;</span>
+<span class="nc" id="L506">    }</span>
 
     /**
      * Get the value of CVSS2 Exploitability Score.
@@ -475,7 +511,7 @@ public class SarifRule {
      * @return the value of CVSS2 Exploitability Score
      */
     public String getCvssv2ExploitabilityScore() {
-<span class="nc" id="L478">        return cvssv2ExploitabilityScore;</span>
+<span class="nc" id="L514">        return cvssv2ExploitabilityScore;</span>
     }
 
     /**
@@ -484,8 +520,8 @@ public class SarifRule {
      * @param cvssv2ExploitabilityScore new value of CVSS2 Exploitability Score
      */
     public void setCvssv2ExploitabilityScore(String cvssv2ExploitabilityScore) {
-<span class="nc" id="L487">        this.cvssv2ExploitabilityScore = cvssv2ExploitabilityScore;</span>
-<span class="nc" id="L488">    }</span>
+<span class="nc" id="L523">        this.cvssv2ExploitabilityScore = cvssv2ExploitabilityScore;</span>
+<span class="nc" id="L524">    }</span>
 
     /**
      * Get the value of CVSS2 Version.
@@ -493,7 +529,7 @@ public class SarifRule {
      * @return the value of CVSS2 Version
      */
     public String getCvssv2Version() {
-<span class="nc" id="L496">        return cvssv2Version;</span>
+<span class="nc" id="L532">        return cvssv2Version;</span>
     }
 
     /**
@@ -502,8 +538,8 @@ public class SarifRule {
      * @param cvssv2Version new value of CVSS2 Version
      */
     public void setCvssv2Version(String cvssv2Version) {
-<span class="nc" id="L505">        this.cvssv2Version = cvssv2Version;</span>
-<span class="nc" id="L506">    }</span>
+<span class="nc" id="L541">        this.cvssv2Version = cvssv2Version;</span>
+<span class="nc" id="L542">    }</span>
 
     /**
      * Get the value of CVSS2 Severity.
@@ -511,7 +547,7 @@ public class SarifRule {
      * @return the value of CVSS2 Severity
      */
     public String getCvssv2Severity() {
-<span class="fc" id="L514">        return cvssv2Severity;</span>
+<span class="fc" id="L550">        return cvssv2Severity;</span>
     }
 
     /**
@@ -520,8 +556,8 @@ public class SarifRule {
      * @param cvssv2Severity new value of CVSS2 Severity
      */
     public void setCvssv2Severity(String cvssv2Severity) {
-<span class="nc" id="L523">        this.cvssv2Severity = cvssv2Severity;</span>
-<span class="nc" id="L524">    }</span>
+<span class="nc" id="L559">        this.cvssv2Severity = cvssv2Severity;</span>
+<span class="nc" id="L560">    }</span>
 
     /**
      * Get the value of CVSS2 Availability Impact.
@@ -529,7 +565,7 @@ public class SarifRule {
      * @return the value of CVSS2 Availability Impact
      */
     public String getCvssv2AvailabilityImpact() {
-<span class="fc" id="L532">        return cvssv2AvailabilityImpact;</span>
+<span class="fc" id="L568">        return cvssv2AvailabilityImpact;</span>
     }
 
     /**
@@ -538,8 +574,8 @@ public class SarifRule {
      * @param cvssv2AvailabilityImpact new value of CVSS2 Availability Impact
      */
     public void setCvssv2AvailabilityImpact(String cvssv2AvailabilityImpact) {
-<span class="nc" id="L541">        this.cvssv2AvailabilityImpact = cvssv2AvailabilityImpact;</span>
-<span class="nc" id="L542">    }</span>
+<span class="nc" id="L577">        this.cvssv2AvailabilityImpact = cvssv2AvailabilityImpact;</span>
+<span class="nc" id="L578">    }</span>
 
     /**
      * Get the value of CVSS2 Integrity Impact.
@@ -547,7 +583,7 @@ public class SarifRule {
      * @return the value of CVSS2 Integrity Impact
      */
     public String getCvssv2IntegrityImpact() {
-<span class="fc" id="L550">        return cvssv2IntegrityImpact;</span>
+<span class="fc" id="L586">        return cvssv2IntegrityImpact;</span>
     }
 
     /**
@@ -556,26 +592,26 @@ public class SarifRule {
      * @param cvssv2IntegrityImpact new value of CVSS2 Integrity Impact
      */
     public void setCvssv2IntegrityImpact(String cvssv2IntegrityImpact) {
-<span class="nc" id="L559">        this.cvssv2IntegrityImpact = cvssv2IntegrityImpact;</span>
-<span class="nc" id="L560">    }</span>
+<span class="nc" id="L595">        this.cvssv2IntegrityImpact = cvssv2IntegrityImpact;</span>
+<span class="nc" id="L596">    }</span>
 
     /**
-     * Get the value of CVSS2 Confidential Impact.
+     * Get the value of CVSS2 Confidentiality Impact.
      *
-     * @return the value of CVSS2 Confidential Impact
+     * @return the value of CVSS2 Confidentiality Impact
      */
-    public String getCvssv2ConfidentialImpact() {
-<span class="nc" id="L568">        return cvssv2ConfidentialImpact;</span>
+    public String getCvssv2ConfidentialityImpact() {
+<span class="fc" id="L604">        return cvssv2ConfidentialityImpact;</span>
     }
 
     /**
-     * Set the value of CVSS2 Confidential Impact.
+     * Set the value of CVSS2 Confidentiality Impact.
      *
-     * @param cvssv2ConfidentialImpact new value of CVSS2 Confidential Impact
+     * @param cvssv2ConfidentialityImpact new value of CVSS2 Confidentiality Impact
      */
-    public void setCvssv2ConfidentialImpact(String cvssv2ConfidentialImpact) {
-<span class="nc" id="L577">        this.cvssv2ConfidentialImpact = cvssv2ConfidentialImpact;</span>
-<span class="nc" id="L578">    }</span>
+    public void setCvssv2ConfidentialityImpact(String cvssv2ConfidentialityImpact) {
+<span class="nc" id="L613">        this.cvssv2ConfidentialityImpact = cvssv2ConfidentialityImpact;</span>
+<span class="nc" id="L614">    }</span>
 
     /**
      * Get the value of CVSS2 Authentication.
@@ -583,7 +619,7 @@ public class SarifRule {
      * @return the value of CVSS2 Authentication
      */
     public String getCvssv2Authentication() {
-<span class="fc" id="L586">        return cvssv2Authentication;</span>
+<span class="fc" id="L622">        return cvssv2Authentication;</span>
     }
 
     /**
@@ -592,8 +628,8 @@ public class SarifRule {
      * @param cvssv2Authentication new value of CVSS2 Authentication
      */
     public void setCvssv2Authentication(String cvssv2Authentication) {
-<span class="nc" id="L595">        this.cvssv2Authentication = cvssv2Authentication;</span>
-<span class="nc" id="L596">    }</span>
+<span class="nc" id="L631">        this.cvssv2Authentication = cvssv2Authentication;</span>
+<span class="nc" id="L632">    }</span>
 
     /**
      * Get the value of CVSS2 Access Complexity.
@@ -601,7 +637,7 @@ public class SarifRule {
      * @return the value of CVSS2 Access Complexity
      */
     public String getCvssv2AccessComplexity() {
-<span class="fc" id="L604">        return cvssv2AccessComplexity;</span>
+<span class="fc" id="L640">        return cvssv2AccessComplexity;</span>
     }
 
     /**
@@ -610,8 +646,8 @@ public class SarifRule {
      * @param cvssv2AccessComplexity new value of CVSS2 Access Complexity
      */
     public void setCvssv2AccessComplexity(String cvssv2AccessComplexity) {
-<span class="nc" id="L613">        this.cvssv2AccessComplexity = cvssv2AccessComplexity;</span>
-<span class="nc" id="L614">    }</span>
+<span class="nc" id="L649">        this.cvssv2AccessComplexity = cvssv2AccessComplexity;</span>
+<span class="nc" id="L650">    }</span>
 
     /**
      * Get the value of CVSS2 Access Vector.
@@ -619,7 +655,7 @@ public class SarifRule {
      * @return the value of CVSS2 Access Vector
      */
     public String getCvssv2AccessVector() {
-<span class="fc" id="L622">        return cvssv2AccessVector;</span>
+<span class="fc" id="L658">        return cvssv2AccessVector;</span>
     }
 
     /**
@@ -628,8 +664,8 @@ public class SarifRule {
      * @param cvssv2AccessVector new value of CVSS2 Access Vector
      */
     public void setCvssv2AccessVector(String cvssv2AccessVector) {
-<span class="nc" id="L631">        this.cvssv2AccessVector = cvssv2AccessVector;</span>
-<span class="nc" id="L632">    }</span>
+<span class="nc" id="L667">        this.cvssv2AccessVector = cvssv2AccessVector;</span>
+<span class="nc" id="L668">    }</span>
 
     /**
      * Get the value of CVSS2 Score.
@@ -637,7 +673,7 @@ public class SarifRule {
      * @return the value of CVSS2 Score
      */
     public String getCvssv2Score() {
-<span class="fc" id="L640">        return cvssv2Score;</span>
+<span class="fc" id="L676">        return cvssv2Score;</span>
     }
 
     /**
@@ -646,8 +682,8 @@ public class SarifRule {
      * @param cvssv2Score new value of CVSS2 Score
      */
     public void setCvssv2Score(String cvssv2Score) {
-<span class="nc" id="L649">        this.cvssv2Score = cvssv2Score;</span>
-<span class="nc" id="L650">    }</span>
+<span class="nc" id="L685">        this.cvssv2Score = cvssv2Score;</span>
+<span class="nc" id="L686">    }</span>
 
     /**
      * Get the name.
@@ -655,7 +691,7 @@ public class SarifRule {
      * @return the name
      */
     public String getName() {
-<span class="fc" id="L658">        return name;</span>
+<span class="fc" id="L694">        return name;</span>
     }
 
     /**
@@ -664,8 +700,8 @@ public class SarifRule {
      * @param name the name
      */
     public void setName(String name) {
-<span class="nc" id="L667">        this.name = name;</span>
-<span class="nc" id="L668">    }</span>
+<span class="nc" id="L703">        this.name = name;</span>
+<span class="nc" id="L704">    }</span>
 
     /**
      * Get the full description.
@@ -673,7 +709,7 @@ public class SarifRule {
      * @return the value of full description
      */
     public String getFullDescription() {
-<span class="fc" id="L676">        return fullDescription;</span>
+<span class="fc" id="L712">        return fullDescription;</span>
     }
 
     /**
@@ -682,8 +718,8 @@ public class SarifRule {
      * @param fullDescription the full description
      */
     public void setFullDescription(String fullDescription) {
-<span class="nc" id="L685">        this.fullDescription = fullDescription;</span>
-<span class="nc" id="L686">    }</span>
+<span class="nc" id="L721">        this.fullDescription = fullDescription;</span>
+<span class="nc" id="L722">    }</span>
 
     /**
      * Get the short description.
@@ -691,7 +727,7 @@ public class SarifRule {
      * @return the short description
      */
     public String getShortDescription() {
-<span class="fc" id="L694">        return shortDescription;</span>
+<span class="fc" id="L730">        return shortDescription;</span>
     }
 
     /**
@@ -700,8 +736,8 @@ public class SarifRule {
      * @param shortDescription the short description
      */
     public void setShortDescription(String shortDescription) {
-<span class="nc" id="L703">        this.shortDescription = shortDescription;</span>
-<span class="nc" id="L704">    }</span>
+<span class="nc" id="L739">        this.shortDescription = shortDescription;</span>
+<span class="nc" id="L740">    }</span>
 
     /**
      * Get the value of id.
@@ -709,7 +745,7 @@ public class SarifRule {
      * @return the value of id
      */
     public String getId() {
-<span class="fc" id="L712">        return id;</span>
+<span class="fc" id="L748">        return id;</span>
     }
 
     /**
@@ -718,8 +754,8 @@ public class SarifRule {
      * @param id new value of id
      */
     public void setId(String id) {
-<span class="nc" id="L721">        this.id = id;</span>
-<span class="nc" id="L722">    }</span>
+<span class="nc" id="L757">        this.id = id;</span>
+<span class="nc" id="L758">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

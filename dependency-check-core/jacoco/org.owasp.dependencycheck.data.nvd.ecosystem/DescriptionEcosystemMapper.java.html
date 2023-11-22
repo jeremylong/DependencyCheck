@@ -18,7 +18,7 @@
 package org.owasp.dependencycheck.data.nvd.ecosystem;
 
 import org.apache.commons.lang3.StringUtils;
-import org.owasp.dependencycheck.data.nvd.json.DefCveItem;
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -179,7 +179,7 @@ public class DescriptionEcosystemMapper {
      */
     public String getEcosystem(DefCveItem cve) {
 <span class="fc" id="L181">        final int[] ecosystemMap = new int[ECOSYSTEMS.length];</span>
-<span class="fc" id="L182">        cve.getCve().getDescription().getDescriptionData().stream()</span>
+<span class="fc" id="L182">        cve.getCve().getDescriptions().stream()</span>
 <span class="fc" id="L183">                .filter((langString) -&gt; (langString.getLang().equals(&quot;en&quot;)))</span>
 <span class="fc" id="L184">                .forEachOrdered((langString) -&gt; search(langString.getValue(), ecosystemMap));</span>
 <span class="fc" id="L185">        return getResult(ecosystemMap);</span>

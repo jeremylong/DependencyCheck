@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import java.time.ZonedDateTime;
 import org.owasp.dependencycheck.exception.ParseException;
 
 import java.util.Calendar;
@@ -37,7 +38,7 @@ public final class DateUtil {
     /**
      * The logger.
      */
-<span class="fc" id="L40">    private static final Logger LOGGER = LoggerFactory.getLogger(DateUtil.class);</span>
+<span class="fc" id="L41">    private static final Logger LOGGER = LoggerFactory.getLogger(DateUtil.class);</span>
 
     /**
      * Private constructor for utility class.
@@ -55,11 +56,11 @@ public final class DateUtil {
      */
     public static Calendar parseXmlDate(String xsDate) throws ParseException {
         try {
-<span class="fc" id="L58">            final DatatypeFactory df = DatatypeFactory.newInstance();</span>
-<span class="fc" id="L59">            final XMLGregorianCalendar dateTime = df.newXMLGregorianCalendar(xsDate);</span>
-<span class="fc" id="L60">            return dateTime.toGregorianCalendar();</span>
-<span class="nc" id="L61">        } catch (DatatypeConfigurationException ex) {</span>
-<span class="nc" id="L62">            throw new ParseException(&quot;Unable to parse &quot; + xsDate, ex);</span>
+<span class="fc" id="L59">            final DatatypeFactory df = DatatypeFactory.newInstance();</span>
+<span class="fc" id="L60">            final XMLGregorianCalendar dateTime = df.newXMLGregorianCalendar(xsDate);</span>
+<span class="fc" id="L61">            return dateTime.toGregorianCalendar();</span>
+<span class="nc" id="L62">        } catch (DatatypeConfigurationException ex) {</span>
+<span class="nc" id="L63">            throw new ParseException(&quot;Unable to parse &quot; + xsDate, ex);</span>
         }
     }
 
@@ -76,8 +77,21 @@ public final class DateUtil {
      */
     public static boolean withinDateRange(long date, long compareTo, int dayRange) {
         // ms = dayRange x 24 hours/day x 60 min/hour x 60 sec/min x 1000 ms/sec
-<span class="fc" id="L79">        final long msRange = dayRange * 24L * 60L * 60L;</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">        return (compareTo - date) &lt; msRange;</span>
+<span class="fc" id="L80">        final long msRange = dayRange * 24L * 60L * 60L;</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        return (compareTo - date) &lt; msRange;</span>
+    }
+
+    /**
+     * Determines if the date is within the given day range.
+     *
+     * @param date the date
+     * @param compareTo the date to compare against
+     * @param dayRange the number of days allowed
+     * @return if the date is within the dayRange of compareTo
+     */
+    public static boolean withinDateRange(ZonedDateTime date, ZonedDateTime compareTo, int dayRange) {
+<span class="fc" id="L93">        final ZonedDateTime rangeEnd = date.plusDays(dayRange);</span>
+<span class="pc bpc" id="L94" title="1 of 4 branches missed.">        return compareTo.isAfter(date) &amp;&amp; compareTo.isBefore(rangeEnd);</span>
     }
 
     /**
@@ -89,19 +103,19 @@ public final class DateUtil {
      */
     public static long getEpochValueInSeconds(String epoch) {
         final String seconds;
-<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (epoch.length() &gt;= 13) {</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if (epoch.length() &gt;= 13) {</span>
             //this is in milliseconds - reduce to seconds
-<span class="fc" id="L94">            seconds = epoch.substring(0, 10);</span>
+<span class="fc" id="L108">            seconds = epoch.substring(0, 10);</span>
         } else {
-<span class="fc" id="L96">            seconds = epoch;</span>
+<span class="fc" id="L110">            seconds = epoch;</span>
         }
-<span class="fc" id="L98">        long results = 0;</span>
+<span class="fc" id="L112">        long results = 0;</span>
         try {
-<span class="fc" id="L100">            results = Long.parseLong(seconds);</span>
-<span class="fc" id="L101">        } catch (NumberFormatException ex) {</span>
-<span class="fc" id="L102">            LOGGER.debug(String.format(&quot;Error parsing '%s' property from the database - using zero&quot;, epoch), ex);</span>
-<span class="fc" id="L103">        }</span>
-<span class="fc" id="L104">        return results;</span>
+<span class="fc" id="L114">            results = Long.parseLong(seconds);</span>
+<span class="fc" id="L115">        } catch (NumberFormatException ex) {</span>
+<span class="fc" id="L116">            LOGGER.debug(String.format(&quot;Error parsing '%s' property from the database - using zero&quot;, epoch), ex);</span>
+<span class="fc" id="L117">        }</span>
+<span class="fc" id="L118">        return results;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

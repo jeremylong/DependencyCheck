@@ -79,7 +79,7 @@ import us.springett.parsers.cpe.util.Convert;
      * @param severity the text representation of a score
      * @return the estimated score
      */
-    public float estimateSeverity(String severity) {
+    public Double estimateSeverity(String severity) {
 <span class="fc" id="L83">        return SeverityUtil.estimateCvssV2(severity);</span>
     }
 
@@ -110,33 +110,33 @@ import us.springett.parsers.cpe.util.Convert;
     private String determineScore(Vulnerability vuln) {
 <span class="fc bfc" id="L111" title="All 2 branches covered.">        if (vuln.getUnscoredSeverity() != null) {</span>
 <span class="pc bpc" id="L112" title="1 of 2 branches missed.">            if (&quot;0.0&quot;.equals(vuln.getUnscoredSeverity())) {</span>
-<span class="nc" id="L113">                return &quot;Unknown&quot;;</span>
+<span class="nc" id="L113">                return &quot;unknown&quot;;</span>
             } else {
 <span class="fc" id="L115">                return normalizeSeverity(vuln.getUnscoredSeverity().toLowerCase());</span>
             }
-<span class="pc bpc" id="L117" title="1 of 4 branches missed.">        } else if (vuln.getCvssV3() != null &amp;&amp; vuln.getCvssV3().getBaseSeverity() != null) {</span>
-<span class="fc" id="L118">            return normalizeSeverity(vuln.getCvssV3().getBaseSeverity().toLowerCase());</span>
-<span class="pc bpc" id="L119" title="2 of 4 branches missed.">        } else if (vuln.getCvssV2() != null &amp;&amp; vuln.getCvssV2().getSeverity() != null) {</span>
-<span class="fc" id="L120">            return normalizeSeverity(vuln.getCvssV2().getSeverity());</span>
+<span class="pc bpc" id="L117" title="1 of 4 branches missed.">        } else if (vuln.getCvssV3() != null &amp;&amp; vuln.getCvssV3().getCvssData().getBaseSeverity() != null) {</span>
+<span class="fc" id="L118">            return normalizeSeverity(vuln.getCvssV3().getCvssData().getBaseSeverity().value().toLowerCase());</span>
+<span class="pc bpc" id="L119" title="2 of 4 branches missed.">        } else if (vuln.getCvssV2() != null &amp;&amp; vuln.getCvssV2().getCvssData().getBaseSeverity() != null) {</span>
+<span class="fc" id="L120">            return normalizeSeverity(vuln.getCvssV2().getCvssData().getBaseSeverity());</span>
         }
-<span class="nc" id="L122">        return &quot;Unknown&quot;;</span>
+<span class="nc" id="L122">        return &quot;unknown&quot;;</span>
     }
 
     private String normalizeSeverity(String sev) {
-<span class="fc bfc" id="L126" title="All 5 branches covered.">        switch (sev) {</span>
+<span class="pc bpc" id="L126" title="1 of 5 branches missed.">        switch (sev.toLowerCase()) {</span>
             case &quot;critical&quot;:
-<span class="fc" id="L128">                return &quot;Critical&quot;;</span>
+<span class="fc" id="L128">                return &quot;critical&quot;;</span>
             case &quot;high&quot;:
-<span class="fc" id="L130">                return &quot;High&quot;;</span>
+<span class="fc" id="L130">                return &quot;high&quot;;</span>
             case &quot;medium&quot;:
             case &quot;moderate&quot;:
-<span class="fc" id="L133">                return &quot;Medium&quot;;</span>
+<span class="fc" id="L133">                return &quot;medium&quot;;</span>
             case &quot;low&quot;:
             case &quot;informational&quot;:
             case &quot;info&quot;:
-<span class="fc" id="L137">                return &quot;Low&quot;;</span>
+<span class="fc" id="L137">                return &quot;low&quot;;</span>
             default:
-<span class="fc" id="L139">                return &quot;Unknown&quot;;</span>
+<span class="nc" id="L139">                return &quot;unknown&quot;;</span>
         }
     }
 

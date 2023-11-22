@@ -31,13 +31,13 @@
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> javax.annotation.concurrent.NotThreadSafe;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvd.json.CVEJSON40Min11;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvd.json.DefCveItem;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvd.json.Reference;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvd.json.References;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> com.hankcs.algorithm.AhoCorasickDoubleArrayTrie.Hit;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> io.github.jeremylong.openvulnerability.client.nvd.Reference;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> com.hankcs.algorithm.AhoCorasickDoubleArrayTrie;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> com.hankcs.algorithm.AhoCorasickDoubleArrayTrie.Hit;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> io.github.jeremylong.openvulnerability.client.nvd.CveItem;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  @NotThreadSafe
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/owasp/dependencycheck/data/nvd/ecosystem/UrlEcosystemMapper.html">UrlEcosystemMapper</a> {
@@ -77,23 +77,22 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     * @return the ecosystem</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      <strong class="jxr_keyword">public</strong> String getEcosystem(DefCveItem cve) {
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">final</strong> References references = Optional.ofNullable(cve)
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>          <strong class="jxr_keyword">final</strong> List&lt;Reference&gt; references = Optional.ofNullable(cve)
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>                  .map(DefCveItem::getCve)
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  .map(CVEJSON40Min11::getReferences)
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  .map(CveItem::getReferences)
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>                  .orElse(<strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">if</strong> (Objects.nonNull(references)) {
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>              <strong class="jxr_keyword">for</strong> (Reference r : references.getReferenceData()) {
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>  
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>                  <strong class="jxr_keyword">final</strong> Hit&lt;String&gt; ecosystem = search.findFirst(r.getUrl());
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>                  <strong class="jxr_keyword">if</strong> (ecosystem != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L82" href="#L82">82</a>                      <strong class="jxr_keyword">return</strong> ecosystem.value;
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>                  }
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>              }
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>          }
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      }
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>  }
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>              <strong class="jxr_keyword">for</strong> (Reference r : references) {
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>                  <strong class="jxr_keyword">final</strong> Hit&lt;String&gt; ecosystem = search.findFirst(r.getUrl());
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>                  <strong class="jxr_keyword">if</strong> (ecosystem != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>                      <strong class="jxr_keyword">return</strong> ecosystem.value;
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>                  }
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>              }
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>          }
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>      }
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
