@@ -1,5 +1,13 @@
 # Change Log
 
+## [Version 9.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.0.0) (2023-11-22)
+
+- feat: Utilize NVD API (#5978)
+- feat: gitlab dependency scanner report format #5919 (#5920)
+- fix: Use ASCII apostrophe for console message (#6076)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/68?closed=1).
+
 ## [Version 8.4.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v8.4.3) (2023-11-15)
 
 - fix: bump jcs3 (#6047)

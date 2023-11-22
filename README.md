@@ -10,6 +10,10 @@ Documentation and links to production binary releases can be found on the [githu
 
 ## 9.0.0 Upgrade Notice
 
+**Upgrading to 9.0.0 or later is mandatory**; previous versions of dependency-check
+utilize the NVD data feeds which will be deprecated on Dec 15th, 2023. Versions
+earlier then 9.0.0 are no longer supported and could fail to work after Dec 15th, 2023.
+
 ### NVD API Key Highly Recommended
 
 With 9.0.0 dependency-check has moved from using the NVD data-feed to the NVD API.
