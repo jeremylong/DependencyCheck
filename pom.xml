@@ -1011,7 +1011,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>io.github.jeremylong</groupId>
                 <artifactId>jcs3-slf4j</artifactId>
-                <version>1.0.1</version>
+                <version>1.0.3</version>
             </dependency>
             <dependency>
                 <groupId>commons-validator</groupId>

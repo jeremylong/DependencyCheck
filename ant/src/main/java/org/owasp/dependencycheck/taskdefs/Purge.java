@@ -164,6 +164,7 @@ public class Purge extends Task {
     private void muteJCS() {
         if (System.getProperty("jcs.logSystem") == null) {
             System.setProperty("jcs.logSystem", "slf4j");
+            System.setProperty("jcs.logSystem.mute", "true");
         }
 
         final String[] noisyLoggers = {

@@ -2489,6 +2489,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     private void muteJCS() {
         if (System.getProperty("jcs.logSystem") == null) {
             System.setProperty("jcs.logSystem", "slf4j");
+            
+            System.setProperty("jcs.logSystem.mute",Boolean.toString(!getLog().isDebugEnabled()));
         }
 
         final String[] noisyLoggers = {

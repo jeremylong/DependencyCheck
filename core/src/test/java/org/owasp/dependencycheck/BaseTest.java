@@ -43,6 +43,7 @@ public abstract class BaseTest {
     public void setUp() throws Exception {
         if (System.getProperty("jcs.logSystem") == null) {
             System.setProperty("jcs.logSystem", "slf4j");
+            System.setProperty("jcs.logSystem.mute", "true");
         }
         settings = new Settings();
     }

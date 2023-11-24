@@ -81,6 +81,7 @@ public class App {
     public static void main(String[] args) {
         if (System.getProperty("jcs.logSystem") == null) {
             System.setProperty("jcs.logSystem", "slf4j");
+            System.setProperty("jcs.logSystem.mute", Boolean.toString(!LOGGER.isDebugEnabled()));
         }
         final int exitCode;
         final App app = new App();
