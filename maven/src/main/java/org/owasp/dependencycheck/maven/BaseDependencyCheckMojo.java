@@ -918,7 +918,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nvdApiKey")
     private String nvdApiKey;
-
+    /**
+     * The maximum number of retry requests for a single call to the NVD API.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "nvdMaxRetryCount")
+    private Integer nvdMaxRetryCount;
     /**
      * The server id in the settings.xml; used to retrieve encrypted API Key
      * from the settings.xml for the NVD API Key. Note that the password is used
@@ -2322,7 +2327,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, nvdApiDelay);
         settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);
         settings.setIntIfNotNull(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);
-
+        settings.setIntIfNotNull(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, nvdMaxRetryCount);
         if (nvdApiKey == null && nvdApiServerId != null) {
             configureServerCredentialsApiKey(nvdApiServerId, Settings.KEYS.NVD_API_KEY);
         } else {

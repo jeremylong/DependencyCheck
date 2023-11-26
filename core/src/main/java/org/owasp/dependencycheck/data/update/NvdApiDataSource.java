@@ -294,6 +294,8 @@ public class NvdApiDataSource implements CachedWebDataSource {
         if (virtualMatch != null) {
             builder.withVirtualMatchString(virtualMatch);
         }
+        final int retryCount = settings.getInt(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, 10);
+        builder.withMaxRetryCount(retryCount);
         long delay = 0;
         try {
             delay = settings.getLong(Settings.KEYS.NVD_API_DELAY);
@@ -321,7 +323,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
                         final Future<NvdApiProcessor> f = processingExecutorService.submit(new NvdApiProcessor(cveDb, items));
                         submitted.add(f);
                         ctr += 1;
-                        if ((ctr % 10) == 0) {
+                        if ((ctr % 5) == 0) {
                             final double percent = (double) (ctr * RESULTS_PER_PAGE) / max * 100;
                             LOGGER.info(String.format("Downloaded %,d/%,d (%.0f%%)", ctr * RESULTS_PER_PAGE, max, percent));
                         }

@@ -114,6 +114,7 @@ public final class CliParser {
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isUpdateOnly() || isRunScan()) {
+            
             String value = line.getOptionValue(ARGUMENT.NVD_API_VALID_FOR_HOURS);
             if (value != null) {
                 try {
@@ -123,6 +124,17 @@ public final class CliParser {
                     }
                 } catch (NumberFormatException ex) {
                     throw new ParseException("Invalid Setting: nvdValidForHours must be a number greater than or equal to 0.");
+                }
+            }
+            value = line.getOptionValue(ARGUMENT.NVD_API_MAX_RETRY_COUNT);
+            if (value != null) {
+                try {
+                    final int i = Integer.parseInt(value);
+                    if (i <= 0) {
+                        throw new ParseException("Invalid Setting: nvdMaxRetryCount must be a number greater than 0.");
+                    }
+                } catch (NumberFormatException ex) {
+                    throw new ParseException("Invalid Setting: nvdMaxRetryCount must be a number greater than 0.");
                 }
             }
             value = line.getOptionValue(ARGUMENT.NVD_API_DELAY);
@@ -347,6 +359,8 @@ public final class CliParser {
                         "Credentials for basic authentication to the NVD API Datafeed."))
                 .addOption(newOptionWithArg(ARGUMENT.NVD_API_DATAFEED_PASSWORD, "password",
                         "Credentials for basic authentication to the NVD API Datafeed."))
+                .addOption(newOptionWithArg(ARGUMENT.NVD_API_MAX_RETRY_COUNT,"count",
+                        "The maximum number of retry requests for a single call to the NVD API."))
                 .addOption(newOptionWithArg(ARGUMENT.NVD_API_VALID_FOR_HOURS, "hours",
                         "The number of hours to wait before checking for new updates from the NVD."))
                 .addOption(newOptionWithArg(ARGUMENT.PROXY_PORT, "port",
@@ -1117,6 +1131,10 @@ public final class CliParser {
          * The CLI argument name for setting the URL for the CVE Data Files.
          */
         public static final String NVD_API_KEY = "nvdApiKey";
+        /**
+        * The CLI argument name for setting the maximum number of retry requests for a single call to the NVD API.
+        */
+        public static final String NVD_API_MAX_RETRY_COUNT = "nvdMaxRetryCount";
         /**
          * The CLI argument name for setting the number of hours to wait before
          * checking for new updates from the NVD.

@@ -171,6 +171,11 @@ public final class Settings {
          */
         public static final String NVD_API_DELAY = "nvd.api.delay";
         /**
+         * The maximum number of retry requests for a single call to the NVD
+         * API.
+         */
+        public static final String NVD_API_MAX_RETRY_COUNT = "nvd.api.max.retry.count";
+        /**
          * The properties key to control the skipping of the check for NVD
          * updates.
          */

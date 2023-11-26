@@ -42,6 +42,10 @@ public class Update extends Purge {
      */
     private String nvdApiKey;
     /**
+     * The maximum number of retry requests for a single call to the NVD API.
+     */
+    private Integer nvdMaxRetryCount;
+    /**
      * The number of hours to wait before checking for new updates from the NVD.
      */
     private Integer nvdValidForHours;
@@ -151,6 +155,24 @@ public class Update extends Purge {
      */
     public void setNvdApiKey(String nvdApiKey) {
         this.nvdApiKey = nvdApiKey;
+    }
+
+    /**
+     * Get the value of nvdMaxRetryCount.
+     *
+     * @return the value of nvdMaxRetryCount
+     */
+    public int getNvdMaxRetryCounts() {
+        return nvdMaxRetryCount;
+    }
+
+    /**
+     * Set the value of nvdMaxRetryCount.
+     *
+     * @param nvdMaxRetryCount new value of nvdMaxRetryCount
+     */
+    public void setNvdMaxRetryCount(int nvdMaxRetryCount) {
+        this.nvdMaxRetryCount = nvdMaxRetryCount;
     }
 
     /**
@@ -578,6 +600,13 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);
         getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, nvdUser);
         getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_PASSWORD, nvdPassword);
+        if (nvdMaxRetryCount != null) {
+            if (nvdMaxRetryCount > 0) {
+                getSettings().setInt(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, nvdMaxRetryCount);
+            } else {
+                throw new BuildException("Invalid setting: `nvdMaxRetryCount` must be greater than zero");
+            }
+        }
         if (nvdValidForHours != null) {
             if (nvdValidForHours >= 0) {
                 getSettings().setInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);
