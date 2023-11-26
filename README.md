@@ -35,6 +35,13 @@ issues arise you may need to purge the database:
 
 ## Requirements
 
+### Java Version
+
+Minimum Java Version: Java 8 update 251
+
+While dependency-check 9.0.0 and higher will still run on Java 8 - the update version
+must be higher then 251.
+
 ### Internet Access
 
 OWASP dependency-check requires access to several externally hosted resources.

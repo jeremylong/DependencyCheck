@@ -46,4 +46,44 @@ public final class Utils {
         }
         return Integer.parseInt(version);
     }
+
+    /**
+     * Returns the update version from the Java runtime.
+     *
+     * @return the update version
+     */
+    public static int getJavaUpdateVersion() {
+        //"1.8.0_144" "11.0.2+9" "17.0.8.1"
+        String runtimeVersion = System.getProperty("java.runtime.version");
+        try {
+            String[] parts = runtimeVersion.split("\\.");
+            if (parts.length == 4) {
+                return Integer.parseInt(parts[2]);
+            }
+            int pos = runtimeVersion.indexOf('_');
+            if (pos <= 0) {
+                pos = runtimeVersion.lastIndexOf('.');
+                if (pos <= 0) {
+                    //unexpected java version - return 0
+                    return 0;
+                }
+            }
+            int end = runtimeVersion.lastIndexOf('+');
+            if (end < 0) {
+                end = runtimeVersion.lastIndexOf('-');
+            }
+            if (end > pos) {
+                return Integer.parseInt(runtimeVersion.substring(pos + 1, end));
+            }
+            return Integer.parseInt(runtimeVersion.substring(pos + 1));
+        } catch (NumberFormatException nfe) {
+            // If the update version is not available, return 0
+            return 0;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("Java version : " + getJavaVersion());
+        System.out.println("Java update  : " + getJavaUpdateVersion());
+    }
 }
