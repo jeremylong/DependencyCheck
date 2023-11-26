@@ -4,7 +4,7 @@ Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,ProxyConfig,27,0,0
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,PurgeMojo,37,0,0,0,11,0,7,0,7,0
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,Mshared998Util.M31ArtifactResult,0,11,0,0,0,4,0,2,0,2
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,ArtifactTypeExcluded,0,22,0,6,0,4,0,5,0,2
-Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,BaseDependencyCheckMojo,1969,2744,306,174,409,544,218,86,17,47
+Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,BaseDependencyCheckMojo,1970,2760,307,175,409,546,219,86,17,47
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,UpdateMojo,68,21,7,1,20,7,9,2,5,2
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,CheckMojo,10,44,2,2,3,12,3,5,1,5
 Dependency-Check Maven Plugin,org.owasp.dependencycheck.maven,AggregateMojo,163,358,36,56,30,68,31,28,5,8

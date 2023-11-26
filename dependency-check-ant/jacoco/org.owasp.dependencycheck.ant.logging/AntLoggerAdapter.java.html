@@ -240,10 +240,10 @@ public class AntLoggerAdapter extends MarkerIgnoringBase {
 
     @Override
     public void error(String msg) {
-<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        if (task != null) {</span>
-<span class="fc" id="L244">            task.log(msg, Project.MSG_ERR);</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        if (task != null) {</span>
+<span class="nc" id="L244">            task.log(msg, Project.MSG_ERR);</span>
         }
-<span class="fc" id="L246">    }</span>
+<span class="nc" id="L246">    }</span>
 
     @Override
     public void error(String format, Object arg) {

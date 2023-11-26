@@ -46,5 +46,45 @@ public final class Utils {
         }
 <span class="fc" id="L47">        return Integer.parseInt(version);</span>
     }
+
+    /**
+     * Returns the update version from the Java runtime.
+     *
+     * @return the update version
+     */
+    public static int getJavaUpdateVersion() {
+        //&quot;1.8.0_144&quot; &quot;11.0.2+9&quot; &quot;17.0.8.1&quot;
+<span class="fc" id="L57">        String runtimeVersion = System.getProperty(&quot;java.runtime.version&quot;);</span>
+        try {
+<span class="fc" id="L59">            String[] parts = runtimeVersion.split(&quot;\\.&quot;);</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            if (parts.length == 4) {</span>
+<span class="nc" id="L61">                return Integer.parseInt(parts[2]);</span>
+            }
+<span class="fc" id="L63">            int pos = runtimeVersion.indexOf('_');</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">            if (pos &lt;= 0) {</span>
+<span class="nc" id="L65">                pos = runtimeVersion.lastIndexOf('.');</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">                if (pos &lt;= 0) {</span>
+                    //unexpected java version - return 0
+<span class="nc" id="L68">                    return 0;</span>
+                }
+            }
+<span class="fc" id="L71">            int end = runtimeVersion.lastIndexOf('+');</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">            if (end &lt; 0) {</span>
+<span class="fc" id="L73">                end = runtimeVersion.lastIndexOf('-');</span>
+            }
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            if (end &gt; pos) {</span>
+<span class="fc" id="L76">                return Integer.parseInt(runtimeVersion.substring(pos + 1, end));</span>
+            }
+<span class="nc" id="L78">            return Integer.parseInt(runtimeVersion.substring(pos + 1));</span>
+<span class="nc" id="L79">        } catch (NumberFormatException nfe) {</span>
+            // If the update version is not available, return 0
+<span class="nc" id="L81">            return 0;</span>
+        }
+    }
+
+    public static void main(String[] args) {
+<span class="nc" id="L86">        System.out.println(&quot;Java version : &quot; + getJavaVersion());</span>
+<span class="nc" id="L87">        System.out.println(&quot;Java update  : &quot; + getJavaUpdateVersion());</span>
+<span class="nc" id="L88">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
