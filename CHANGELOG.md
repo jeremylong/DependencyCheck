@@ -1,5 +1,20 @@
 # Change Log
 
+## [Version 9.0.1](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.1) (2023-11-26)
+
+**breaking changes**: See the [upgrade notice](https://github.com/jeremylong/DependencyCheck#900-upgrade-notice)
+
+- fix: check java 8 update version; minimum JRE is 8 update 251 (#6118)
+- fix: add retry for failed NVD API requests (#6136)
+- docs: add default values to documentation for the NVD API Delay (#6135)
+- chore: Revert "build(deps): bump com.h2database:h2 from 2.1.214 to 2.2.224" (#6131)
+  - this is a **breaking change** for anyone that successfully created the H2 database with 9.0.0.
+- fix: mute jcs logging (#6130)
+- docs: update NVD notice (#6110)
+- fix: Use the correct key for NVD API-Key from Maven Settings serverId (#6109)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/71?closed=1).
+
 ## [Version 9.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.0.0) (2023-11-22)
 
 **breaking changes**: See the [upgrade notice](https://github.com/jeremylong/DependencyCheck#900-upgrade-notice)
