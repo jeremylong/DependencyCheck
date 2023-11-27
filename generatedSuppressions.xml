@@ -1385,3 +1385,10 @@
    <packageUrl regex="true">^pkg:maven/net\.lbruun\.springboot/preliquibase-spring-boot-starter@.*$</packageUrl>
    <cpe>cpe:/a:liquibase:liquibase</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6138 and #6139
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/rubygems/.*@.*$</packageUrl>
+   <cpe>cpe:/a:rubygems:rubygems</cpe>
+</suppress>
