@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.maven;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL.StandardTypes;
 import com.github.packageurl.PackageURL;
+import io.github.jeremylong.jcs3.slf4j.Slf4jAdapter;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
@@ -2488,39 +2489,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     }
 
     /**
-     * Hacky method of muting the noisy logging from JCS. Implemented using a
-     * solution from SO: https://stackoverflow.com/a/50723801
+     * Hacky method of muting the noisy logging from JCS
      */
     private void muteJCS() {
-        if (System.getProperty("jcs.logSystem") == null) {
-            System.setProperty("jcs.logSystem", "slf4j");
-            
-            System.setProperty("jcs.logSystem.mute",Boolean.toString(!getLog().isDebugEnabled()));
-        }
-
-        final String[] noisyLoggers = {
-            "org.apache.commons.jcs3.auxiliary.disk.AbstractDiskCache",
-            "org.apache.commons.jcs3.engine.memory.AbstractMemoryCache",
-            "org.apache.commons.jcs3.engine.control.CompositeCache",
-            "org.apache.commons.jcs3.auxiliary.disk.indexed.IndexedDiskCache",
-            "org.apache.commons.jcs3.engine.control.CompositeCache",
-            "org.apache.commons.jcs3.engine.memory.AbstractMemoryCache",
-            "org.apache.commons.jcs3.engine.control.event.ElementEventQueue",
-            "org.apache.commons.jcs3.engine.memory.AbstractDoubleLinkedListMemoryCache",
-            "org.apache.commons.jcs3.auxiliary.AuxiliaryCacheConfigurator",
-            "org.apache.commons.jcs3.engine.control.CompositeCacheManager",
-            "org.apache.commons.jcs3.utils.threadpool.ThreadPoolManager",
-            "org.apache.commons.jcs3.engine.control.CompositeCacheConfigurator"};
-        for (String loggerName : noisyLoggers) {
-            try {
-                //This is actually a MavenSimpleLogger, but due to various classloader issues, can't work with the directly.
-                final Logger l = LoggerFactory.getLogger(loggerName);
-                final Field f = l.getClass().getSuperclass().getDeclaredField("currentLogLevel");
-                f.setAccessible(true);
-                f.set(l, LocationAwareLogger.ERROR_INT);
-            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {
-                getLog().debug("Failed to reset the log level of " + loggerName + ", it will continue being noisy.");
-            }
+        System.setProperty("jcs.logSystem", "slf4j");
+        if (!getLog().isDebugEnabled()) {
+            Slf4jAdapter.muteLogging(true);
         }
     }
 

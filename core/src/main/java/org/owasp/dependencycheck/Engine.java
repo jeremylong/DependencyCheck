@@ -19,6 +19,7 @@ package org.owasp.dependencycheck;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.jcs3.JCS;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.owasp.dependencycheck.analyzer.AnalysisPhase;
@@ -222,6 +223,7 @@ public class Engine implements FileFilter, AutoCloseable {
         } else {
             System.clearProperty("javax.xml.accessExternalSchema");
         }
+        JCS.shutdown();
     }
 
     /**

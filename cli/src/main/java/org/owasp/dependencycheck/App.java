@@ -44,6 +44,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import io.github.jeremylong.jcs3.slf4j.Slf4jAdapter;
 import java.util.TreeSet;
 import org.owasp.dependencycheck.utils.SeverityUtil;
 
@@ -79,9 +80,9 @@ public class App {
      */
     @SuppressWarnings("squid:S4823")
     public static void main(String[] args) {
-        if (System.getProperty("jcs.logSystem") == null) {
-            System.setProperty("jcs.logSystem", "slf4j");
-            System.setProperty("jcs.logSystem.mute", Boolean.toString(!LOGGER.isDebugEnabled()));
+        System.setProperty("jcs.logSystem", "slf4j");
+        if (!LOGGER.isDebugEnabled()) {
+            Slf4jAdapter.muteLogging(true);
         }
         final int exitCode;
         final App app = new App();
