@@ -160,18 +160,17 @@ public class DatabaseProperties {
         for (Entry<Object, Object> entry : properties.entrySet()) {
             final String key = (String) entry.getKey();
             if (!"version".equals(key)) {
-                if ("NVD CVE Modified".equals(key) || "NVD CVE Checked".equals(key) || "VersionCheckOn".equals(key)) {
-                    try {
-                        final long epoch = Long.parseLong((String) entry.getValue());
-                        final ZonedDateTime dateTime = Instant.ofEpochSecond(epoch).atZone(ZoneId.systemDefault());
-                        final String formatted = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateTime);
-                        map.put(key, formatted);
-                    } catch (Throwable ex) { //deliberately being broad in this catch clause
-                        LOGGER.debug("Unable to parse timestamp from DB", ex);
-                        map.put(key, (String) entry.getValue());
-                    }
-                } else if (!key.startsWith("NVD CVE ")) {
-                    map.put(key, (String) entry.getValue());
+                if (DatabaseProperties.NVD_API_LAST_CHECKED.equals(key)) {
+                    map.put("NVD API Last Checked", entry.getValue().toString());
+                    
+                } else if (DatabaseProperties.NVD_API_LAST_MODIFIED.equals(key)) {
+                    map.put("NVD API Last Modified", entry.getValue().toString());
+                    
+                } else if (DatabaseProperties.NVD_CACHE_LAST_CHECKED.equals(key)) {
+                    map.put("NVD Cache Last Checked", entry.getValue().toString());
+                    
+                } else if (DatabaseProperties.NVD_CACHE_LAST_MODIFIED.equals(key)) {
+                    map.put("NVD Cache Last Modified", entry.getValue().toString());
                 }
             }
         }
