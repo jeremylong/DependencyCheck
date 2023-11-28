@@ -17,11 +17,20 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author Jeremy Long
  */
 public final class Utils {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class);
 
     /**
      * Empty constructor for utility class.
@@ -55,9 +64,20 @@ public final class Utils {
     public static int getJavaUpdateVersion() {
         //"1.8.0_144" "11.0.2+9" "17.0.8.1"
         String runtimeVersion = System.getProperty("java.runtime.version");
+        return parseUpdate(runtimeVersion);
+    }
+
+    /**
+     * Parses the update version from the runtime version.
+     *
+     * @param runtimeVersion the runtime version
+     * @return the update version
+     */
+    protected static int parseUpdate(String runtimeVersion) {
+        LOGGER.debug(runtimeVersion);
         try {
             String[] parts = runtimeVersion.split("\\.");
-            if (parts.length == 4) {
+            if (parts.length == 4 && isNumeric(parts)) {
                 return Integer.parseInt(parts[2]);
             }
             int pos = runtimeVersion.indexOf('_');
@@ -68,9 +88,9 @@ public final class Utils {
                     return 0;
                 }
             }
-            int end = runtimeVersion.lastIndexOf('+');
+            int end = runtimeVersion.indexOf('+', pos);
             if (end < 0) {
-                end = runtimeVersion.lastIndexOf('-');
+                end = runtimeVersion.indexOf('-', pos);
             }
             if (end > pos) {
                 return Integer.parseInt(runtimeVersion.substring(pos + 1, end));
@@ -82,8 +102,26 @@ public final class Utils {
         }
     }
 
+    /**
+     * Determines if all parts of the string array are numeric.
+     *
+     * @param parts the strings to check
+     * @return true if all of the strings in the array are numeric; otherwise
+     * false
+     */
+    private static boolean isNumeric(String[] parts) {
+        for (String i : parts) {
+            if (!StringUtils.isNumeric(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
+        System.out.println("Java runtime : " + System.getProperty("java.runtime.version"));
         System.out.println("Java version : " + getJavaVersion());
         System.out.println("Java update  : " + getJavaUpdateVersion());
+
     }
 }
