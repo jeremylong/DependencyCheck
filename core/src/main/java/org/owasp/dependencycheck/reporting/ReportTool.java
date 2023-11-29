@@ -122,7 +122,7 @@ public class ReportTool {
         return "unknown";
     }
 
-    private String normalizeSeverity(String sev) {
+    public String normalizeSeverity(String sev) {
         switch (sev.toLowerCase()) {
             case "critical":
                 return "critical";
