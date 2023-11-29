@@ -1392,3 +1392,10 @@
    <packageUrl regex="true">^pkg:maven/rubygems/.*@.*$</packageUrl>
    <cpe>cpe:/a:rubygems:rubygems</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6170
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.parquet/parquet-avro@.*$</packageUrl>
+   <cpe>cpe:/a:apache:avro</cpe>
+</suppress>
