@@ -290,10 +290,12 @@ public class NvdApiDataSource implements CachedWebDataSource {
             builder.withDelay(8000);
         }
         builder.withResultsPerPage(RESULTS_PER_PAGE);
-        final String virtualMatch = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER);
-        if (virtualMatch != null) {
-            builder.withVirtualMatchString(virtualMatch);
-        }
+        //removed due to the virtualMatch filter causing overhead with the NVD API
+        //final String virtualMatch = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER);
+        //if (virtualMatch != null) {
+        //    builder.withVirtualMatchString(virtualMatch);
+        //}
+
         final int retryCount = settings.getInt(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, 10);
         builder.withMaxRetryCount(retryCount);
         long delay = 0;
