@@ -1,5 +1,17 @@
 # Change Log
 
+
+## [Version 9.0.2](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.2) (2023-12-01)
+
+- fix: remove virtual match string on NVD API Request (#6177)
+- fix: correct meta data in report after switching the NVD API (#6154)
+- fix: retry HTTP connections to NVD on 502 and 504 errors (#6151)
+- fix: Gitlab report format needs severity capitalized (#6182)
+- fix: improve JDK update version parsing (#6163)
+- fix: mute JCS logging (again) (#6153)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/72?closed=1).
+
 ## [Version 9.0.1](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.1) (2023-11-26)
 
 **breaking changes**: See the [upgrade notice](https://github.com/jeremylong/DependencyCheck#900-upgrade-notice)
