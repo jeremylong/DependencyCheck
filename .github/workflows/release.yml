@@ -186,16 +186,14 @@ jobs:
           prerelease: false
           draft: false
           body: |
-            - fix: check java 8 update version; minimum JRE is 8 update 251 (#6118)
-            - fix: add retry for failed NVD API requests (#6136)
-            - docs: add default values to documentation for the NVD API Delay (#6135)
-            - chore: Revert "build(deps): bump com.h2database:h2 from 2.1.214 to 2.2.224" (#6131)
-              - this is a **breaking change** for anyone that successfully created the H2 database with 9.0.0.
-            - fix: mute jcs logging (#6130)
-            - docs: update NVD notice (#6110)
-            - fix: Use the correct key for NVD API-Key from Maven Settings serverId (#6109)
+            - fix: remove virtual match string on NVD API Request (#6177)
+            - fix: correct meta data in report after switching the NVD API (#6154)
+            - fix: retry HTTP connections to NVD on 502 and 504 errors (#6151)
+            - fix: Gitlab report format needs severity capitalized (#6182)
+            - fix: improve JDK update version parsing (#6163)
+            - fix: mute JCS logging (again) (#6153)
 
-            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/71?closed=1).
+            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/72?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
