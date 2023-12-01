@@ -100,7 +100,8 @@
                         ## optional properties
                         "name": "$enc.json($vulnerability.name)",
                         "description": "$enc.json($vulnerability.description)",
-                        "severity": "$rpt.normalizeSeverity($vulnerability.cvssV3.cvssData.baseSeverity).toLowerCase()",
+                        #set($severity = $rpt.normalizeSeverity($vulnerability.cvssV3.cvssData.baseSeverity))
+                        "severity": "$severity.substring(0,1).toUpperCase()$severity.substring(1)",
                         ## "solution": "" --> not implemented
                         "links": [
                             #foreach( $ref in $vulnerability.getReferences(true) )
