@@ -160,22 +160,21 @@ public class DatabaseProperties {
 <span class="fc bfc" id="L160" title="All 2 branches covered.">        for (Entry&lt;Object, Object&gt; entry : properties.entrySet()) {</span>
 <span class="fc" id="L161">            final String key = (String) entry.getKey();</span>
 <span class="fc bfc" id="L162" title="All 2 branches covered.">            if (!&quot;version&quot;.equals(key)) {</span>
-<span class="fc bfc" id="L163" title="All 6 branches covered.">                if (&quot;NVD CVE Modified&quot;.equals(key) || &quot;NVD CVE Checked&quot;.equals(key) || &quot;VersionCheckOn&quot;.equals(key)) {</span>
-                    try {
-<span class="fc" id="L165">                        final long epoch = Long.parseLong((String) entry.getValue());</span>
-<span class="fc" id="L166">                        final ZonedDateTime dateTime = Instant.ofEpochSecond(epoch).atZone(ZoneId.systemDefault());</span>
-<span class="fc" id="L167">                        final String formatted = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateTime);</span>
-<span class="fc" id="L168">                        map.put(key, formatted);</span>
-<span class="nc" id="L169">                    } catch (Throwable ex) { //deliberately being broad in this catch clause</span>
-<span class="nc" id="L170">                        LOGGER.debug(&quot;Unable to parse timestamp from DB&quot;, ex);</span>
-<span class="nc" id="L171">                        map.put(key, (String) entry.getValue());</span>
-<span class="pc" id="L172">                    }</span>
-<span class="fc bfc" id="L173" title="All 2 branches covered.">                } else if (!key.startsWith(&quot;NVD CVE &quot;)) {</span>
-<span class="fc" id="L174">                    map.put(key, (String) entry.getValue());</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">                if (DatabaseProperties.NVD_API_LAST_CHECKED.equals(key)) {</span>
+<span class="nc" id="L164">                    map.put(&quot;NVD API Last Checked&quot;, entry.getValue().toString());</span>
+                    
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">                } else if (DatabaseProperties.NVD_API_LAST_MODIFIED.equals(key)) {</span>
+<span class="nc" id="L167">                    map.put(&quot;NVD API Last Modified&quot;, entry.getValue().toString());</span>
+                    
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">                } else if (DatabaseProperties.NVD_CACHE_LAST_CHECKED.equals(key)) {</span>
+<span class="nc" id="L170">                    map.put(&quot;NVD Cache Last Checked&quot;, entry.getValue().toString());</span>
+                    
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">                } else if (DatabaseProperties.NVD_CACHE_LAST_MODIFIED.equals(key)) {</span>
+<span class="nc" id="L173">                    map.put(&quot;NVD Cache Last Modified&quot;, entry.getValue().toString());</span>
                 }
             }
-<span class="fc" id="L177">        }</span>
-<span class="fc" id="L178">        return map;</span>
+<span class="fc" id="L176">        }</span>
+<span class="fc" id="L177">        return map;</span>
     }
 
     /**
@@ -185,7 +184,7 @@ public class DatabaseProperties {
      * @return the zoned date time
      */
     public ZonedDateTime getTimestamp(String key) {
-<span class="nc" id="L188">        return DatabaseProperties.getTimestamp(properties, key);</span>
+<span class="nc" id="L187">        return DatabaseProperties.getTimestamp(properties, key);</span>
     }
 
     /**
@@ -195,9 +194,9 @@ public class DatabaseProperties {
      * @param timestamp the zoned date time
      */
     public void save(String key, ZonedDateTime timestamp) throws UpdateException {
-<span class="nc" id="L198">        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;uuuu-MM-dd'T'HH:mm:ssX&quot;);</span>
-<span class="nc" id="L199">        save(key, dtf.format(timestamp));</span>
-<span class="nc" id="L200">    }</span>
+<span class="nc" id="L197">        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;uuuu-MM-dd'T'HH:mm:ssX&quot;);</span>
+<span class="nc" id="L198">        save(key, dtf.format(timestamp));</span>
+<span class="nc" id="L199">    }</span>
 
     /**
      * Retrieves a zoned date time.
@@ -207,13 +206,13 @@ public class DatabaseProperties {
      * @return the zoned date time
      */
     public static ZonedDateTime getTimestamp(Properties properties, String key) {
-<span class="nc" id="L210">        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;uuuu-MM-dd'T'HH:mm:ssX&quot;);</span>
-<span class="nc" id="L211">        final String val = properties.getProperty(key);</span>
-<span class="nc bnc" id="L212" title="All 2 branches missed.">        if (val != null) {</span>
-<span class="nc" id="L213">            final String value = properties.getProperty(key);</span>
-<span class="nc" id="L214">            return ZonedDateTime.parse(value, dtf);</span>
+<span class="nc" id="L209">        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;uuuu-MM-dd'T'HH:mm:ssX&quot;);</span>
+<span class="nc" id="L210">        final String val = properties.getProperty(key);</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (val != null) {</span>
+<span class="nc" id="L212">            final String value = properties.getProperty(key);</span>
+<span class="nc" id="L213">            return ZonedDateTime.parse(value, dtf);</span>
         }
-<span class="nc" id="L216">        return null;</span>
+<span class="nc" id="L215">        return null;</span>
     }
 
 }

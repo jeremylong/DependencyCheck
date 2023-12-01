@@ -168,63 +168,62 @@
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">for</strong> (Entry&lt;Object, Object&gt; entry : properties.entrySet()) {
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>             <strong class="jxr_keyword">final</strong> String key = (String) entry.getKey();
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>             <strong class="jxr_keyword">if</strong> (!<span class="jxr_string">"version"</span>.equals(key)) {
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>                 <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"NVD CVE Modified"</span>.equals(key) || <span class="jxr_string">"NVD CVE Checked"</span>.equals(key) || <span class="jxr_string">"VersionCheckOn"</span>.equals(key)) {
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>                         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> epoch = Long.parseLong((String) entry.getValue());
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>                         <strong class="jxr_keyword">final</strong> ZonedDateTime dateTime = Instant.ofEpochSecond(epoch).atZone(ZoneId.systemDefault());
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>                         <strong class="jxr_keyword">final</strong> String formatted = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(dateTime);
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>                         map.put(key, formatted);
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>                     } <strong class="jxr_keyword">catch</strong> (Throwable ex) { <em class="jxr_comment">//deliberately being broad in this catch clause</em>
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>                         LOGGER.debug(<span class="jxr_string">"Unable to parse timestamp from DB"</span>, ex);
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>                         map.put(key, (String) entry.getValue());
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>                     }
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (!key.startsWith(<span class="jxr_string">"NVD CVE "</span>)) {
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>                     map.put(key, (String) entry.getValue());
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>                 }
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>             }
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>         }
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">return</strong> map;
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>     }
-<a class="jxr_linenumber" name="L180" href="#L180">180</a> 
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">     * Retrieves a zoned date time.</em>
-<a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">     * @param key the property key</em>
-<a class="jxr_linenumber" name="L185" href="#L185">185</a> <em class="jxr_javadoccomment">     * @return the zoned date time</em>
-<a class="jxr_linenumber" name="L186" href="#L186">186</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>     <strong class="jxr_keyword">public</strong> ZonedDateTime getTimestamp(String key) {
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>         <strong class="jxr_keyword">return</strong> DatabaseProperties.getTimestamp(properties, key);
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>     }
-<a class="jxr_linenumber" name="L190" href="#L190">190</a> 
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">     * Stores a timestamp.</em>
-<a class="jxr_linenumber" name="L193" href="#L193">193</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L194" href="#L194">194</a> <em class="jxr_javadoccomment">     * @param key the property key</em>
-<a class="jxr_linenumber" name="L195" href="#L195">195</a> <em class="jxr_javadoccomment">     * @param timestamp the zoned date time</em>
-<a class="jxr_linenumber" name="L196" href="#L196">196</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> save(String key, ZonedDateTime timestamp) <strong class="jxr_keyword">throws</strong> UpdateException {
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>         <strong class="jxr_keyword">final</strong> DateTimeFormatter dtf = DateTimeFormatter.ofPattern(<span class="jxr_string">"uuuu-MM-dd'T'HH:mm:ssX"</span>);
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         save(key, dtf.format(timestamp));
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>     }
-<a class="jxr_linenumber" name="L201" href="#L201">201</a> 
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L203" href="#L203">203</a> <em class="jxr_javadoccomment">     * Retrieves a zoned date time.</em>
-<a class="jxr_linenumber" name="L204" href="#L204">204</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L205" href="#L205">205</a> <em class="jxr_javadoccomment">     * @param properties the properties file containing the date time</em>
-<a class="jxr_linenumber" name="L206" href="#L206">206</a> <em class="jxr_javadoccomment">     * @param key the property key</em>
-<a class="jxr_linenumber" name="L207" href="#L207">207</a> <em class="jxr_javadoccomment">     * @return the zoned date time</em>
-<a class="jxr_linenumber" name="L208" href="#L208">208</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ZonedDateTime getTimestamp(Properties properties, String key) {
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">final</strong> DateTimeFormatter dtf = DateTimeFormatter.ofPattern(<span class="jxr_string">"uuuu-MM-dd'T'HH:mm:ssX"</span>);
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>         <strong class="jxr_keyword">final</strong> String val = properties.getProperty(key);
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">if</strong> (val != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>             <strong class="jxr_keyword">final</strong> String value = properties.getProperty(key);
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>             <strong class="jxr_keyword">return</strong> ZonedDateTime.parse(value, dtf);
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>         }
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>     }
-<a class="jxr_linenumber" name="L218" href="#L218">218</a> 
-<a class="jxr_linenumber" name="L219" href="#L219">219</a> }
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>                 <strong class="jxr_keyword">if</strong> (DatabaseProperties.NVD_API_LAST_CHECKED.equals(key)) {
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>                     map.put(<span class="jxr_string">"NVD API Last Checked"</span>, entry.getValue().toString());
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>                     
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (DatabaseProperties.NVD_API_LAST_MODIFIED.equals(key)) {
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>                     map.put(<span class="jxr_string">"NVD API Last Modified"</span>, entry.getValue().toString());
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>                     
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (DatabaseProperties.NVD_CACHE_LAST_CHECKED.equals(key)) {
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>                     map.put(<span class="jxr_string">"NVD Cache Last Checked"</span>, entry.getValue().toString());
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>                     
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (DatabaseProperties.NVD_CACHE_LAST_MODIFIED.equals(key)) {
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>                     map.put(<span class="jxr_string">"NVD Cache Last Modified"</span>, entry.getValue().toString());
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>                 }
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>             }
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>         }
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">return</strong> map;
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>     }
+<a class="jxr_linenumber" name="L179" href="#L179">179</a> 
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">     * Retrieves a zoned date time.</em>
+<a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     * @param key the property key</em>
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">     * @return the zoned date time</em>
+<a class="jxr_linenumber" name="L185" href="#L185">185</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     <strong class="jxr_keyword">public</strong> ZonedDateTime getTimestamp(String key) {
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">return</strong> DatabaseProperties.getTimestamp(properties, key);
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     }
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> 
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a> <em class="jxr_javadoccomment">     * Stores a timestamp.</em>
+<a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L193" href="#L193">193</a> <em class="jxr_javadoccomment">     * @param key the property key</em>
+<a class="jxr_linenumber" name="L194" href="#L194">194</a> <em class="jxr_javadoccomment">     * @param timestamp the zoned date time</em>
+<a class="jxr_linenumber" name="L195" href="#L195">195</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> save(String key, ZonedDateTime timestamp) <strong class="jxr_keyword">throws</strong> UpdateException {
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>         <strong class="jxr_keyword">final</strong> DateTimeFormatter dtf = DateTimeFormatter.ofPattern(<span class="jxr_string">"uuuu-MM-dd'T'HH:mm:ssX"</span>);
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>         save(key, dtf.format(timestamp));
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>     }
+<a class="jxr_linenumber" name="L200" href="#L200">200</a> 
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L202" href="#L202">202</a> <em class="jxr_javadoccomment">     * Retrieves a zoned date time.</em>
+<a class="jxr_linenumber" name="L203" href="#L203">203</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L204" href="#L204">204</a> <em class="jxr_javadoccomment">     * @param properties the properties file containing the date time</em>
+<a class="jxr_linenumber" name="L205" href="#L205">205</a> <em class="jxr_javadoccomment">     * @param key the property key</em>
+<a class="jxr_linenumber" name="L206" href="#L206">206</a> <em class="jxr_javadoccomment">     * @return the zoned date time</em>
+<a class="jxr_linenumber" name="L207" href="#L207">207</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> ZonedDateTime getTimestamp(Properties properties, String key) {
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>         <strong class="jxr_keyword">final</strong> DateTimeFormatter dtf = DateTimeFormatter.ofPattern(<span class="jxr_string">"uuuu-MM-dd'T'HH:mm:ssX"</span>);
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">final</strong> String val = properties.getProperty(key);
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>         <strong class="jxr_keyword">if</strong> (val != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>             <strong class="jxr_keyword">final</strong> String value = properties.getProperty(key);
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>             <strong class="jxr_keyword">return</strong> ZonedDateTime.parse(value, dtf);
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>         }
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>     }
+<a class="jxr_linenumber" name="L217" href="#L217">217</a> 
+<a class="jxr_linenumber" name="L218" href="#L218">218</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

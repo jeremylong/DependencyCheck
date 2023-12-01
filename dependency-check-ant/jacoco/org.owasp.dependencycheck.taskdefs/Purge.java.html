@@ -17,6 +17,7 @@
  */
 package org.owasp.dependencycheck.taskdefs;
 
+import io.github.jeremylong.jcs3.slf4j.Slf4jAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,31 +52,31 @@ public class Purge extends Task {
     /**
      * The location of the data directory that contains
      */
-<span class="fc" id="L54">    private String dataDirectory = null;</span>
+<span class="fc" id="L55">    private String dataDirectory = null;</span>
     /**
      * Indicates if dependency-check should fail the build if an exception
      * occurs.
      */
-<span class="fc" id="L59">    private boolean failOnError = true;</span>
+<span class="fc" id="L60">    private boolean failOnError = true;</span>
 
     /**
      * The URL to hosted suppressions file with base FP suppressions.
      */
-<span class="fc" id="L64">    private String hostedSuppressionsUrl = null;</span>
+<span class="fc" id="L65">    private String hostedSuppressionsUrl = null;</span>
 
     /**
      * Construct a new DependencyCheckTask.
      */
     public Purge() {
-<span class="fc" id="L70">        super();</span>
+<span class="fc" id="L71">        super();</span>
 
         // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
         // core end up coming through this tasks logger
-<span class="fc" id="L74">        StaticLoggerBinder.getSingleton().setTask(this);</span>
-<span class="fc" id="L75">    }</span>
+<span class="fc" id="L75">        StaticLoggerBinder.getSingleton().setTask(this);</span>
+<span class="fc" id="L76">    }</span>
 
     public Settings getSettings() {
-<span class="fc" id="L78">        return settings;</span>
+<span class="fc" id="L79">        return settings;</span>
     }
 
     /**
@@ -84,7 +85,7 @@ public class Purge extends Task {
      * @return the value of dataDirectory
      */
     public String getDataDirectory() {
-<span class="nc" id="L87">        return dataDirectory;</span>
+<span class="nc" id="L88">        return dataDirectory;</span>
     }
 
     /**
@@ -93,8 +94,8 @@ public class Purge extends Task {
      * @param dataDirectory new value of dataDirectory
      */
     public void setDataDirectory(String dataDirectory) {
-<span class="nc" id="L96">        this.dataDirectory = dataDirectory;</span>
-<span class="nc" id="L97">    }</span>
+<span class="nc" id="L97">        this.dataDirectory = dataDirectory;</span>
+<span class="nc" id="L98">    }</span>
 
     /**
      * Get the value of failOnError.
@@ -102,7 +103,7 @@ public class Purge extends Task {
      * @return the value of failOnError
      */
     public boolean isFailOnError() {
-<span class="nc" id="L105">        return failOnError;</span>
+<span class="nc" id="L106">        return failOnError;</span>
     }
 
     /**
@@ -111,8 +112,8 @@ public class Purge extends Task {
      * @param failOnError new value of failOnError
      */
     public void setFailOnError(boolean failOnError) {
-<span class="nc" id="L114">        this.failOnError = failOnError;</span>
-<span class="nc" id="L115">    }</span>
+<span class="nc" id="L115">        this.failOnError = failOnError;</span>
+<span class="nc" id="L116">    }</span>
 
     /**
      * Get the value of hostedSuppressionsUrl.
@@ -120,7 +121,7 @@ public class Purge extends Task {
      * @return the value of hostedSuppressionsUrl
      */
     public String getHostedSuppressionsUrl() {
-<span class="nc" id="L123">        return hostedSuppressionsUrl;</span>
+<span class="nc" id="L124">        return hostedSuppressionsUrl;</span>
     }
 
     /**
@@ -129,8 +130,8 @@ public class Purge extends Task {
      * @param hostedSuppressionsUrl new value of hostedSuppressionsUrl
      */
     public void setHostedSuppressionsUrl(final String hostedSuppressionsUrl) {
-<span class="nc" id="L132">        this.hostedSuppressionsUrl = hostedSuppressionsUrl;</span>
-<span class="nc" id="L133">    }</span>
+<span class="nc" id="L133">        this.hostedSuppressionsUrl = hostedSuppressionsUrl;</span>
+<span class="nc" id="L134">    }</span>
 
     /**
      * Sets the
@@ -146,52 +147,24 @@ public class Purge extends Task {
      */
     @Override
     public final void execute() throws BuildException {
-<span class="fc" id="L149">        muteJCS();</span>
-<span class="fc" id="L150">        final ClassLoader current = Thread.currentThread().getContextClassLoader();</span>
+<span class="fc" id="L150">        muteJCS();</span>
+<span class="fc" id="L151">        final ClassLoader current = Thread.currentThread().getContextClassLoader();</span>
         try {
-<span class="fc" id="L152">            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());</span>
+<span class="fc" id="L153">            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());</span>
 
-<span class="fc" id="L154">            executeWithContextClassloader();</span>
+<span class="fc" id="L155">            executeWithContextClassloader();</span>
         } finally {
-<span class="fc" id="L156">            Thread.currentThread().setContextClassLoader(current);</span>
+<span class="fc" id="L157">            Thread.currentThread().setContextClassLoader(current);</span>
         }
-<span class="fc" id="L158">    }</span>
+<span class="fc" id="L159">    }</span>
 
     /**
-     * Hacky method of muting the noisy logging from JCS. Implemented using a
-     * solution from SO: https://stackoverflow.com/a/50723801
+     * Hacky method of muting the noisy logging from JCS.
      */
     private void muteJCS() {
-<span class="pc bpc" id="L165" title="1 of 2 branches missed.">        if (System.getProperty(&quot;jcs.logSystem&quot;) == null) {</span>
-<span class="nc" id="L166">            System.setProperty(&quot;jcs.logSystem&quot;, &quot;slf4j&quot;);</span>
-<span class="nc" id="L167">            System.setProperty(&quot;jcs.logSystem.mute&quot;, &quot;true&quot;);</span>
-        }
-
-<span class="fc" id="L170">        final String[] noisyLoggers = {</span>
-            &quot;org.apache.commons.jcs3.auxiliary.disk.AbstractDiskCache&quot;,
-            &quot;org.apache.commons.jcs3.engine.memory.AbstractMemoryCache&quot;,
-            &quot;org.apache.commons.jcs3.engine.control.CompositeCache&quot;,
-            &quot;org.apache.commons.jcs3.auxiliary.disk.indexed.IndexedDiskCache&quot;,
-            &quot;org.apache.commons.jcs3.engine.control.CompositeCache&quot;,
-            &quot;org.apache.commons.jcs3.engine.memory.AbstractMemoryCache&quot;,
-            &quot;org.apache.commons.jcs3.engine.control.event.ElementEventQueue&quot;,
-            &quot;org.apache.commons.jcs3.engine.memory.AbstractDoubleLinkedListMemoryCache&quot;,
-            &quot;org.apache.commons.jcs3.auxiliary.AuxiliaryCacheConfigurator&quot;,
-            &quot;org.apache.commons.jcs3.engine.control.CompositeCacheManager&quot;,
-            &quot;org.apache.commons.jcs3.utils.threadpool.ThreadPoolManager&quot;,
-            &quot;org.apache.commons.jcs3.engine.control.CompositeCacheConfigurator&quot;};
-<span class="fc bfc" id="L183" title="All 2 branches covered.">        for (String loggerName : noisyLoggers) {</span>
-            try {
-<span class="fc" id="L185">                final Logger l = LoggerFactory.getLogger(loggerName);</span>
-<span class="nc" id="L186">                final Field f = l.getClass().getSuperclass().getDeclaredField(&quot;currentLogLevel&quot;);</span>
-<span class="nc" id="L187">                f.setAccessible(true);</span>
-<span class="nc" id="L188">                f.set(l, LocationAwareLogger.ERROR_INT);</span>
-<span class="fc" id="L189">            } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException e) {</span>
-<span class="fc" id="L190">                LoggerFactory.getLogger(Purge.class)</span>
-<span class="fc" id="L191">                        .debug(&quot;Failed to reset the log level of &quot; + loggerName + &quot;, it will continue being noisy.&quot;);</span>
-<span class="nc" id="L192">            }</span>
-        }
-<span class="fc" id="L194">    }</span>
+<span class="fc" id="L165">        System.setProperty(&quot;jcs.logSystem&quot;, &quot;slf4j&quot;);</span>
+<span class="fc" id="L166">        Slf4jAdapter.muteLogging(true);</span>
+<span class="fc" id="L167">    }</span>
 
     /**
      * Executes the dependency-check purge to delete the existing local copy of
@@ -202,13 +175,13 @@ public class Purge extends Task {
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     protected void executeWithContextClassloader() throws BuildException {
-<span class="nc" id="L205">        populateSettings();</span>
-<span class="nc" id="L206">        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {</span>
-<span class="nc" id="L207">            engine.purge();</span>
+<span class="nc" id="L178">        populateSettings();</span>
+<span class="nc" id="L179">        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {</span>
+<span class="nc" id="L180">            engine.purge();</span>
         } finally {
-<span class="nc" id="L209">            settings.cleanup(true);</span>
+<span class="nc" id="L182">            settings.cleanup(true);</span>
         }
-<span class="nc" id="L211">    }</span>
+<span class="nc" id="L184">    }</span>
 
     /**
      * Takes the properties supplied and updates the dependency-check settings.
@@ -220,26 +193,26 @@ public class Purge extends Task {
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     protected void populateSettings() throws BuildException {
-<span class="fc" id="L223">        settings = new Settings();</span>
-<span class="fc" id="L224">        try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {</span>
-<span class="fc" id="L225">            settings.mergeProperties(taskProperties);</span>
-<span class="nc" id="L226">        } catch (IOException ex) {</span>
-<span class="nc" id="L227">            final String msg = &quot;Unable to load the dependency-check ant task.properties file.&quot;;</span>
-<span class="nc bnc" id="L228" title="All 2 branches missed.">            if (this.failOnError) {</span>
-<span class="nc" id="L229">                throw new BuildException(msg, ex);</span>
+<span class="fc" id="L196">        settings = new Settings();</span>
+<span class="fc" id="L197">        try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {</span>
+<span class="fc" id="L198">            settings.mergeProperties(taskProperties);</span>
+<span class="nc" id="L199">        } catch (IOException ex) {</span>
+<span class="nc" id="L200">            final String msg = &quot;Unable to load the dependency-check ant task.properties file.&quot;;</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">            if (this.failOnError) {</span>
+<span class="nc" id="L202">                throw new BuildException(msg, ex);</span>
             }
-<span class="nc" id="L231">            log(msg, ex, Project.MSG_WARN);</span>
-<span class="fc" id="L232">        }</span>
-<span class="fc" id="L233">        settings.setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);</span>
-<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
-<span class="nc" id="L235">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
+<span class="nc" id="L204">            log(msg, ex, Project.MSG_WARN);</span>
+<span class="fc" id="L205">        }</span>
+<span class="fc" id="L206">        settings.setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
+<span class="nc" id="L208">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
         } else {
-<span class="fc" id="L237">            final File jarPath = new File(Purge.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
-<span class="fc" id="L238">            final File base = jarPath.getParentFile();</span>
-<span class="fc" id="L239">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
-<span class="fc" id="L240">            final File dataDir = new File(base, sub);</span>
-<span class="fc" id="L241">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
+<span class="fc" id="L210">            final File jarPath = new File(Purge.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
+<span class="fc" id="L211">            final File base = jarPath.getParentFile();</span>
+<span class="fc" id="L212">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
+<span class="fc" id="L213">            final File dataDir = new File(base, sub);</span>
+<span class="fc" id="L214">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
         }
-<span class="fc" id="L243">    }</span>
+<span class="fc" id="L216">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
