@@ -100,15 +100,26 @@
                         ## optional properties
                         "name": "$enc.json($vulnerability.name)",
                         "description": "$enc.json($vulnerability.description)",
-                        #set($severity = $rpt.normalizeSeverity($vulnerability.cvssV3.cvssData.baseSeverity))
+                        #if($vulnerability.unscoredSeverity)
+                            #if($vulnerability.unscoredSeverity.equals("0.0"))
+                                #set($severity = "Unknown")
+                            #else
+                                #set($severity = $rpt.normalizeSeverity($vulnerability.unscoredSeverity))
+                            #end
+                        #elseif($vulnerability.cvssV3 && $vulnerability.cvssV3.cvssData && $vulnerability.cvssV3.cvssData.baseSeverity)
+                            #set($severity = $rpt.normalizeSeverity($vulnerability.cvssV3.cvssData.baseSeverity))
+                        #elseif($vulnerability.cvssV2 && $vulnerability.cvssV2.cvssData && $vulnerability.cvssV2.cvssData.baseSeverity)
+                            #set($severity = $rpt.normalizeSeverity($vulnerability.cvssV2.cvssData.baseSeverity))
+                        #end
                         "severity": "$severity.substring(0,1).toUpperCase()$severity.substring(1)",
                         ## "solution": "" --> not implemented
                         "links": [
                             #foreach( $ref in $vulnerability.getReferences(true) )
                                 {
+                                #if($ref.name)
+                                    ## optional property
                                     "name": "$enc.json($ref.name)",
-
-                                    ## optional properties
+                                #end
                                     "url": "$enc.json($ref.url)"
                                 }
                                 #if( $foreach.hasNext ),#end
@@ -129,6 +140,7 @@
             "package_manager": "maven",
             "dependencies": [
                 #foreach( $dependency in $dependencies )
+                    #if( $dependency.name )
                     {
                         "package": {
                             "name": "$enc.json($dependency.name)"
@@ -141,6 +153,7 @@
                         ##"dependency_path": [] --> not implemented
                     }
                     #if( $foreach.hasNext ),#end
+                    #end
                 #end
             ]
             ## no optional properties
