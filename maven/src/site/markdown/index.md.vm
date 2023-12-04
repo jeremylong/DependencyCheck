@@ -159,8 +159,7 @@ and META files must also be mirrored; see https://nvd.nist.gov/vuln/data-feeds#J
                 <artifactId>dependency-check-maven</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <cveUrlModified>http://internal-mirror.mycorp.com/nvdcve-1.1-modified.json.gz</cveUrlModified>
-                    <cveUrlBase>http://internal-mirror.mycorp.com/nvdcve-1.1-%d.json.gz</cveUrlBase>
+                    <nvdDatafeedUrl>http://internal-mirror.mycorp.com/nvdcve-{0}.json.gz</nvdDatafeedUrl>
                 </configuration>
                 <executions>
                     <execution>
