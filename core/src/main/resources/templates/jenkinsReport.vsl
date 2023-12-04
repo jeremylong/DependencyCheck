@@ -743,9 +743,11 @@ Getting Help: <a href="https://github.com/jeremylong/DependencyCheck/issues" tar
                             #if ($vuln.getReferences().size()>0)
                                 <br/>References:<ul>
                                 #foreach($ref in $vuln.getReferences(true))
-                                    #if ($ref.url)
+                                    #if ($ref.url && $ref.name)
                                     <li>$enc.html($ref.source) - <a target="_blank" href="$enc.html($ref.url)">$enc.html($ref.name)</a></li>
-                                    #else
+                                    #elseif ($ref.uri)
+                                    <li>$enc.html($ref.source) - <a target="_blank" href="$enc.html($ref.url)">$enc.html($ref.url)</a></li>
+                                    #elseif ($ref.name)
                                     <li>$enc.html($ref.source) - $enc.html($ref.name)</li>
                                     #end
                                 #end

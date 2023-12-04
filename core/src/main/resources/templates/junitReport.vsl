@@ -85,7 +85,7 @@
             #end
             <system-out>#if($vuln.description)$enc.xml($vuln.description)#else<![CDATA[ 
                 #foreach($ref in $vuln.getReferences())
-                    #if($ref.url)$enc.xml($ref.name): $enc.xml($ref.url)#end
+                    #if($ref.url && $ref.name)$enc.xml($ref.name): $enc.xml($ref.url)#elseif($ref.url)uri: $enc.xml($ref.url)#end
                 #end]]>#end</system-out>
             #set($referencedProjects="")
             #set($projectReferenced=false)
