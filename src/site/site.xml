@@ -93,6 +93,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                     <item name="Proxy" href="./data/proxy.html" />
                     <item name="Mirroring NVD" href="./data/mirrornvd.html" />
                     <item name="Snapshotting the NVD" href="./data/cachenvd.html" />
+                    <item name="Caching the Database" href="./data/cacheh2.html" />
                     <item name="Central DB" href="./data/database.html" />
                     <item name="Sonatype OSS Index" href="./data/ossindex.html" />
                 </item>
