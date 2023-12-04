@@ -287,7 +287,7 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
                         <reference>
                             <source>$enc.xml($ref.source)</source>
                             #if($ref.url)<url>$enc.xml($ref.url)</url>#end
-                            <name>$enc.xml($ref.name)</name>
+                            #if($ref.name)<name>$enc.xml($ref.name)</name>#end
                         </reference>
 #end
                     </references>
@@ -359,8 +359,8 @@ Copyright (c) 2018 Jeremy Long. All Rights Reserved.
 #foreach($ref in $vuln.getReferences())
                         <reference>
                             <source>$enc.xml($ref.source)</source>
-                            <url>$enc.xml($ref.url)</url>
-                            <name>$enc.xml($ref.name)</name>
+                            #if($ref.url)<url>$enc.xml($ref.url)</url>#end
+                            #if($ref.name)<name>$enc.xml($ref.name)</name>#end
                         </reference>
 #end
                     </references>

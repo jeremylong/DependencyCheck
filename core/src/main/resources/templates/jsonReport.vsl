@@ -254,7 +254,7 @@
                         #if($foreach.count > 1),#end {
                         "source": "$enc.json($ref.source)",
                         #if ($ref.url)"url": "$enc.json($ref.url)",#end
-                        "name": "$enc.json($ref.name)"
+                        #if ($ref.name)"name": "$enc.json($ref.name)"#end
                     }#end
                 ],
                 "vulnerableSoftware": [
@@ -331,7 +331,7 @@
                         #if($foreach.count > 1),#end {
                     "source": "$enc.json($ref.source)",
                     #if ($ref.url)"url": "$enc.json($ref.url)",#end
-                    "name": "$enc.json($ref.name)"
+                    #if ($ref.name)"name": "$enc.json($ref.name)"#end
                     }#end
                 ],
                 "vulnerableSoftware": [
