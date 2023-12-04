@@ -22,6 +22,13 @@ Without an NVD API Key dependency-check's updates will be **extremely slow**.
 Please see the documentation for the cli, maven, gradle, or ant integrations on
 how to set the NVD API key.
 
+#### The NVD API Key, CI, and Rate Limiting
+
+The NVD API has enforced rate limits. If you are using a single API KEY and
+multiple builds occur you could hit the rate limit and receive 403 errors. In
+a CI environment one must use a caching strategy.
+
+
 ### Breaking Changes
 
 9.0.0 contains breaking changes which requires updates to the database. If using
