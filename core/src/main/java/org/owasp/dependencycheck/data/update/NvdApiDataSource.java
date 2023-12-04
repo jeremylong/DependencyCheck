@@ -506,7 +506,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
             } else {
                 updates.put("modified", url + MessageFormat.format(filePattern, "modified"));
                 if (needsFullUpdate) {
-                    for (int i = startYear; i < endYear; i++) {
+                    for (int i = startYear; i <= endYear; i++) {
                         if (cacheProperties.containsKey(NVD_API_CACHE_MODIFIED_DATE + "." + i)) {
                             updates.put(String.valueOf(i), url + MessageFormat.format(filePattern, String.valueOf(i)));
                         }
