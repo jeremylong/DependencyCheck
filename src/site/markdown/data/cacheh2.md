@@ -2,7 +2,7 @@ Caching ODC's H2 Database
 =========================================
 
 Many users of dependency-check ensure that ODC runs as fast as possible by caching
-the `data` director (or in some cases just the H2 database). Where the `data`
+the `data` directory (or in some cases just the H2 database). Where the `data`
 directory exists is different for each integration (cli, maven, gradle, etc.).
 However, each integration allows users to configure the location of the data directory.
 
