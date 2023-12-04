@@ -439,13 +439,18 @@ public class NvdApiDataSource implements CachedWebDataSource {
             // ms Valid = valid (hours) x 60 min/hour x 60 sec/min x 1000 ms/sec
             final long validForSeconds = validForHours * 60L * 60L;
             final ZonedDateTime lastChecked = dbProperties.getTimestamp(DatabaseProperties.NVD_CACHE_LAST_CHECKED);
-            final ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-            final Duration duration = Duration.between(now, lastChecked);
-            final long difference = duration.getSeconds();
-            proceed = difference > validForSeconds;
-            if (!proceed) {
-                LOGGER.info("Skipping NVD API Cache check since last check was within {} hours.", validForHours);
-                LOGGER.debug("Last NVD API was at {}, and now {} is within {} s.", lastChecked, now, validForSeconds);
+            if (lastChecked == null) {
+                final ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+                final Duration duration = Duration.between(now, lastChecked);
+                final long difference = duration.getSeconds();
+                proceed = difference > validForSeconds;
+                if (!proceed) {
+                    LOGGER.info("Skipping NVD API Cache check since last check was within {} hours.", validForHours);
+                    LOGGER.debug("Last NVD API was at {}, and now {} is within {} s.", lastChecked, now, validForSeconds);
+                }
+            } else {
+                LOGGER.warn("NVD cache last checked not present; updating the entire database. This could occur if you are "
+                        + "switching back and forth from using the API vs a datafeed or if you are using a database created prior to ODC 9.x");
             }
         }
         return proceed;
