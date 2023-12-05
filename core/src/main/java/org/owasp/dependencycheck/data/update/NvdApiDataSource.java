@@ -441,7 +441,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
             final ZonedDateTime lastChecked = dbProperties.getTimestamp(DatabaseProperties.NVD_CACHE_LAST_CHECKED);
             if (lastChecked == null) {
                 final ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-                final Duration duration = Duration.between(now, lastChecked);
+                final Duration duration = Duration.between(lastChecked, now);
                 final long difference = duration.getSeconds();
                 proceed = difference > validForSeconds;
                 if (!proceed) {
