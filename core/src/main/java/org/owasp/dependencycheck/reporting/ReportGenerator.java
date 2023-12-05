@@ -309,9 +309,9 @@ public class ReportGenerator {
      * Writes the dependency-check report to the given output location.
      *
      * @param outputLocation the path where the reports should be written
-     * @param format the format the report should be written in (XML, HTML,
-     * JSON, CSV, ALL) or even the path to a custom velocity template (either
-     * fully qualified or the template name on the class path).
+     * @param format the format the report should be written in (a valid member
+     * of {@link Format}) or even the path to a custom velocity template
+     * (either fully qualified or the template name on the class path).
      * @throws ReportException is thrown if there is an error creating out the
      * reports
      */
@@ -331,6 +331,7 @@ public class ReportGenerator {
                 out = new File(out, FilenameUtils.getBaseName(format));
                 LOGGER.warn("Writing non-standard VSL output to a directory using template name as file name.");
             }
+            LOGGER.info("Writing custom report to: {}", out.getAbsolutePath());
             processTemplate(format, out);
         }
 
@@ -340,7 +341,8 @@ public class ReportGenerator {
      * Writes the dependency-check report(s).
      *
      * @param outputLocation the path where the reports should be written
-     * @param format the format the report should be written in (XML, HTML, ALL)
+     * @param format the format the report should be written in (see
+     * {@link Format})
      * @throws ReportException is thrown if there is an error creating out the
      * reports
      */
@@ -354,6 +356,7 @@ public class ReportGenerator {
         } else {
             final File out = getReportFile(outputLocation, format);
             final String templateName = format.toString().toLowerCase() + "Report";
+            LOGGER.info("Writing {} report to: {}", format, out.getAbsolutePath());
             processTemplate(templateName, out);
             if (settings.getBoolean(Settings.KEYS.PRETTY_PRINT, false)) {
                 if (format == Format.JSON || format == Format.SARIF) {
@@ -422,7 +425,6 @@ public class ReportGenerator {
     @SuppressFBWarnings(justification = "try with resources will clean up the output stream", value = {"OBL_UNSATISFIED_OBLIGATION"})
     protected void processTemplate(String template, File file) throws ReportException {
         ensureParentDirectoryExists(file);
-        LOGGER.info("Writing report to: " + file.getAbsolutePath());
         try (OutputStream output = new FileOutputStream(file)) {
             processTemplate(template, output);
         } catch (IOException ex) {

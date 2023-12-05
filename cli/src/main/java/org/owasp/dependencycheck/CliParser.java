@@ -64,7 +64,7 @@ public final class CliParser {
     /**
      * The supported reported formats.
      */
-    private static final String SUPPORTED_FORMATS = "HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, or ALL";
+    private static final String SUPPORTED_FORMATS = "HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, GITLAB or ALL";
 
     /**
      * Constructs a new CLI Parser object with the configured settings.
@@ -114,7 +114,7 @@ public final class CliParser {
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
         if (isUpdateOnly() || isRunScan()) {
-            
+
             String value = line.getOptionValue(ARGUMENT.NVD_API_VALID_FOR_HOURS);
             if (value != null) {
                 try {

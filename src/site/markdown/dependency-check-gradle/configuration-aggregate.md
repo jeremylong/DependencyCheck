@@ -29,8 +29,8 @@ Property             | Description                                              
 ---------------------|----------------------------------------------------------------------------------------------------------------------|------------------
 autoUpdate           | Sets whether auto-updating of the NVD API CVE data is enabled. It is not recommended that this be turned to false.   | true
 analyzedTypes        | The default artifact types that will be analyzed.                                                                    | ['jar', 'aar', 'js', 'war', 'ear', 'zip']
-format               | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL).                                         | HTML
-formats              | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, ALL).                                  | &nbsp;
+format               | The report format to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, GITLAB, ALL).                        | HTML
+formats              | A list of report formats to be generated (HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, GITLAB, ALL).                 | &nbsp;
 junitFailOnCVSS      | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure.     | 0
 failBuildOnCVSS      | Specifies if the build should be failed if a CVSS score equal to or above a specified level is identified. The default is 11; since the CVSS scores are 0-10, by default the build will never fail.  More information on CVSS scores can be found at the [NVD](https://nvd.nist.gov/vuln-metrics/cvss)| 11
 failOnError          | Fails the build if an error occurs during the dependency-check analysis.                                             | true

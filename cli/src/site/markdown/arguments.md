@@ -10,7 +10,7 @@ The following table lists the command line arguments:
 |       | \-\-exclude            | \<pattern\>     | The path patterns to exclude from the scan \- this option can be specified multiple times. This accepts Ant style path patterns (e.g. **/exclude/**). | Optional |
 |       | \-\-symLink            | \<depth\>       | The depth that symbolic links will be followed; the default is 0 meaning symbolic links will not be followed. | Optional |
 | \-o   | \-\-out                | \<path\>        | The folder to write reports to. This defaults to the current directory. If the format is not set to ALL one could specify a specific file name. | Optional |
-| \-f   | \-\-format             | \<format\>      | The output format to write to (XML, HTML, CSV, JSON, JUNIT, SARIF, ALL). Multiple formats can be specified by specifying the parameter multiple times. The default is HTML. | Required |
+| \-f   | \-\-format             | \<format\>      | The output format to write to (HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, GITLAB, ALL). Multiple formats can be specified by specifying the parameter multiple times. The default is HTML. | Required |
 |       | \-\-junitFailOnCVSS    | \<score\>       | If using the JUNIT report format the junitFailOnCVSS sets the CVSS score threshold that is considered a failure. The default is 0. | Optional |
 |       | \-\-prettyPrint        |                 | When specified the JSON and XML report formats will be pretty printed. | Optional |
 |       | \-\-failOnCVSS         | \<score\>       | If the score set between 0 and 10 the exit code from dependency-check will indicate if a vulnerability with a CVSS score equal to or higher was identified. | Optional |
