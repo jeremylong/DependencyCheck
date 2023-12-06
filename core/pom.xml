@@ -20,7 +20,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>9.0.3-SNAPSHOT</version>
+        <version>9.0.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>dependency-check-core</artifactId>
