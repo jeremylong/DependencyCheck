@@ -1,5 +1,22 @@
 # Change Log
 
+## [Version 9.0.3](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.3) (2023-12-06)
+
+- fix: use Java properties for proxy configuration (#6238)
+- docs: update proxy configuration documentation (#6237)
+- docs: add documentation on caching (#6204)
+- docs: Clarify H2 database caching strategy (#6220)
+- docs: Update list of supported report formats (#6224)
+- docs: example 5 with new nvdDatafeedUrl parameter (#6215)
+- fix: prevent NPEs (#6232 and #6206)
+- fix: check valid for hours for NVD API (#6225)
+- fix: correct NVD cache last checked logic (#6218)
+- fix: nvd datafeed should process current year (#6213)
+- fix: correct references to cvssv2 and cvssv3 fields in json and xml reports (#6212)
+- fix: correct name on reference links in report (#6205)
+- fix: flaws int the gitlab report (#6193)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/73?closed=1).
 
 ## [Version 9.0.2](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.2) (2023-12-01)
 

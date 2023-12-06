@@ -186,14 +186,21 @@ jobs:
           prerelease: false
           draft: false
           body: |
-            - fix: remove virtual match string on NVD API Request (#6177)
-            - fix: correct meta data in report after switching the NVD API (#6154)
-            - fix: retry HTTP connections to NVD on 502 and 504 errors (#6151)
-            - fix: Gitlab report format needs severity capitalized (#6182)
-            - fix: improve JDK update version parsing (#6163)
-            - fix: mute JCS logging (again) (#6153)
+            - fix: use Java properties for proxy configuration (#6238)
+            - docs: update proxy configuration documentation (#6237)
+            - docs: add documentation on caching (#6204)
+            - docs: Clarify H2 database caching strategy (#6220)
+            - docs: Update list of supported report formats (#6224)
+            - docs: example 5 with new nvdDatafeedUrl parameter (#6215)
+            - fix: prevent NPEs (#6232 and #6206)
+            - fix: check valid for hours for NVD API (#6225)
+            - fix: correct NVD cache last checked logic (#6218)
+            - fix: nvd datafeed should process current year (#6213)
+            - fix: correct references to cvssv2 and cvssv3 fields in json and xml reports (#6212)
+            - fix: correct name on reference links in report (#6205)
+            - fix: flaws int the gitlab report (#6193)
 
-            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/72?closed=1).
+            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/73?closed=1).
 
       - name: Upload CLI
         id: upload-release-cli
