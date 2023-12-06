@@ -1,15 +1,36 @@
-Proxy Configuration
-===================
-All of the dependency-check clients (CLI, Maven, Gradle, Ant, Jenkins) can be configured
-to use a proxy to connect to the Internet. See the configuration settings for each:
+# Proxy Configuration
+
+With dependency-check 9.x the proxy configuration is unfortunately in transition
+and, if required, will likely need to be **configured twice**.
+
+## Java Properties
+
+The go-forward proxy configuration is done using standard Java proxy configuration
+settings which can be set using an environment variable `JAVA_TOOL_OPTIONS`. 
+See https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html for
+more information. The properties that can be configured are:
+
+- https.proxyHost
+- https.proxyPort
+- https.proxyUser
+- https.proxyPassword
+- http.nonProxyHosts
+
+As example configuration would be:
+
+```bash
+export JAVA_TOOL_OPTIONS="-Dhttps.proxyHost=my-proxy.internal -Dhttps.proxyPort=8083"
+```
+
+## Legacy configuration
+
+Legacy proxy configuration can be configured in any of the dependency-check integrations 
+(CLI, Maven, Gradle, Ant, Jenkins). See the configuration settings for each:
 
 * [Maven Plugin](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/configuration.html)
 * [Gradle Plugin](https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html)
 * [Ant Task](https://jeremylong.github.io/DependencyCheck/dependency-check-ant/configuration.html)
 * [Command Line](https://jeremylong.github.io/DependencyCheck/dependency-check-cli/arguments.html)
-
-Note, it may also be possible to use the core [Java proxy](https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html)
-system properties instead of the configuration above.
 
 Certificate Errors
 ------------------

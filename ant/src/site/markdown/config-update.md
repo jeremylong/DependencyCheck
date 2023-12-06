@@ -17,16 +17,16 @@ Configuration: dependency-check-update Task
 --------------------
 The following properties can be set on the dependency-check-update task.
 
-Property              | Description                                                             | Default Value
-----------------------|-------------------------------------------------------------------------|------------------
-proxyServer           | The Proxy Server.                                                       | &nbsp;
-proxyPort             | The Proxy Port.                                                         | &nbsp;
-proxyUsername         | Defines the proxy user name.                                            | &nbsp;
-proxyPassword         | Defines the proxy password.                                             | &nbsp;
-nonProxyHosts         | Defines the hosts that will not be proxied.                             | &nbsp;
-connectionTimeout     | The URL Connection Timeout (in milliseconds).                           | 10000
-readtimeout           | The URL Read Timeout (in milliseconds).                                 | 60000
-failOnError           | Whether the build should fail if there is an error executing the update | true
+Property              | Description                                                                                   | Default Value
+----------------------|-----------------------------------------------------------------------------------------------|------------------
+proxyServer           | The Proxy Server; see the [proxy configuration](../data/proxy.html) page for more information.| &nbsp;
+proxyPort             | The Proxy Port.                                                                               | &nbsp;
+proxyUsername         | Defines the proxy user name.                                                                  | &nbsp;
+proxyPassword         | Defines the proxy password.                                                                   | &nbsp;
+nonProxyHosts         | Defines the hosts that will not be proxied.                                                   | &nbsp;
+connectionTimeout     | The URL Connection Timeout (in milliseconds).                                                 | 10000
+readtimeout           | The URL Read Timeout (in milliseconds).                                                       | 60000
+failOnError           | Whether the build should fail if there is an error executing the update                       | true
 
 Advanced Configuration
 ====================
