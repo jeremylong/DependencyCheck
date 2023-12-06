@@ -252,9 +252,9 @@
                 "references": [
                     #foreach($ref in $vuln.getReferences())
                         #if($foreach.count > 1),#end {
-                        "source": "$enc.json($ref.source)",
-                        #if ($ref.url)"url": "$enc.json($ref.url)",#end
-                        #if ($ref.name)"name": "$enc.json($ref.name)"#end
+                        "source": "$enc.json($ref.source)"
+                        #if ($ref.url),"url": "$enc.json($ref.url)"#end
+                        #if ($ref.name),"name": "$enc.json($ref.name)"#end
                     }#end
                 ],
                 "vulnerableSoftware": [
@@ -329,9 +329,9 @@
                 "references": [
                     #foreach($ref in $vuln.getReferences())
                         #if($foreach.count > 1),#end {
-                    "source": "$enc.json($ref.source)",
-                    #if ($ref.url)"url": "$enc.json($ref.url)",#end
-                    #if ($ref.name)"name": "$enc.json($ref.name)"#end
+                    "source": "$enc.json($ref.source)"
+                    #if ($ref.url),"url": "$enc.json($ref.url)"#end
+                    #if ($ref.name),"name": "$enc.json($ref.name)"#end
                     }#end
                 ],
                 "vulnerableSoftware": [
