@@ -203,7 +203,7 @@ See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/
 - The `gradle` and `maven` plugins now have the capability to scan the build plugins ([#4035](https://github.com/jeremylong/DependencyCheck/issues/4035)).
 - The `gradle` and `maven` plugins, for transitive dependencies, will report the root dependency in the project that included the transitive dependency ([#5001](https://github.com/jeremylong/DependencyCheck/pull/5001)).
 - Added `properties.security-severity` to SARIF report for better integration with GitHub Security Code scanning ([#5277](https://github.com/jeremylong/DependencyCheck/pull/5227)).
-- Allow for HTTP auth settings for Retire JS respository ([#5209](https://github.com/jeremylong/DependencyCheck/pull/5209)).
+- Allow for HTTP auth settings for Retire JS repository ([#5209](https://github.com/jeremylong/DependencyCheck/pull/5209)).
 - New schema for the XML report was added to support some of the above additions ([#5296](https://github.com/jeremylong/DependencyCheck/pull/5296)).
 - Added missing gradle option to only warn on remote errors from the OSS Index Analyzer ([gradle #303](https://github.com/dependency-check/dependency-check-gradle/pull/303)).
 

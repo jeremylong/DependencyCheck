@@ -14,7 +14,7 @@ Then configure dependency-check to use the NVD Datafeed URL.
 
 Mirroring Retire JS Repository
 ------------------------------------------------------------
-The Retire JS Respository is located at:
+The Retire JS Repository is located at:
 
 ```
 https://raw.githubusercontent.com/Retirejs/retire.js/master/repository/jsrepository.json

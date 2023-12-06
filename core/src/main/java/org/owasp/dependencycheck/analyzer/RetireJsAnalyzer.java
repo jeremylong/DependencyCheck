@@ -216,7 +216,7 @@ public class RetireJsAnalyzer extends AbstractFileTypeAnalyzer {
             try {
                 ds.update(engine);
             } catch (UpdateException ex) {
-                throw new InitializationException("Unable to initialize the Retire JS respository", ex);
+                throw new InitializationException("Unable to initialize the Retire JS repository", ex);
             }
         }
 

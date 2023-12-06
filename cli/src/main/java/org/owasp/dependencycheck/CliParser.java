@@ -413,11 +413,11 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.RETIRE_JS_FORCEUPDATE, "Force the RetireJS Analyzer to update "
                         + "even if autoupdate is disabled"))
                 .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL, "url",
-                        "The Retire JS Respository URL"))
+                        "The Retire JS Repository URL"))
                 .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL_USER, "username",
-                        "The password to authenticate to Retire JS Respository URL"))
+                        "The password to authenticate to Retire JS Repository URL"))
                 .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL_PASSWORD, "password",
-                        "The password to authenticate to Retire JS Respository URL"))
+                        "The password to authenticate to Retire JS Repository URL"))
                 .addOption(newOption(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE, "Specifies that the Retire JS "
                         + "Analyzer should filter out non-vulnerable JS files from the report."))
                 .addOption(newOptionWithArg(ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS, "true/false",
