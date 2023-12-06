@@ -53,7 +53,7 @@ Dependency-Check Core,org.owasp.dependencycheck.exception,ScanAgentException,16,
 Dependency-Check Core,org.owasp.dependencycheck.exception,ReportException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Core,org.owasp.dependencycheck.reporting,ReportGenerator.Format,0,94,0,0,0,10,0,1,0,1
 Dependency-Check Core,org.owasp.dependencycheck.reporting,SarifRule,125,323,20,28,61,81,52,31,32,27
-Dependency-Check Core,org.owasp.dependencycheck.reporting,ReportGenerator,220,668,20,74,52,144,22,40,3,12
+Dependency-Check Core,org.owasp.dependencycheck.reporting,ReportGenerator,225,663,20,74,53,144,22,40,3,12
 Dependency-Check Core,org.owasp.dependencycheck.reporting,EscapeTool,26,159,7,39,10,43,6,27,1,9
 Dependency-Check Core,org.owasp.dependencycheck.reporting,ReportTool,135,265,32,33,29,55,23,20,0,9
 Dependency-Check Core,org.owasp.dependencycheck.data.cwe,CweHandler,41,0,4,0,8,0,5,0,3,0
@@ -66,7 +66,7 @@ Dependency-Check Core,org.owasp.dependencycheck.data.update,EngineVersionCheck,1
 Dependency-Check Core,org.owasp.dependencycheck.data.update,KnownExploitedDataSource,139,39,15,1,26,10,11,3,3,3
 Dependency-Check Core,org.owasp.dependencycheck.data.update,RetireJSDataSource,166,114,16,6,35,23,11,6,2,4
 Dependency-Check Core,org.owasp.dependencycheck.data.update,HostedSuppressionsDataSource,185,129,19,9,42,25,15,6,3,4
-Dependency-Check Core,org.owasp.dependencycheck.data.update,NvdApiDataSource,1230,48,141,3,266,14,83,4,11,4
+Dependency-Check Core,org.owasp.dependencycheck.data.update,NvdApiDataSource,1262,48,145,3,273,14,85,4,11,4
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,15,72,1,9,4,17,1,7,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,LuceneUtils,0,61,1,11,0,17,1,8,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,TokenPairConcatenatingFilter,59,99,6,10,17,28,5,8,2,3

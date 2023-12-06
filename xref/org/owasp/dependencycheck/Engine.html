@@ -1195,7 +1195,7 @@
 <a class="jxr_linenumber" name="L1187" href="#L1187">1187</a> <em class="jxr_javadoccomment">     * @param applicationName the name of the application/project</em>
 <a class="jxr_linenumber" name="L1188" href="#L1188">1188</a> <em class="jxr_javadoccomment">     * @param outputDir the path to the output directory (can include the full</em>
 <a class="jxr_linenumber" name="L1189" href="#L1189">1189</a> <em class="jxr_javadoccomment">     * file name if the format is not ALL)</em>
-<a class="jxr_linenumber" name="L1190" href="#L1190">1190</a> <em class="jxr_javadoccomment">     * @param format the report format (ALL, HTML, CSV, JSON, etc.)</em>
+<a class="jxr_linenumber" name="L1190" href="#L1190">1190</a> <em class="jxr_javadoccomment">     * @param format the report format (see {@link ReportGenerator.Format})</em>
 <a class="jxr_linenumber" name="L1191" href="#L1191">1191</a> <em class="jxr_javadoccomment">     * @throws ReportException thrown if there is an error generating the report</em>
 <a class="jxr_linenumber" name="L1192" href="#L1192">1192</a> <em class="jxr_javadoccomment">     * @deprecated use</em>
 <a class="jxr_linenumber" name="L1193" href="#L1193">1193</a> <em class="jxr_javadoccomment">     * {@link #writeReports(java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)}</em>
@@ -1212,7 +1212,7 @@
 <a class="jxr_linenumber" name="L1204" href="#L1204">1204</a> <em class="jxr_javadoccomment">     * @param applicationName the name of the application/project</em>
 <a class="jxr_linenumber" name="L1205" href="#L1205">1205</a> <em class="jxr_javadoccomment">     * @param outputDir the path to the output directory (can include the full</em>
 <a class="jxr_linenumber" name="L1206" href="#L1206">1206</a> <em class="jxr_javadoccomment">     * file name if the format is not ALL)</em>
-<a class="jxr_linenumber" name="L1207" href="#L1207">1207</a> <em class="jxr_javadoccomment">     * @param format the report format (ALL, HTML, CSV, JSON, etc.)</em>
+<a class="jxr_linenumber" name="L1207" href="#L1207">1207</a> <em class="jxr_javadoccomment">     * @param format the report format (see {@link ReportGenerator.Format})</em>
 <a class="jxr_linenumber" name="L1208" href="#L1208">1208</a> <em class="jxr_javadoccomment">     * @param exceptions a collection of exceptions that may have occurred</em>
 <a class="jxr_linenumber" name="L1209" href="#L1209">1209</a> <em class="jxr_javadoccomment">     * during the analysis</em>
 <a class="jxr_linenumber" name="L1210" href="#L1210">1210</a> <em class="jxr_javadoccomment">     * @throws ReportException thrown if there is an error generating the report</em>
@@ -1231,7 +1231,7 @@
 <a class="jxr_linenumber" name="L1223" href="#L1223">1223</a> <em class="jxr_javadoccomment">     * @param version the Maven version</em>
 <a class="jxr_linenumber" name="L1224" href="#L1224">1224</a> <em class="jxr_javadoccomment">     * @param outputDir the path to the output directory (can include the full</em>
 <a class="jxr_linenumber" name="L1225" href="#L1225">1225</a> <em class="jxr_javadoccomment">     * file name if the format is not ALL)</em>
-<a class="jxr_linenumber" name="L1226" href="#L1226">1226</a> <em class="jxr_javadoccomment">     * @param format the report format (ALL, HTML, CSV, JSON, etc.)</em>
+<a class="jxr_linenumber" name="L1226" href="#L1226">1226</a> <em class="jxr_javadoccomment">     * @param format the report format (see {@link ReportGenerator.Format})</em>
 <a class="jxr_linenumber" name="L1227" href="#L1227">1227</a> <em class="jxr_javadoccomment">     * @throws ReportException thrown if there is an error generating the report</em>
 <a class="jxr_linenumber" name="L1228" href="#L1228">1228</a> <em class="jxr_javadoccomment">     * @deprecated use</em>
 <a class="jxr_linenumber" name="L1229" href="#L1229">1229</a> <em class="jxr_javadoccomment">     * {@link #writeReports(String, String, String, String, File, String, ExceptionCollection)}</em>
@@ -1253,7 +1253,7 @@
 <a class="jxr_linenumber" name="L1245" href="#L1245">1245</a> <em class="jxr_javadoccomment">     * @param version the Maven version</em>
 <a class="jxr_linenumber" name="L1246" href="#L1246">1246</a> <em class="jxr_javadoccomment">     * @param outputDir the path to the output directory (can include the full</em>
 <a class="jxr_linenumber" name="L1247" href="#L1247">1247</a> <em class="jxr_javadoccomment">     * file name if the format is not ALL)</em>
-<a class="jxr_linenumber" name="L1248" href="#L1248">1248</a> <em class="jxr_javadoccomment">     * @param format the report format (ALL, HTML, CSV, JSON, etc.)</em>
+<a class="jxr_linenumber" name="L1248" href="#L1248">1248</a> <em class="jxr_javadoccomment">     * @param format the report format  (see {@link ReportGenerator.Format})</em>
 <a class="jxr_linenumber" name="L1249" href="#L1249">1249</a> <em class="jxr_javadoccomment">     * @param exceptions a collection of exceptions that may have occurred</em>
 <a class="jxr_linenumber" name="L1250" href="#L1250">1250</a> <em class="jxr_javadoccomment">     * during the analysis</em>
 <a class="jxr_linenumber" name="L1251" href="#L1251">1251</a> <em class="jxr_javadoccomment">     * @throws ReportException thrown if there is an error generating the report</em>

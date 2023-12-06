@@ -1187,7 +1187,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param applicationName the name of the application/project
      * @param outputDir the path to the output directory (can include the full
      * file name if the format is not ALL)
-     * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @param format the report format (see {@link ReportGenerator.Format})
      * @throws ReportException thrown if there is an error generating the report
      * @deprecated use
      * {@link #writeReports(java.lang.String, java.io.File, java.lang.String, org.owasp.dependencycheck.exception.ExceptionCollection)}
@@ -1204,7 +1204,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param applicationName the name of the application/project
      * @param outputDir the path to the output directory (can include the full
      * file name if the format is not ALL)
-     * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @param format the report format (see {@link ReportGenerator.Format})
      * @param exceptions a collection of exceptions that may have occurred
      * during the analysis
      * @throws ReportException thrown if there is an error generating the report
@@ -1223,7 +1223,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param version the Maven version
      * @param outputDir the path to the output directory (can include the full
      * file name if the format is not ALL)
-     * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @param format the report format (see {@link ReportGenerator.Format})
      * @throws ReportException thrown if there is an error generating the report
      * @deprecated use
      * {@link #writeReports(String, String, String, String, File, String, ExceptionCollection)}
@@ -1245,7 +1245,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param version the Maven version
      * @param outputDir the path to the output directory (can include the full
      * file name if the format is not ALL)
-     * @param format the report format (ALL, HTML, CSV, JSON, etc.)
+     * @param format the report format  (see {@link ReportGenerator.Format})
      * @param exceptions a collection of exceptions that may have occurred
      * during the analysis
      * @throws ReportException thrown if there is an error generating the report

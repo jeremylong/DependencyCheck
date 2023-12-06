@@ -264,107 +264,112 @@ import org.slf4j.LoggerFactory;
 
     private boolean processApi() throws UpdateException {
 <span class="nc" id="L266">        final ZonedDateTime lastChecked = dbProperties.getTimestamp(DatabaseProperties.NVD_API_LAST_CHECKED);</span>
-<span class="nc bnc" id="L267" title="All 4 branches missed.">        if (cveDb.dataExists() &amp;&amp; lastChecked != null) {</span>
-<span class="nc" id="L268">            final ZonedDateTime thirtyMinutesAgo = ZonedDateTime.now().minusMinutes(30);</span>
-<span class="nc bnc" id="L269" title="All 2 branches missed.">            if (thirtyMinutesAgo.isBefore(lastChecked)) {</span>
-<span class="nc" id="L270">                LOGGER.info(&quot;Skipping the NVD API Update as it was completed within the last 30 minutes&quot;);</span>
-<span class="nc" id="L271">                return true;</span>
+<span class="nc" id="L267">        final int validForHours = settings.getInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, 0);</span>
+<span class="nc bnc" id="L268" title="All 6 branches missed.">        if (cveDb.dataExists() &amp;&amp; lastChecked != null &amp;&amp; validForHours&gt;0) {</span>
+            // ms Valid = valid (hours) x 60 min/hour x 60 sec/min x 1000 ms/sec
+<span class="nc" id="L270">            final long validForSeconds = validForHours * 60L * 60L;</span>
+<span class="nc" id="L271">            final ZonedDateTime now = ZonedDateTime.now(ZoneId.of(&quot;UTC&quot;));</span>
+<span class="nc" id="L272">            final Duration duration = Duration.between(lastChecked, now);</span>
+<span class="nc" id="L273">            final long difference = duration.getSeconds();</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">            if (difference &lt; validForSeconds) {</span>
+<span class="nc" id="L275">                LOGGER.info(&quot;Skipping the NVD API Update as it was completed within the last {} minutes&quot;, validForSeconds/60);</span>
+<span class="nc" id="L276">                return false;</span>
             }
         }
 
-<span class="nc" id="L275">        ZonedDateTime lastModifiedRequest = dbProperties.getTimestamp(DatabaseProperties.NVD_API_LAST_MODIFIED);</span>
-<span class="nc" id="L276">        final NvdCveClientBuilder builder = NvdCveClientBuilder.aNvdCveApi();</span>
-<span class="nc bnc" id="L277" title="All 2 branches missed.">        if (lastModifiedRequest != null) {</span>
-<span class="nc" id="L278">            final ZonedDateTime end = lastModifiedRequest.minusDays(-120);</span>
-<span class="nc" id="L279">            builder.withLastModifiedFilter(lastModifiedRequest, end);</span>
+<span class="nc" id="L280">        ZonedDateTime lastModifiedRequest = dbProperties.getTimestamp(DatabaseProperties.NVD_API_LAST_MODIFIED);</span>
+<span class="nc" id="L281">        final NvdCveClientBuilder builder = NvdCveClientBuilder.aNvdCveApi();</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">        if (lastModifiedRequest != null) {</span>
+<span class="nc" id="L283">            final ZonedDateTime end = lastModifiedRequest.minusDays(-120);</span>
+<span class="nc" id="L284">            builder.withLastModifiedFilter(lastModifiedRequest, end);</span>
         }
-<span class="nc" id="L281">        final String key = settings.getString(Settings.KEYS.NVD_API_KEY);</span>
-<span class="nc bnc" id="L282" title="All 2 branches missed.">        if (key != null) {</span>
+<span class="nc" id="L286">        final String key = settings.getString(Settings.KEYS.NVD_API_KEY);</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">        if (key != null) {</span>
             //using a higher delay as the system may not be able to process these faster.
-<span class="nc" id="L284">            builder.withApiKey(key)</span>
-<span class="nc" id="L285">                    .withDelay(2000)</span>
-<span class="nc" id="L286">                    .withThreadCount(4);</span>
+<span class="nc" id="L289">            builder.withApiKey(key)</span>
+<span class="nc" id="L290">                    .withDelay(2000)</span>
+<span class="nc" id="L291">                    .withThreadCount(4);</span>
         } else {
-<span class="nc" id="L288">            LOGGER.warn(&quot;An NVD API Key was not provided - it is highly recommended to use &quot;</span>
+<span class="nc" id="L293">            LOGGER.warn(&quot;An NVD API Key was not provided - it is highly recommended to use &quot;</span>
                     + &quot;an NVD API key as the update can take a VERY long time without an API Key&quot;);
-<span class="nc" id="L290">            builder.withDelay(8000);</span>
+<span class="nc" id="L295">            builder.withDelay(8000);</span>
         }
-<span class="nc" id="L292">        builder.withResultsPerPage(RESULTS_PER_PAGE);</span>
+<span class="nc" id="L297">        builder.withResultsPerPage(RESULTS_PER_PAGE);</span>
         //removed due to the virtualMatch filter causing overhead with the NVD API
         //final String virtualMatch = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER);
         //if (virtualMatch != null) {
         //    builder.withVirtualMatchString(virtualMatch);
         //}
 
-<span class="nc" id="L299">        final int retryCount = settings.getInt(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, 10);</span>
-<span class="nc" id="L300">        builder.withMaxRetryCount(retryCount);</span>
-<span class="nc" id="L301">        long delay = 0;</span>
+<span class="nc" id="L304">        final int retryCount = settings.getInt(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, 10);</span>
+<span class="nc" id="L305">        builder.withMaxRetryCount(retryCount);</span>
+<span class="nc" id="L306">        long delay = 0;</span>
         try {
-<span class="nc" id="L303">            delay = settings.getLong(Settings.KEYS.NVD_API_DELAY);</span>
-<span class="nc" id="L304">        } catch (InvalidSettingException ex) {</span>
-<span class="nc" id="L305">            LOGGER.warn(&quot;Invalid setting `NVD_API_DELAY`? ({}), using default delay&quot;, settings.getString(Settings.KEYS.NVD_API_DELAY));</span>
-<span class="nc" id="L306">        }</span>
-<span class="nc bnc" id="L307" title="All 2 branches missed.">        if (delay &gt; 0) {</span>
-<span class="nc" id="L308">            builder.withDelay(delay);</span>
+<span class="nc" id="L308">            delay = settings.getLong(Settings.KEYS.NVD_API_DELAY);</span>
+<span class="nc" id="L309">        } catch (InvalidSettingException ex) {</span>
+<span class="nc" id="L310">            LOGGER.warn(&quot;Invalid setting `NVD_API_DELAY`? ({}), using default delay&quot;, settings.getString(Settings.KEYS.NVD_API_DELAY));</span>
+<span class="nc" id="L311">        }</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">        if (delay &gt; 0) {</span>
+<span class="nc" id="L313">            builder.withDelay(delay);</span>
         }
 
-<span class="nc" id="L311">        ExecutorService processingExecutorService = null;</span>
+<span class="nc" id="L316">        ExecutorService processingExecutorService = null;</span>
         try {
-<span class="nc" id="L313">            processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);</span>
-<span class="nc" id="L314">            final List&lt;Future&lt;NvdApiProcessor&gt;&gt; submitted = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L315">            int max = -1;</span>
-<span class="nc" id="L316">            int ctr = 0;</span>
-<span class="nc" id="L317">            try (NvdCveClient api = builder.build()) {</span>
-<span class="nc bnc" id="L318" title="All 2 branches missed.">                while (api.hasNext()) {</span>
-<span class="nc" id="L319">                    final Collection&lt;DefCveItem&gt; items = api.next();</span>
-<span class="nc" id="L320">                    max = api.getTotalAvailable();</span>
-<span class="nc bnc" id="L321" title="All 2 branches missed.">                    if (ctr == 0) {</span>
-<span class="nc" id="L322">                        LOGGER.info(String.format(&quot;NVD API has %,d records in this update&quot;, max));</span>
+<span class="nc" id="L318">            processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);</span>
+<span class="nc" id="L319">            final List&lt;Future&lt;NvdApiProcessor&gt;&gt; submitted = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L320">            int max = -1;</span>
+<span class="nc" id="L321">            int ctr = 0;</span>
+<span class="nc" id="L322">            try (NvdCveClient api = builder.build()) {</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">                while (api.hasNext()) {</span>
+<span class="nc" id="L324">                    final Collection&lt;DefCveItem&gt; items = api.next();</span>
+<span class="nc" id="L325">                    max = api.getTotalAvailable();</span>
+<span class="nc bnc" id="L326" title="All 2 branches missed.">                    if (ctr == 0) {</span>
+<span class="nc" id="L327">                        LOGGER.info(String.format(&quot;NVD API has %,d records in this update&quot;, max));</span>
                     }
-<span class="nc bnc" id="L324" title="All 4 branches missed.">                    if (items != null &amp;&amp; !items.isEmpty()) {</span>
-<span class="nc" id="L325">                        final Future&lt;NvdApiProcessor&gt; f = processingExecutorService.submit(new NvdApiProcessor(cveDb, items));</span>
-<span class="nc" id="L326">                        submitted.add(f);</span>
-<span class="nc" id="L327">                        ctr += 1;</span>
-<span class="nc bnc" id="L328" title="All 2 branches missed.">                        if ((ctr % 5) == 0) {</span>
-<span class="nc" id="L329">                            final double percent = (double) (ctr * RESULTS_PER_PAGE) / max * 100;</span>
-<span class="nc" id="L330">                            LOGGER.info(String.format(&quot;Downloaded %,d/%,d (%.0f%%)&quot;, ctr * RESULTS_PER_PAGE, max, percent));</span>
+<span class="nc bnc" id="L329" title="All 4 branches missed.">                    if (items != null &amp;&amp; !items.isEmpty()) {</span>
+<span class="nc" id="L330">                        final Future&lt;NvdApiProcessor&gt; f = processingExecutorService.submit(new NvdApiProcessor(cveDb, items));</span>
+<span class="nc" id="L331">                        submitted.add(f);</span>
+<span class="nc" id="L332">                        ctr += 1;</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">                        if ((ctr % 5) == 0) {</span>
+<span class="nc" id="L334">                            final double percent = (double) (ctr * RESULTS_PER_PAGE) / max * 100;</span>
+<span class="nc" id="L335">                            LOGGER.info(String.format(&quot;Downloaded %,d/%,d (%.0f%%)&quot;, ctr * RESULTS_PER_PAGE, max, percent));</span>
                         }
                     }
-<span class="nc" id="L333">                    final ZonedDateTime last = api.getLastUpdated();</span>
-<span class="nc bnc" id="L334" title="All 6 branches missed.">                    if (last != null &amp;&amp; (lastModifiedRequest == null || lastModifiedRequest.compareTo(last) &lt; 0)) {</span>
-<span class="nc" id="L335">                        lastModifiedRequest = last;</span>
+<span class="nc" id="L338">                    final ZonedDateTime last = api.getLastUpdated();</span>
+<span class="nc bnc" id="L339" title="All 6 branches missed.">                    if (last != null &amp;&amp; (lastModifiedRequest == null || lastModifiedRequest.compareTo(last) &lt; 0)) {</span>
+<span class="nc" id="L340">                        lastModifiedRequest = last;</span>
                     }
-<span class="nc" id="L337">                }</span>
+<span class="nc" id="L342">                }</span>
 
-<span class="nc" id="L339">            } catch (Exception e) {</span>
-<span class="nc" id="L340">                throw new UpdateException(&quot;Error updating the NVD Data&quot;, e);</span>
-<span class="nc" id="L341">            }</span>
-<span class="nc" id="L342">            LOGGER.info(String.format(&quot;Downloaded %,d/%,d (%.0f%%)&quot;, max, max, 100f));</span>
-<span class="nc" id="L343">            max = submitted.size();</span>
-<span class="nc bnc" id="L344" title="All 2 branches missed.">            final boolean updated = max &gt; 0;</span>
-<span class="nc" id="L345">            ctr = 0;</span>
-<span class="nc bnc" id="L346" title="All 2 branches missed.">            for (Future&lt;NvdApiProcessor&gt; f : submitted) {</span>
+<span class="nc" id="L344">            } catch (Exception e) {</span>
+<span class="nc" id="L345">                throw new UpdateException(&quot;Error updating the NVD Data&quot;, e);</span>
+<span class="nc" id="L346">            }</span>
+<span class="nc" id="L347">            LOGGER.info(String.format(&quot;Downloaded %,d/%,d (%.0f%%)&quot;, max, max, 100f));</span>
+<span class="nc" id="L348">            max = submitted.size();</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">            final boolean updated = max &gt; 0;</span>
+<span class="nc" id="L350">            ctr = 0;</span>
+<span class="nc bnc" id="L351" title="All 2 branches missed.">            for (Future&lt;NvdApiProcessor&gt; f : submitted) {</span>
                 try {
-<span class="nc" id="L348">                    final NvdApiProcessor proc = f.get();</span>
-<span class="nc" id="L349">                    ctr += 1;</span>
-<span class="nc" id="L350">                    final double percent = (double) ctr / max * 100;</span>
-<span class="nc" id="L351">                    LOGGER.info(String.format(&quot;Completed processing batch %d/%d (%.0f%%) in %,dms&quot;, ctr, max, percent, proc.getDurationMillis()));</span>
-<span class="nc" id="L352">                } catch (InterruptedException ex) {</span>
-<span class="nc" id="L353">                    Thread.currentThread().interrupt();</span>
-<span class="nc" id="L354">                    throw new RuntimeException(ex);</span>
-<span class="nc" id="L355">                } catch (ExecutionException ex) {</span>
-<span class="nc" id="L356">                    LOGGER.error(&quot;Exception processing NVD API Results&quot;, ex);</span>
-<span class="nc" id="L357">                    throw new RuntimeException(ex);</span>
-<span class="nc" id="L358">                }</span>
-<span class="nc" id="L359">            }</span>
-<span class="nc bnc" id="L360" title="All 2 branches missed.">            if (lastModifiedRequest != null) {</span>
-<span class="nc" id="L361">                dbProperties.save(DatabaseProperties.NVD_API_LAST_CHECKED, ZonedDateTime.now());</span>
-<span class="nc" id="L362">                dbProperties.save(DatabaseProperties.NVD_API_LAST_MODIFIED, lastModifiedRequest);</span>
+<span class="nc" id="L353">                    final NvdApiProcessor proc = f.get();</span>
+<span class="nc" id="L354">                    ctr += 1;</span>
+<span class="nc" id="L355">                    final double percent = (double) ctr / max * 100;</span>
+<span class="nc" id="L356">                    LOGGER.info(String.format(&quot;Completed processing batch %d/%d (%.0f%%) in %,dms&quot;, ctr, max, percent, proc.getDurationMillis()));</span>
+<span class="nc" id="L357">                } catch (InterruptedException ex) {</span>
+<span class="nc" id="L358">                    Thread.currentThread().interrupt();</span>
+<span class="nc" id="L359">                    throw new RuntimeException(ex);</span>
+<span class="nc" id="L360">                } catch (ExecutionException ex) {</span>
+<span class="nc" id="L361">                    LOGGER.error(&quot;Exception processing NVD API Results&quot;, ex);</span>
+<span class="nc" id="L362">                    throw new RuntimeException(ex);</span>
+<span class="nc" id="L363">                }</span>
+<span class="nc" id="L364">            }</span>
+<span class="nc bnc" id="L365" title="All 2 branches missed.">            if (lastModifiedRequest != null) {</span>
+<span class="nc" id="L366">                dbProperties.save(DatabaseProperties.NVD_API_LAST_CHECKED, ZonedDateTime.now());</span>
+<span class="nc" id="L367">                dbProperties.save(DatabaseProperties.NVD_API_LAST_MODIFIED, lastModifiedRequest);</span>
             }
-<span class="nc" id="L364">            return updated;</span>
+<span class="nc" id="L369">            return updated;</span>
         } finally {
-<span class="nc bnc" id="L366" title="All 2 branches missed.">            if (processingExecutorService != null) {</span>
-<span class="nc" id="L367">                processingExecutorService.shutdownNow();</span>
+<span class="nc bnc" id="L371" title="All 2 branches missed.">            if (processingExecutorService != null) {</span>
+<span class="nc" id="L372">                processingExecutorService.shutdownNow();</span>
             }
         }
     }
@@ -376,51 +381,51 @@ import org.slf4j.LoggerFactory;
      * true
      */
     private boolean isUpdateConfiguredFalse() {
-<span class="pc bpc" id="L379" title="1 of 2 branches missed.">        if (!settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {</span>
-<span class="nc" id="L380">            return true;</span>
+<span class="pc bpc" id="L384" title="1 of 2 branches missed.">        if (!settings.getBoolean(Settings.KEYS.UPDATE_NVDCVE_ENABLED, true)) {</span>
+<span class="nc" id="L385">            return true;</span>
         }
-<span class="fc" id="L382">        boolean autoUpdate = true;</span>
+<span class="fc" id="L387">        boolean autoUpdate = true;</span>
         try {
-<span class="fc" id="L384">            autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE);</span>
-<span class="nc" id="L385">        } catch (InvalidSettingException ex) {</span>
-<span class="nc" id="L386">            LOGGER.debug(&quot;Invalid setting for auto-update; using true.&quot;);</span>
-<span class="fc" id="L387">        }</span>
-<span class="pc bpc" id="L388" title="1 of 2 branches missed.">        return !autoUpdate;</span>
+<span class="fc" id="L389">            autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE);</span>
+<span class="nc" id="L390">        } catch (InvalidSettingException ex) {</span>
+<span class="nc" id="L391">            LOGGER.debug(&quot;Invalid setting for auto-update; using true.&quot;);</span>
+<span class="fc" id="L392">        }</span>
+<span class="pc bpc" id="L393" title="1 of 2 branches missed.">        return !autoUpdate;</span>
     }
 
     @Override
     public boolean purge(Engine engine) {
-<span class="nc" id="L393">        boolean result = true;</span>
+<span class="nc" id="L398">        boolean result = true;</span>
         try {
-<span class="nc" id="L395">            final File dataDir = engine.getSettings().getDataDirectory();</span>
-<span class="nc" id="L396">            final File db = new File(dataDir, engine.getSettings().getString(Settings.KEYS.DB_FILE_NAME, &quot;odc.mv.db&quot;));</span>
-<span class="nc bnc" id="L397" title="All 2 branches missed.">            if (db.exists()) {</span>
-<span class="nc bnc" id="L398" title="All 2 branches missed.">                if (db.delete()) {</span>
-<span class="nc" id="L399">                    LOGGER.info(&quot;Database file purged; local copy of the NVD has been removed&quot;);</span>
+<span class="nc" id="L400">            final File dataDir = engine.getSettings().getDataDirectory();</span>
+<span class="nc" id="L401">            final File db = new File(dataDir, engine.getSettings().getString(Settings.KEYS.DB_FILE_NAME, &quot;odc.mv.db&quot;));</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">            if (db.exists()) {</span>
+<span class="nc bnc" id="L403" title="All 2 branches missed.">                if (db.delete()) {</span>
+<span class="nc" id="L404">                    LOGGER.info(&quot;Database file purged; local copy of the NVD has been removed&quot;);</span>
                 } else {
-<span class="nc" id="L401">                    LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, db.getAbsolutePath());</span>
-<span class="nc" id="L402">                    result = false;</span>
+<span class="nc" id="L406">                    LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, db.getAbsolutePath());</span>
+<span class="nc" id="L407">                    result = false;</span>
                 }
             } else {
-<span class="nc" id="L405">                LOGGER.info(&quot;Unable to purge database; the database file does not exist: {}&quot;, db.getAbsolutePath());</span>
-<span class="nc" id="L406">                result = false;</span>
-            }
-<span class="nc" id="L408">            final File traceFile = new File(dataDir, &quot;odc.trace.db&quot;);</span>
-<span class="nc bnc" id="L409" title="All 4 branches missed.">            if (traceFile.exists() &amp;&amp; !traceFile.delete()) {</span>
-<span class="nc" id="L410">                LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, traceFile.getAbsolutePath());</span>
+<span class="nc" id="L410">                LOGGER.info(&quot;Unable to purge database; the database file does not exist: {}&quot;, db.getAbsolutePath());</span>
 <span class="nc" id="L411">                result = false;</span>
             }
-<span class="nc" id="L413">            final File lockFile = new File(dataDir, &quot;odc.update.lock&quot;);</span>
-<span class="nc bnc" id="L414" title="All 4 branches missed.">            if (lockFile.exists() &amp;&amp; !lockFile.delete()) {</span>
-<span class="nc" id="L415">                LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, lockFile.getAbsolutePath());</span>
+<span class="nc" id="L413">            final File traceFile = new File(dataDir, &quot;odc.trace.db&quot;);</span>
+<span class="nc bnc" id="L414" title="All 4 branches missed.">            if (traceFile.exists() &amp;&amp; !traceFile.delete()) {</span>
+<span class="nc" id="L415">                LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, traceFile.getAbsolutePath());</span>
 <span class="nc" id="L416">                result = false;</span>
             }
-<span class="nc" id="L418">        } catch (IOException ex) {</span>
-<span class="nc" id="L419">            final String msg = &quot;Unable to delete the database&quot;;</span>
-<span class="nc" id="L420">            LOGGER.error(msg, ex);</span>
-<span class="nc" id="L421">            result = false;</span>
-<span class="nc" id="L422">        }</span>
-<span class="nc" id="L423">        return result;</span>
+<span class="nc" id="L418">            final File lockFile = new File(dataDir, &quot;odc.update.lock&quot;);</span>
+<span class="nc bnc" id="L419" title="All 4 branches missed.">            if (lockFile.exists() &amp;&amp; !lockFile.delete()) {</span>
+<span class="nc" id="L420">                LOGGER.error(&quot;Unable to delete '{}'; please delete the file manually&quot;, lockFile.getAbsolutePath());</span>
+<span class="nc" id="L421">                result = false;</span>
+            }
+<span class="nc" id="L423">        } catch (IOException ex) {</span>
+<span class="nc" id="L424">            final String msg = &quot;Unable to delete the database&quot;;</span>
+<span class="nc" id="L425">            LOGGER.error(msg, ex);</span>
+<span class="nc" id="L426">            result = false;</span>
+<span class="nc" id="L427">        }</span>
+<span class="nc" id="L428">        return result;</span>
     }
 
     /**
@@ -432,23 +437,28 @@ import org.slf4j.LoggerFactory;
      * updates
      */
     private boolean checkUpdate() throws UpdateException {
-<span class="nc" id="L435">        boolean proceed = true;</span>
+<span class="nc" id="L440">        boolean proceed = true;</span>
         // If the valid setting has not been specified, then we proceed to check...
-<span class="nc" id="L437">        final int validForHours = settings.getInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, 0);</span>
-<span class="nc bnc" id="L438" title="All 4 branches missed.">        if (dataExists() &amp;&amp; 0 &lt; validForHours) {</span>
+<span class="nc" id="L442">        final int validForHours = settings.getInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, 0);</span>
+<span class="nc bnc" id="L443" title="All 4 branches missed.">        if (dataExists() &amp;&amp; 0 &lt; validForHours) {</span>
             // ms Valid = valid (hours) x 60 min/hour x 60 sec/min x 1000 ms/sec
-<span class="nc" id="L440">            final long validForSeconds = validForHours * 60L * 60L;</span>
-<span class="nc" id="L441">            final ZonedDateTime lastChecked = dbProperties.getTimestamp(DatabaseProperties.NVD_CACHE_LAST_CHECKED);</span>
-<span class="nc" id="L442">            final ZonedDateTime now = ZonedDateTime.now(ZoneId.of(&quot;UTC&quot;));</span>
-<span class="nc" id="L443">            final Duration duration = Duration.between(now, lastChecked);</span>
-<span class="nc" id="L444">            final long difference = duration.getSeconds();</span>
-<span class="nc bnc" id="L445" title="All 2 branches missed.">            proceed = difference &gt; validForSeconds;</span>
-<span class="nc bnc" id="L446" title="All 2 branches missed.">            if (!proceed) {</span>
-<span class="nc" id="L447">                LOGGER.info(&quot;Skipping NVD API Cache check since last check was within {} hours.&quot;, validForHours);</span>
-<span class="nc" id="L448">                LOGGER.debug(&quot;Last NVD API was at {}, and now {} is within {} s.&quot;, lastChecked, now, validForSeconds);</span>
+<span class="nc" id="L445">            final long validForSeconds = validForHours * 60L * 60L;</span>
+<span class="nc" id="L446">            final ZonedDateTime lastChecked = dbProperties.getTimestamp(DatabaseProperties.NVD_CACHE_LAST_CHECKED);</span>
+<span class="nc bnc" id="L447" title="All 2 branches missed.">            if (lastChecked != null) {</span>
+<span class="nc" id="L448">                final ZonedDateTime now = ZonedDateTime.now(ZoneId.of(&quot;UTC&quot;));</span>
+<span class="nc" id="L449">                final Duration duration = Duration.between(lastChecked, now);</span>
+<span class="nc" id="L450">                final long difference = duration.getSeconds();</span>
+<span class="nc bnc" id="L451" title="All 2 branches missed.">                proceed = difference &gt; validForSeconds;</span>
+<span class="nc bnc" id="L452" title="All 2 branches missed.">                if (!proceed) {</span>
+<span class="nc" id="L453">                    LOGGER.info(&quot;Skipping NVD API Cache check since last check was within {} hours.&quot;, validForHours);</span>
+<span class="nc" id="L454">                    LOGGER.debug(&quot;Last NVD API was at {}, and now {} is within {} s.&quot;, lastChecked, now, validForSeconds);</span>
+                }
+<span class="nc" id="L456">            } else {</span>
+<span class="nc" id="L457">                LOGGER.warn(&quot;NVD cache last checked not present; updating the entire database. This could occur if you are &quot;</span>
+                        + &quot;switching back and forth from using the API vs a datafeed or if you are using a database created prior to ODC 9.x&quot;);
             }
         }
-<span class="nc" id="L451">        return proceed;</span>
+<span class="nc" id="L461">        return proceed;</span>
     }
 
     /**
@@ -457,7 +467,7 @@ import org.slf4j.LoggerFactory;
      * @return true if the database contains data
      */
     private boolean dataExists() {
-<span class="nc" id="L460">        return cveDb.dataExists();</span>
+<span class="nc" id="L470">        return cveDb.dataExists();</span>
     }
 
     /**
@@ -477,53 +487,53 @@ import org.slf4j.LoggerFactory;
      */
     protected final Map&lt;String, String&gt; getUpdatesNeeded(String url, String filePattern,
             Properties cacheProperties, ZonedDateTime now) throws UpdateException {
-<span class="nc" id="L480">        LOGGER.debug(&quot;starting getUpdatesNeeded() ...&quot;);</span>
-<span class="nc" id="L481">        final Map&lt;String, String&gt; updates = new HashMap&lt;&gt;();</span>
-<span class="nc bnc" id="L482" title="All 4 branches missed.">        if (dbProperties != null &amp;&amp; !dbProperties.isEmpty()) {</span>
-<span class="nc" id="L483">            final int startYear = settings.getInt(Settings.KEYS.NVD_API_DATAFEED_START_YEAR, 2002);</span>
+<span class="nc" id="L490">        LOGGER.debug(&quot;starting getUpdatesNeeded() ...&quot;);</span>
+<span class="nc" id="L491">        final Map&lt;String, String&gt; updates = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L492" title="All 4 branches missed.">        if (dbProperties != null &amp;&amp; !dbProperties.isEmpty()) {</span>
+<span class="nc" id="L493">            final int startYear = settings.getInt(Settings.KEYS.NVD_API_DATAFEED_START_YEAR, 2002);</span>
             // for establishing the current year use the timezone where the new year starts first
             // as from that moment on CNAs might start assigning CVEs with the new year depending
             // on the CNA's timezone
-<span class="nc" id="L487">            final int endYear = now.withZoneSameInstant(ZoneId.of(&quot;UTC+14:00&quot;)).getYear();</span>
-<span class="nc" id="L488">            boolean needsFullUpdate = false;</span>
-<span class="nc bnc" id="L489" title="All 2 branches missed.">            for (int y = startYear; y &lt;= endYear; y++) {</span>
-<span class="nc" id="L490">                final ZonedDateTime val = dbProperties.getTimestamp(DatabaseProperties.NVD_CACHE_LAST_MODIFIED + &quot;.&quot; + y);</span>
-<span class="nc bnc" id="L491" title="All 2 branches missed.">                if (val == null) {</span>
-<span class="nc" id="L492">                    needsFullUpdate = true;</span>
-<span class="nc" id="L493">                    break;</span>
+<span class="nc" id="L497">            final int endYear = now.withZoneSameInstant(ZoneId.of(&quot;UTC+14:00&quot;)).getYear();</span>
+<span class="nc" id="L498">            boolean needsFullUpdate = false;</span>
+<span class="nc bnc" id="L499" title="All 2 branches missed.">            for (int y = startYear; y &lt;= endYear; y++) {</span>
+<span class="nc" id="L500">                final ZonedDateTime val = dbProperties.getTimestamp(DatabaseProperties.NVD_CACHE_LAST_MODIFIED + &quot;.&quot; + y);</span>
+<span class="nc bnc" id="L501" title="All 2 branches missed.">                if (val == null) {</span>
+<span class="nc" id="L502">                    needsFullUpdate = true;</span>
+<span class="nc" id="L503">                    break;</span>
                 }
             }
-<span class="nc" id="L496">            final ZonedDateTime lastUpdated = dbProperties.getTimestamp(DatabaseProperties.NVD_CACHE_LAST_MODIFIED);</span>
-<span class="nc" id="L497">            final int days = settings.getInt(Settings.KEYS.NVD_API_DATAFEED_VALID_FOR_DAYS, 7);</span>
+<span class="nc" id="L506">            final ZonedDateTime lastUpdated = dbProperties.getTimestamp(DatabaseProperties.NVD_CACHE_LAST_MODIFIED);</span>
+<span class="nc" id="L507">            final int days = settings.getInt(Settings.KEYS.NVD_API_DATAFEED_VALID_FOR_DAYS, 7);</span>
 
-<span class="nc bnc" id="L499" title="All 4 branches missed.">            if (!needsFullUpdate &amp;&amp; lastUpdated.equals(DatabaseProperties.getTimestamp(cacheProperties, NVD_API_CACHE_MODIFIED_DATE))) {</span>
-<span class="nc" id="L500">                return updates;</span>
+<span class="nc bnc" id="L509" title="All 4 branches missed.">            if (!needsFullUpdate &amp;&amp; lastUpdated.equals(DatabaseProperties.getTimestamp(cacheProperties, NVD_API_CACHE_MODIFIED_DATE))) {</span>
+<span class="nc" id="L510">                return updates;</span>
             } else {
-<span class="nc" id="L502">                updates.put(&quot;modified&quot;, url + MessageFormat.format(filePattern, &quot;modified&quot;));</span>
-<span class="nc bnc" id="L503" title="All 2 branches missed.">                if (needsFullUpdate) {</span>
-<span class="nc bnc" id="L504" title="All 2 branches missed.">                    for (int i = startYear; i &lt; endYear; i++) {</span>
-<span class="nc bnc" id="L505" title="All 2 branches missed.">                        if (cacheProperties.containsKey(NVD_API_CACHE_MODIFIED_DATE + &quot;.&quot; + i)) {</span>
-<span class="nc" id="L506">                            updates.put(String.valueOf(i), url + MessageFormat.format(filePattern, String.valueOf(i)));</span>
+<span class="nc" id="L512">                updates.put(&quot;modified&quot;, url + MessageFormat.format(filePattern, &quot;modified&quot;));</span>
+<span class="nc bnc" id="L513" title="All 2 branches missed.">                if (needsFullUpdate) {</span>
+<span class="nc bnc" id="L514" title="All 2 branches missed.">                    for (int i = startYear; i &lt;= endYear; i++) {</span>
+<span class="nc bnc" id="L515" title="All 2 branches missed.">                        if (cacheProperties.containsKey(NVD_API_CACHE_MODIFIED_DATE + &quot;.&quot; + i)) {</span>
+<span class="nc" id="L516">                            updates.put(String.valueOf(i), url + MessageFormat.format(filePattern, String.valueOf(i)));</span>
                         }
                     }
-<span class="nc bnc" id="L509" title="All 2 branches missed.">                } else if (!DateUtil.withinDateRange(lastUpdated, now, days)) {</span>
-<span class="nc bnc" id="L510" title="All 2 branches missed.">                    for (int i = startYear; i &lt;= endYear; i++) {</span>
-<span class="nc bnc" id="L511" title="All 2 branches missed.">                        if (cacheProperties.containsKey(NVD_API_CACHE_MODIFIED_DATE + &quot;.&quot; + i)) {</span>
-<span class="nc" id="L512">                            final ZonedDateTime lastModifiedCache = DatabaseProperties.getTimestamp(cacheProperties,</span>
+<span class="nc bnc" id="L519" title="All 2 branches missed.">                } else if (!DateUtil.withinDateRange(lastUpdated, now, days)) {</span>
+<span class="nc bnc" id="L520" title="All 2 branches missed.">                    for (int i = startYear; i &lt;= endYear; i++) {</span>
+<span class="nc bnc" id="L521" title="All 2 branches missed.">                        if (cacheProperties.containsKey(NVD_API_CACHE_MODIFIED_DATE + &quot;.&quot; + i)) {</span>
+<span class="nc" id="L522">                            final ZonedDateTime lastModifiedCache = DatabaseProperties.getTimestamp(cacheProperties,</span>
                                     NVD_API_CACHE_MODIFIED_DATE + &quot;.&quot; + i);
-<span class="nc" id="L514">                            final ZonedDateTime lastModifiedDB = dbProperties.getTimestamp(DatabaseProperties.NVD_CACHE_LAST_MODIFIED + &quot;.&quot; + i);</span>
-<span class="nc bnc" id="L515" title="All 4 branches missed.">                            if (lastModifiedDB == null || lastModifiedCache.compareTo(lastModifiedDB) &gt; 0) {</span>
-<span class="nc" id="L516">                                updates.put(String.valueOf(i), url + MessageFormat.format(filePattern, String.valueOf(i)));</span>
+<span class="nc" id="L524">                            final ZonedDateTime lastModifiedDB = dbProperties.getTimestamp(DatabaseProperties.NVD_CACHE_LAST_MODIFIED + &quot;.&quot; + i);</span>
+<span class="nc bnc" id="L525" title="All 4 branches missed.">                            if (lastModifiedDB == null || lastModifiedCache.compareTo(lastModifiedDB) &gt; 0) {</span>
+<span class="nc" id="L526">                                updates.put(String.valueOf(i), url + MessageFormat.format(filePattern, String.valueOf(i)));</span>
                             }
                         }
                     }
                 }
             }
         }
-<span class="nc bnc" id="L523" title="All 2 branches missed.">        if (updates.size() &gt; 3) {</span>
-<span class="nc" id="L524">            LOGGER.info(&quot;NVD API Cache requires several updates; this could take a couple of minutes.&quot;);</span>
+<span class="nc bnc" id="L533" title="All 2 branches missed.">        if (updates.size() &gt; 3) {</span>
+<span class="nc" id="L534">            LOGGER.info(&quot;NVD API Cache requires several updates; this could take a couple of minutes.&quot;);</span>
         }
-<span class="nc" id="L526">        return updates;</span>
+<span class="nc" id="L536">        return updates;</span>
     }
 
     /**
@@ -536,18 +546,18 @@ import org.slf4j.LoggerFactory;
      */
     protected final Properties getRemoteCacheProperties(String url) throws UpdateException {
         try {
-<span class="nc" id="L539">            final URL u = new URL(url + &quot;cache.properties&quot;);</span>
-<span class="nc" id="L540">            final Downloader d = new Downloader(settings);</span>
-<span class="nc" id="L541">            final String content = d.fetchContent(u, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);</span>
-<span class="nc" id="L542">            final Properties properties = new Properties();</span>
-<span class="nc" id="L543">            properties.load(new StringReader(content));</span>
-<span class="nc" id="L544">            return properties;</span>
-<span class="nc" id="L545">        } catch (MalformedURLException ex) {</span>
-<span class="nc" id="L546">            throw new UpdateException(&quot;Invalid NVD Cache URL&quot;, ex);</span>
-<span class="nc" id="L547">        } catch (DownloadFailedException | TooManyRequestsException | ResourceNotFoundException ex) {</span>
-<span class="nc" id="L548">            throw new UpdateException(&quot;Unable to download the NVD API cache.properties&quot;, ex);</span>
-<span class="nc" id="L549">        } catch (IOException ex) {</span>
-<span class="nc" id="L550">            throw new UpdateException(&quot;Invalid NVD Cache Properties file contents&quot;, ex);</span>
+<span class="nc" id="L549">            final URL u = new URL(url + &quot;cache.properties&quot;);</span>
+<span class="nc" id="L550">            final Downloader d = new Downloader(settings);</span>
+<span class="nc" id="L551">            final String content = d.fetchContent(u, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);</span>
+<span class="nc" id="L552">            final Properties properties = new Properties();</span>
+<span class="nc" id="L553">            properties.load(new StringReader(content));</span>
+<span class="nc" id="L554">            return properties;</span>
+<span class="nc" id="L555">        } catch (MalformedURLException ex) {</span>
+<span class="nc" id="L556">            throw new UpdateException(&quot;Invalid NVD Cache URL&quot;, ex);</span>
+<span class="nc" id="L557">        } catch (DownloadFailedException | TooManyRequestsException | ResourceNotFoundException ex) {</span>
+<span class="nc" id="L558">            throw new UpdateException(&quot;Unable to download the NVD API cache.properties&quot;, ex);</span>
+<span class="nc" id="L559">        } catch (IOException ex) {</span>
+<span class="nc" id="L560">            throw new UpdateException(&quot;Invalid NVD Cache Properties file contents&quot;, ex);</span>
         }
     }
 }

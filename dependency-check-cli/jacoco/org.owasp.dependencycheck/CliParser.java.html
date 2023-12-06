@@ -64,7 +64,7 @@ public final class CliParser {
     /**
      * The supported reported formats.
      */
-    private static final String SUPPORTED_FORMATS = &quot;HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, or ALL&quot;;
+    private static final String SUPPORTED_FORMATS = &quot;HTML, XML, CSV, JSON, JUNIT, SARIF, JENKINS, GITLAB or ALL&quot;;
 
     /**
      * Constructs a new CLI Parser object with the configured settings.
@@ -114,7 +114,7 @@ public final class CliParser {
      */
     private void validateArgs() throws FileNotFoundException, ParseException {
 <span class="pc bpc" id="L116" title="1 of 4 branches missed.">        if (isUpdateOnly() || isRunScan()) {</span>
-            
+
 <span class="fc" id="L118">            String value = line.getOptionValue(ARGUMENT.NVD_API_VALID_FOR_HOURS);</span>
 <span class="pc bpc" id="L119" title="1 of 2 branches missed.">            if (value != null) {</span>
                 try {
@@ -413,11 +413,11 @@ public final class CliParser {
 <span class="fc" id="L413">                .addOption(newOption(ARGUMENT.RETIRE_JS_FORCEUPDATE, &quot;Force the RetireJS Analyzer to update &quot;</span>
                         + &quot;even if autoupdate is disabled&quot;))
 <span class="fc" id="L415">                .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL, &quot;url&quot;,</span>
-                        &quot;The Retire JS Respository URL&quot;))
+                        &quot;The Retire JS Repository URL&quot;))
 <span class="fc" id="L417">                .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL_USER, &quot;username&quot;,</span>
-                        &quot;The password to authenticate to Retire JS Respository URL&quot;))
+                        &quot;The password to authenticate to Retire JS Repository URL&quot;))
 <span class="fc" id="L419">                .addOption(newOptionWithArg(ARGUMENT.RETIREJS_URL_PASSWORD, &quot;password&quot;,</span>
-                        &quot;The password to authenticate to Retire JS Respository URL&quot;))
+                        &quot;The password to authenticate to Retire JS Repository URL&quot;))
 <span class="fc" id="L421">                .addOption(newOption(ARGUMENT.RETIREJS_FILTER_NON_VULNERABLE, &quot;Specifies that the Retire JS &quot;</span>
                         + &quot;Analyzer should filter out non-vulnerable JS files from the report.&quot;))
 <span class="fc" id="L423">                .addOption(newOptionWithArg(ARGUMENT.ARTIFACTORY_PARALLEL_ANALYSIS, &quot;true/false&quot;,</span>
