@@ -264,11 +264,16 @@ public class NvdApiDataSource implements CachedWebDataSource {
 
     private boolean processApi() throws UpdateException {
         final ZonedDateTime lastChecked = dbProperties.getTimestamp(DatabaseProperties.NVD_API_LAST_CHECKED);
-        if (cveDb.dataExists() && lastChecked != null) {
-            final ZonedDateTime thirtyMinutesAgo = ZonedDateTime.now().minusMinutes(30);
-            if (thirtyMinutesAgo.isBefore(lastChecked)) {
-                LOGGER.info("Skipping the NVD API Update as it was completed within the last 30 minutes");
-                return true;
+        final int validForHours = settings.getInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, 0);
+        if (cveDb.dataExists() && lastChecked != null && validForHours>0) {
+            // ms Valid = valid (hours) x 60 min/hour x 60 sec/min x 1000 ms/sec
+            final long validForSeconds = validForHours * 60L * 60L;
+            final ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+            final Duration duration = Duration.between(lastChecked, now);
+            final long difference = duration.getSeconds();
+            if (difference < validForSeconds) {
+                LOGGER.info("Skipping the NVD API Update as it was completed within the last {} minutes", validForSeconds/60);
+                return false;
             }
         }
 
