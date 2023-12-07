@@ -88,11 +88,8 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-plugin-plugin</artifactId>
+                <artifactId>maven-plugin-report-plugin</artifactId>
                 <version>${version.maven-plugin-plugin}</version>
-                <configuration>
-                    <goalPrefix>dependency-check</goalPrefix>
-                </configuration>
             </plugin>
         </plugins>
     </reporting>
