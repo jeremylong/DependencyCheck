@@ -649,7 +649,13 @@ public class App {
         settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH,
                 cli.getStringArgument(CliParser.ARGUMENT.PATH_TO_CORE));
 
-        settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, cli.getStringArgument(CliParser.ARGUMENT.NVD_API_KEY));
+        String key = cli.getStringArgument(CliParser.ARGUMENT.NVD_API_KEY);
+        if (key != null) {
+            if ((key.startsWith("\"") && key.endsWith("\"") || (key.startsWith("'") && key.endsWith("'")))) {
+                key = key.substring(1, key.length() - 1);
+            }
+            settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, key);
+        }
         settings.setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, cli.getIntegerValue(CliParser.ARGUMENT.NVD_API_DELAY));
         settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, cli.getStringArgument(CliParser.ARGUMENT.NVD_API_DATAFEED_URL));
         settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, cli.getStringArgument(CliParser.ARGUMENT.NVD_API_DATAFEED_USER));
