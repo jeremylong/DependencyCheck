@@ -1,5 +1,14 @@
 # Change Log
 
+## [Version 9.0.4](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.4) (2023-12-08)
+
+- fix: utilize maven proxy if present (#6255)
+- fix: allow api key in cli to be quoted (#6253)
+- fix: use correct maven plugin reporting plugin (#6244)
+- fix: correct trailing comma in JSON report (#6245)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/74?closed=1).
+
 ## [Version 9.0.3](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.3) (2023-12-06)
 
 - fix: use Java properties for proxy configuration (#6238)
