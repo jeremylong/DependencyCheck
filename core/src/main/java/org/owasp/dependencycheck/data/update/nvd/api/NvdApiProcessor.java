@@ -17,11 +17,20 @@
  */
 package org.owasp.dependencycheck.data.update.nvd.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.github.jeremylong.openvulnerability.client.nvd.CveApiJson20;
 import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.Callable;
+import java.util.zip.GZIPInputStream;
 import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
+import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +50,9 @@ public class NvdApiProcessor implements Callable<NvdApiProcessor> {
      */
     private final CveDB cveDB;
     /**
-     * The collection of NVD API data to add to the database.
+     * The file containing the data to inject.
      */
-    private Collection<DefCveItem> data;
+    private File jsonFile;
     /**
      * Reference to the CVE Ecosystem Mapper object.
      */
@@ -60,13 +69,13 @@ public class NvdApiProcessor implements Callable<NvdApiProcessor> {
     /**
      * Create a new processor to put the NVD data into the database.
      *
-     * @param cveDB a reference to the database
-     * @param data the data to add to the database
+     * @param cveDB a reference to the database.
+     * @param jsonFile the JSON data file to inject.
      * @param startTime the start time of the update process.
      */
-    public NvdApiProcessor(final CveDB cveDB, Collection<DefCveItem> data, long startTime) {
+    public NvdApiProcessor(final CveDB cveDB, File jsonFile, long startTime) {
         this.cveDB = cveDB;
-        this.data = data;
+        this.jsonFile = jsonFile;
         this.startTime = startTime;
     }
 
@@ -74,23 +83,48 @@ public class NvdApiProcessor implements Callable<NvdApiProcessor> {
      * Create a new processor to put the NVD data into the database.
      *
      * @param cveDB a reference to the database
-     * @param data the data to add to the database
+     * @param jsonFile the JSON data file to inject.
      */
-    public NvdApiProcessor(final CveDB cveDB, Collection<DefCveItem> data) {
-        this(cveDB, data, System.currentTimeMillis());
+    public NvdApiProcessor(final CveDB cveDB, File jsonFile) {
+        this(cveDB, jsonFile, System.currentTimeMillis());
     }
 
     @Override
     public NvdApiProcessor call() throws Exception {
-        for (DefCveItem entry : data) {
-            try {
-            cveDB.updateVulnerability(entry, mapper.getEcosystem(entry));
-            } catch (Exception ex) {
-                LOGGER.error("Failed to process " + entry.getCve().getId(), ex);
+        final ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+         Collection<DefCveItem> data = null;
+        
+         if (jsonFile.getName().endsWith(".jsonarray.gz")) {
+            try (FileInputStream fileInputStream = new FileInputStream(jsonFile);
+                        GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);) {
+                data = objectMapper.readValue(gzipInputStream, new TypeReference<Collection<DefCveItem>>(){});
+            } catch (IOException exception) {
+                throw new UpdateException("Unable to read downloaded json data: " + jsonFile, exception);
+            }
+        } else if (jsonFile.getName().endsWith(".gz")) {
+            try (FileInputStream fileInputStream = new FileInputStream(jsonFile);
+                        GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);) {
+                CveApiJson20 cveData = objectMapper.readValue(gzipInputStream, CveApiJson20.class);
+                if (cveData != null) {
+                    data = cveData.getVulnerabilities();
+                }
+            } catch (IOException exception) {
+                throw new UpdateException("Unable to read downloaded json data: " + jsonFile, exception);
+            }
+        } else {
+            data = objectMapper.readValue(jsonFile, new TypeReference<Collection<DefCveItem>>(){});
+        }
+        if (data != null ) {
+            for (DefCveItem entry : data) {
+                try {
+                    cveDB.updateVulnerability(entry, mapper.getEcosystem(entry));
+                } catch (Exception ex) {
+                    LOGGER.error("Failed to process " + entry.getCve().getId(), ex);
+                }
             }
         }
         endTime = System.currentTimeMillis();
-        data = null;
         return this;
     }
 

@@ -17,10 +17,13 @@
  */
 package org.owasp.dependencycheck.data.update;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
 import io.github.jeremylong.openvulnerability.client.nvd.NvdCveClient;
 import io.github.jeremylong.openvulnerability.client.nvd.NvdCveClientBuilder;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.MalformedURLException;
@@ -41,6 +44,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.zip.GZIPOutputStream;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -328,14 +332,21 @@ public class NvdApiDataSource implements CachedWebDataSource {
             int ctr = 0;
             try (NvdCveClient api = builder.build()) {
                 while (api.hasNext()) {
-                    final Collection<DefCveItem> items = api.next();
+                    Collection<DefCveItem> items = api.next();
                     max = api.getTotalAvailable();
                     if (ctr == 0) {
                         LOGGER.info(String.format("NVD API has %,d records in this update", max));
                     }
                     if (items != null && !items.isEmpty()) {
-                        final Future<NvdApiProcessor> f = processingExecutorService.submit(new NvdApiProcessor(cveDb, items));
+                        final ObjectMapper objectMapper = new ObjectMapper();
+                        objectMapper.registerModule(new JavaTimeModule());
+                        final File outputFile = settings.getTempFile("nvd-data-", ".jsonarray.gz");
+                        try (FileOutputStream fos = new FileOutputStream(outputFile);
+                                GZIPOutputStream out = new GZIPOutputStream(fos);) {
+                        objectMapper.writeValue(out, items);
+                        final Future<NvdApiProcessor> f = processingExecutorService.submit(new NvdApiProcessor(cveDb, outputFile));
                         submitted.add(f);
+                        }
                         ctr += 1;
                         if ((ctr % 5) == 0) {
                             final double percent = (double) (ctr * RESULTS_PER_PAGE) / max * 100;

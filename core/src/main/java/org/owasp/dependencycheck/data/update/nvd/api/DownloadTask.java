@@ -17,9 +17,7 @@
  */
 package org.owasp.dependencycheck.data.update.nvd.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.github.jeremylong.openvulnerability.client.nvd.CveApiJson20;
+import java.io.File;
 import java.net.URL;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -27,7 +25,6 @@ import java.util.concurrent.Future;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
-import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -72,7 +69,6 @@ public class DownloadTask implements Callable<Future<NvdApiProcessor>> {
      * @param settings a reference to the global settings object; this is
      * necessary so that when the thread is started the dependencies have a
      * correct reference to the global settings.
-     * @throws UpdateException thrown if temporary files could not be created
      */
     public DownloadTask(String url, ExecutorService processor, CveDB cveDB, Settings settings) {
         this.url = url;
@@ -89,15 +85,12 @@ public class DownloadTask implements Callable<Future<NvdApiProcessor>> {
             LOGGER.info("Download Started for NVD Cache - {}", url);
             final long startDownload = System.currentTimeMillis();
             final Downloader d = new Downloader(settings);
-            final String content = d.fetchGzContent(u, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
-            final ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            final CveApiJson20 data = objectMapper.readValue(content, CveApiJson20.class);
-
+            final File outputFile = settings.getTempFile("nvd-datafeed-", "json.gz");
+            d.fetchFile(u, outputFile, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
             if (this.processorService == null) {
                 return null;
             }
-            final NvdApiProcessor task = new NvdApiProcessor(cveDB, data.getVulnerabilities(), startDownload);
+            final NvdApiProcessor task = new NvdApiProcessor(cveDB, outputFile, startDownload);
             final Future<NvdApiProcessor> val = this.processorService.submit(task);
             return val;
         } catch (Throwable ex) {

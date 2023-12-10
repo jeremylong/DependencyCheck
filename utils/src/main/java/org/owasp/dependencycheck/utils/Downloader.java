@@ -178,49 +178,11 @@ public final class Downloader {
     public String fetchContent(URL url, boolean useProxy, String userKey, String passwordKey)
             throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
         InputStream in = null;
-        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);
+        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey); 
                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             in = conn.fetch(url);
             IOUtils.copy(in, out);
             return out.toString(UTF8);
-        } catch (IOException ex) {
-            final String msg = format("Download failed, unable to retrieve '%s'; %s", url, ex.getMessage());
-            throw new DownloadFailedException(msg, ex);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ex) {
-                    LOGGER.trace("Ignorable error", ex);
-                }
-            }
-        }
-    }
-
-    /**
-     * Retrieves a gzip file from a given URL and returns the uncompressed contents.
-     *
-     * @param url the URL of the file to download
-     * @param useProxy whether to use the configured proxy when downloading
-     * files
-     * @return the content of the file
-     * @param userKey the settings key for the username to be used
-     * @param passwordKey the settings key for the password to be used
-     * @throws DownloadFailedException is thrown if there is an error
-     * downloading the file
-     * @throws TooManyRequestsException thrown when a 429 is received
-     * @throws ResourceNotFoundException thrown when a 404 is received
-     */
-    public String fetchGzContent(URL url, boolean useProxy, String userKey, String passwordKey)
-            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
-        InputStream in = null;
-        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey)) {
-            in = conn.fetch(url);
-            try (GZIPInputStream gzipIn = new GZIPInputStream(in);
-                    ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-                IOUtils.copy(gzipIn, out);
-                return out.toString(UTF8);
-            }
         } catch (IOException ex) {
             final String msg = format("Download failed, unable to retrieve '%s'; %s", url, ex.getMessage());
             throw new DownloadFailedException(msg, ex);
