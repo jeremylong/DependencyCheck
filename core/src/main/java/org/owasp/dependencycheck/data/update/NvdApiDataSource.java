@@ -110,23 +110,30 @@ public class NvdApiDataSource implements CachedWebDataSource {
         return processApi();
     }
 
+    protected UrlData extractUrlData(String nvdDataFeedUrl) {
+        String url;
+        String pattern = null;
+        if (nvdDataFeedUrl.endsWith(".json.gz")) {
+            final int lio = nvdDataFeedUrl.lastIndexOf("/");
+            pattern = nvdDataFeedUrl.substring(lio + 1);
+            url = nvdDataFeedUrl.substring(0, lio);
+        } else {
+            url = nvdDataFeedUrl;
+        }
+        if (!url.endsWith("/")) {
+            url += "/";
+        }
+        return new UrlData(url, pattern);
+    }
+
     private boolean processDatafeed(String nvdDataFeedUrl) throws UpdateException {
         boolean updatesMade = false;
         try {
             dbProperties = cveDb.getDatabaseProperties();
             if (checkUpdate()) {
-                String url;
-                String pattern = null;
-                if (nvdDataFeedUrl.endsWith(".json.gz")) {
-                    final int lio = nvdDataFeedUrl.lastIndexOf("/");
-                    pattern = nvdDataFeedUrl.substring(lio + 1);
-                    url = nvdDataFeedUrl.substring(0, lio);
-                } else {
-                    url = nvdDataFeedUrl;
-                }
-                if (!url.endsWith("/")) {
-                    url += "/";
-                }
+                final UrlData data = extractUrlData(nvdDataFeedUrl);
+                String url = data.getUrl();
+                String pattern = data.getPattern();
                 final Properties cacheProperties = getRemoteCacheProperties(url);
                 if (pattern == null) {
                     final String prefix = cacheProperties.getProperty("prefix", "nvdcve-");
@@ -265,14 +272,14 @@ public class NvdApiDataSource implements CachedWebDataSource {
     private boolean processApi() throws UpdateException {
         final ZonedDateTime lastChecked = dbProperties.getTimestamp(DatabaseProperties.NVD_API_LAST_CHECKED);
         final int validForHours = settings.getInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, 0);
-        if (cveDb.dataExists() && lastChecked != null && validForHours>0) {
+        if (cveDb.dataExists() && lastChecked != null && validForHours > 0) {
             // ms Valid = valid (hours) x 60 min/hour x 60 sec/min x 1000 ms/sec
             final long validForSeconds = validForHours * 60L * 60L;
             final ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             final Duration duration = Duration.between(lastChecked, now);
             final long difference = duration.getSeconds();
             if (difference < validForSeconds) {
-                LOGGER.info("Skipping the NVD API Update as it was completed within the last {} minutes", validForSeconds/60);
+                LOGGER.info("Skipping the NVD API Update as it was completed within the last {} minutes", validForSeconds / 60);
                 return false;
             }
         }
@@ -559,5 +566,36 @@ public class NvdApiDataSource implements CachedWebDataSource {
         } catch (IOException ex) {
             throw new UpdateException("Invalid NVD Cache Properties file contents", ex);
         }
+    }
+
+    protected static class UrlData {
+
+        private final String url;
+
+        private final String pattern;
+
+        public UrlData(String url, String pattern) {
+            this.url = url;
+            this.pattern = pattern;
+        }
+
+        /**
+         * Get the value of pattern
+         *
+         * @return the value of pattern
+         */
+        public String getPattern() {
+            return pattern;
+        }
+
+        /**
+         * Get the value of url
+         *
+         * @return the value of url
+         */
+        public String getUrl() {
+            return url;
+        }
+
     }
 }
