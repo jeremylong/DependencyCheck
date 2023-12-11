@@ -17,20 +17,11 @@
  */
 package org.owasp.dependencycheck.data.update.nvd.api;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.github.jeremylong.openvulnerability.client.nvd.CveApiJson20;
 import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Collection;
 import java.util.concurrent.Callable;
-import java.util.zip.GZIPInputStream;
 import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
-import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,38 +82,26 @@ public class NvdApiProcessor implements Callable<NvdApiProcessor> {
 
     @Override
     public NvdApiProcessor call() throws Exception {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-         Collection<DefCveItem> data = null;
+        CveItemSource<DefCveItem> itemSource = null;
         
-         if (jsonFile.getName().endsWith(".jsonarray.gz")) {
-            try (FileInputStream fileInputStream = new FileInputStream(jsonFile);
-                        GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);) {
-                data = objectMapper.readValue(gzipInputStream, new TypeReference<Collection<DefCveItem>>(){});
-            } catch (IOException exception) {
-                throw new UpdateException("Unable to read downloaded json data: " + jsonFile, exception);
-            }
+        if (jsonFile.getName().endsWith(".jsonarray.gz")) {
+            itemSource = new JsonArrayCveItemSource(jsonFile);
         } else if (jsonFile.getName().endsWith(".gz")) {
-            try (FileInputStream fileInputStream = new FileInputStream(jsonFile);
-                        GZIPInputStream gzipInputStream = new GZIPInputStream(fileInputStream);) {
-                CveApiJson20 cveData = objectMapper.readValue(gzipInputStream, CveApiJson20.class);
-                if (cveData != null) {
-                    data = cveData.getVulnerabilities();
-                }
-            } catch (IOException exception) {
-                throw new UpdateException("Unable to read downloaded json data: " + jsonFile, exception);
-            }
+            itemSource = new CveApiJson20CveItemSource(jsonFile);
         } else {
-            data = objectMapper.readValue(jsonFile, new TypeReference<Collection<DefCveItem>>(){});
+            itemSource = new JsonArrayCveItemSource(jsonFile);
         }
-        if (data != null ) {
-            for (DefCveItem entry : data) {
+        try {
+            while (itemSource.hasNext()) {
+                DefCveItem entry = itemSource.next();
                 try {
                     cveDB.updateVulnerability(entry, mapper.getEcosystem(entry));
                 } catch (Exception ex) {
                     LOGGER.error("Failed to process " + entry.getCve().getId(), ex);
                 }
             }
+        } finally {
+            itemSource.close();
         }
         endTime = System.currentTimeMillis();
         return this;
