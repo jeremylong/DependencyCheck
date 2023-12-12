@@ -215,9 +215,15 @@ public class NvdApiDataSource implements CachedWebDataSource {
 
     private void storeLastModifiedDates(final ZonedDateTime now, final Properties cacheProperties,
             final Map<String, String> updateable) throws UpdateException {
+        
+        ZonedDateTime lastModifiedRequest = DatabaseProperties.getTimestamp(cacheProperties,
+                NVD_API_CACHE_MODIFIED_DATE + ".modified");
         dbProperties.save(DatabaseProperties.NVD_CACHE_LAST_CHECKED, now);
-        dbProperties.save(DatabaseProperties.NVD_CACHE_LAST_MODIFIED, DatabaseProperties.getTimestamp(cacheProperties,
-                NVD_API_CACHE_MODIFIED_DATE + ".modified"));
+        dbProperties.save(DatabaseProperties.NVD_CACHE_LAST_MODIFIED, lastModifiedRequest);
+        //allow users to initially load from a cache but then use the API - this may happen with the GH Action
+        dbProperties.save(DatabaseProperties.NVD_API_LAST_CHECKED, now);
+        dbProperties.save(DatabaseProperties.NVD_API_LAST_MODIFIED, lastModifiedRequest);
+        
         for (String entry : updateable.keySet()) {
             final ZonedDateTime date = DatabaseProperties.getTimestamp(cacheProperties, NVD_API_CACHE_MODIFIED_DATE + "." + entry);
             dbProperties.save(DatabaseProperties.NVD_CACHE_LAST_MODIFIED + "." + entry, date);
