@@ -33,8 +33,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 
-public class HostedSuppressionsDataSource  implements CachedWebDataSource {
+public class HostedSuppressionsDataSource implements CachedWebDataSource {
 
     /**
      * Static logger.
@@ -45,7 +46,10 @@ public class HostedSuppressionsDataSource  implements CachedWebDataSource {
      * The configured settings.
      */
     private Settings settings;
-
+    /**
+     * The properties obtained from the database.
+     */
+    private DatabaseProperties dbProperties = null;
     /**
      * The default URL to the Hosted Suppressions file.
      */
@@ -55,12 +59,17 @@ public class HostedSuppressionsDataSource  implements CachedWebDataSource {
      * Downloads the current Hosted suppressions file.
      *
      * @param engine a reference to the ODC Engine
-     * @return returns false as no updates are made to the database, just web resources cached locally
+     * @return returns false as no updates are made to the database, just web
+     * resources cached locally
      * @throws UpdateException thrown if the update encountered fatal errors
      */
     @Override
     public boolean update(Engine engine) throws UpdateException {
         this.settings = engine.getSettings();
+        if (engine.getMode() != Engine.Mode.EVIDENCE_COLLECTION) {
+            //note this conditional is only to support test cases.
+            this.dbProperties = engine.getDatabase().getDatabaseProperties();
+        }
         final String configuredUrl = settings.getString(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, DEFAULT_SUPPRESSIONS_URL);
         final boolean autoupdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);
         final boolean forceupdate = settings.getBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, false);
@@ -76,11 +85,14 @@ public class HostedSuppressionsDataSource  implements CachedWebDataSource {
             if (proceed) {
                 LOGGER.debug("Begin Hosted Suppressions file update");
                 fetchHostedSuppressions(settings, url, repoFile);
+                if (dbProperties != null) {
+                    dbProperties.save(DatabaseProperties.HOSTED_SUPPRESSION_LAST_CHECKED, Long.toString(System.currentTimeMillis() / 1000));
+                }
             }
         } catch (UpdateException ex) {
             // only emit a warning, DependencyCheck will continue without taking the latest hosted suppressions into account.
             LOGGER.warn("Failed to update hosted suppressions file, results may contain false positives already resolved by the "
-                        + "DependencyCheck project", ex);
+                    + "DependencyCheck project", ex);
         } catch (MalformedURLException ex) {
             throw new UpdateException(String.format("Invalid URL for Hosted Suppressions file (%s)", configuredUrl), ex);
         } catch (IOException ex) {
@@ -93,8 +105,8 @@ public class HostedSuppressionsDataSource  implements CachedWebDataSource {
      * Determines if the we should update the Hosted Suppressions file.
      *
      * @param repo the Hosted Suppressions file.
-     * @return <code>true</code> if an update to the Hosted Suppressions file should
-     * be performed; otherwise <code>false</code>
+     * @return <code>true</code> if an update to the Hosted Suppressions file
+     * should be performed; otherwise <code>false</code>
      * @throws NumberFormatException thrown if an invalid value is contained in
      * the database properties
      */
@@ -102,7 +114,14 @@ public class HostedSuppressionsDataSource  implements CachedWebDataSource {
         boolean proceed = true;
         if (repo != null && repo.isFile()) {
             final int validForHours = settings.getInt(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, 2);
-            final long lastUpdatedOn = repo.lastModified();
+            long lastUpdatedOn = 0;
+            if (dbProperties != null) {
+                lastUpdatedOn = dbProperties.getPropertyInSeconds(DatabaseProperties.HOSTED_SUPPRESSION_LAST_CHECKED);
+            }
+            if (lastUpdatedOn <= 0) {
+                //fall back on conversion from file last modified to storing in the db.
+                lastUpdatedOn = repo.lastModified();
+            }
             final long now = System.currentTimeMillis();
             LOGGER.debug("Last updated: {}", lastUpdatedOn);
             LOGGER.debug("Now: {}", now);
@@ -120,7 +139,8 @@ public class HostedSuppressionsDataSource  implements CachedWebDataSource {
      *
      * @param settings a reference to the dependency-check settings
      * @param repoUrl the URL to the hosted suppressions file to use
-     * @param repoFile the local file where the hosted suppressions file is to be placed
+     * @param repoFile the local file where the hosted suppressions file is to
+     * be placed
      * @throws UpdateException thrown if there is an exception during
      * initialization
      */
@@ -144,7 +164,7 @@ public class HostedSuppressionsDataSource  implements CachedWebDataSource {
         boolean result = true;
         try {
             final URL repoUrl = new URL(settings.getString(Settings.KEYS.HOSTED_SUPPRESSIONS_URL,
-                                                                       DEFAULT_SUPPRESSIONS_URL));
+                    DEFAULT_SUPPRESSIONS_URL));
             final String filename = new File(repoUrl.getPath()).getName();
             final File repo = new File(settings.getDataDirectory(), filename);
             if (repo.exists()) {

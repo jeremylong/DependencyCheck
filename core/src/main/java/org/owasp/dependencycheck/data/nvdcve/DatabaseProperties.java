@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.utils.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +73,14 @@ public class DatabaseProperties {
      * The key for the last check time for the Known Exploited Vulnerabilities.
      */
     public static final String KEV_LAST_CHECKED = "kev.checked";
+    /**
+     * The key for the last check time for the Retire JS repository.
+     */
+    public static final String RETIRE_LAST_CHECKED = "retirejs.checked";
+    /**
+     * The key for the last check time for the hosted suppression file.
+     */
+    public static final String HOSTED_SUPPRESSION_LAST_CHECKED = "hosted.suppression.checked";
     /**
      * The key for the version the Known Exploited Vulnerabilities.
      */
@@ -213,6 +222,17 @@ public class DatabaseProperties {
             return ZonedDateTime.parse(value, dtf);
         }
         return null;
+    }
+    
+    /**
+     * Returns the database property value in seconds.
+     *
+     * @param key the key to the property
+     * @return the property value in seconds
+     */
+    public long getPropertyInSeconds(String key) {
+        final String value = getProperty(key, "0");
+        return DateUtil.getEpochValueInSeconds(value);
     }
 
 }
