@@ -171,13 +171,13 @@ public class DatabaseProperties {
             if (!"version".equals(key)) {
                 if (DatabaseProperties.NVD_API_LAST_CHECKED.equals(key)) {
                     map.put("NVD API Last Checked", entry.getValue().toString());
-                    
+
                 } else if (DatabaseProperties.NVD_API_LAST_MODIFIED.equals(key)) {
                     map.put("NVD API Last Modified", entry.getValue().toString());
-                    
+
                 } else if (DatabaseProperties.NVD_CACHE_LAST_CHECKED.equals(key)) {
                     map.put("NVD Cache Last Checked", entry.getValue().toString());
-                    
+
                 } else if (DatabaseProperties.NVD_CACHE_LAST_MODIFIED.equals(key)) {
                     map.put("NVD Cache Last Modified", entry.getValue().toString());
                 }
@@ -208,6 +208,18 @@ public class DatabaseProperties {
     }
 
     /**
+     * Stores a timestamp in the properties file.
+     *
+     * @param properties the properties to store the timestamp
+     * @param key the property key
+     * @param timestamp the zoned date time
+     */
+    public static void setTimestamp(Properties properties, String key, ZonedDateTime timestamp) throws UpdateException {
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssX");
+        properties.put(key, dtf.format(timestamp));
+    }
+
+    /**
      * Retrieves a zoned date time.
      *
      * @param properties the properties file containing the date time
@@ -223,7 +235,25 @@ public class DatabaseProperties {
         }
         return null;
     }
-    
+
+    /**
+     * Retrieves a zoned date time.
+     *
+     * @param properties the properties file containing the date time
+     * @param key the property key
+     * @return the zoned date time
+     */
+    public static ZonedDateTime getIsoTimestamp(Properties properties, String key) {
+        //final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssX");
+        final DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
+        final String val = properties.getProperty(key);
+        if (val != null) {
+            final String value = properties.getProperty(key);
+            return ZonedDateTime.parse(value, dtf);
+        }
+        return null;
+    }
+
     /**
      * Returns the database property value in seconds.
      *

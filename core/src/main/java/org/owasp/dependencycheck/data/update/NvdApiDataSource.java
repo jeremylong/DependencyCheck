@@ -26,7 +26,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.time.Duration;
@@ -138,7 +139,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
                 final UrlData data = extractUrlData(nvdDataFeedUrl);
                 String url = data.getUrl();
                 String pattern = data.getPattern();
-                final Properties cacheProperties = getRemoteCacheProperties(url);
+                final Properties cacheProperties = getRemoteCacheProperties(url, pattern);
                 if (pattern == null) {
                     final String prefix = cacheProperties.getProperty("prefix", "nvdcve-");
                     pattern = prefix + "{0}.json.gz";
@@ -341,11 +342,10 @@ public class NvdApiDataSource implements CachedWebDataSource {
                         final ObjectMapper objectMapper = new ObjectMapper();
                         objectMapper.registerModule(new JavaTimeModule());
                         final File outputFile = settings.getTempFile("nvd-data-", ".jsonarray.gz");
-                        try (FileOutputStream fos = new FileOutputStream(outputFile);
-                                GZIPOutputStream out = new GZIPOutputStream(fos);) {
-                        objectMapper.writeValue(out, items);
-                        final Future<NvdApiProcessor> f = processingExecutorService.submit(new NvdApiProcessor(cveDb, outputFile));
-                        submitted.add(f);
+                        try (FileOutputStream fos = new FileOutputStream(outputFile); GZIPOutputStream out = new GZIPOutputStream(fos);) {
+                            objectMapper.writeValue(out, items);
+                            final Future<NvdApiProcessor> f = processingExecutorService.submit(new NvdApiProcessor(cveDb, outputFile));
+                            submitted.add(f);
                         }
                         ctr += 1;
                         if ((ctr % 5) == 0) {
@@ -562,21 +562,51 @@ public class NvdApiDataSource implements CachedWebDataSource {
      * @throws UpdateException thrown if the properties file could not be
      * downloaded
      */
-    protected final Properties getRemoteCacheProperties(String url) throws UpdateException {
+    protected final Properties getRemoteCacheProperties(String url, String pattern) throws UpdateException {
+        final Downloader d = new Downloader(settings);
+        final Properties properties = new Properties();
         try {
-            final URL u = new URL(url + "cache.properties");
-            final Downloader d = new Downloader(settings);
+            final URL u = new URI(url + "cache.properties").toURL();
             final String content = d.fetchContent(u, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
-            final Properties properties = new Properties();
             properties.load(new StringReader(content));
-            return properties;
-        } catch (MalformedURLException ex) {
+            
+        } catch (URISyntaxException ex) {
             throw new UpdateException("Invalid NVD Cache URL", ex);
-        } catch (DownloadFailedException | TooManyRequestsException | ResourceNotFoundException ex) {
+        } catch (DownloadFailedException | ResourceNotFoundException ex) {
+            String metaPattern;
+            if (pattern == null) {
+                metaPattern = "nvdcve-{0}.meta";
+            } else {
+                metaPattern = pattern.replace(".json.gz", ".meta");
+            }
+            try {
+                URL  metaUrl = new URI(url + MessageFormat.format(metaPattern, "modified")).toURL();
+                String content = d.fetchContent(metaUrl, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
+                Properties props = new Properties();
+                props.load(new StringReader(content));
+                ZonedDateTime lmd = DatabaseProperties.getIsoTimestamp(props, "lastModifiedDate");
+                DatabaseProperties.setTimestamp(properties,"lastModifiedDate.modified", lmd);
+                DatabaseProperties.setTimestamp(properties,"lastModifiedDate", lmd);
+                final int startYear = settings.getInt(Settings.KEYS.NVD_API_DATAFEED_START_YEAR, 2002);
+                final ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+                final int endYear = now.withZoneSameInstant(ZoneId.of("UTC+14:00")).getYear();
+                for (int y = startYear; y <= endYear; y++) {
+                    metaUrl = new URI(url + MessageFormat.format(metaPattern, String.valueOf(y))).toURL();
+                    content = d.fetchContent(metaUrl, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
+                    props.clear();
+                    props.load(new StringReader(content));
+                    lmd = DatabaseProperties.getIsoTimestamp(props, "lastModifiedDate");
+                    DatabaseProperties.setTimestamp(properties, "lastModifiedDate." + String.valueOf(y), lmd);
+                }
+            } catch (URISyntaxException | TooManyRequestsException | ResourceNotFoundException | IOException ex1) {
+                throw new UpdateException("Unable to download the data feed META files", ex);
+            }
+        } catch ( TooManyRequestsException ex) {
             throw new UpdateException("Unable to download the NVD API cache.properties", ex);
         } catch (IOException ex) {
             throw new UpdateException("Invalid NVD Cache Properties file contents", ex);
         }
+        return properties;
     }
 
     protected static class UrlData {
