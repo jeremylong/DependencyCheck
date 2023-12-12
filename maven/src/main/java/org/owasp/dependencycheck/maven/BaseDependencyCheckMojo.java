@@ -2194,7 +2194,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     System.setProperty("https.proxyPassword", mavenProxy.getPassword());
                 }
                 if (mavenProxy.getNonProxyHosts() != null && !mavenProxy.getNonProxyHosts().isEmpty()) {
-                    System.setProperty("https.nonProxyHosts", mavenProxy.getNonProxyHosts());
+                    System.setProperty("http.nonProxyHosts", mavenProxy.getNonProxyHosts());
                 }
             }
 
