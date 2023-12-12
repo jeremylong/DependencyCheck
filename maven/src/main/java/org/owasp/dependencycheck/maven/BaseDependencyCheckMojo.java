@@ -88,6 +88,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
@@ -1929,7 +1930,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * fail the build
      */
     protected void runCheck() throws MojoExecutionException, MojoFailureException {
-        muteJCS();
+        muteNoisyLoggers();
         try (Engine engine = initializeEngine()) {
             ExceptionCollection exCol = null;
             if (scanDependencies) {
@@ -2498,10 +2499,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * Hacky method of muting the noisy logging from JCS
      */
-    private void muteJCS() {
+    private void muteNoisyLoggers() {
         System.setProperty("jcs.logSystem", "slf4j");
         if (!getLog().isDebugEnabled()) {
             Slf4jAdapter.muteLogging(true);
+        }
+
+        final String[] noisyLoggers = {
+            "org.apache.hc"
+        };
+        for (String loggerName : noisyLoggers) {
+            System.setProperty("org.slf4j.simpleLogger.log." + loggerName, "error");
         }
     }
 

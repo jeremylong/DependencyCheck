@@ -147,7 +147,7 @@ public class Purge extends Task {
      */
     @Override
     public final void execute() throws BuildException {
-        muteJCS();
+        muteNoisyLoggers();
         final ClassLoader current = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -161,9 +161,16 @@ public class Purge extends Task {
     /**
      * Hacky method of muting the noisy logging from JCS.
      */
-    private void muteJCS() {
+    private void muteNoisyLoggers() {
         System.setProperty("jcs.logSystem", "slf4j");
         Slf4jAdapter.muteLogging(true);
+
+        final String[] noisyLoggers = {
+            "org.apache.hc"
+        };
+        for (String loggerName : noisyLoggers) {
+            System.setProperty("org.slf4j.simpleLogger.log." + loggerName, "error");
+        }
     }
 
     /**

@@ -11,6 +11,7 @@
     </appender>
 
     <logger name="org.apache.commons.jcs" level="ERROR" />
+    <logger name="org.apache.hc" level="ERROR" />
 
     <root level="INFO">
         <appender-ref ref="console"/>
