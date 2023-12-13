@@ -2870,6 +2870,13 @@
     </suppress>
     <suppress base="true">
         <notes><![CDATA[
+        FP per #6016
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/com\.vaadin\.flow\.ai.*$</packageUrl>
+        <cpe>cpe:/a:vaadin:flow</cpe>
+    </suppress>
+    <suppress base="true">
+        <notes><![CDATA[
         FP per #5155 #5153 #4180 #4188 #4189 #4190 #2651 #2191
         ]]></notes>
         <packageUrl regex="true">^(?!pkg:maven/com\.vaadin/vaadin(-core)?@).*$</packageUrl>
