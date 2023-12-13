@@ -2,10 +2,10 @@ name: Build and Deploy Release
 
 ##
 ## Automates the release process
-## 1. Update the 'body:' below and the changelog.md
+## 1. Run `./list-changes.sh` and update the changelog.md.
 ## 2. Run `./prepare-release.sh`
 ## 3. Create PR, merge PR
-## 4. Run `git push origin main --tags`
+## 4. Run `git push origin --tags`
 ##
 
 permissions:
@@ -186,12 +186,7 @@ jobs:
           prerelease: false
           draft: false
           body: |
-            - fix: utilize maven proxy if present (#6255)
-            - fix: allow api key in cli to be quoted (#6253)
-            - fix: use correct maven plugin reporting plugin (#6244)
-            - fix: correct trailing comma in JSON report (#6245)
-
-            See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/74?closed=1).
+            Refer to the [CHANGELOG.md](https://github.com/jeremylong/DependencyCheck/blob/main/CHANGELOG.md#change-log) for information about improvements and upgrade notes.
 
       - name: Upload CLI
         id: upload-release-cli

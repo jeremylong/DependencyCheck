@@ -1,5 +1,20 @@
 # Change Log
 
+## [Version 9.0.5](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.5) (2023-12-13)
+
+- fix: make NVD API endpoint configurable (#6287)
+- fix: synch last modified timestamp for NVD API (#6281)
+- fix: read NVD cache meta files if cache.properties does not exist (#6282)
+- fix: correct property for nonProxyHosts (#6285)
+- fix: reduce apache http logging (#6280)
+- fix: store last modified timestamp for RetireJS and the Hosted Suppression File in db (#6271)
+- build: bump golang in the docker image (#6274)
+- fix: use temporary files to reduce memory usage during the NVD Update (#6270)
+- fix: use BIT for Oracle DB instead of Boolean when calling prepared statements (#6264)
+- fix: showing all reference tags in reports (#6259)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/75?closed=1).
+
 ## [Version 9.0.4](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.4) (2023-12-08)
 
 - fix: utilize maven proxy if present (#6255)
