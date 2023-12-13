@@ -297,6 +297,10 @@ public class NvdApiDataSource implements CachedWebDataSource {
 
         ZonedDateTime lastModifiedRequest = dbProperties.getTimestamp(DatabaseProperties.NVD_API_LAST_MODIFIED);
         final NvdCveClientBuilder builder = NvdCveClientBuilder.aNvdCveApi();
+        final String endpoint = settings.getString(Settings.KEYS.NVD_API_ENDPOINT);
+        if (endpoint != null) {
+            builder.withEndpoint(endpoint);
+        }
         if (lastModifiedRequest != null) {
             final ZonedDateTime end = lastModifiedRequest.minusDays(-120);
             builder.withLastModifiedFilter(lastModifiedRequest, end);

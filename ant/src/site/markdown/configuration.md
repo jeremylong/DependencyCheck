@@ -144,6 +144,7 @@ The following properties can be configured in the plugin. However, they are less
 Property             | Description                                                                                                  | Default Value
 ---------------------|--------------------------------------------------------------------------------------------------------------|------------------
 nvdApiKey            | The API Key to access the NVD API; obtained from https://nvd.nist.gov/developers/request-an-api-key          | &nbsp;
+nvdApiEndpoint       | The NVD API endpoint URL; setting this is uncommon.                                                          | https://services.nvd.nist.gov/rest/json/cves/2.0
 nvdMaxRetryCount     | The maximum number of retry requests for a single call to the NVD API.                                       | 10
 nvdApiDelay          | The number of milliseconds to wait between calls to the NVD API.                                             | 2000 with an NVD API Key or 8000 without an API Key
 nvdDatafeedUrl       | The URL for the NVD API Data feed that can be generated using https://github.com/jeremylong/Open-Vulnerability-Project/tree/main/vulnz#caching-the-nvd-cve-data - example value `https://internal.server/cache/nvdcve-{0}.json.gz` | &nbsp;

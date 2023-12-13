@@ -21,17 +21,13 @@ import io.github.jeremylong.jcs3.slf4j.Slf4jAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.utils.Settings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.impl.StaticLoggerBinder;
-import org.slf4j.spi.LocationAwareLogger;
 
 /**
  * An Ant task definition to execute dependency-check during an Ant build.

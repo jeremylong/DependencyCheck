@@ -77,7 +77,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -88,7 +87,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
@@ -109,9 +107,6 @@ import org.owasp.dependencycheck.reporting.ReportGenerator;
 import org.owasp.dependencycheck.utils.SeverityUtil;
 import org.owasp.dependencycheck.xml.pom.Model;
 import org.owasp.dependencycheck.xml.pom.PomUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.spi.LocationAwareLogger;
 
 //CSOFF: FileLength
 /**
@@ -941,7 +936,12 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nvdValidForHours")
     private Integer nvdValidForHours;
-
+    /**
+     * The NVD API Endpoint; setting this is uncommon.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "nvdApiEndpoint")
+    private String nvdApiEndpoint;
     /**
      * The NVD API Data Feed URL.
      */
@@ -2334,6 +2334,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         }
         settings.setStringIfNotEmpty(Settings.KEYS.DATA_DIRECTORY, dataDirectory);
         settings.setStringIfNotEmpty(Settings.KEYS.DB_FILE_NAME, dbFilename);
+        settings.setStringIfNotNull(Settings.KEYS.NVD_API_ENDPOINT, nvdApiEndpoint);
         settings.setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, nvdApiDelay);
         settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);
         settings.setIntIfNotNull(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);

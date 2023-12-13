@@ -161,7 +161,10 @@ public final class Settings {
          * be imported.
          */
         public static final String CVE_CPE_STARTS_WITH_FILTER = "cve.cpe.startswith.filter";
-
+        /**
+         * The NVD API Endpoint.
+         */
+        public static final String NVD_API_ENDPOINT = "nvd.api.endpoint";
         /**
          * API Key for the NVD API.
          */

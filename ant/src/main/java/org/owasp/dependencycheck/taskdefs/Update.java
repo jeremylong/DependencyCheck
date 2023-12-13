@@ -38,6 +38,10 @@ import org.slf4j.impl.StaticLoggerBinder;
 public class Update extends Purge {
 
     /**
+     * The NVD API endpoint.
+     */
+    private String nvdApiEndpoint;
+    /**
      * The NVD API Key.
      */
     private String nvdApiKey;
@@ -137,6 +141,24 @@ public class Update extends Purge {
         // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
         // core end up coming through this tasks logger
         StaticLoggerBinder.getSingleton().setTask(this);
+    }
+
+    /**
+     * Get the value of nvdApiEndpoint.
+     *
+     * @return the value of nvdApiEndpoint
+     */
+    public String getNvdApiEndpoint() {
+        return nvdApiEndpoint;
+    }
+
+    /**
+     * Set the value of nvdApiEndpoint.
+     *
+     * @param nvdApiEndpoint new value of nvdApiEndpoint
+     */
+    public void setNvdApiEndpoint(String nvdApiEndpoint) {
+        this.nvdApiEndpoint = nvdApiEndpoint;
     }
 
     /**
@@ -596,6 +618,7 @@ public class Update extends Purge {
         getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);
 
         getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_ENDPOINT, nvdApiEndpoint);
         getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, nvdApiDelay);
         getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);
         getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, nvdUser);

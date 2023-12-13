@@ -68,6 +68,7 @@ The following properties can be configured in the dependencyCheck task. However,
 Config Group | Property          | Description                                                                                                          | Default Value
 -------------|-------------------|----------------------------------------------------------------------------------------------------------------------|------------------
 nvd          | apiKey            | The API Key to access the NVD API; obtained from https://nvd.nist.gov/developers/request-an-api-key                  | &nbsp;                                                              |
+nvd          | endpoint          | The NVD API endpoint URL; setting this is uncommon.                                                          | https://services.nvd.nist.gov/rest/json/cves/2.0                            |
 nvd          | maxRetryCount     | The maximum number of retry requests for a single call to the NVD API.                                               | 10                                                                  |
 nvd          | delay             | The number of milliseconds to wait between calls to the NVD API.                                                     | 2000 with an NVD API Key or 8000 without an API Key                 |
 nvd          | datafeedUrl       | The URL for the NVD API Data feed that can be generated using https://github.com/jeremylong/Open-Vulnerability-Project/tree/main/vulnz#caching-the-nvd-cve-data | &nbsp;                   |

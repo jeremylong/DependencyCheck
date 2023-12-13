@@ -353,6 +353,8 @@ public final class CliParser {
                         "Only update the local NVD data cache; no scan will be executed."))
                 .addOption(newOptionWithArg(ARGUMENT.NVD_API_DELAY, "milliseconds",
                         "Time in milliseconds to wait between downloading from the NVD."))
+                .addOption(newOptionWithArg(ARGUMENT.NVD_API_ENDPOINT, "endpoint",
+                        "The NVD API Endpoint - setting this is rare."))
                 .addOption(newOptionWithArg(ARGUMENT.NVD_API_DATAFEED_URL, "url",
                         "The URL to the NVD API Datafeed."))
                 .addOption(newOptionWithArg(ARGUMENT.NVD_API_DATAFEED_USER, "user",
@@ -1128,7 +1130,11 @@ public final class CliParser {
          */
         public static final String DATA_DIRECTORY = "data";
         /**
-         * The CLI argument name for setting the URL for the CVE Data Files.
+         * The CLI argument name for setting the URL for the NVD API Endpoint
+         */
+        public static final String NVD_API_ENDPOINT = "nvdApiEndpoint";
+        /**
+         * The CLI argument name for setting the URL for the NVD API Key.
          */
         public static final String NVD_API_KEY = "nvdApiKey";
         /**
