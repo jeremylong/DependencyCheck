@@ -178,7 +178,7 @@ public final class Downloader {
     public String fetchContent(URL url, boolean useProxy, String userKey, String passwordKey)
             throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
 <span class="nc" id="L180">        InputStream in = null;</span>
-<span class="nc" id="L181">        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);</span>
+<span class="nc" id="L181">        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey); </span>
 <span class="nc" id="L182">                ByteArrayOutputStream out = new ByteArrayOutputStream()) {</span>
 <span class="nc" id="L183">            in = conn.fetch(url);</span>
 <span class="nc" id="L184">            IOUtils.copy(in, out);</span>
@@ -193,44 +193,6 @@ public final class Downloader {
 <span class="nc" id="L193">                } catch (IOException ex) {</span>
 <span class="nc" id="L194">                    LOGGER.trace(&quot;Ignorable error&quot;, ex);</span>
 <span class="nc" id="L195">                }</span>
-            }
-        }
-    }
-
-    /**
-     * Retrieves a gzip file from a given URL and returns the uncompressed contents.
-     *
-     * @param url the URL of the file to download
-     * @param useProxy whether to use the configured proxy when downloading
-     * files
-     * @return the content of the file
-     * @param userKey the settings key for the username to be used
-     * @param passwordKey the settings key for the password to be used
-     * @throws DownloadFailedException is thrown if there is an error
-     * downloading the file
-     * @throws TooManyRequestsException thrown when a 429 is received
-     * @throws ResourceNotFoundException thrown when a 404 is received
-     */
-    public String fetchGzContent(URL url, boolean useProxy, String userKey, String passwordKey)
-            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
-<span class="nc" id="L216">        InputStream in = null;</span>
-<span class="nc" id="L217">        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey)) {</span>
-<span class="nc" id="L218">            in = conn.fetch(url);</span>
-<span class="nc" id="L219">            try (GZIPInputStream gzipIn = new GZIPInputStream(in);</span>
-<span class="nc" id="L220">                    ByteArrayOutputStream out = new ByteArrayOutputStream()) {</span>
-<span class="nc" id="L221">                IOUtils.copy(gzipIn, out);</span>
-<span class="nc" id="L222">                return out.toString(UTF8);</span>
-            }
-<span class="nc" id="L224">        } catch (IOException ex) {</span>
-<span class="nc" id="L225">            final String msg = format(&quot;Download failed, unable to retrieve '%s'; %s&quot;, url, ex.getMessage());</span>
-<span class="nc" id="L226">            throw new DownloadFailedException(msg, ex);</span>
-        } finally {
-<span class="nc bnc" id="L228" title="All 2 branches missed.">            if (in != null) {</span>
-                try {
-<span class="nc" id="L230">                    in.close();</span>
-<span class="nc" id="L231">                } catch (IOException ex) {</span>
-<span class="nc" id="L232">                    LOGGER.trace(&quot;Ignorable error&quot;, ex);</span>
-<span class="nc" id="L233">                }</span>
             }
         }
     }

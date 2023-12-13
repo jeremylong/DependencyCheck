@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.utils.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ public class DatabaseProperties {
     /**
      * The Logger.
      */
-<span class="fc" id="L46">    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseProperties.class);</span>
+<span class="fc" id="L47">    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseProperties.class);</span>
     /**
      * The last modified request data for the NVD API.
      */
@@ -73,6 +74,14 @@ public class DatabaseProperties {
      */
     public static final String KEV_LAST_CHECKED = &quot;kev.checked&quot;;
     /**
+     * The key for the last check time for the Retire JS repository.
+     */
+    public static final String RETIRE_LAST_CHECKED = &quot;retirejs.checked&quot;;
+    /**
+     * The key for the last check time for the hosted suppression file.
+     */
+    public static final String HOSTED_SUPPRESSION_LAST_CHECKED = &quot;hosted.suppression.checked&quot;;
+    /**
      * The key for the version the Known Exploited Vulnerabilities.
      */
     public static final String KEV_VERSION = &quot;kev.version&quot;;
@@ -90,10 +99,10 @@ public class DatabaseProperties {
      *
      * @param cveDB the database object holding the properties
      */
-<span class="fc" id="L93">    DatabaseProperties(CveDB cveDB) {</span>
-<span class="fc" id="L94">        this.cveDB = cveDB;</span>
-<span class="fc" id="L95">        this.properties = cveDB.getProperties();</span>
-<span class="fc" id="L96">    }</span>
+<span class="fc" id="L102">    DatabaseProperties(CveDB cveDB) {</span>
+<span class="fc" id="L103">        this.cveDB = cveDB;</span>
+<span class="fc" id="L104">        this.properties = cveDB.getProperties();</span>
+<span class="fc" id="L105">    }</span>
 
     /**
      * Returns whether or not any properties are set.
@@ -101,7 +110,7 @@ public class DatabaseProperties {
      * @return whether or not any properties are set
      */
     public synchronized boolean isEmpty() {
-<span class="nc bnc" id="L104" title="All 4 branches missed.">        return properties == null || properties.isEmpty();</span>
+<span class="nc bnc" id="L113" title="All 4 branches missed.">        return properties == null || properties.isEmpty();</span>
     }
 
     /**
@@ -112,9 +121,9 @@ public class DatabaseProperties {
      * @throws UpdateException is thrown if there is an update exception
      */
     public synchronized void save(String key, String value) throws UpdateException {
-<span class="fc" id="L115">        properties.put(key, value);</span>
-<span class="fc" id="L116">        cveDB.saveProperty(key, value);</span>
-<span class="fc" id="L117">    }</span>
+<span class="fc" id="L124">        properties.put(key, value);</span>
+<span class="fc" id="L125">        cveDB.saveProperty(key, value);</span>
+<span class="fc" id="L126">    }</span>
 
     /**
      * Returns the property value for the given key. If the key is not contained
@@ -124,7 +133,7 @@ public class DatabaseProperties {
      * @return the value of the property
      */
     public synchronized String getProperty(String key) {
-<span class="fc" id="L127">        return properties.getProperty(key);</span>
+<span class="fc" id="L136">        return properties.getProperty(key);</span>
     }
 
     /**
@@ -136,7 +145,7 @@ public class DatabaseProperties {
      * @return the value of the property
      */
     public synchronized String getProperty(String key, String defaultValue) {
-<span class="fc" id="L139">        return properties.getProperty(key, defaultValue);</span>
+<span class="fc" id="L148">        return properties.getProperty(key, defaultValue);</span>
     }
 
     /**
@@ -145,7 +154,7 @@ public class DatabaseProperties {
      * @return the collection of Database Properties
      */
     public synchronized Properties getProperties() {
-<span class="fc" id="L148">        return properties;</span>
+<span class="fc" id="L157">        return properties;</span>
     }
 
     /**
@@ -156,25 +165,25 @@ public class DatabaseProperties {
      * @return a map of the database meta data
      */
     public synchronized Map&lt;String, String&gt; getMetaData() {
-<span class="fc" id="L159">        final Map&lt;String, String&gt; map = new TreeMap&lt;&gt;();</span>
-<span class="fc bfc" id="L160" title="All 2 branches covered.">        for (Entry&lt;Object, Object&gt; entry : properties.entrySet()) {</span>
-<span class="fc" id="L161">            final String key = (String) entry.getKey();</span>
-<span class="fc bfc" id="L162" title="All 2 branches covered.">            if (!&quot;version&quot;.equals(key)) {</span>
-<span class="pc bpc" id="L163" title="1 of 2 branches missed.">                if (DatabaseProperties.NVD_API_LAST_CHECKED.equals(key)) {</span>
-<span class="nc" id="L164">                    map.put(&quot;NVD API Last Checked&quot;, entry.getValue().toString());</span>
-                    
-<span class="pc bpc" id="L166" title="1 of 2 branches missed.">                } else if (DatabaseProperties.NVD_API_LAST_MODIFIED.equals(key)) {</span>
-<span class="nc" id="L167">                    map.put(&quot;NVD API Last Modified&quot;, entry.getValue().toString());</span>
-                    
-<span class="pc bpc" id="L169" title="1 of 2 branches missed.">                } else if (DatabaseProperties.NVD_CACHE_LAST_CHECKED.equals(key)) {</span>
-<span class="nc" id="L170">                    map.put(&quot;NVD Cache Last Checked&quot;, entry.getValue().toString());</span>
-                    
-<span class="pc bpc" id="L172" title="1 of 2 branches missed.">                } else if (DatabaseProperties.NVD_CACHE_LAST_MODIFIED.equals(key)) {</span>
-<span class="nc" id="L173">                    map.put(&quot;NVD Cache Last Modified&quot;, entry.getValue().toString());</span>
+<span class="fc" id="L168">        final Map&lt;String, String&gt; map = new TreeMap&lt;&gt;();</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        for (Entry&lt;Object, Object&gt; entry : properties.entrySet()) {</span>
+<span class="fc" id="L170">            final String key = (String) entry.getKey();</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">            if (!&quot;version&quot;.equals(key)) {</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">                if (DatabaseProperties.NVD_API_LAST_CHECKED.equals(key)) {</span>
+<span class="nc" id="L173">                    map.put(&quot;NVD API Last Checked&quot;, entry.getValue().toString());</span>
+
+<span class="pc bpc" id="L175" title="1 of 2 branches missed.">                } else if (DatabaseProperties.NVD_API_LAST_MODIFIED.equals(key)) {</span>
+<span class="nc" id="L176">                    map.put(&quot;NVD API Last Modified&quot;, entry.getValue().toString());</span>
+
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">                } else if (DatabaseProperties.NVD_CACHE_LAST_CHECKED.equals(key)) {</span>
+<span class="nc" id="L179">                    map.put(&quot;NVD Cache Last Checked&quot;, entry.getValue().toString());</span>
+
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">                } else if (DatabaseProperties.NVD_CACHE_LAST_MODIFIED.equals(key)) {</span>
+<span class="nc" id="L182">                    map.put(&quot;NVD Cache Last Modified&quot;, entry.getValue().toString());</span>
                 }
             }
-<span class="fc" id="L176">        }</span>
-<span class="fc" id="L177">        return map;</span>
+<span class="fc" id="L185">        }</span>
+<span class="fc" id="L186">        return map;</span>
     }
 
     /**
@@ -184,7 +193,7 @@ public class DatabaseProperties {
      * @return the zoned date time
      */
     public ZonedDateTime getTimestamp(String key) {
-<span class="nc" id="L187">        return DatabaseProperties.getTimestamp(properties, key);</span>
+<span class="nc" id="L196">        return DatabaseProperties.getTimestamp(properties, key);</span>
     }
 
     /**
@@ -194,9 +203,21 @@ public class DatabaseProperties {
      * @param timestamp the zoned date time
      */
     public void save(String key, ZonedDateTime timestamp) throws UpdateException {
-<span class="nc" id="L197">        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;uuuu-MM-dd'T'HH:mm:ssX&quot;);</span>
-<span class="nc" id="L198">        save(key, dtf.format(timestamp));</span>
-<span class="nc" id="L199">    }</span>
+<span class="nc" id="L206">        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;uuuu-MM-dd'T'HH:mm:ssX&quot;);</span>
+<span class="nc" id="L207">        save(key, dtf.format(timestamp));</span>
+<span class="nc" id="L208">    }</span>
+
+    /**
+     * Stores a timestamp in the properties file.
+     *
+     * @param properties the properties to store the timestamp
+     * @param key the property key
+     * @param timestamp the zoned date time
+     */
+    public static void setTimestamp(Properties properties, String key, ZonedDateTime timestamp) throws UpdateException {
+<span class="nc" id="L218">        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;uuuu-MM-dd'T'HH:mm:ssX&quot;);</span>
+<span class="nc" id="L219">        properties.put(key, dtf.format(timestamp));</span>
+<span class="nc" id="L220">    }</span>
 
     /**
      * Retrieves a zoned date time.
@@ -206,13 +227,42 @@ public class DatabaseProperties {
      * @return the zoned date time
      */
     public static ZonedDateTime getTimestamp(Properties properties, String key) {
-<span class="nc" id="L209">        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;uuuu-MM-dd'T'HH:mm:ssX&quot;);</span>
-<span class="nc" id="L210">        final String val = properties.getProperty(key);</span>
-<span class="nc bnc" id="L211" title="All 2 branches missed.">        if (val != null) {</span>
-<span class="nc" id="L212">            final String value = properties.getProperty(key);</span>
-<span class="nc" id="L213">            return ZonedDateTime.parse(value, dtf);</span>
+<span class="nc" id="L230">        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;uuuu-MM-dd'T'HH:mm:ssX&quot;);</span>
+<span class="nc" id="L231">        final String val = properties.getProperty(key);</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        if (val != null) {</span>
+<span class="nc" id="L233">            final String value = properties.getProperty(key);</span>
+<span class="nc" id="L234">            return ZonedDateTime.parse(value, dtf);</span>
         }
-<span class="nc" id="L215">        return null;</span>
+<span class="nc" id="L236">        return null;</span>
+    }
+
+    /**
+     * Retrieves a zoned date time.
+     *
+     * @param properties the properties file containing the date time
+     * @param key the property key
+     * @return the zoned date time
+     */
+    public static ZonedDateTime getIsoTimestamp(Properties properties, String key) {
+        //final DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;uuuu-MM-dd'T'HH:mm:ssX&quot;);
+<span class="nc" id="L248">        final DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;</span>
+<span class="nc" id="L249">        final String val = properties.getProperty(key);</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">        if (val != null) {</span>
+<span class="nc" id="L251">            final String value = properties.getProperty(key);</span>
+<span class="nc" id="L252">            return ZonedDateTime.parse(value, dtf);</span>
+        }
+<span class="nc" id="L254">        return null;</span>
+    }
+
+    /**
+     * Returns the database property value in seconds.
+     *
+     * @param key the key to the property
+     * @return the property value in seconds
+     */
+    public long getPropertyInSeconds(String key) {
+<span class="nc" id="L264">        final String value = getProperty(key, &quot;0&quot;);</span>
+<span class="nc" id="L265">        return DateUtil.getEpochValueInSeconds(value);</span>
     }
 
 }
