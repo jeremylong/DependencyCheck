@@ -52,7 +52,6 @@ scanSet              | A list of directories that will be scanned for additional
 ```groovy
 dependencyCheck {
     autoUpdate=false
-    cveValidForHours=1
     format='ALL'
 }
 ```
