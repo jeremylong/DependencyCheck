@@ -148,15 +148,17 @@ public class NvdApiDataSource implements CachedWebDataSource {
                 final ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
                 final Map<String, String> updateable = getUpdatesNeeded(url, pattern, cacheProperties, now);
                 if (!updateable.isEmpty()) {
-                    final int downloadPoolSize;
                     final int max = settings.getInt(Settings.KEYS.MAX_DOWNLOAD_THREAD_POOL_SIZE, 1);
-                    downloadPoolSize = Math.min(Runtime.getRuntime().availableProcessors(), max);
+                    final int downloadPoolSize = Math.min(Runtime.getRuntime().availableProcessors(), max);
+                    // going over 2 threads does not appear to improve performance
+                    final int maxExec = PROCESSING_THREAD_POOL_SIZE;
+                    final int execPoolSize = Math.min(maxExec, 2);
 
                     ExecutorService processingExecutorService = null;
                     ExecutorService downloadExecutorService = null;
                     try {
                         downloadExecutorService = Executors.newFixedThreadPool(downloadPoolSize);
-                        processingExecutorService = Executors.newFixedThreadPool(PROCESSING_THREAD_POOL_SIZE);
+                        processingExecutorService = Executors.newFixedThreadPool(execPoolSize);
 
                         DownloadTask runLast = null;
                         final Set<Future<Future<NvdApiProcessor>>> downloadFutures = new HashSet<>(updateable.size());

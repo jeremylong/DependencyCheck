@@ -24,9 +24,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+
 import static java.lang.String.format;
+
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
+
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,10 +133,17 @@ public final class Downloader {
     public void fetchFile(URL url, File outputPath, boolean useProxy, String userKey, String passwordKey) throws DownloadFailedException,
             TooManyRequestsException, ResourceNotFoundException {
         InputStream in = null;
-        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);
-                OutputStream out = new FileOutputStream(outputPath)) {
+        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey)) {
             in = conn.fetch(url);
-            IOUtils.copy(in, out);
+            try (ReadableByteChannel sourceChannel = Channels.newChannel(in);
+                 FileChannel destChannel = new FileOutputStream(outputPath).getChannel()) {
+                ByteBuffer buffer = ByteBuffer.allocateDirect(8192);
+                while (sourceChannel.read(buffer) != -1) {
+                    buffer.flip();
+                    destChannel.write(buffer);
+                    buffer.compact();
+                }
+            }
         } catch (IOException ex) {
             final String msg = format("Download failed, unable to copy '%s' to '%s'; %s",
                     url.toString(), outputPath.getAbsolutePath(), ex.getMessage());
@@ -167,9 +181,9 @@ public final class Downloader {
      * @param url the URL of the file to download
      * @param useProxy whether to use the configured proxy when downloading
      * files
-     * @return the content of the file
      * @param userKey the settings key for the username to be used
      * @param passwordKey the settings key for the password to be used
+     * @return the content of the file
      * @throws DownloadFailedException is thrown if there is an error
      * downloading the file
      * @throws TooManyRequestsException thrown when a 429 is received
@@ -178,8 +192,8 @@ public final class Downloader {
     public String fetchContent(URL url, boolean useProxy, String userKey, String passwordKey)
             throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
         InputStream in = null;
-        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey); 
-                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (HttpResourceConnection conn = new HttpResourceConnection(settings, useProxy, userKey, passwordKey);
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             in = conn.fetch(url);
             IOUtils.copy(in, out);
             return out.toString(UTF8);
