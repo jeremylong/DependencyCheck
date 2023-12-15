@@ -1,5 +1,16 @@
 # Change Log
 
+## [Version 9.0.6](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.6) (2023-12-15)
+
+- build: bump open-vulnerability-clients@5.1.1 (#6308)
+- fix: mask nvd.api.key in logs (#6307)
+- fix: update java version check (#6297)
+- fix: more efficient memory usage (#6299)
+- fix: stream NVD data via Jackson to reduce memory footprint (#6275)
+- docs: document github action caching (#6301)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/76?closed=1).
+
 ## [Version 9.0.5](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.5) (2023-12-13)
 
 - fix: make NVD API endpoint configurable (#6287)
