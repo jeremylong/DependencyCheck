@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CveApiJson20CveItemSource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.update.nvd.api</a> &gt; <span class="el_source">CveApiJson20CveItemSource.java</span></div><h1>CveApiJson20CveItemSource.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2013 Jeremy Long. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.data.update.nvd.api;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.zip.GZIPInputStream;
+
+public class CveApiJson20CveItemSource implements CveItemSource&lt;DefCveItem&gt; {
+
+    private final File jsonFile;
+    private final ObjectMapper mapper;
+    private final InputStream inputStream;
+    private final JsonParser jsonParser;
+    private DefCveItem currentItem;
+    private DefCveItem nextItem;
+
+<span class="nc" id="L42">    public CveApiJson20CveItemSource(File jsonFile) throws IOException {</span>
+<span class="nc" id="L43">        this.jsonFile = jsonFile;</span>
+<span class="nc" id="L44">        mapper = new ObjectMapper();</span>
+<span class="nc" id="L45">        mapper.registerModule(new JavaTimeModule());</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        inputStream = jsonFile.getName().endsWith(&quot;.gz&quot;) ?</span>
+<span class="nc" id="L47">                new GZIPInputStream(new BufferedInputStream(Files.newInputStream(jsonFile.toPath()))) :</span>
+<span class="nc" id="L48">                new BufferedInputStream(Files.newInputStream(jsonFile.toPath()));</span>
+<span class="nc" id="L49">        jsonParser = mapper.getFactory().createParser(inputStream);</span>
+
+<span class="nc" id="L51">        JsonToken token = null;</span>
+        do {
+<span class="nc" id="L53">            token = jsonParser.nextToken();</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            if (token  == JsonToken.FIELD_NAME) {</span>
+<span class="nc" id="L55">                String fieldName = jsonParser.getCurrentName();</span>
+<span class="nc bnc" id="L56" title="All 4 branches missed.">                if (fieldName.equals(&quot;vulnerabilities&quot;) &amp;&amp; (jsonParser.nextToken() == JsonToken.START_ARRAY)) {</span>
+<span class="nc" id="L57">                    nextItem = readItem(jsonParser);</span>
+                }
+            }
+<span class="nc bnc" id="L60" title="All 4 branches missed.">        } while (token != null &amp;&amp; nextItem == null);</span>
+<span class="nc" id="L61">    }</span>
+
+    @Override
+    public void close() throws Exception {
+<span class="nc" id="L65">        jsonParser.close();</span>
+<span class="nc" id="L66">        inputStream.close();</span>
+<span class="nc" id="L67">        Files.delete(jsonFile.toPath());</span>
+<span class="nc" id="L68">    }</span>
+
+    @Override
+    public boolean hasNext() {
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        return nextItem != null;</span>
+    }
+
+    @Override
+    public DefCveItem next() throws IOException {
+<span class="nc" id="L77">        currentItem = nextItem;</span>
+<span class="nc" id="L78">        nextItem = readItem(jsonParser);</span>
+<span class="nc" id="L79">        return currentItem;</span>
+    }
+
+    private DefCveItem readItem(JsonParser jsonParser) throws IOException {
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (jsonParser.nextToken() == JsonToken.START_OBJECT) {</span>
+<span class="nc" id="L84">            return mapper.readValue(jsonParser, DefCveItem.class);</span>
+        }
+<span class="nc" id="L86">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

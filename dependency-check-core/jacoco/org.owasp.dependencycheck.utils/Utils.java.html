@@ -63,7 +63,7 @@ public final class Utils {
      */
     public static int getJavaUpdateVersion() {
         //&quot;1.8.0_144&quot; &quot;11.0.2+9&quot; &quot;17.0.8.1&quot;
-<span class="fc" id="L66">        String runtimeVersion = System.getProperty(&quot;java.runtime.version&quot;);</span>
+<span class="fc" id="L66">        String runtimeVersion = System.getProperty(&quot;java.version&quot;);</span>
 <span class="fc" id="L67">        return parseUpdate(runtimeVersion);</span>
     }
 
