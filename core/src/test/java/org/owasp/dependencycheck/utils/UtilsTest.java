@@ -18,10 +18,10 @@
 package org.owasp.dependencycheck.utils;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Jeremy Long
  */
 public class UtilsTest {
@@ -43,6 +43,11 @@ public class UtilsTest {
         assertEquals(expResult, result);
 
         runtimeVersion = "11.0.2+9";
+        expResult = 2;
+        result = Utils.parseUpdate(runtimeVersion);
+        assertEquals(expResult, result);
+
+        runtimeVersion = "11.0.2";
         expResult = 2;
         result = Utils.parseUpdate(runtimeVersion);
         assertEquals(expResult, result);
