@@ -37,7 +37,7 @@ jobs:
       - name: Test with Maven
         id: build
         run: |
-            mvn -s settings.xml -pl utils,core,cli,ant,archetype -am compile verify --no-transfer-progress --batch-mode
+            mvn -V -s settings.xml -pl utils,core,cli,ant,archetype -am compile verify --no-transfer-progress --batch-mode
       - name: SARIF Multitool
         uses: microsoft/sarif-actions@v0.1
         with:
@@ -76,7 +76,7 @@ jobs:
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
-            mvn -s settings.xml -pl utils,core,maven -am compile verify -DtestMavenPlugin -DreleaseTesting --no-transfer-progress --batch-mode
+            mvn -V -s settings.xml -pl utils,core,maven -am compile verify -DtestMavenPlugin -DreleaseTesting --no-transfer-progress --batch-mode
       - name: Archive IT test logs
         id: archive-logs
         if: always()

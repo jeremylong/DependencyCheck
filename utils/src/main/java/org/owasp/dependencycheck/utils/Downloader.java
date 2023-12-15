@@ -27,6 +27,7 @@ import java.net.URL;
 
 import static java.lang.String.format;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -139,7 +140,8 @@ public final class Downloader {
                  FileChannel destChannel = new FileOutputStream(outputPath).getChannel()) {
                 ByteBuffer buffer = ByteBuffer.allocateDirect(8192);
                 while (sourceChannel.read(buffer) != -1) {
-                    buffer.flip();
+                    // cast is a workaround, see https://github.com/plasma-umass/doppio/issues/497#issuecomment-334740243
+                    ((Buffer)buffer).flip();
                     destChannel.write(buffer);
                     buffer.compact();
                 }

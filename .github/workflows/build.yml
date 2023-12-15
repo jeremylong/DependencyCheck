@@ -64,7 +64,7 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: mvn -s settings.xml -Prelease clean package verify source:jar javadoc:jar gpg:sign deploy -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+        run: mvn -V -s settings.xml -Prelease clean package verify source:jar javadoc:jar gpg:sign deploy -DreleaseTesting --no-transfer-progress --batch-mode -Dgpg.passphrase=${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
       - name: SARIF Multitool
         uses: microsoft/sarif-actions@v0.1
         with:
@@ -143,6 +143,6 @@ jobs:
       - name: Build Docker Image
         run: ./build-docker.sh
       - name: build scan target
-        run: mvn -s settings.xml package -DskipTests=true --no-transfer-progress --batch-mode
+        run: mvn -V -s settings.xml package -DskipTests=true --no-transfer-progress --batch-mode
       - name: Test Docker Image
         run: ./test-docker.sh
