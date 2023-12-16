@@ -367,7 +367,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "suppressionFileUser")
     private String suppressionFileUser;
     /**
-     * The password used when connecting to the suppressionFiles.
+     * The password used when connecting to the suppressionFiles. The `suppressionFileServerId` should be used instead otherwise maven debug logging could expose the password.
      */
     @Parameter(property = "suppressionFilePassword")
     private String suppressionFilePassword;
@@ -563,7 +563,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "retireJsUser")
     private String retireJsUser;
     /**
-     * The password to authenticate to the CVE-URL.
+     * The password to authenticate to the CVE-URL. The `retireJsUrlServerId` should be used instead otherwise maven debug logging could expose the password.
      */
     @Parameter(property = "retireJsPassword")
     private String retireJsPassword;
@@ -829,7 +829,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "databaseUser")
     private String databaseUser;
     /**
-     * The password to use when connecting to the database.
+     * The password to use when connecting to the database. The `serverId` should be used instead otherwise maven debug logging could expose the password.
      */
     @Parameter(property = "databasePassword")
     private String databasePassword;
@@ -910,7 +910,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "serverId")
     private String serverId;
     /**
-     * The NVD API Key.
+     * The NVD API Key. The `nvdApiServerId` should be used instead otherwise maven debug logging could expose the API Key. See GHSA-qqhq-8r2c-c3f5.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nvdApiKey")
