@@ -1,9 +1,18 @@
 # Change Log
 
+## [Version 9.0.7](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.7) (2023-12-18)
+
+- docs: document insecure configuration for GHSA-qqhq-8r2c-c3f5 (#6315)
+- fix: improve memory usage on NVD update (#6321)
+- fix: skip pyproject.toml unless it contains `tool.poetry` (#6316)
+- fix: resolve build error that may cause an issue on some JDK versions (#6312)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/77?closed=1).
+
 ## [Version 9.0.6](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.6) (2023-12-15)
 
 - build: bump open-vulnerability-clients@5.1.1 (#6308)
-- fix: mask nvd.api.key in logs (#6307)
+- fix: mask nvd.api.key in logs; see GHSA-qqhq-8r2c-c3f5 (#6307)
 - fix: update java version check (#6297)
 - fix: more efficient memory usage (#6299)
 - fix: stream NVD data via Jackson to reduce memory footprint (#6275)
