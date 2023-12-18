@@ -155,6 +155,10 @@ public class PoetryAnalyzer extends AbstractFileTypeAnalyzer {
         }
 
         final Toml result = new Toml().read(dependency.getActualFile());
+        if (PYPROJECT_TOML.equals(dependency.getActualFile().getName()) && result.getTables("tool.poetry") == null) {
+            LOGGER.debug("skipping {} as it does not contain `tool.poetry`", dependency.getDisplayFileName());
+            return;
+        }
         final List<Toml> projectsLocks = result.getTables("package");
         if (projectsLocks == null) {
             return;
