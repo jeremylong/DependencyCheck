@@ -44,14 +44,14 @@ public class CveApiJson20CveItemSource implements CveItemSource<DefCveItem> {
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         inputStream = jsonFile.getName().endsWith(".gz") ?
-                new GZIPInputStream(new BufferedInputStream(Files.newInputStream(jsonFile.toPath()))) :
+                new BufferedInputStream(new GZIPInputStream(Files.newInputStream(jsonFile.toPath()))) :
                 new BufferedInputStream(Files.newInputStream(jsonFile.toPath()));
         jsonParser = mapper.getFactory().createParser(inputStream);
 
         JsonToken token = null;
         do {
             token = jsonParser.nextToken();
-            if (token  == JsonToken.FIELD_NAME) {
+            if (token == JsonToken.FIELD_NAME) {
                 String fieldName = jsonParser.getCurrentName();
                 if (fieldName.equals("vulnerabilities") && (jsonParser.nextToken() == JsonToken.START_ARRAY)) {
                     nextItem = readItem(jsonParser);

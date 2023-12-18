@@ -44,7 +44,7 @@ public class JsonArrayCveItemSource implements CveItemSource<DefCveItem> {
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         inputStream = jsonFile.getName().endsWith(".gz") ?
-                new GZIPInputStream(new BufferedInputStream(Files.newInputStream(jsonFile.toPath()))) :
+                new BufferedInputStream(new GZIPInputStream(Files.newInputStream(jsonFile.toPath()))) :
                 new BufferedInputStream(Files.newInputStream(jsonFile.toPath()));
         jsonParser = mapper.getFactory().createParser(inputStream);
 
