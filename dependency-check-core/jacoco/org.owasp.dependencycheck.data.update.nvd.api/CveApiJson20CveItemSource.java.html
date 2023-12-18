@@ -44,14 +44,14 @@ public class CveApiJson20CveItemSource implements CveItemSource&lt;DefCveItem&gt
 <span class="nc" id="L44">        mapper = new ObjectMapper();</span>
 <span class="nc" id="L45">        mapper.registerModule(new JavaTimeModule());</span>
 <span class="nc bnc" id="L46" title="All 2 branches missed.">        inputStream = jsonFile.getName().endsWith(&quot;.gz&quot;) ?</span>
-<span class="nc" id="L47">                new GZIPInputStream(new BufferedInputStream(Files.newInputStream(jsonFile.toPath()))) :</span>
+<span class="nc" id="L47">                new BufferedInputStream(new GZIPInputStream(Files.newInputStream(jsonFile.toPath()))) :</span>
 <span class="nc" id="L48">                new BufferedInputStream(Files.newInputStream(jsonFile.toPath()));</span>
 <span class="nc" id="L49">        jsonParser = mapper.getFactory().createParser(inputStream);</span>
 
 <span class="nc" id="L51">        JsonToken token = null;</span>
         do {
 <span class="nc" id="L53">            token = jsonParser.nextToken();</span>
-<span class="nc bnc" id="L54" title="All 2 branches missed.">            if (token  == JsonToken.FIELD_NAME) {</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            if (token == JsonToken.FIELD_NAME) {</span>
 <span class="nc" id="L55">                String fieldName = jsonParser.getCurrentName();</span>
 <span class="nc bnc" id="L56" title="All 4 branches missed.">                if (fieldName.equals(&quot;vulnerabilities&quot;) &amp;&amp; (jsonParser.nextToken() == JsonToken.START_ARRAY)) {</span>
 <span class="nc" id="L57">                    nextItem = readItem(jsonParser);</span>

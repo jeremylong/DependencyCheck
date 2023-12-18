@@ -52,14 +52,14 @@
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>          mapper = <strong class="jxr_keyword">new</strong> ObjectMapper();
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>          mapper.registerModule(<strong class="jxr_keyword">new</strong> JavaTimeModule());
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>          inputStream = jsonFile.getName().endsWith(<span class="jxr_string">".gz"</span>) ?
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>                  <strong class="jxr_keyword">new</strong> GZIPInputStream(<strong class="jxr_keyword">new</strong> BufferedInputStream(Files.newInputStream(jsonFile.toPath()))) :
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>                  <strong class="jxr_keyword">new</strong> BufferedInputStream(<strong class="jxr_keyword">new</strong> GZIPInputStream(Files.newInputStream(jsonFile.toPath()))) :
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>                  <strong class="jxr_keyword">new</strong> BufferedInputStream(Files.newInputStream(jsonFile.toPath()));
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          jsonParser = mapper.getFactory().createParser(inputStream);
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>          JsonToken token = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          <strong class="jxr_keyword">do</strong> {
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>              token = jsonParser.nextToken();
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>              <strong class="jxr_keyword">if</strong> (token  == JsonToken.FIELD_NAME) {
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>              <strong class="jxr_keyword">if</strong> (token == JsonToken.FIELD_NAME) {
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>                  String fieldName = jsonParser.getCurrentName();
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>                  <strong class="jxr_keyword">if</strong> (fieldName.equals(<span class="jxr_string">"vulnerabilities"</span>) &amp;&amp; (jsonParser.nextToken() == JsonToken.START_ARRAY)) {
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>                      nextItem = readItem(jsonParser);

@@ -375,7 +375,7 @@
 <a class="jxr_linenumber" name="L367" href="#L367">367</a>     @Parameter(property = <span class="jxr_string">"suppressionFileUser"</span>)
 <a class="jxr_linenumber" name="L368" href="#L368">368</a>     <strong class="jxr_keyword">private</strong> String suppressionFileUser;
 <a class="jxr_linenumber" name="L369" href="#L369">369</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L370" href="#L370">370</a> <em class="jxr_javadoccomment">     * The password used when connecting to the suppressionFiles.</em>
+<a class="jxr_linenumber" name="L370" href="#L370">370</a> <em class="jxr_javadoccomment">     * The password used when connecting to the suppressionFiles. The `suppressionFileServerId` should be used instead otherwise maven debug logging could expose the password.</em>
 <a class="jxr_linenumber" name="L371" href="#L371">371</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L372" href="#L372">372</a>     @Parameter(property = <span class="jxr_string">"suppressionFilePassword"</span>)
 <a class="jxr_linenumber" name="L373" href="#L373">373</a>     <strong class="jxr_keyword">private</strong> String suppressionFilePassword;
@@ -571,7 +571,7 @@
 <a class="jxr_linenumber" name="L563" href="#L563">563</a>     @Parameter(property = <span class="jxr_string">"retireJsUser"</span>)
 <a class="jxr_linenumber" name="L564" href="#L564">564</a>     <strong class="jxr_keyword">private</strong> String retireJsUser;
 <a class="jxr_linenumber" name="L565" href="#L565">565</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L566" href="#L566">566</a> <em class="jxr_javadoccomment">     * The password to authenticate to the CVE-URL.</em>
+<a class="jxr_linenumber" name="L566" href="#L566">566</a> <em class="jxr_javadoccomment">     * The password to authenticate to the CVE-URL. The `retireJsUrlServerId` should be used instead otherwise maven debug logging could expose the password.</em>
 <a class="jxr_linenumber" name="L567" href="#L567">567</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L568" href="#L568">568</a>     @Parameter(property = <span class="jxr_string">"retireJsPassword"</span>)
 <a class="jxr_linenumber" name="L569" href="#L569">569</a>     <strong class="jxr_keyword">private</strong> String retireJsPassword;
@@ -837,7 +837,7 @@
 <a class="jxr_linenumber" name="L829" href="#L829">829</a>     @Parameter(property = <span class="jxr_string">"databaseUser"</span>)
 <a class="jxr_linenumber" name="L830" href="#L830">830</a>     <strong class="jxr_keyword">private</strong> String databaseUser;
 <a class="jxr_linenumber" name="L831" href="#L831">831</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L832" href="#L832">832</a> <em class="jxr_javadoccomment">     * The password to use when connecting to the database.</em>
+<a class="jxr_linenumber" name="L832" href="#L832">832</a> <em class="jxr_javadoccomment">     * The password to use when connecting to the database. The `serverId` should be used instead otherwise maven debug logging could expose the password.</em>
 <a class="jxr_linenumber" name="L833" href="#L833">833</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L834" href="#L834">834</a>     @Parameter(property = <span class="jxr_string">"databasePassword"</span>)
 <a class="jxr_linenumber" name="L835" href="#L835">835</a>     <strong class="jxr_keyword">private</strong> String databasePassword;
@@ -918,7 +918,7 @@
 <a class="jxr_linenumber" name="L910" href="#L910">910</a>     @Parameter(property = <span class="jxr_string">"serverId"</span>)
 <a class="jxr_linenumber" name="L911" href="#L911">911</a>     <strong class="jxr_keyword">private</strong> String serverId;
 <a class="jxr_linenumber" name="L912" href="#L912">912</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L913" href="#L913">913</a> <em class="jxr_javadoccomment">     * The NVD API Key.</em>
+<a class="jxr_linenumber" name="L913" href="#L913">913</a> <em class="jxr_javadoccomment">     * The NVD API Key. The `nvdApiServerId` should be used instead otherwise maven debug logging could expose the API Key. See GHSA-qqhq-8r2c-c3f5.</em>
 <a class="jxr_linenumber" name="L914" href="#L914">914</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L915" href="#L915">915</a>     @SuppressWarnings(<span class="jxr_string">"CanBeFinal"</span>)
 <a class="jxr_linenumber" name="L916" href="#L916">916</a>     @Parameter(property = <span class="jxr_string">"nvdApiKey"</span>)

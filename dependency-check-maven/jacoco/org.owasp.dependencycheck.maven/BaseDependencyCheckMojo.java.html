@@ -367,7 +367,7 @@ import org.owasp.dependencycheck.xml.pom.PomUtils;
     @Parameter(property = &quot;suppressionFileUser&quot;)
     private String suppressionFileUser;
     /**
-     * The password used when connecting to the suppressionFiles.
+     * The password used when connecting to the suppressionFiles. The `suppressionFileServerId` should be used instead otherwise maven debug logging could expose the password.
      */
     @Parameter(property = &quot;suppressionFilePassword&quot;)
     private String suppressionFilePassword;
@@ -563,7 +563,7 @@ import org.owasp.dependencycheck.xml.pom.PomUtils;
     @Parameter(property = &quot;retireJsUser&quot;)
     private String retireJsUser;
     /**
-     * The password to authenticate to the CVE-URL.
+     * The password to authenticate to the CVE-URL. The `retireJsUrlServerId` should be used instead otherwise maven debug logging could expose the password.
      */
     @Parameter(property = &quot;retireJsPassword&quot;)
     private String retireJsPassword;
@@ -829,7 +829,7 @@ import org.owasp.dependencycheck.xml.pom.PomUtils;
     @Parameter(property = &quot;databaseUser&quot;)
     private String databaseUser;
     /**
-     * The password to use when connecting to the database.
+     * The password to use when connecting to the database. The `serverId` should be used instead otherwise maven debug logging could expose the password.
      */
     @Parameter(property = &quot;databasePassword&quot;)
     private String databasePassword;
@@ -910,7 +910,7 @@ import org.owasp.dependencycheck.xml.pom.PomUtils;
     @Parameter(property = &quot;serverId&quot;)
     private String serverId;
     /**
-     * The NVD API Key.
+     * The NVD API Key. The `nvdApiServerId` should be used instead otherwise maven debug logging could expose the API Key. See GHSA-qqhq-8r2c-c3f5.
      */
     @SuppressWarnings(&quot;CanBeFinal&quot;)
     @Parameter(property = &quot;nvdApiKey&quot;)
