@@ -18,8 +18,15 @@
 package org.owasp.dependencycheck.data.update.nvd.api;
 
 import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.concurrent.Callable;
+import java.util.zip.GZIPInputStream;
+
 import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.slf4j.Logger;
@@ -82,16 +89,7 @@ public class NvdApiProcessor implements Callable<NvdApiProcessor> {
 
     @Override
     public NvdApiProcessor call() throws Exception {
-        CveItemSource<DefCveItem> itemSource = null;
-        
-        if (jsonFile.getName().endsWith(".jsonarray.gz")) {
-            itemSource = new JsonArrayCveItemSource(jsonFile);
-        } else if (jsonFile.getName().endsWith(".gz")) {
-            itemSource = new CveApiJson20CveItemSource(jsonFile);
-        } else {
-            itemSource = new JsonArrayCveItemSource(jsonFile);
-        }
-        try {
+        try (CveItemSource<DefCveItem> itemSource = buildItemSource(jsonFile)) {
             while (itemSource.hasNext()) {
                 DefCveItem entry = itemSource.next();
                 try {
@@ -100,11 +98,25 @@ public class NvdApiProcessor implements Callable<NvdApiProcessor> {
                     LOGGER.error("Failed to process " + entry.getCve().getId(), ex);
                 }
             }
-        } finally {
-            itemSource.close();
         }
         endTime = System.currentTimeMillis();
         return this;
+    }
+
+    static CveItemSource<DefCveItem> buildItemSource(File file) throws IOException {
+        if (file.getName().endsWith(".jsonarray.gz")) {
+            return new JsonArrayCveItemSource(new BufferedInputStream(new GZIPInputStream(
+                    Files.newInputStream(file.toPath())
+            )));
+        } else if (file.getName().endsWith(".gz")) {
+            return new CveApiJson20CveItemSource(new BufferedInputStream(new GZIPInputStream(
+                    Files.newInputStream(file.toPath())
+            )));
+        } else {
+            return new JsonArrayCveItemSource(new BufferedInputStream(
+                    Files.newInputStream(file.toPath())
+            ));
+        }
     }
 
     /**

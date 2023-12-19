@@ -22,30 +22,23 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.util.zip.GZIPInputStream;
 
 public class JsonArrayCveItemSource implements CveItemSource<DefCveItem> {
 
-    private final File jsonFile;
     private final ObjectMapper mapper;
     private final InputStream inputStream;
     private final JsonParser jsonParser;
     private DefCveItem currentItem;
     private DefCveItem nextItem;
 
-    public JsonArrayCveItemSource(File jsonFile) throws IOException {
-        this.jsonFile = jsonFile;
+    public JsonArrayCveItemSource(InputStream inputStream) throws IOException {
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        inputStream = jsonFile.getName().endsWith(".gz") ?
-                new BufferedInputStream(new GZIPInputStream(Files.newInputStream(jsonFile.toPath()))) :
-                new BufferedInputStream(Files.newInputStream(jsonFile.toPath()));
+        this.inputStream = inputStream;
         jsonParser = mapper.getFactory().createParser(inputStream);
 
         if (jsonParser.nextToken() == JsonToken.START_ARRAY) {
@@ -55,9 +48,7 @@ public class JsonArrayCveItemSource implements CveItemSource<DefCveItem> {
 
     @Override
     public void close() throws Exception {
-        jsonParser.close();
-        inputStream.close();
-        Files.delete(jsonFile.toPath());
+        IOUtils.closeQuietly(jsonParser, inputStream);
     }
 
     @Override
