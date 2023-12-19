@@ -20,6 +20,7 @@ package org.owasp.dependencycheck.data.update;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+import io.github.jeremylong.openvulnerability.client.nvd.NvdApiException;
 import io.github.jeremylong.openvulnerability.client.nvd.NvdCveClient;
 import io.github.jeremylong.openvulnerability.client.nvd.NvdCveClientBuilder;
 import java.io.File;
@@ -217,7 +218,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
 
     private void storeLastModifiedDates(final ZonedDateTime now, final Properties cacheProperties,
             final Map<String, String> updateable) throws UpdateException {
-        
+
         ZonedDateTime lastModifiedRequest = DatabaseProperties.getTimestamp(cacheProperties,
                 NVD_API_CACHE_MODIFIED_DATE + ".modified");
         dbProperties.save(DatabaseProperties.NVD_CACHE_LAST_CHECKED, now);
@@ -225,7 +226,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
         //allow users to initially load from a cache but then use the API - this may happen with the GH Action
         dbProperties.save(DatabaseProperties.NVD_API_LAST_CHECKED, now);
         dbProperties.save(DatabaseProperties.NVD_API_LAST_MODIFIED, lastModifiedRequest);
-        
+
         for (String entry : updateable.keySet()) {
             final ZonedDateTime date = DatabaseProperties.getTimestamp(cacheProperties, NVD_API_CACHE_MODIFIED_DATE + "." + entry);
             dbProperties.save(DatabaseProperties.NVD_CACHE_LAST_MODIFIED + "." + entry, date);
@@ -372,7 +373,20 @@ public class NvdApiDataSource implements CachedWebDataSource {
                 }
 
             } catch (Exception e) {
-                throw new UpdateException("Error updating the NVD Data", e);
+                if (e instanceof NvdApiException && (e.getMessage().equals("NVD Returned Status Code: 404") || e.getMessage().equals("NVD Returned Status Code: 403"))) {
+                    final String msg;
+                    if (key != null) {
+                        msg = "Error updating the NVD Data; the NVD returned a 403 or 404 error\n\nPlease ensure your API Key is valid; "
+                                + "see https://github.com/jeremylong/Open-Vulnerability-Project/tree/main/vulnz#api-key-is-used-and-a-403-or-404-error-occurs\n\n"
+                                + "If you NVD API Key is valid try increasing the NVD API Delay.";
+                    } else {
+                        msg = "Error updating the NVD Data; the NVD returned a 403 or 404 error\n\nConsider using an NVD API Key; "
+                                + "see https://github.com/jeremylong/DependencyCheck?tab=readme-ov-file#nvd-api-key-highly-recommended";
+                    }
+                    throw new UpdateException(msg);
+                } else {
+                    throw new UpdateException("Error updating the NVD Data", e);
+                }
             }
             LOGGER.info(String.format("Downloaded %,d/%,d (%.0f%%)", max, max, 100f));
             max = submitted.size();
@@ -581,7 +595,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
             final URL u = new URI(url + "cache.properties").toURL();
             final String content = d.fetchContent(u, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
             properties.load(new StringReader(content));
-            
+
         } catch (URISyntaxException ex) {
             throw new UpdateException("Invalid NVD Cache URL", ex);
         } catch (DownloadFailedException | ResourceNotFoundException ex) {
@@ -592,13 +606,13 @@ public class NvdApiDataSource implements CachedWebDataSource {
                 metaPattern = pattern.replace(".json.gz", ".meta");
             }
             try {
-                URL  metaUrl = new URI(url + MessageFormat.format(metaPattern, "modified")).toURL();
+                URL metaUrl = new URI(url + MessageFormat.format(metaPattern, "modified")).toURL();
                 String content = d.fetchContent(metaUrl, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
                 Properties props = new Properties();
                 props.load(new StringReader(content));
                 ZonedDateTime lmd = DatabaseProperties.getIsoTimestamp(props, "lastModifiedDate");
-                DatabaseProperties.setTimestamp(properties,"lastModifiedDate.modified", lmd);
-                DatabaseProperties.setTimestamp(properties,"lastModifiedDate", lmd);
+                DatabaseProperties.setTimestamp(properties, "lastModifiedDate.modified", lmd);
+                DatabaseProperties.setTimestamp(properties, "lastModifiedDate", lmd);
                 final int startYear = settings.getInt(Settings.KEYS.NVD_API_DATAFEED_START_YEAR, 2002);
                 final ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
                 final int endYear = now.withZoneSameInstant(ZoneId.of("UTC+14:00")).getYear();
@@ -613,7 +627,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
             } catch (URISyntaxException | TooManyRequestsException | ResourceNotFoundException | IOException ex1) {
                 throw new UpdateException("Unable to download the data feed META files", ex);
             }
-        } catch ( TooManyRequestsException ex) {
+        } catch (TooManyRequestsException ex) {
             throw new UpdateException("Unable to download the NVD API cache.properties", ex);
         } catch (IOException ex) {
             throw new UpdateException("Invalid NVD Cache Properties file contents", ex);
