@@ -1407,4 +1407,11 @@
    <packageUrl regex="true">^pkg:maven/commons-net/commons-net@.*$</packageUrl>
    <cpe>cpe:/a:ftp_project:ftp</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6313
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel-reactive-executor-tomcat@.*$</packageUrl>
+   <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
+</suppress>
 </suppressions>
