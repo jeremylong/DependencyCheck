@@ -1427,3 +1427,10 @@
    <packageUrl regex="true">^pkg:maven/org\.jruby\.rack/jruby-rack@.*$</packageUrl>
    <cpe>cpe:/a:rack_project:rack</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6199
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.r2dbc/r2dbc-mssql@.*$</packageUrl>
+   <cpe>cpe:/a:microsoft:sql_server</cpe>
+</suppress>
