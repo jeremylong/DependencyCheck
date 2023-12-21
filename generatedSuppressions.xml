@@ -1413,3 +1413,10 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.camel/camel-reactive-executor-tomcat@.*$</packageUrl>
    <cpe>cpe:/a:apache_tomcat:apache_tomcat</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6286
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/info\.picocli/picocli@.*$</packageUrl>
+   <cpe>cpe:/a:line:line</cpe>
+</suppress>
