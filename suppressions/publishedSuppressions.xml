@@ -1435,4 +1435,11 @@
    <packageUrl regex="true">^pkg:maven/io\.r2dbc/r2dbc-mssql@.*$</packageUrl>
    <cpe>cpe:/a:microsoft:sql_server</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6031
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.thymeleaf\.extras/thymeleaf-extras-java8time@.*$</packageUrl>
+   <cpe>cpe:/a:thymeleaf:thymeleaf</cpe>
+</suppress>
 </suppressions>
