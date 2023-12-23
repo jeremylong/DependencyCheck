@@ -89,33 +89,37 @@ public class NvdApiProcessor implements Callable<NvdApiProcessor> {
 
     @Override
     public NvdApiProcessor call() throws Exception {
-        try (CveItemSource<DefCveItem> itemSource = buildItemSource(jsonFile)) {
-            while (itemSource.hasNext()) {
-                DefCveItem entry = itemSource.next();
-                try {
-                    cveDB.updateVulnerability(entry, mapper.getEcosystem(entry));
-                } catch (Exception ex) {
-                    LOGGER.error("Failed to process " + entry.getCve().getId(), ex);
-                }
+        if (jsonFile.getName().endsWith(".jsonarray.gz")) {
+            try (InputStream fis = Files.newInputStream(jsonFile.toPath());
+                 InputStream is = new BufferedInputStream(new GZIPInputStream(fis));
+                 CveItemSource<DefCveItem> itemSource = new JsonArrayCveItemSource(is)) {
+                updateCveDb(itemSource);
+            }
+        } else if (jsonFile.getName().endsWith(".gz")) {
+            try (InputStream fis = Files.newInputStream(jsonFile.toPath());
+                 InputStream is = new BufferedInputStream(new GZIPInputStream(fis));
+                 CveItemSource<DefCveItem> itemSource = new CveApiJson20CveItemSource(is)) {
+                updateCveDb(itemSource);
+            }
+        } else {
+            try (InputStream fis = Files.newInputStream(jsonFile.toPath());
+                 InputStream is = new BufferedInputStream(fis);
+                 CveItemSource<DefCveItem> itemSource = new JsonArrayCveItemSource(is)) {
+                updateCveDb(itemSource);
             }
         }
         endTime = System.currentTimeMillis();
         return this;
     }
 
-    static CveItemSource<DefCveItem> buildItemSource(File file) throws IOException {
-        if (file.getName().endsWith(".jsonarray.gz")) {
-            return new JsonArrayCveItemSource(new BufferedInputStream(new GZIPInputStream(
-                    Files.newInputStream(file.toPath())
-            )));
-        } else if (file.getName().endsWith(".gz")) {
-            return new CveApiJson20CveItemSource(new BufferedInputStream(new GZIPInputStream(
-                    Files.newInputStream(file.toPath())
-            )));
-        } else {
-            return new JsonArrayCveItemSource(new BufferedInputStream(
-                    Files.newInputStream(file.toPath())
-            ));
+    private void updateCveDb(CveItemSource<DefCveItem> itemSource) throws IOException {
+        while (itemSource.hasNext()) {
+            DefCveItem entry = itemSource.next();
+            try {
+                cveDB.updateVulnerability(entry, mapper.getEcosystem(entry));
+            } catch (Exception ex) {
+                LOGGER.error("Failed to process " + entry.getCve().getId(), ex);
+            }
         }
     }
 
