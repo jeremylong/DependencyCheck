@@ -197,6 +197,9 @@ public final class DatabaseManager {
                         LOGGER.debug("Unable to connect to the database", ex);
                         throw new DatabaseException("Unable to connect to the database", ex);
                     }
+                } else if (isH2 && ex.getMessage().contains("file version or invalid file header")) {
+                    LOGGER.error("Incompatible or corrupt database found. To resolve this issue please remove the existing database by running purge");
+                    throw new DatabaseException("Incompatible or corrupt database found; run the purge command to resolve the issue");
                 } else {
                     LOGGER.debug("Unable to connect to the database", ex);
                     throw new DatabaseException("Unable to connect to the database", ex);
