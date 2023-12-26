@@ -1442,4 +1442,11 @@
    <packageUrl regex="true">^pkg:maven/org\.thymeleaf\.extras/thymeleaf-extras-java8time@.*$</packageUrl>
    <cpe>cpe:/a:thymeleaf:thymeleaf</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6340
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.idealista/format-preserving-encryption@.*$</packageUrl>
+   <cpe>cpe:/a:vega_project:vega</cpe>
+</suppress>
 </suppressions>
