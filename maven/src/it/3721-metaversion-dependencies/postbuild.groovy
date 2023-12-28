@@ -16,32 +16,30 @@
  * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 
-import org.apache.commons.io.FileUtils;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.NodeList
 
-import java.nio.charset.Charset;
-import javax.xml.xpath.*
 import javax.xml.parsers.DocumentBuilderFactory
-
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathFactory
 // Check to see if jackson-databind-2.5.3.jar was identified with a known CVE - using CVE-2018-7489.
 
 def countMatches(String xml, String xpathQuery) {
     def xpath = XPathFactory.newInstance().newXPath()
-    def builder     = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-    def inputStream = new ByteArrayInputStream( xml.bytes )
-    def records     = builder.parse(inputStream).documentElement
-    NodeList nodes       = xpath.evaluate( xpathQuery, records, XPathConstants.NODESET ) as NodeList
+    def builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    def inputStream = new ByteArrayInputStream(xml.bytes)
+    def records = builder.parse(inputStream).documentElement
+    NodeList nodes = xpath.evaluate(xpathQuery, records, XPathConstants.NODESET) as NodeList
     nodes.getLength();
 }
 
-String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
-int count = countMatches(log,"/analysis/dependencies/dependency/evidenceCollected/evidence[@type='product' and ./value = 'commons-compress' and ./name = 'artifactid']");
-if (count != 1){
+String log = new File(basedir, "target/dependency-check-report.xml").text
+int count = countMatches(log, "/analysis/dependencies/dependency/evidenceCollected/evidence[@type='product' and ./value = 'commons-compress' and ./name = 'artifactid']");
+if (count != 1) {
     System.out.println(String.format("commons-compress was identified %s times, expected 1", count));
     return false;
 }
-count = countMatches(log,"/analysis/dependencies/dependency/evidenceCollected/evidence[@type='product' and ./value = 'commons-pool2' and ./name = 'artifactid']");
-if (count != 1){
+count = countMatches(log, "/analysis/dependencies/dependency/evidenceCollected/evidence[@type='product' and ./value = 'commons-pool2' and ./name = 'artifactid']");
+if (count != 1) {
     System.out.println(String.format("commons-pool2  was identified %s times, expected 1", count));
     return false;
 }

@@ -20,15 +20,6 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.concurrent.ThreadSafe;
-
-import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
@@ -37,11 +28,20 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.Checksum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This analyzer is used to analyze SWIFT and Objective-C packages by collecting
@@ -170,7 +170,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
 
         final String contents;
         try {
-            contents = FileUtils.readFileToString(podfileLock.getActualFile(), Charset.defaultCharset());
+            contents = new String(Files.readAllBytes(podfileLock.getActualFile().toPath()), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
@@ -229,7 +229,7 @@ public class CocoaPodsAnalyzer extends AbstractFileTypeAnalyzer {
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         String contents;
         try {
-            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
+            contents = new String(Files.readAllBytes(dependency.getActualFile().toPath()), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);

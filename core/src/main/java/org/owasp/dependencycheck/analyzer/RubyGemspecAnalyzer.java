@@ -20,16 +20,6 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.concurrent.ThreadSafe;
-
-import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
@@ -43,6 +33,16 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Used to analyze Ruby Gem specifications and collect information that can be
@@ -143,7 +143,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         String contents;
         try {
-            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
+            contents = new String(Files.readAllBytes(dependency.getActualFile().toPath()), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
@@ -265,7 +265,7 @@ public class RubyGemspecAnalyzer extends AbstractFileTypeAnalyzer {
             }
             for (File f : matchingFiles) {
                 try {
-                    final List<String> lines = FileUtils.readLines(f, Charset.defaultCharset());
+                    final List<String> lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);
                     if (lines.size() == 1) { //TODO other checking?
                         final String value = lines.get(0).trim();
                         if (version == null || !version.equals(value)) {

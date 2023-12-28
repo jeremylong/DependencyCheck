@@ -16,13 +16,11 @@
  * Copyright (c) 2018 Nicolas Henneaux. All Rights Reserved.
  */
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import java.nio.charset.Charset;
+import org.apache.commons.lang.StringUtils
 
-String log = FileUtils.readFileToString(new File(basedir, "build.log"), Charset.defaultCharset().name());
+String log = new File(basedir, "build.log").text
 int count = StringUtils.countMatches(log, "There was an issue connecting to Artifactory . Disabling analyzer.");
-if (count > 0){
+if (count > 0) {
     System.out.println(String.format("There was an issue connecting to Artifactory . Disabling analyzer."));
     return false;
 }

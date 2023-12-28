@@ -17,7 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.artifactory.ArtifactorySearch;
@@ -30,8 +29,11 @@ import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.owasp.dependencycheck.xml.pom.PomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +46,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
-import org.owasp.dependencycheck.utils.ResourceNotFoundException;
-import org.owasp.dependencycheck.utils.TooManyRequestsException;
 
 /**
  * Analyzer which will attempt to locate a dependency, and the GAV information,
@@ -251,7 +251,7 @@ public class ArtifactoryAnalyzer extends AbstractFileTypeAnalyzer {
             LOGGER.warn("pom.xml not found for {} from Artifactory; "
                     + "this could result in undetected CPE/CVEs.", dependency.getFileName());
         } finally {
-            if (pomFile != null && pomFile.exists() && !FileUtils.deleteQuietly(pomFile)) {
+            if (pomFile != null && pomFile.exists() && !FileUtils.delete(pomFile)) {
                 LOGGER.debug("Failed to delete temporary pom file {}", pomFile);
                 pomFile.deleteOnExit();
             }

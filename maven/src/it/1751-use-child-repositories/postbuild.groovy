@@ -16,12 +16,9 @@
  * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 
-import java.nio.charset.Charset;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import groovy.util.XmlSlurper;
+import groovy.util.XmlSlurper
 
-String report = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
+String report = new File(basedir, "target/dependency-check-report.xml").text;
 
 def analysis = new XmlSlurper().parseText(report);
 def databindDep = analysis.dependencies.'*'.find { node -> node.fileName.text() == 'jackson-databind-2.4.3.jar' };
@@ -29,19 +26,19 @@ def references = databindDep.projectReferences.projectReference;
 
 int refCount = references.size();
 if (refCount != 2) {
-	System.out.println("Failed to find both project references");
-	return false;
+    System.out.println("Failed to find both project references");
+    return false;
 }
 if (!references.find { node -> node.text() == '1751-child-one:compile' }) {
-	System.out.println("Should find reference from 1751-child-one to jackson-databind");
-	return false
+    System.out.println("Should find reference from 1751-child-one to jackson-databind");
+    return false
 }
 if (!references.find { node -> node.text() == '1751-child-two:compile' }) {
-	System.out.println("Should find reference from 1751-child-two to jackson-databind");
-	return false
+    System.out.println("Should find reference from 1751-child-two to jackson-databind");
+    return false
 }
 if (!databindDep.vulnerabilities.vulnerability.name.find { node -> node.text() == 'CVE-2018-7489' }) {
-	System.out.println("Failed to identify vulnerability CVE-2018-7489 in Jackson");
+    System.out.println("Failed to identify vulnerability CVE-2018-7489 in Jackson");
     return false;
 }
 

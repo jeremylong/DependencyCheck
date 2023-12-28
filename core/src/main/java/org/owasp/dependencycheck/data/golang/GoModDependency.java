@@ -19,13 +19,6 @@ package org.owasp.dependencycheck.data.golang;
 
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURLBuilder;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
@@ -33,12 +26,20 @@ import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.DEPENDENCY_ECOSYSTEM;
 import static org.owasp.dependencycheck.analyzer.GolangModAnalyzer.GO_MOD;
-import org.owasp.dependencycheck.utils.Checksum;
 
 /**
  * Represents a Go module dependency.
@@ -185,7 +186,6 @@ public class GoModDependency {
      * Extracts the content of the license file into the dependency's license
      * field.
      *
-     *
      * @param dependency the dependency being analyzed
      * @param file the license file
      */
@@ -195,7 +195,7 @@ public class GoModDependency {
             for (File f : files) {
                 if (LICENSE_FILES.contains(f.getName().toUpperCase())) {
                     try {
-                        final String license = FileUtils.readFileToString(f, StandardCharsets.UTF_8);
+                        final String license = new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8);
                         dependency.setLicense(license);
                         break;
                     } catch (IOException ex) {

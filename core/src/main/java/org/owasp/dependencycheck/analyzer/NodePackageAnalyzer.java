@@ -20,39 +20,39 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
-import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.Engine.Mode;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.concurrent.ThreadSafe;
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.concurrent.ThreadSafe;
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
-import org.owasp.dependencycheck.Engine.Mode;
-import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
-import org.owasp.dependencycheck.dependency.Confidence;
-import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
-import org.owasp.dependencycheck.exception.InitializationException;
-import org.owasp.dependencycheck.utils.Checksum;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
 
 /**
  * Used to analyze Node Package Manager (npm) package.json files, and collect
@@ -252,7 +252,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
             return;
         }
 
-        try (JsonReader jsonReader = Json.createReader(FileUtils.openInputStream(dependencyFile))) {
+        try (JsonReader jsonReader = Json.createReader(Files.newInputStream(dependencyFile.toPath()))) {
             final JsonObject json = jsonReader.readObject();
             final String parentName = json.getString("name", "");
             final String parentVersion = json.getString("version", "");
@@ -303,7 +303,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
         // using a local node_module is not supported by npm audit, it crash
         if (Objects.nonNull(version) && (version.startsWith("file:") || version.matches("^[.~]{0,2}/.*"))) {
             LOGGER.warn("dependency skipped: package.json contain an local node_module for {} seems to be "
-                    + "located {} npm audit doesn't support locally referenced modules",
+                            + "located {} npm audit doesn't support locally referenced modules",
                     name, version);
             return true;
         }
@@ -320,12 +320,12 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
     /**
      * Checks if the given dependency should be skipped.
      *
-     * @see NodePackageAnalyzer#shouldSkipDependency(java.lang.String,
-     * java.lang.String, boolean, boolean)
      * @param name the name of the dependency to test
      * @param version the version of the dependency to test
      * @return <code>true</code> if the dependency should be skipped; otherwise
      * <code>false</code>
+     * @see NodePackageAnalyzer#shouldSkipDependency(java.lang.String,
+     * java.lang.String, boolean, boolean)
      */
     public static boolean shouldSkipDependency(String name, String version) {
         return shouldSkipDependency(name, version, false, true);
@@ -344,20 +344,20 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
      * @throws AnalysisException thrown if there is an exception
      */
     private void processDependencies(JsonObject json, File baseDir, File rootFile,
-            String parentPackage, Engine engine) throws AnalysisException {
-          final boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
-          final JsonObject deps;
-          final File modulesRoot = new File(rootFile.getParentFile(), "node_modules");
-          final int lockJsonVersion = json.containsKey("lockfileVersion") ? json.getInt("lockfileVersion") : 1;
-          if (lockJsonVersion >= 2) {
+                                     String parentPackage, Engine engine) throws AnalysisException {
+        final boolean skipDev = getSettings().getBoolean(Settings.KEYS.ANALYZER_NODE_PACKAGE_SKIPDEV, false);
+        final JsonObject deps;
+        final File modulesRoot = new File(rootFile.getParentFile(), "node_modules");
+        final int lockJsonVersion = json.containsKey("lockfileVersion") ? json.getInt("lockfileVersion") : 1;
+        if (lockJsonVersion >= 2) {
             deps = json.getJsonObject("packages");
-          } else if (json.containsKey("dependencies")) {
+        } else if (json.containsKey("dependencies")) {
             deps = json.getJsonObject("dependencies");
-          } else {
+        } else {
             deps = null;
-          }
+        }
 
-          if (deps != null) {
+        if (deps != null) {
             for (Map.Entry<String, JsonValue> entry : deps.entrySet()) {
                 final String pathName = entry.getKey();
                 String name = pathName;
@@ -428,7 +428,7 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                     } catch (IOException | NoSuchAlgorithmException ex) {
                         LOGGER.debug("Error setting hashes:" + ex.getMessage(), ex);
                     }
-                    try (JsonReader jr = Json.createReader(FileUtils.openInputStream(f))) {
+                    try (JsonReader jr = Json.createReader(Files.newInputStream(f.toPath()))) {
                         final JsonObject childJson = jr.readObject();
                         gatherEvidence(childJson, child);
                     } catch (JsonException e) {

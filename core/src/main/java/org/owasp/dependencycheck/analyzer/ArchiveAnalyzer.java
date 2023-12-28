@@ -17,24 +17,6 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import javax.annotation.concurrent.ThreadSafe;
-
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream;
@@ -50,7 +32,6 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.eclipse.packager.rpm.RpmTag;
 import org.eclipse.packager.rpm.parse.RpmInputStream;
 import org.owasp.dependencycheck.Engine;
-import static org.owasp.dependencycheck.analyzer.AbstractNpmAnalyzer.shouldProcess;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
@@ -59,9 +40,29 @@ import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import static org.owasp.dependencycheck.analyzer.AbstractNpmAnalyzer.shouldProcess;
 
 /**
  * <p>
@@ -359,7 +360,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
                 dependency.setMd5sum("");
                 dependency.setSha1sum("");
                 dependency.setSha256sum("");
-                org.apache.commons.io.FileUtils.copyFile(dependency.getActualFile(), tmpLoc);
+                Files.copy(dependency.getActualFile().toPath(), tmpLoc.toPath());
                 final List<Dependency> dependencySet = findMoreDependencies(engine, tmpLoc);
                 if (dependencySet != null && !dependencySet.isEmpty()) {
                     dependencySet.forEach((d) -> {
@@ -523,12 +524,11 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * executable JAR is identified the input stream will be advanced to the
      * start of the actual JAR file ( skipping the script).
      *
-     * @see
-     * <a href="http://docs.spring.io/spring-boot/docs/1.3.0.BUILD-SNAPSHOT/reference/htmlsingle/#deployment-install">Installing
-     * Spring Boot Applications</a>
      * @param archiveExt the file extension
      * @param in the input stream
      * @throws IOException thrown if there is an error reading the stream
+     * @see <a href="http://docs.spring.io/spring-boot/docs/1.3.0.BUILD-SNAPSHOT/reference/htmlsingle/#deployment-install">Installing
+     * Spring Boot Applications</a>
      */
     private void ensureReadableJar(final String archiveExt, BufferedInputStream in) throws IOException {
         if (("war".equals(archiveExt) || "jar".equals(archiveExt)) && in.markSupported()) {

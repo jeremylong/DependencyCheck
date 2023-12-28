@@ -17,23 +17,8 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.concurrent.ThreadSafe;
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.dependencycheck.Engine;
@@ -51,6 +36,20 @@ import org.owasp.dependencycheck.utils.processing.ProcessReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
+
+import javax.annotation.concurrent.ThreadSafe;
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @ThreadSafe
 public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
@@ -235,7 +234,7 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
                     LOGGER.debug("Process Error Out: {}", errOutput);
                     LOGGER.debug("Process Out: {}", processReader.getOutput());
                 }
-                final String verboseJson = FileUtils.readFileToString(tmpFile, StandardCharsets.UTF_8);
+                final String verboseJson = new String(Files.readAllBytes(tmpFile.toPath()), StandardCharsets.UTF_8);
                 final String auditRequestJson = Arrays.stream(verboseJson.split("\n"))
                         .filter(line -> line.contains("Audit Request"))
                         .findFirst().get();
@@ -280,9 +279,10 @@ public class YarnAuditAnalyzer extends AbstractNpmAnalyzer {
             // Retrieves the contents of package-lock.json from the Dependency
             final JsonObject lockJson = fetchYarnAuditJson(dependency, skipDevDependencies);
             // Retrieves the contents of package-lock.json from the Dependency
-            final JsonReader packageReader = Json.createReader(FileUtils.openInputStream(packageFile));
-            final JsonObject packageJson = packageReader.readObject();
-
+            final JsonObject packageJson;
+            try (final JsonReader packageReader = Json.createReader(Files.newInputStream(packageFile.toPath()))) {
+                packageJson = packageReader.readObject();
+            }
             // Modify the payload to meet the NPM Audit API requirements
             final JsonObject payload = NpmPayloadBuilder.build(lockJson, packageJson, dependencyMap, skipDevDependencies);
 

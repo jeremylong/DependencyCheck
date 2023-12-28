@@ -20,31 +20,31 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
-import org.owasp.dependencycheck.utils.FileFilterBuilder;
-import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.UrlStringUtils;
-
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.concurrent.ThreadSafe;
-import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.UrlStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Used to analyze a Python package, and collect information that can be used to
@@ -237,13 +237,13 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
             throws AnalysisException {
         final String contents;
         try {
-            contents = FileUtils.readFileToString(file, Charset.defaultCharset()).trim();
+            contents = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8).trim();
         } catch (IOException e) {
             throw new AnalysisException("Problem occurred while reading dependency file.", e);
         }
         if (!contents.isEmpty()) {
             final String source = file.getName();
-             gatherEvidence(dependency, EvidenceType.VERSION, VERSION_PATTERN, contents,
+            gatherEvidence(dependency, EvidenceType.VERSION, VERSION_PATTERN, contents,
                     source, "SourceVersion", Confidence.MEDIUM);
             addSummaryInfo(dependency, SUMMARY_PATTERN, 4, contents,
                     source, "summary");
@@ -292,7 +292,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * @param key the key name to use when recording the evidence
      */
     private void addSummaryInfo(Dependency dependency, Pattern pattern,
-            int group, String contents, String source, String key) {
+                                int group, String contents, String source, String key) {
         final Matcher matcher = pattern.matcher(contents);
         final boolean found = matcher.find();
         if (found) {
@@ -312,7 +312,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * @param contents the home page URL
      */
     private void gatherHomePageEvidence(Dependency dependency, EvidenceType type, Pattern pattern,
-            String source, String name, String contents) {
+                                        String source, String name, String contents) {
         final Matcher matcher = pattern.matcher(contents);
         if (matcher.find()) {
             final String url = matcher.group(4);
@@ -335,7 +335,7 @@ public class PythonPackageAnalyzer extends AbstractFileTypeAnalyzer {
      * @param confidence in evidence
      */
     private void gatherEvidence(Dependency dependency, EvidenceType type, Pattern pattern, String contents,
-            String source, String name, Confidence confidence) {
+                                String source, String name, Confidence confidence) {
         final Matcher matcher = pattern.matcher(contents);
         final boolean found = matcher.find();
         if (found) {

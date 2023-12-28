@@ -17,24 +17,24 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.owasp.dependencycheck.BaseTest;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.utils.Settings;
+
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
  * @author Jeremy Long
@@ -216,8 +216,9 @@ public class JarAnalyzerTest extends BaseTest {
     public void testAnalyzeDependency_SkipsMacOSMetaDataFile() throws Exception {
         JarAnalyzer instance = new JarAnalyzer();
         Dependency macOSMetaDataFile = new Dependency();
+
         macOSMetaDataFile
-                .setActualFilePath(FileUtils.getFile("src", "test", "resources", "._avro-ipc-1.5.0.jar").getAbsolutePath());
+                .setActualFilePath(Paths.get("src", "test", "resources", "._avro-ipc-1.5.0.jar").toFile().getAbsolutePath());
         macOSMetaDataFile.setFileName("._avro-ipc-1.5.0.jar");
         Dependency actualJarFile = new Dependency();
         actualJarFile.setActualFilePath(BaseTest.getResourceAsFile(this, "avro-ipc-1.5.0.jar").getAbsolutePath());

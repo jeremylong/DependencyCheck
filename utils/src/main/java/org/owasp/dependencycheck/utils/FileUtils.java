@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
@@ -90,7 +91,7 @@ public final class FileUtils {
         }
 
         try {
-            org.apache.commons.io.FileUtils.forceDelete(file);
+            Files.delete(file.toPath());
         } catch (IOException ex) {
             LOGGER.trace(ex.getMessage(), ex);
             LOGGER.debug("Failed to delete file: {} (error message: {}); attempting to delete on exit.", file.getPath(), ex.getMessage());

@@ -16,26 +16,20 @@
  * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import java.nio.charset.Charset;
-import java.io.File;
-import java.io.FileNotFoundException;
-
+import org.apache.commons.lang.StringUtils
 
 // Check to see if jackson-dataformat-xml-2.4.5.jar was identified.
 //TODO change this to xpath and check for CVE-2018-11307
 File file = new File(basedir, "target/dependency-check-report.xml");
-if ( !file.isFile() )
-{
-    System.err.println( "Could not find XML Report: " + file );
+if (!file.isFile()) {
+    System.err.println("Could not find XML Report: " + file);
 }
-String log = FileUtils.readFileToString(file, Charset.defaultCharset().name());
+String log = file.text
 int count = StringUtils.countMatches(log, "<name>CVE-2018-11307</name>");
 count += StringUtils.countMatches(log, "<name>CVE-2016-7051</name>");
 
 if (count == 0) {
-    System.err.println( log );
+    System.err.println(log);
     System.err.println(String.format("jackson-dataformat-xml CVEs (neither CVE-2016-7051 or CVE-2018-11307) were identified", count));
     return false;
 }

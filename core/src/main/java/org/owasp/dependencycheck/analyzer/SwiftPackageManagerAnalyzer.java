@@ -20,15 +20,6 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.concurrent.ThreadSafe;
-
-import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
@@ -41,6 +32,15 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This analyzer is used to analyze the SWIFT Package Manager
@@ -158,7 +158,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
             throws AnalysisException, IOException {
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
 
-        final String contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());
+        final String contents = new String(Files.readAllBytes(dependency.getActualFile().toPath()), StandardCharsets.UTF_8);
 
         final Matcher matcher = SPM_BLOCK_PATTERN.matcher(contents);
         if (matcher.find()) {
@@ -220,7 +220,7 @@ public class SwiftPackageManagerAnalyzer extends AbstractFileTypeAnalyzer {
      * @return the string that was added as evidence
      */
     private String addStringEvidence(Dependency dependency, EvidenceType type,
-            String packageDescription, String field, String fieldPattern, Confidence confidence) {
+                                     String packageDescription, String field, String fieldPattern, Confidence confidence) {
         String value = "";
 
         final Matcher matcher = Pattern.compile(

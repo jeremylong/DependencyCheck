@@ -22,23 +22,7 @@ import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
 import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
 import io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.ADVISORY;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CRITICALITY;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CVE;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.NAME;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.VERSION;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -56,6 +40,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
 import us.springett.parsers.cpe.values.Part;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.ADVISORY;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CRITICALITY;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CVE;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.NAME;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.VERSION;
 
 /**
  * Processor for the output of bundler-audit.
@@ -133,7 +133,7 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
                     appendToDescription = false;
                     gem = nextLine.substring(NAME.length());
                     if (!map.containsKey(gem)) {
-                        map.put(gem, createDependencyForGem(engine, parentName, fileName, filePath, gem));
+                        map.put(gem, createDependencyForGem(engine, gemDependency.getActualFile(), parentName, fileName, filePath, gem));
                     }
                     dependency = map.get(gem);
                     LOGGER.debug("bundle-audit ({}): {}", parentName, nextLine);
@@ -310,17 +310,10 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
      * @return the dependency to add
      * @throws IOException thrown if a temporary gem file could not be written
      */
-    private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String filePath, String gem) throws IOException {
-        final File gemFile;
-        try {
-            gemFile = File.createTempFile(gem, "_Gemfile.lock", engine.getSettings().getTempDirectory());
-        } catch (IOException ioe) {
-            throw new IOException("Unable to create temporary gem file");
-        }
+    private Dependency createDependencyForGem(Engine engine, File gemFile, String parentName, String fileName, String filePath, String gem) throws IOException {
         final String displayFileName = String.format("%s%c%s:%s", parentName, File.separatorChar, fileName, gem);
-
-        FileUtils.write(gemFile, displayFileName, Charset.defaultCharset()); // unique contents to avoid dependency bundling
-        final Dependency dependency = new Dependency(gemFile);
+        final Dependency dependency = new Dependency(gemFile, true);
+        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));
         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
         dependency.addEvidence(EvidenceType.PRODUCT, "bundler-audit", "Name", gem, Confidence.HIGHEST);
         //TODO add package URL - note, this may require parsing the gemfile.lock and getting the version for each entry

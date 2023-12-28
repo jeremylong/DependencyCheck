@@ -16,27 +16,26 @@
  * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 
-import org.apache.commons.io.FileUtils;
-import org.w3c.dom.NodeList;
 
-import java.nio.charset.Charset;
-import javax.xml.xpath.*
+import org.w3c.dom.NodeList
+
 import javax.xml.parsers.DocumentBuilderFactory
-
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathFactory
 // Check to see if lib-1.0.0-SNAPSHOT.jar was added to the report only once as a virtual dependency.
 
 def countMatches(String xml, String xpathQuery) {
     def xpath = XPathFactory.newInstance().newXPath()
-    def builder     = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-    def inputStream = new ByteArrayInputStream( xml.bytes )
-    def records     = builder.parse(inputStream).documentElement
-    NodeList nodes       = xpath.evaluate( xpathQuery, records, XPathConstants.NODESET ) as NodeList
+    def builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    def inputStream = new ByteArrayInputStream(xml.bytes)
+    def records = builder.parse(inputStream).documentElement
+    NodeList nodes = xpath.evaluate(xpathQuery, records, XPathConstants.NODESET) as NodeList
     nodes.getLength();
 }
 
-String log = FileUtils.readFileToString(new File(basedir, "target/dependency-check-report.xml"), Charset.defaultCharset().name());
-int count = countMatches(log,"/analysis/dependencies/dependency[./fileName = 'org.owasp.test.aggregate.issue-3944:lib:1.0.0-SNAPSHOT']");
-if (count != 1){
+String log = new File(basedir, "target/dependency-check-report.xml").text
+int count = countMatches(log, "/analysis/dependencies/dependency[./fileName = 'org.owasp.test.aggregate.issue-3944:lib:1.0.0-SNAPSHOT']");
+if (count != 1) {
     System.out.println(String.format("virtual dependency lib 1.0.0-SNAPSHOT was identified %s times, expected 1", count));
     return false;
 }

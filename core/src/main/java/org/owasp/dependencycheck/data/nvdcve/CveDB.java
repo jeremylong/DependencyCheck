@@ -872,13 +872,13 @@ public final class CveDB implements AutoCloseable {
                 }
             }
         } catch (SQLException ex) {
-            final String msg = String.format("Error updating '%s'", cveId);
+            final String msg = String.format("Error updating '%s'; %s", cveId, ex.getMessage());
             LOGGER.debug(msg, ex);
-            throw new DatabaseException(msg, ex);
+            throw new DatabaseException(msg);
         } catch (CpeValidationException ex) {
-            final String msg = String.format("Error parsing CPE entry from '%s'", cveId);
+            final String msg = String.format("Error parsing CPE entry from '%s'; %s", cveId, ex.getMessage());
             LOGGER.debug(msg, ex);
-            throw new DatabaseException(msg, ex);
+            throw new DatabaseException(msg);
         }
     }
 

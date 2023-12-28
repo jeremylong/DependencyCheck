@@ -17,20 +17,33 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.jcs3.access.exception.CacheException;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.analyzer.exception.UnexpectedAnalysisException;
+import org.owasp.dependencycheck.data.cache.DataCache;
+import org.owasp.dependencycheck.data.cache.DataCacheFactory;
 import org.owasp.dependencycheck.data.central.CentralSearch;
-import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.Evidence;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.FileUtils;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
+import org.owasp.dependencycheck.xml.pom.Model;
 import org.owasp.dependencycheck.xml.pom.PomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -39,20 +52,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.List;
-import javax.annotation.concurrent.ThreadSafe;
-import org.apache.commons.jcs3.access.exception.CacheException;
-import org.owasp.dependencycheck.data.cache.DataCache;
-import org.owasp.dependencycheck.data.cache.DataCacheFactory;
-
-import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.exception.InitializationException;
-import org.owasp.dependencycheck.utils.DownloadFailedException;
-import org.owasp.dependencycheck.utils.Downloader;
-import org.owasp.dependencycheck.utils.FileFilterBuilder;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
-import org.owasp.dependencycheck.utils.ResourceNotFoundException;
-import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.xml.pom.Model;
 
 /**
  * Analyzer which will attempt to locate a dependency, and the GAV information,
@@ -295,7 +294,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                                 + "this could result in undetected CPE/CVEs.", dependency.getFileName()), ex);
 
                     } finally {
-                        if (pomFile != null && pomFile.exists() && !FileUtils.deleteQuietly(pomFile)) {
+                        if (pomFile != null && pomFile.exists() && !FileUtils.delete(pomFile)) {
                             LOGGER.debug("Failed to delete temporary pom file {}", pomFile);
                             pomFile.deleteOnExit();
                         }

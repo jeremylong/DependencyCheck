@@ -17,11 +17,12 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.dependency.Confidence;
 import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.exception.InitializationException;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.UrlStringUtils;
@@ -29,11 +30,10 @@ import org.owasp.dependencycheck.utils.UrlStringUtils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.owasp.dependencycheck.dependency.EvidenceType;
-import org.owasp.dependencycheck.exception.InitializationException;
 
 /**
  * Used to analyze Autoconf input files named configure.ac or configure.in.
@@ -187,7 +187,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
      * @param contents the contents to analyze for evidence
      */
     private void extractConfigureScriptEvidence(Dependency dependency,
-            final String name, final String contents) {
+                                                final String name, final String contents) {
         final Matcher matcher = PACKAGE_VAR.matcher(contents);
         while (matcher.find()) {
             final String variable = matcher.group(1);
@@ -216,7 +216,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
     private String getFileContents(final File actualFile)
             throws AnalysisException {
         try {
-            return FileUtils.readFileToString(actualFile, Charset.defaultCharset()).trim();
+            return new String(Files.readAllBytes(actualFile.toPath()), StandardCharsets.UTF_8).trim();
         } catch (IOException e) {
             throw new AnalysisException(
                     "Problem occurred while reading dependency file.", e);
@@ -231,7 +231,7 @@ public class AutoconfAnalyzer extends AbstractFileTypeAnalyzer {
      * @param contents the evidence to analyze
      */
     private void gatherEvidence(Dependency dependency, final String name,
-            String contents) {
+                                String contents) {
         final Matcher matcher = AC_INIT_PATTERN.matcher(contents);
         if (matcher.find()) {
             dependency.addEvidence(EvidenceType.PRODUCT, name, "Package", matcher.group(1), Confidence.HIGHEST);

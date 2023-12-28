@@ -16,11 +16,9 @@
  * Copyright (c) 2014 Jeremy Long. All Rights Reserved.
  */
 
-import java.nio.charset.Charset;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.StringUtils
  
-String log = FileUtils.readFileToString(new File(basedir, "build.log"), Charset.defaultCharset().name());
+String log = new File(basedir, "build.log").text
 int count = StringUtils.countMatches(log, "Download Started for NVD CVE - 2020");
 if (count > 1){
     System.out.println(String.format("NVD CVE was downloaded %s times, should be 0 or 1 times", count));

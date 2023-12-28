@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.jcs3.JCS;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +39,7 @@ import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.exception.WriteLockException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.WriteLock;
 import org.slf4j.Logger;
@@ -949,7 +949,7 @@ public class Engine implements FileFilter, AutoCloseable {
         try {
             final File cache = new File(settings.getDataDirectory(), "cache");
             if (cache.exists()) {
-                if (FileUtils.deleteQuietly(cache)) {
+                if (FileUtils.delete(cache)) {
                     LOGGER.info("Cache directory purged");
                 }
             }
@@ -959,7 +959,7 @@ public class Engine implements FileFilter, AutoCloseable {
         try {
             final File cache = new File(settings.getDataDirectory(), "oss_cache");
             if (cache.exists()) {
-                if (FileUtils.deleteQuietly(cache)) {
+                if (FileUtils.delete(cache)) {
                     LOGGER.info("OSS Cache directory purged");
                 }
             }

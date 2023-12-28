@@ -377,7 +377,7 @@ public abstract class AbstractSuppressionAnalyzer extends AbstractAnalyzer {
                         deleteTempFile = true;
                         file = getSettings().getTempFile("suppression", "xml");
                         try {
-                            org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionFromClasspath, file);
+                            Files.copy(suppressionFromClasspath, file.toPath());
                         } catch (IOException ex) {
                             throwSuppressionParseException("Unable to locate suppression file in classpath", ex, suppressionFilePath);
                         }

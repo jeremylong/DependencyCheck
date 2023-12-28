@@ -17,7 +17,8 @@
  */
 package org.owasp.dependencycheck.analyzer;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -42,10 +43,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 @ThreadSafe
 public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
@@ -219,7 +219,7 @@ public class PnpmAuditAnalyzer extends AbstractNpmAnalyzer {
                 if (!StringUtils.isBlank(errOutput)) {
                     LOGGER.error("Process error output: {}", errOutput);
                 }
-                String verboseJson = FileUtils.readFileToString(tmpFile, StandardCharsets.UTF_8);
+                String verboseJson = new String(Files.readAllBytes(tmpFile.toPath()), StandardCharsets.UTF_8);
                 // Workaround implicit creation of .pnpm-debug.log, see https://github.com/pnpm/pnpm/issues/3832
                 // affects usage of docker container to analyze mounted directories without privileges
                 if (verboseJson.contains("EACCES: permission denied, open 'node_modules/.pnpm-debug.log'")) {

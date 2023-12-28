@@ -17,6 +17,17 @@
  */
 package org.owasp.dependencycheck.utils;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.io.IOUtils;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,17 +39,6 @@ import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.annotation.concurrent.ThreadSafe;
-
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.apache.commons.io.IOUtils;
-import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
-import org.owasp.dependencycheck.analyzer.exception.ArchiveExtractionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Set of utilities to extract files from archives.
@@ -350,7 +350,7 @@ public final class ExtractionUtil {
                 FileOutputStream out = new FileOutputStream(newFile)) {
             IOUtils.copy(cin, out);
         } finally {
-            if (gzip.isFile() && !org.apache.commons.io.FileUtils.deleteQuietly(gzip)) {
+            if (gzip.isFile() && !FileUtils.delete(gzip)) {
                 LOGGER.debug("Failed to delete temporary file when extracting 'gz' {}", gzip);
                 gzip.deleteOnExit();
             }
@@ -382,7 +382,7 @@ public final class ExtractionUtil {
             cin.getNextEntry();
             IOUtils.copy(cin, out);
         } finally {
-            if (zip.isFile() && !org.apache.commons.io.FileUtils.deleteQuietly(zip)) {
+            if (zip.isFile() && !FileUtils.delete(zip)) {
                 LOGGER.debug("Failed to delete temporary file when extracting 'zip' {}", zip);
                 zip.deleteOnExit();
             }
