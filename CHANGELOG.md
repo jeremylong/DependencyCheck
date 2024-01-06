@@ -1,6 +1,6 @@
 # Change Log
 
-## [Version 9.0.7](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.7) (2024-01-06)
+## [Version 9.0.8](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.8) (2024-01-06)
 
 - fix: favor stability over performance (#6349)
 - chore: replace commons-io with core java calls (#6343)
