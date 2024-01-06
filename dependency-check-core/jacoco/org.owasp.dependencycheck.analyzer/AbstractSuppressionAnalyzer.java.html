@@ -377,7 +377,7 @@ import org.xml.sax.SAXException;
 <span class="fc" id="L377">                        deleteTempFile = true;</span>
 <span class="fc" id="L378">                        file = getSettings().getTempFile(&quot;suppression&quot;, &quot;xml&quot;);</span>
                         try {
-<span class="fc" id="L380">                            org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionFromClasspath, file);</span>
+<span class="fc" id="L380">                            Files.copy(suppressionFromClasspath, file.toPath());</span>
 <span class="nc" id="L381">                        } catch (IOException ex) {</span>
 <span class="nc" id="L382">                            throwSuppressionParseException(&quot;Unable to locate suppression file in classpath&quot;, ex, suppressionFilePath);</span>
 <span class="fc" id="L383">                        }</span>

@@ -22,23 +22,7 @@ import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
 import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
 import io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.ADVISORY;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CRITICALITY;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CVE;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.NAME;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.VERSION;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -56,6 +40,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
 import us.springett.parsers.cpe.values.Part;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.ADVISORY;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CRITICALITY;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CVE;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.NAME;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.VERSION;
 
 /**
  * Processor for the output of bundler-audit.
@@ -133,7 +133,7 @@ public class BundlerAuditProcessor extends Processor&lt;InputStream&gt; {
 <span class="nc" id="L133">                    appendToDescription = false;</span>
 <span class="nc" id="L134">                    gem = nextLine.substring(NAME.length());</span>
 <span class="nc bnc" id="L135" title="All 2 branches missed.">                    if (!map.containsKey(gem)) {</span>
-<span class="nc" id="L136">                        map.put(gem, createDependencyForGem(engine, parentName, fileName, filePath, gem));</span>
+<span class="nc" id="L136">                        map.put(gem, createDependencyForGem(engine, gemDependency.getActualFile(), parentName, fileName, filePath, gem));</span>
                     }
 <span class="nc" id="L138">                    dependency = map.get(gem);</span>
 <span class="nc" id="L139">                    LOGGER.debug(&quot;bundle-audit ({}): {}&quot;, parentName, nextLine);</span>
@@ -310,28 +310,21 @@ public class BundlerAuditProcessor extends Processor&lt;InputStream&gt; {
      * @return the dependency to add
      * @throws IOException thrown if a temporary gem file could not be written
      */
-    private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String filePath, String gem) throws IOException {
-        final File gemFile;
-        try {
-<span class="nc" id="L316">            gemFile = File.createTempFile(gem, &quot;_Gemfile.lock&quot;, engine.getSettings().getTempDirectory());</span>
-<span class="nc" id="L317">        } catch (IOException ioe) {</span>
-<span class="nc" id="L318">            throw new IOException(&quot;Unable to create temporary gem file&quot;);</span>
-<span class="nc" id="L319">        }</span>
-<span class="nc" id="L320">        final String displayFileName = String.format(&quot;%s%c%s:%s&quot;, parentName, File.separatorChar, fileName, gem);</span>
-
-<span class="nc" id="L322">        FileUtils.write(gemFile, displayFileName, Charset.defaultCharset()); // unique contents to avoid dependency bundling</span>
-<span class="nc" id="L323">        final Dependency dependency = new Dependency(gemFile);</span>
-<span class="nc" id="L324">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="nc" id="L325">        dependency.addEvidence(EvidenceType.PRODUCT, &quot;bundler-audit&quot;, &quot;Name&quot;, gem, Confidence.HIGHEST);</span>
+    private Dependency createDependencyForGem(Engine engine, File gemFile, String parentName, String fileName, String filePath, String gem) throws IOException {
+<span class="nc" id="L314">        final String displayFileName = String.format(&quot;%s%c%s:%s&quot;, parentName, File.separatorChar, fileName, gem);</span>
+<span class="nc" id="L315">        final Dependency dependency = new Dependency(gemFile, true);</span>
+<span class="nc" id="L316">        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));</span>
+<span class="nc" id="L317">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="nc" id="L318">        dependency.addEvidence(EvidenceType.PRODUCT, &quot;bundler-audit&quot;, &quot;Name&quot;, gem, Confidence.HIGHEST);</span>
         //TODO add package URL - note, this may require parsing the gemfile.lock and getting the version for each entry
 
-<span class="nc" id="L328">        dependency.setDisplayFileName(displayFileName);</span>
-<span class="nc" id="L329">        dependency.setFileName(fileName);</span>
-<span class="nc" id="L330">        dependency.setFilePath(filePath);</span>
+<span class="nc" id="L321">        dependency.setDisplayFileName(displayFileName);</span>
+<span class="nc" id="L322">        dependency.setFileName(fileName);</span>
+<span class="nc" id="L323">        dependency.setFilePath(filePath);</span>
         //sha1sum is used for anchor links in the HtML report
-<span class="nc" id="L332">        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));</span>
-<span class="nc" id="L333">        engine.addDependency(dependency);</span>
-<span class="nc" id="L334">        return dependency;</span>
+<span class="nc" id="L325">        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));</span>
+<span class="nc" id="L326">        engine.addDependency(dependency);</span>
+<span class="nc" id="L327">        return dependency;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

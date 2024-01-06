@@ -385,7 +385,7 @@
 <a class="jxr_linenumber" name="L377" href="#L377">377</a>                         deleteTempFile = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L378" href="#L378">378</a>                         file = getSettings().getTempFile(<span class="jxr_string">"suppression"</span>, <span class="jxr_string">"xml"</span>);
 <a class="jxr_linenumber" name="L379" href="#L379">379</a>                         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>                             org.apache.commons.io.FileUtils.copyInputStreamToFile(suppressionFromClasspath, file);
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>                             Files.copy(suppressionFromClasspath, file.toPath());
 <a class="jxr_linenumber" name="L381" href="#L381">381</a>                         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
 <a class="jxr_linenumber" name="L382" href="#L382">382</a>                             throwSuppressionParseException(<span class="jxr_string">"Unable to locate suppression file in classpath"</span>, ex, suppressionFilePath);
 <a class="jxr_linenumber" name="L383" href="#L383">383</a>                         }
@@ -454,6 +454,6 @@
 <a class="jxr_linenumber" name="L446" href="#L446">446</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2024 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

@@ -872,13 +872,13 @@ public final class CveDB implements AutoCloseable {
                 }
             }
 <span class="nc" id="L874">        } catch (SQLException ex) {</span>
-<span class="nc" id="L875">            final String msg = String.format(&quot;Error updating '%s'&quot;, cveId);</span>
+<span class="nc" id="L875">            final String msg = String.format(&quot;Error updating '%s'; %s&quot;, cveId, ex.getMessage());</span>
 <span class="nc" id="L876">            LOGGER.debug(msg, ex);</span>
-<span class="nc" id="L877">            throw new DatabaseException(msg, ex);</span>
+<span class="nc" id="L877">            throw new DatabaseException(msg);</span>
 <span class="nc" id="L878">        } catch (CpeValidationException ex) {</span>
-<span class="nc" id="L879">            final String msg = String.format(&quot;Error parsing CPE entry from '%s'&quot;, cveId);</span>
+<span class="nc" id="L879">            final String msg = String.format(&quot;Error parsing CPE entry from '%s'; %s&quot;, cveId, ex.getMessage());</span>
 <span class="nc" id="L880">            LOGGER.debug(msg, ex);</span>
-<span class="nc" id="L881">            throw new DatabaseException(msg, ex);</span>
+<span class="nc" id="L881">            throw new DatabaseException(msg);</span>
 <span class="nc" id="L882">        }</span>
 <span class="nc" id="L883">    }</span>
 
@@ -1504,8 +1504,8 @@ public final class CveDB implements AutoCloseable {
 <span class="fc bfc" id="L1504" title="All 2 branches covered.">                if (matched == null) {</span>
 <span class="fc" id="L1505">                    matched = vs;</span>
                 } else {
-<span class="fc bfc" id="L1507" title="All 4 branches covered.">                    if (&quot;*&quot;.equals(vs.getWellFormedUpdate()) &amp;&amp; !&quot;*&quot;.equals(matched.getWellFormedUpdate())) {</span>
-<span class="fc" id="L1508">                        matched = vs;</span>
+<span class="pc bpc" id="L1507" title="1 of 4 branches missed.">                    if (&quot;*&quot;.equals(vs.getWellFormedUpdate()) &amp;&amp; !&quot;*&quot;.equals(matched.getWellFormedUpdate())) {</span>
+<span class="nc" id="L1508">                        matched = vs;</span>
                     }
                 }
             }

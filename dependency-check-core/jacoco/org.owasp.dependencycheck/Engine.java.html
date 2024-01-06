@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.jcs3.JCS;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +39,7 @@ import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.exception.WriteLockException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
+import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.WriteLock;
 import org.slf4j.Logger;
@@ -949,7 +949,7 @@ public class Engine implements FileFilter, AutoCloseable {
         try {
 <span class="nc" id="L950">            final File cache = new File(settings.getDataDirectory(), &quot;cache&quot;);</span>
 <span class="nc bnc" id="L951" title="All 2 branches missed.">            if (cache.exists()) {</span>
-<span class="nc bnc" id="L952" title="All 2 branches missed.">                if (FileUtils.deleteQuietly(cache)) {</span>
+<span class="nc bnc" id="L952" title="All 2 branches missed.">                if (FileUtils.delete(cache)) {</span>
 <span class="nc" id="L953">                    LOGGER.info(&quot;Cache directory purged&quot;);</span>
                 }
             }
@@ -959,7 +959,7 @@ public class Engine implements FileFilter, AutoCloseable {
         try {
 <span class="nc" id="L960">            final File cache = new File(settings.getDataDirectory(), &quot;oss_cache&quot;);</span>
 <span class="nc bnc" id="L961" title="All 2 branches missed.">            if (cache.exists()) {</span>
-<span class="nc bnc" id="L962" title="All 2 branches missed.">                if (FileUtils.deleteQuietly(cache)) {</span>
+<span class="nc bnc" id="L962" title="All 2 branches missed.">                if (FileUtils.delete(cache)) {</span>
 <span class="nc" id="L963">                    LOGGER.info(&quot;OSS Cache directory purged&quot;);</span>
                 }
             }

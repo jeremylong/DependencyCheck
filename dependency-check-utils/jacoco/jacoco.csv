@@ -1,6 +1,6 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 Dependency-Check Utils,org.owasp.dependencycheck.utils.search,FileContentSearch,0,74,0,6,0,10,0,6,0,3
-Dependency-Check Utils,org.owasp.dependencycheck.utils,FileUtils,98,67,15,7,28,18,13,6,3,5
+Dependency-Check Utils,org.owasp.dependencycheck.utils,FileUtils,98,68,15,7,28,18,13,6,3,5
 Dependency-Check Utils,org.owasp.dependencycheck.utils,JsonArrayFixingInputStream,68,378,21,49,7,78,15,34,0,14
 Dependency-Check Utils,org.owasp.dependencycheck.utils,HttpResourceConnection,360,161,29,15,75,45,23,10,3,8
 Dependency-Check Utils,org.owasp.dependencycheck.utils,Settings,480,435,57,41,108,103,55,38,14,30

@@ -26,28 +26,28 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <strong class="jxr_keyword">package</strong> org.owasp.dependencycheck;
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">import</strong> edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.FileUtils;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.jcs3.JCS;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.Nullable;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.analyzer.AnalysisPhase;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.analyzer.Analyzer;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.analyzer.AnalyzerService;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvdcve.DatabaseManager;
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvdcve.CveDB;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvdcve.DatabaseException;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.update.CachedWebDataSource;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.update.UpdateService;
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.update.exception.UpdateException;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.Dependency;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.exception.ExceptionCollection;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.exception.InitializationException;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.exception.NoDataException;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.exception.ReportException;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.exception.WriteLockException;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.reporting.ReportGenerator;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.jcs3.JCS;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.NotNull;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jetbrains.annotations.Nullable;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.analyzer.AnalysisPhase;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.analyzer.Analyzer;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.analyzer.AnalyzerService;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.analyzer.FileTypeAnalyzer;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvdcve.DatabaseManager;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvdcve.CveDB;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvdcve.DatabaseException;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.update.CachedWebDataSource;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.update.UpdateService;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.data.update.exception.UpdateException;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.dependency.Dependency;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.exception.ExceptionCollection;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.exception.InitializationException;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.exception.NoDataException;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.exception.ReportException;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.exception.WriteLockException;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.reporting.ReportGenerator;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.utils.FileUtils;
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.utils.Settings;
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.utils.WriteLock;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
@@ -957,7 +957,7 @@
 <a class="jxr_linenumber" name="L949" href="#L949">949</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L950" href="#L950">950</a>             <strong class="jxr_keyword">final</strong> File cache = <strong class="jxr_keyword">new</strong> File(settings.getDataDirectory(), <span class="jxr_string">"cache"</span>);
 <a class="jxr_linenumber" name="L951" href="#L951">951</a>             <strong class="jxr_keyword">if</strong> (cache.exists()) {
-<a class="jxr_linenumber" name="L952" href="#L952">952</a>                 <strong class="jxr_keyword">if</strong> (FileUtils.deleteQuietly(cache)) {
+<a class="jxr_linenumber" name="L952" href="#L952">952</a>                 <strong class="jxr_keyword">if</strong> (FileUtils.delete(cache)) {
 <a class="jxr_linenumber" name="L953" href="#L953">953</a>                     LOGGER.info(<span class="jxr_string">"Cache directory purged"</span>);
 <a class="jxr_linenumber" name="L954" href="#L954">954</a>                 }
 <a class="jxr_linenumber" name="L955" href="#L955">955</a>             }
@@ -967,7 +967,7 @@
 <a class="jxr_linenumber" name="L959" href="#L959">959</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L960" href="#L960">960</a>             <strong class="jxr_keyword">final</strong> File cache = <strong class="jxr_keyword">new</strong> File(settings.getDataDirectory(), <span class="jxr_string">"oss_cache"</span>);
 <a class="jxr_linenumber" name="L961" href="#L961">961</a>             <strong class="jxr_keyword">if</strong> (cache.exists()) {
-<a class="jxr_linenumber" name="L962" href="#L962">962</a>                 <strong class="jxr_keyword">if</strong> (FileUtils.deleteQuietly(cache)) {
+<a class="jxr_linenumber" name="L962" href="#L962">962</a>                 <strong class="jxr_keyword">if</strong> (FileUtils.delete(cache)) {
 <a class="jxr_linenumber" name="L963" href="#L963">963</a>                     LOGGER.info(<span class="jxr_string">"OSS Cache directory purged"</span>);
 <a class="jxr_linenumber" name="L964" href="#L964">964</a>                 }
 <a class="jxr_linenumber" name="L965" href="#L965">965</a>             }
@@ -1389,6 +1389,6 @@
 <a class="jxr_linenumber" name="L1381" href="#L1381">1381</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2024 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

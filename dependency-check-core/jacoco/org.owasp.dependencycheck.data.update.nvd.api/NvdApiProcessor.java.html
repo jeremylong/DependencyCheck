@@ -18,8 +18,15 @@
 package org.owasp.dependencycheck.data.update.nvd.api;
 
 import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
+
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.concurrent.Callable;
+import java.util.zip.GZIPInputStream;
+
 import org.owasp.dependencycheck.data.nvd.ecosystem.CveEcosystemMapper;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.slf4j.Logger;
@@ -35,7 +42,7 @@ public class NvdApiProcessor implements Callable&lt;NvdApiProcessor&gt; {
     /**
      * The Logger for use throughout the class.
      */
-<span class="nc" id="L38">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdApiProcessor.class);</span>
+<span class="fc" id="L45">    private static final Logger LOGGER = LoggerFactory.getLogger(NvdApiProcessor.class);</span>
     /**
      * A reference to the database.
      */
@@ -47,7 +54,7 @@ public class NvdApiProcessor implements Callable&lt;NvdApiProcessor&gt; {
     /**
      * Reference to the CVE Ecosystem Mapper object.
      */
-<span class="nc" id="L50">    private final CveEcosystemMapper mapper = new CveEcosystemMapper();</span>
+<span class="fc" id="L57">    private final CveEcosystemMapper mapper = new CveEcosystemMapper();</span>
     /**
      * The start time.
      */
@@ -55,7 +62,7 @@ public class NvdApiProcessor implements Callable&lt;NvdApiProcessor&gt; {
     /**
      * The end time.
      */
-<span class="nc" id="L58">    private long endTime = 0;</span>
+<span class="fc" id="L65">    private long endTime = 0;</span>
 
     /**
      * Create a new processor to put the NVD data into the database.
@@ -64,11 +71,11 @@ public class NvdApiProcessor implements Callable&lt;NvdApiProcessor&gt; {
      * @param jsonFile the JSON data file to inject.
      * @param startTime the start time of the update process.
      */
-<span class="nc" id="L67">    public NvdApiProcessor(final CveDB cveDB, File jsonFile, long startTime) {</span>
-<span class="nc" id="L68">        this.cveDB = cveDB;</span>
-<span class="nc" id="L69">        this.jsonFile = jsonFile;</span>
-<span class="nc" id="L70">        this.startTime = startTime;</span>
-<span class="nc" id="L71">    }</span>
+<span class="fc" id="L74">    public NvdApiProcessor(final CveDB cveDB, File jsonFile, long startTime) {</span>
+<span class="fc" id="L75">        this.cveDB = cveDB;</span>
+<span class="fc" id="L76">        this.jsonFile = jsonFile;</span>
+<span class="fc" id="L77">        this.startTime = startTime;</span>
+<span class="fc" id="L78">    }</span>
 
     /**
      * Create a new processor to put the NVD data into the database.
@@ -77,35 +84,44 @@ public class NvdApiProcessor implements Callable&lt;NvdApiProcessor&gt; {
      * @param jsonFile the JSON data file to inject.
      */
     public NvdApiProcessor(final CveDB cveDB, File jsonFile) {
-<span class="nc" id="L80">        this(cveDB, jsonFile, System.currentTimeMillis());</span>
-<span class="nc" id="L81">    }</span>
+<span class="fc" id="L87">        this(cveDB, jsonFile, System.currentTimeMillis());</span>
+<span class="fc" id="L88">    }</span>
 
     @Override
     public NvdApiProcessor call() throws Exception {
-<span class="nc" id="L85">        CveItemSource&lt;DefCveItem&gt; itemSource = null;</span>
-        
-<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (jsonFile.getName().endsWith(&quot;.jsonarray.gz&quot;)) {</span>
-<span class="nc" id="L88">            itemSource = new JsonArrayCveItemSource(jsonFile);</span>
-<span class="nc bnc" id="L89" title="All 2 branches missed.">        } else if (jsonFile.getName().endsWith(&quot;.gz&quot;)) {</span>
-<span class="nc" id="L90">            itemSource = new CveApiJson20CveItemSource(jsonFile);</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if (jsonFile.getName().endsWith(&quot;.jsonarray.gz&quot;)) {</span>
+<span class="nc" id="L93">            try (InputStream fis = Files.newInputStream(jsonFile.toPath());</span>
+<span class="nc" id="L94">                 InputStream is = new BufferedInputStream(new GZIPInputStream(fis));</span>
+<span class="nc" id="L95">                 CveItemSource&lt;DefCveItem&gt; itemSource = new JsonArrayCveItemSource(is)) {</span>
+<span class="nc" id="L96">                updateCveDb(itemSource);</span>
+<span class="nc" id="L97">            }</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        } else if (jsonFile.getName().endsWith(&quot;.gz&quot;)) {</span>
+<span class="nc" id="L99">            try (InputStream fis = Files.newInputStream(jsonFile.toPath());</span>
+<span class="nc" id="L100">                 InputStream is = new BufferedInputStream(new GZIPInputStream(fis));</span>
+<span class="nc" id="L101">                 CveItemSource&lt;DefCveItem&gt; itemSource = new CveApiJson20CveItemSource(is)) {</span>
+<span class="nc" id="L102">                updateCveDb(itemSource);</span>
+<span class="nc" id="L103">            }</span>
         } else {
-<span class="nc" id="L92">            itemSource = new JsonArrayCveItemSource(jsonFile);</span>
+<span class="fc" id="L105">            try (InputStream fis = Files.newInputStream(jsonFile.toPath());</span>
+<span class="fc" id="L106">                 InputStream is = new BufferedInputStream(fis);</span>
+<span class="fc" id="L107">                 CveItemSource&lt;DefCveItem&gt; itemSource = new JsonArrayCveItemSource(is)) {</span>
+<span class="fc" id="L108">                updateCveDb(itemSource);</span>
+            }
         }
-        try {
-<span class="nc bnc" id="L95" title="All 2 branches missed.">            while (itemSource.hasNext()) {</span>
-<span class="nc" id="L96">                DefCveItem entry = itemSource.next();</span>
-                try {
-<span class="nc" id="L98">                    cveDB.updateVulnerability(entry, mapper.getEcosystem(entry));</span>
-<span class="nc" id="L99">                } catch (Exception ex) {</span>
-<span class="nc" id="L100">                    LOGGER.error(&quot;Failed to process &quot; + entry.getCve().getId(), ex);</span>
-<span class="nc" id="L101">                }</span>
-<span class="nc" id="L102">            }</span>
-        } finally {
-<span class="nc" id="L104">            itemSource.close();</span>
-        }
-<span class="nc" id="L106">        endTime = System.currentTimeMillis();</span>
-<span class="nc" id="L107">        return this;</span>
+<span class="fc" id="L111">        endTime = System.currentTimeMillis();</span>
+<span class="fc" id="L112">        return this;</span>
     }
+
+    private void updateCveDb(CveItemSource&lt;DefCveItem&gt; itemSource) throws IOException {
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        while (itemSource.hasNext()) {</span>
+<span class="nc" id="L117">            DefCveItem entry = itemSource.next();</span>
+            try {
+<span class="nc" id="L119">                cveDB.updateVulnerability(entry, mapper.getEcosystem(entry));</span>
+<span class="nc" id="L120">            } catch (Exception ex) {</span>
+<span class="nc" id="L121">                LOGGER.error(&quot;Failed to process &quot; + entry.getCve().getId(), ex);</span>
+<span class="nc" id="L122">            }</span>
+<span class="nc" id="L123">        }</span>
+<span class="fc" id="L124">    }</span>
 
     /**
      * Calculates how long the update process took.
@@ -113,7 +129,7 @@ public class NvdApiProcessor implements Callable&lt;NvdApiProcessor&gt; {
      * @return the number of milliseconds that the update process took
      */
     public long getDurationMillis() {
-<span class="nc" id="L116">        return endTime - startTime;</span>
+<span class="nc" id="L132">        return endTime - startTime;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
