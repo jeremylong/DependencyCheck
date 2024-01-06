@@ -1,5 +1,17 @@
 # Change Log
 
+## [Version 9.0.7](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.7) (2024-01-06)
+
+- fix: favor stability over performance (#6349)
+- chore: replace commons-io with core java calls (#6343)
+- fix: improve error reporting for invalid H2 database (#6339)
+- fix: rework fix for closing input streams on errors correctly (#6338)
+- fix: reduce chance NVD API block updates due to rate limit (#6333)
+- fix: ensure open handles will not leak on errors (#6326)
+- fix: improve error reporting (#6324)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/78?closed=1).
+
 ## [Version 9.0.7](https://github.com/jereong/DependencyCheck/releases/tag/v9.0.7) (2023-12-18)
 
 - docs: document insecure configuration for GHSA-qqhq-8r2c-c3f5 (#6315)
