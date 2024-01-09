@@ -58,4 +58,21 @@ public class FileUtilsTest extends BaseTest {
         assertTrue("delete returned a failed status", status);
         assertFalse("Temporary file exists after attempting deletion", file.exists());
     }
+
+    /**
+     * Test of delete method with a non-empty directory, of class FileUtils.
+     */
+    @Test
+    public void testDeleteWithSubDirectories() throws Exception {
+
+        File dir = new File(getSettings().getTempDirectory(), "delete-me");
+        dir.mkdirs();
+        File file = File.createTempFile("tmp", "deleteme", dir);
+        assertTrue("Unable to create a temporary file " + file.getAbsolutePath(), file.exists());
+
+        // delete the file
+        boolean status = FileUtils.delete(dir);
+        assertTrue("delete returned a failed status", status);
+        assertFalse("Temporary file exists after attempting deletion", file.exists());
+    }
 }
