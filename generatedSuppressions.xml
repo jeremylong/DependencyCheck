@@ -1448,3 +1448,10 @@
    <packageUrl regex="true">^pkg:maven/com\.idealista/format-preserving-encryption@.*$</packageUrl>
    <cpe>cpe:/a:vega_project:vega</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6367
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.keycloak/keycloak-model-infinispan@.*$</packageUrl>
+   <cpe>cpe:/a:infinispan:infinispan</cpe>
+</suppress>
