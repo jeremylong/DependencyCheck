@@ -1462,3 +1462,10 @@
    <packageUrl regex="true">^pkg:maven/org\.wildfly\.security\.elytron-web/undertow-server@.*$</packageUrl>
    <cpe>cpe:/a:web_project:web</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6368
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jgroups\.azure/jgroups-azure@.*$</packageUrl>
+   <cpe>cpe:/a:redhat:jgroups</cpe>
+</suppress>
