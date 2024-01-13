@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -90,9 +91,8 @@ public final class FileUtils {
             return false;
         }
 
-        try {
-            Files.walk(file.toPath())
-            .sorted(Comparator.reverseOrder())
+        try (Stream<Path> paths = Files.walk(file.toPath())) {
+            paths.sorted(Comparator.reverseOrder())
             .map(Path::toFile)
             .forEach(File::delete);
         } catch (IOException ex) {
