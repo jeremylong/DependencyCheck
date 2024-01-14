@@ -48,7 +48,20 @@ public class JsonArrayCveItemSource implements CveItemSource<DefCveItem> {
 
     @Override
     public void close() throws Exception {
-        IOUtils.closeQuietly(jsonParser, inputStream);
+        if (jsonParser != null) {
+            try {
+                jsonParser.close();
+            } catch (IOException ex) {
+                //ignore
+            }
+        }
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException ex) {
+                //ignore
+            }
+        }
     }
 
     @Override
