@@ -1135,11 +1135,11 @@ import org.slf4j.LoggerFactory;
 <span class="pc bpc" id="L1135" title="2 of 4 branches missed.">        if (tempFileLocation != null &amp;&amp; tempFileLocation.exists()) {</span>
 <span class="fc" id="L1136">            LOGGER.debug(&quot;Attempting to delete temporary files from `{}`&quot;, tempFileLocation.toString());</span>
 <span class="fc" id="L1137">            final boolean success = FileUtils.delete(tempFileLocation);</span>
-<span class="pc bpc" id="L1138" title="1 of 4 branches missed.">            if (!success &amp;&amp; tempFileLocation.exists()) {</span>
-<span class="fc" id="L1139">                final String[] l = tempFileLocation.list();</span>
-<span class="pc bpc" id="L1140" title="2 of 4 branches missed.">                if (l != null &amp;&amp; l.length &gt; 0) {</span>
-<span class="fc" id="L1141">                    LOGGER.warn(&quot;Failed to delete the JAR Analyzder's temporary files from `{}`, &quot;</span>
-<span class="fc" id="L1142">                            + &quot;see the log for more details&quot;, tempFileLocation.getAbsolutePath());</span>
+<span class="pc bpc" id="L1138" title="3 of 4 branches missed.">            if (!success &amp;&amp; tempFileLocation.exists()) {</span>
+<span class="nc" id="L1139">                final String[] l = tempFileLocation.list();</span>
+<span class="nc bnc" id="L1140" title="All 4 branches missed.">                if (l != null &amp;&amp; l.length &gt; 0) {</span>
+<span class="nc" id="L1141">                    LOGGER.warn(&quot;Failed to delete the JAR Analyzder's temporary files from `{}`, &quot;</span>
+<span class="nc" id="L1142">                            + &quot;see the log for more details&quot;, tempFileLocation.getAbsolutePath());</span>
                 }
             }
         }

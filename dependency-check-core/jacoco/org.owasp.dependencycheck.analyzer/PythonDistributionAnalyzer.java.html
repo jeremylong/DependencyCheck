@@ -274,10 +274,10 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
 <span class="pc bpc" id="L274" title="2 of 4 branches missed.">        if (tempFileLocation != null &amp;&amp; tempFileLocation.exists()) {</span>
 <span class="fc" id="L275">            LOGGER.debug(&quot;Attempting to delete temporary files&quot;);</span>
 <span class="fc" id="L276">            final boolean success = FileUtils.delete(tempFileLocation);</span>
-<span class="pc bpc" id="L277" title="1 of 4 branches missed.">            if (!success &amp;&amp; tempFileLocation.exists()) {</span>
-<span class="fc" id="L278">                final String[] l = tempFileLocation.list();</span>
-<span class="pc bpc" id="L279" title="2 of 4 branches missed.">                if (l != null &amp;&amp; l.length &gt; 0) {</span>
-<span class="fc" id="L280">                    LOGGER.warn(&quot;Failed to delete some temporary files, see the log for more details&quot;);</span>
+<span class="pc bpc" id="L277" title="3 of 4 branches missed.">            if (!success &amp;&amp; tempFileLocation.exists()) {</span>
+<span class="nc" id="L278">                final String[] l = tempFileLocation.list();</span>
+<span class="nc bnc" id="L279" title="All 4 branches missed.">                if (l != null &amp;&amp; l.length &gt; 0) {</span>
+<span class="nc" id="L280">                    LOGGER.warn(&quot;Failed to delete some temporary files, see the log for more details&quot;);</span>
                 }
             }
         }
