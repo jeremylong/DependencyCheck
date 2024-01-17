@@ -1,5 +1,15 @@
 # Change Log
 
+## [Version 9.0.9](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.0.9) (2024-01-17)
+
+- fix: for #6374 to delete non-empty directories (#6375)
+- fix: NoSuchMethodError closeQuietly(java.io.Closeable[]) (#6377)
+- chore: close stream to prevent possible resource leak (#6382)
+- docs: Document default for CLI --data (#6359)
+- docs: document gradle build (#6371)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/79?closed=1).
+
 ## [Version 9.0.8](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.0.8) (2024-01-06)
 
 - fix: favor stability over performance (#6349)
