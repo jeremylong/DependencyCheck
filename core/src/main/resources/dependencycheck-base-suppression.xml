@@ -6565,10 +6565,10 @@
     </suppress>
     <suppress base="true">
        <notes><![CDATA[
-       FP per issue #5754
+       FP per issue #5754 #6441
        ]]></notes>
        <packageUrl regex="true">^pkg:maven/io\.swagger\.parser\.v3/swagger-parser-safe-url-resolver@.*$</packageUrl>
-       <cpe>cpe:/a:parse-url_project:2.1.14</cpe>
+       <cpe>cpe:/a:parse-url_project:</cpe>
     </suppress>
     <suppress base="true">
        <notes><![CDATA[
