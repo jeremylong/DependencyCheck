@@ -1476,3 +1476,10 @@
    <packageUrl regex="true">^pkg:maven/com\.bornium/oauth2-openid@.*$</packageUrl>
    <cpe>cpe:/a:openid:openid</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6460
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.hsqldb/hsqldb@.*$</packageUrl>
+   <cpe>cpe:/a:hyper:hyper</cpe>
+</suppress>
