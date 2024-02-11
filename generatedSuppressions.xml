@@ -1483,3 +1483,10 @@
    <packageUrl regex="true">^pkg:maven/org\.hsqldb/hsqldb@.*$</packageUrl>
    <cpe>cpe:/a:hyper:hyper</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6421
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.swagger/swagger-parser-safe-url-resolver@.*$</packageUrl>
+   <cpe>cpe:/a:parse-url_project:parse-url</cpe>
+</suppress>
