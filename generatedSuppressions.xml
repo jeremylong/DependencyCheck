@@ -1490,3 +1490,10 @@
    <packageUrl regex="true">^pkg:maven/io\.swagger/swagger-parser-safe-url-resolver@.*$</packageUrl>
    <cpe>cpe:/a:parse-url_project:parse-url</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6408
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jboss\.activemq\.artemis\.integration/artemis-wildfly-integration@.*$</packageUrl>
+   <cpe>cpe:/a:redhat:wildfly</cpe>
+</suppress>
