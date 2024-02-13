@@ -241,7 +241,8 @@ public class BundlerAuditProcessor extends Processor<InputStream> {
                 } else if ("Low".equalsIgnoreCase(criticality)) {
                     score = 2.0;
                 }
-                final CvssV2Data cvssData = new CvssV2Data(null, null, null, null, null, null, null, null, score, criticality.toUpperCase(),
+                LOGGER.debug("bundle-audit vulnerability missing CVSS data: {}", vulnerability.getName());
+                final CvssV2Data cvssData = new CvssV2Data("2.0", null, null, null, null, null, null, null, score, criticality.toUpperCase(),
                         null, null, null, null, null, null, null, null, null, null);
                 final CvssV2 cvssV2 = new CvssV2(null, null, cvssData, criticality.toUpperCase(), null, null, null, null, null, null, null);
                 vulnerability.setCvssV2(cvssV2);
