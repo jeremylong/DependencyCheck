@@ -1498,4 +1498,11 @@
    <packageUrl regex="true">^pkg:maven/org\.jboss\.activemq\.artemis\.integration/artemis-wildfly-integration@.*$</packageUrl>
    <cpe>cpe:/a:redhat:wildfly</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6482
+   ]]></notes>
+   <packageUrl regex="true">^pkg:npm/bare-os@.*$</packageUrl>
+   <cpe>cpe:/a:bareos:bareos</cpe>
+</suppress>
 </suppressions>
