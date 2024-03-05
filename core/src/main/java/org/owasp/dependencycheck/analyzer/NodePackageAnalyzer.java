@@ -458,18 +458,19 @@ public class NodePackageAnalyzer extends AbstractNpmAnalyzer {
                         LOGGER.debug("Unable to build package url for `" + packagePath + "`", ex);
                     }
                 }
-
-                final Dependency existing = findDependency(engine, name, version);
-                if (existing != null) {
-                    if (existing.isVirtual()) {
-                        DependencyMergingAnalyzer.mergeDependencies(child, existing, null);
-                        engine.removeDependency(existing);
-                        engine.addDependency(child);
+                synchronized (this) {
+                    final Dependency existing = findDependency(engine, name, version);
+                    if (existing != null) {
+                        if (existing.isVirtual()) {
+                            DependencyMergingAnalyzer.mergeDependencies(child, existing, null);
+                            engine.removeDependency(existing);
+                            engine.addDependency(child);
+                        } else {
+                            DependencyBundlingAnalyzer.mergeDependencies(existing, child, null);
+                        }
                     } else {
-                        DependencyBundlingAnalyzer.mergeDependencies(existing, child, null);
+                        engine.addDependency(child);
                     }
-                } else {
-                    engine.addDependency(child);
                 }
             }
         }
