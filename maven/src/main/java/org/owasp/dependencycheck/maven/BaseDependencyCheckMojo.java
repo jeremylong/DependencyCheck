@@ -910,7 +910,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     @Parameter(property = "serverId")
     private String serverId;
     /**
-     * The NVD API Key. The `nvdApiServerId` should be used instead otherwise maven debug logging could expose the API Key. See GHSA-qqhq-8r2c-c3f5.
+     * The NVD API Key. The parameters {@link #nvdApiKeyEnvironmentVariable} or {@link #nvdApiServerId} should be used instead otherwise 
+     * Maven debug logging could expose the API Key (see <a href="https://github.com/advisories/GHSA-qqhq-8r2c-c3f5">GHSA-qqhq-8r2c-c3f5</a>).
+     * This takes precedence over {@link #nvdApiServerId} and {@link #nvdApiKeyEnvironmentVariable}.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nvdApiKey")
@@ -924,12 +926,20 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
     /**
      * The server id in the settings.xml; used to retrieve encrypted API Key
      * from the settings.xml for the NVD API Key. Note that the password is used
-     * as the API Key
+     * as the API Key.
+     * Is potentially overwritten by {@link #nvdApiKeyEnvironmentVariable} or {@link #nvdApiKey}.
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "nvdApiServerId")
     private String nvdApiServerId;
-
+    /**
+     * The environment variable from which to retrieve the API key for the NVD API.
+     * Takes precedence over {@link #nvdApiServerId} but is potentially overwritten by {@link #nvdApiKey}.
+     * This is the recommended option to pass the API key in CI builds.
+     */
+    @SuppressWarnings("CanBeFinal")
+    @Parameter(property = "nvdApiKeyEnvironmentVariable")
+    private String nvdApiKeyEnvironmentVariable;
     /**
      * The number of hours to wait before checking for new updates from the NVD.
      */
@@ -2339,8 +2349,14 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);
         settings.setIntIfNotNull(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);
         settings.setIntIfNotNull(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, nvdMaxRetryCount);
-        if (nvdApiKey == null && nvdApiServerId != null) {
-            configureServerCredentialsApiKey(nvdApiServerId, Settings.KEYS.NVD_API_KEY);
+        if (nvdApiKey == null) {
+            if (nvdApiKeyEnvironmentVariable != null) {
+                settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, System.getenv(nvdApiKeyEnvironmentVariable));
+                getLog().debug("Using NVD API key from environment variable " + nvdApiKeyEnvironmentVariable);
+            } else if (nvdApiServerId != null) {
+                configureServerCredentialsApiKey(nvdApiServerId, Settings.KEYS.NVD_API_KEY);
+                getLog().debug("Using NVD API key from server's password with id " + nvdApiServerId + " in settings.xml");
+            }
         } else {
             settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);
         }
@@ -2400,7 +2416,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * names. This is used to retrieve an encrypted password as an API key.
      *
      * @param serverId the server id
-     * @param apiKeySetting the property name for the username
+     * @param apiKeySetting the property name for the API key
      */
     private void configureServerCredentialsApiKey(String serverId, String apiKeySetting) {
         if (serverId != null) {
