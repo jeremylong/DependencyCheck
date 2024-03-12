@@ -6870,6 +6870,27 @@
        <packageUrl regex="true">^pkg:maven/software\.amazon\.awssdk\.crt/aws-crt@.*$</packageUrl>
        <cpe>cpe:/a:amazon:aws-sdk-java</cpe>
     </suppress>
-    <!-- end generated suppressions added to main in 8.4.0 -->    
+    <!-- end generated suppressions added to main in 8.4.0 -->
+    <suppress base="true">
+        <notes><![CDATA[
+            FP per #4321
+            ]]></notes>
+        <packageUrl regex="true">^pkg:(pypi/redis|generic/Microsoft\.Extensions\.Caching\.StackExchangeRedis|generic/HealthChecks\.Redis)@.*$</packageUrl>
+        <cve>CVE-2021-32626</cve>
+        <cve>CVE-2021-32627</cve>
+        <cve>CVE-2021-32628</cve>
+        <cve>CVE-2021-32675</cve>
+        <cve>CVE-2021-32687</cve>
+        <cve>CVE-2021-32762</cve>
+        <cve>CVE-2021-41099</cve>
+        <cve>CVE-2022-24735</cve>
+        <cve>CVE-2022-24834</cve>
+        <cve>CVE-2021-31294</cve>
+        <cve>CVE-2021-32672</cve>
+        <cve>CVE-2022-24736</cve>
+        <cve>CVE-2022-36021</cve>
+        <cve>CVE-2023-25155</cve>
+        <cve>CVE-2023-28856</cve>
+    </suppress>
     
 </suppressions>
