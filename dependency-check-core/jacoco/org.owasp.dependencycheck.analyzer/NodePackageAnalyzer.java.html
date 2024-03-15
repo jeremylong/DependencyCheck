@@ -241,8 +241,8 @@ import java.util.Objects;
             }
 <span class="fc bfc" id="L242" title="All 2 branches covered.">        } else if (PACKAGE_LOCK_JSON.equals(dependency.getFileName())) {</span>
 <span class="fc" id="L243">            final File shrinkwrap = new File(baseDir, SHRINKWRAP_JSON);</span>
-<span class="fc bfc" id="L244" title="All 2 branches covered.">            if (shrinkwrap.exists()) {</span>
-<span class="fc" id="L245">                return;</span>
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">            if (shrinkwrap.exists()) {</span>
+<span class="nc" id="L245">                return;</span>
             }
         }
 <span class="fc" id="L248">        final File nodeModules = new File(baseDir, &quot;node_modules&quot;);</span>
@@ -458,21 +458,22 @@ import java.util.Objects;
 <span class="nc" id="L458">                        LOGGER.debug(&quot;Unable to build package url for `&quot; + packagePath + &quot;`&quot;, ex);</span>
 <span class="nc" id="L459">                    }</span>
                 }
-
-<span class="fc" id="L462">                final Dependency existing = findDependency(engine, name, version);</span>
-<span class="fc bfc" id="L463" title="All 2 branches covered.">                if (existing != null) {</span>
-<span class="pc bpc" id="L464" title="1 of 2 branches missed.">                    if (existing.isVirtual()) {</span>
-<span class="fc" id="L465">                        DependencyMergingAnalyzer.mergeDependencies(child, existing, null);</span>
-<span class="fc" id="L466">                        engine.removeDependency(existing);</span>
-<span class="fc" id="L467">                        engine.addDependency(child);</span>
+<span class="fc" id="L461">                synchronized (this) {</span>
+<span class="fc" id="L462">                    final Dependency existing = findDependency(engine, name, version);</span>
+<span class="fc bfc" id="L463" title="All 2 branches covered.">                    if (existing != null) {</span>
+<span class="pc bpc" id="L464" title="1 of 2 branches missed.">                        if (existing.isVirtual()) {</span>
+<span class="fc" id="L465">                            DependencyMergingAnalyzer.mergeDependencies(child, existing, null);</span>
+<span class="fc" id="L466">                            engine.removeDependency(existing);</span>
+<span class="fc" id="L467">                            engine.addDependency(child);</span>
+                        } else {
+<span class="nc" id="L469">                            DependencyBundlingAnalyzer.mergeDependencies(existing, child, null);</span>
+                        }
                     } else {
-<span class="nc" id="L469">                        DependencyBundlingAnalyzer.mergeDependencies(existing, child, null);</span>
+<span class="fc" id="L472">                        engine.addDependency(child);</span>
                     }
-                } else {
-<span class="fc" id="L472">                    engine.addDependency(child);</span>
-                }
-<span class="fc" id="L474">            }</span>
+<span class="fc" id="L474">                }</span>
+<span class="fc" id="L475">            }</span>
         }
-<span class="fc" id="L476">    }</span>
+<span class="fc" id="L477">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

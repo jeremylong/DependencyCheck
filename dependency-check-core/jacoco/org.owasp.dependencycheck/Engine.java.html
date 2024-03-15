@@ -268,12 +268,12 @@ public class Engine implements FileFilter, AutoCloseable {
 <span class="fc bfc" id="L268" title="All 2 branches covered.">            for (Dependency existing : dependencies) {</span>
 <span class="fc bfc" id="L269" title="All 2 branches covered.">                if (existing.isVirtual()</span>
 <span class="fc bfc" id="L270" title="All 2 branches covered.">                        &amp;&amp; existing.getSha256sum() != null</span>
-<span class="fc bfc" id="L271" title="All 2 branches covered.">                        &amp;&amp; existing.getSha256sum().equals(dependency.getSha256sum())</span>
-<span class="pc bpc" id="L272" title="1 of 2 branches missed.">                        &amp;&amp; existing.getDisplayFileName() != null</span>
-<span class="pc bpc" id="L273" title="1 of 2 branches missed.">                        &amp;&amp; existing.getDisplayFileName().equals(dependency.getDisplayFileName())</span>
-<span class="pc bpc" id="L274" title="1 of 2 branches missed.">                        &amp;&amp; identifiersMatch(existing.getSoftwareIdentifiers(), dependency.getSoftwareIdentifiers())) {</span>
-<span class="fc" id="L275">                    DependencyBundlingAnalyzer.mergeDependencies(existing, dependency, null);</span>
-<span class="fc" id="L276">                    return;</span>
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">                        &amp;&amp; existing.getSha256sum().equals(dependency.getSha256sum())</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">                        &amp;&amp; existing.getDisplayFileName() != null</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">                        &amp;&amp; existing.getDisplayFileName().equals(dependency.getDisplayFileName())</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">                        &amp;&amp; identifiersMatch(existing.getSoftwareIdentifiers(), dependency.getSoftwareIdentifiers())) {</span>
+<span class="nc" id="L275">                    DependencyBundlingAnalyzer.mergeDependencies(existing, dependency, null);</span>
+<span class="nc" id="L276">                    return;</span>
                 }
 <span class="fc" id="L278">            }</span>
         }
@@ -1271,17 +1271,17 @@ public class Engine implements FileFilter, AutoCloseable {
     //CSON: LineLength
 
     private boolean identifiersMatch(Set&lt;Identifier&gt; left, Set&lt;Identifier&gt; right) {
-<span class="pc bpc" id="L1274" title="4 of 8 branches missed.">        if (left != null &amp;&amp; right != null &amp;&amp; left.size() &gt; 0 &amp;&amp; left.size() == right.size()) {</span>
-<span class="fc" id="L1275">            int count = 0;</span>
-<span class="fc bfc" id="L1276" title="All 2 branches covered.">            for (Identifier l : left) {</span>
-<span class="pc bpc" id="L1277" title="1 of 2 branches missed.">                for (Identifier r : right) {</span>
-<span class="pc bpc" id="L1278" title="1 of 2 branches missed.">                    if (l.getValue().equals(r.getValue())) {</span>
-<span class="fc" id="L1279">                        count += 1;</span>
-<span class="fc" id="L1280">                        break;</span>
+<span class="nc bnc" id="L1274" title="All 8 branches missed.">        if (left != null &amp;&amp; right != null &amp;&amp; left.size() &gt; 0 &amp;&amp; left.size() == right.size()) {</span>
+<span class="nc" id="L1275">            int count = 0;</span>
+<span class="nc bnc" id="L1276" title="All 2 branches missed.">            for (Identifier l : left) {</span>
+<span class="nc bnc" id="L1277" title="All 2 branches missed.">                for (Identifier r : right) {</span>
+<span class="nc bnc" id="L1278" title="All 2 branches missed.">                    if (l.getValue().equals(r.getValue())) {</span>
+<span class="nc" id="L1279">                        count += 1;</span>
+<span class="nc" id="L1280">                        break;</span>
                     }
 <span class="nc" id="L1282">                }</span>
-<span class="fc" id="L1283">            }</span>
-<span class="pc bpc" id="L1284" title="1 of 2 branches missed.">            return count == left.size();</span>
+<span class="nc" id="L1283">            }</span>
+<span class="nc bnc" id="L1284" title="All 2 branches missed.">            return count == left.size();</span>
         }
 <span class="nc" id="L1286">        return false;</span>
     }
