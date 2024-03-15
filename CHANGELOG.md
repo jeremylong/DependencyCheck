@@ -1,5 +1,17 @@
 # Change Log
 
+## [Version 9.0.10](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.0.10) (2024-03-15)
+
+- fix: #4321 Suppress redis server CVEs for client libraries (#4321) (#6489)
+- fix: bump commons-compress from 1.25.0 to 1.26.0 to fix CVE-2024-25710 and CVE-2024-26308 (#6492)
+- feat: Allow to pass NVD API key via environment variable (#6454)
+- fix: issue 5452 - ConcurrentModificationException in NodePackageAnalyzer.processDependencies - adding synchronized block  (#6501)
+- docs: document the default data directory (#6484)
+- fix: prevent NPE in bundler audit (#6462)
+- fix: #6441 Improve suppression rule to not restrict to a single version (#6442)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/80?closed=1).
+
 ## [Version 9.0.9](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.0.9) (2024-01-17)
 
 - fix: for #6374 to delete non-empty directories (#6375)

@@ -20,14 +20,14 @@ Copyright (c) 2017 Jeremy Long. All Rights Reserved.
     <parent>
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-parent</artifactId>
-        <version>9.0.10-SNAPSHOT</version>
+        <version>9.0.11-SNAPSHOT</version>
     </parent>
     <artifactId>dependency-check-plugin</artifactId>
     <name>Dependency-Check Plugin Archetype</name>
     <packaging>jar</packaging>
     <properties>
         <!--reproducible build-->
-        <project.build.outputTimestamp>2024-01-17T10:26:49Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2024-03-15T09:52:32Z</project.build.outputTimestamp>
     </properties>
     <scm>
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
