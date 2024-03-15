@@ -80,6 +80,8 @@ public class PinnedMavenInstallAnalyzerTest extends BaseDBTestCase {
     public void testSupportsFiles() {
         assertTrue(analyzer.accept(new File("install_maven.json")));
         assertTrue(analyzer.accept(new File("maven_install.json")));
+        assertTrue(analyzer.accept(new File("maven_install_v010.json")));
+        assertTrue(analyzer.accept(new File("maven_install_v2.json")));
         assertTrue(analyzer.accept(new File("rules_jvm_external_install.json")));
         assertTrue(analyzer.accept(new File("pinned_install_gplonly.json")));
         assertFalse("should not accept Cloudflare install.json", analyzer.accept(new File("install.json")));
@@ -89,12 +91,12 @@ public class PinnedMavenInstallAnalyzerTest extends BaseDBTestCase {
     }
 
     /**
-     * Tests that the analyzer correctly pulls dependencies out of a pinned {@code maven_install.json}.
+     * Tests that the analyzer correctly pulls dependencies out of a pinned v0.1.0 {@code maven_install.json}.
      */
     @Test
-    public void testAnalyzePinnedInstallJson() throws Exception {
+    public void testAnalyzePinnedInstallJsonV010() throws Exception {
         try (Engine engine = new Engine(getSettings())) {
-            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "maven_install.json"));
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "maven_install_v010.json"));
             engine.addDependency(result);
             analyzer.analyze(result, engine);
             assertFalse(ArrayUtils.contains(engine.getDependencies(), result));
@@ -104,6 +106,29 @@ public class PinnedMavenInstallAnalyzerTest extends BaseDBTestCase {
                 if ("com.google.errorprone:error_prone_annotations".equals(d.getName())) {
                     found = true;
                     assertEquals("2.3.4", d.getVersion());
+                    assertEquals(Ecosystem.JAVA, d.getEcosystem());
+                }
+            }
+            assertTrue("Expected to find com.google.errorprone:error_prone_annotations:2.3.4", found);
+        }
+    }
+
+    /**
+     * Tests that the analyzer correctly pulls dependencies out of a pinned v2 {@code maven_install.json}.
+     */
+    @Test
+    public void testAnalyzePinnedInstallJsonV2() throws Exception {
+        try (Engine engine = new Engine(getSettings())) {
+            final Dependency result = new Dependency(BaseTest.getResourceAsFile(this, "maven_install_v2.json"));
+            engine.addDependency(result);
+            analyzer.analyze(result, engine);
+            assertFalse(ArrayUtils.contains(engine.getDependencies(), result));
+            assertEquals(113, engine.getDependencies().length);
+            boolean found = false;
+            for (Dependency d : engine.getDependencies()) {
+                if ("io.grpc:grpc-protobuf".equals(d.getName())) {
+                    found = true;
+                    assertEquals("1.48.1", d.getVersion());
                     assertEquals(Ecosystem.JAVA, d.getEcosystem());
                 }
             }
