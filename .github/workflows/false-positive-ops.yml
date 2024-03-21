@@ -126,7 +126,7 @@ jobs:
           dotnet publish
           cd ..
       - name: "Check for setup complete"
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         id: check_files
         with:
           files: "./fp-project"
