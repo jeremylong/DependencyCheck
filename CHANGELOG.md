@@ -9,6 +9,8 @@
 - build(deps): bump org.jsoup:jsoup from 1.16.2 to 1.17.2 (#6362)
 - build(deps): bump golang from 1.21.5-alpine to 1.22.1-alpine (#6506)
 
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/81?closed=1).
+
 ## [Version 9.0.10](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.0.10) (2024-03-15)
 
 - fix: #4321 Suppress redis server CVEs for client libraries (#4321) (#6489)
