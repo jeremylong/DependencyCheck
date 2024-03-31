@@ -51,7 +51,7 @@ the transitive dependencies of dependency-check to specific versions. For exampl
 dependencies {
     constraints {
         // org.owasp.dependencycheck needs at least this version of jackson. Other plugins pull in older versions..
-        add("implementation", "com.fasterxml.jackson:jackson-bom:2.16.0")
+        add("implementation", "com.fasterxml.jackson:jackson-bom:2.16.1")
 
         // org.owasp.dependencycheck needs these versions. Other plugins pull in older versions..
         add("implementation", "org.apache.commons:commons-lang3:3.14.0")
@@ -356,7 +356,7 @@ Dependency-Check makes use of several other open source libraries. Please see th
 
 This product uses the NVD API but is not endorsed or certified by the NVD.
 
-Copyright (c) 2012-2023 Jeremy Long. All Rights Reserved.
+Copyright (c) 2012-2024 Jeremy Long. All Rights Reserved.
 
   [wiki]: https://github.com/jeremylong/DependencyCheck/wiki
   [notices]: https://github.com/jeremylong/DependencyCheck/blob/main/NOTICE.txt
