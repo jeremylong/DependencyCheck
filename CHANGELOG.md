@@ -1,5 +1,16 @@
 # Change Log
 
+## [Version 9.1.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.1.0) (2024-03-31)
+
+- feat: Add v2 support for maven_install.json (#6528)
+- build(deps): bump open-vulnerability-client (#6554)
+  - resolves update issues due to CVSS Metrics 4.0
+- build(deps): bump jackson.version from 2.16.0 to 2.16.1 (#6353)
+- build(deps): bump org.jsoup:jsoup from 1.16.2 to 1.17.2 (#6362)
+- build(deps): bump golang from 1.21.5-alpine to 1.22.1-alpine (#6506)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/81?closed=1).
+
 ## [Version 9.0.10](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.0.10) (2024-03-15)
 
 - fix: #4321 Suppress redis server CVEs for client libraries (#4321) (#6489)
