@@ -1518,3 +1518,4 @@
    <packageUrl regex="true">^pkg:maven/org\.apache\.camel\.quarkus/camel-quarkus-core@.*$</packageUrl>
    <cpe>cpe:/a:apache:camel</cpe>
 </suppress>
+<!-- suppressions above this line will be included in 9.1.1 -->
