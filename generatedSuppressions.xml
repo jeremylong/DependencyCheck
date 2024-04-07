@@ -1511,3 +1511,10 @@
    <packageUrl regex="true">^pkg:maven/io\.ktor/ktor-server-metrics-micrometer-jvm@.*$</packageUrl>
    <cpe>cpe:/a:csm_server_project:csm_server</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6538
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.camel\.quarkus/camel-quarkus-core@.*$</packageUrl>
+   <cpe>cpe:/a:apache:camel</cpe>
+</suppress>
