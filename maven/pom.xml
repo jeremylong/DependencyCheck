@@ -29,7 +29,7 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
     <inceptionYear>2013</inceptionYear>
     <properties>
         <!-- upgrading has caused publishing errors -->
-        <version.maven-plugin-plugin>3.10.2</version.maven-plugin-plugin>
+        <version.maven-plugin-plugin>3.11.0</version.maven-plugin-plugin>
     </properties>
     <scm>
         <connection>scm:git:https://github.com/jeremylong/DependencyCheck.git</connection>
