@@ -165,7 +165,8 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
                     analyzeSpmResolvedDependenciesV1(spmResolved, engine, file);
                     break;
                 case 2:
-                    analyzeSpmResolvedDependenciesV2(spmResolved, engine, file);
+                case 3:
+                    analyzeSpmResolvedDependenciesV2And3(spmResolved, engine, file);
                     break;
                 default:
                     return;
@@ -209,14 +210,14 @@ public class SwiftPackageResolvedAnalyzer extends AbstractFileTypeAnalyzer {
     }
 
     /**
-     * Analyzes the version 2 of the Package.resolved file to extract evidence
+     * Analyzes the versions 2 and 3 of the Package.resolved file to extract evidence
      * for the dependency.
      *
      * @param spmResolved the dependency to analyze
      * @param engine the analysis engine
      * @param resolved the json object of the file to analyze
      */
-    private void analyzeSpmResolvedDependenciesV2(Dependency spmResolved, Engine engine, JsonObject resolved) {
+    private void analyzeSpmResolvedDependenciesV2And3(Dependency spmResolved, Engine engine, JsonObject resolved) {
         final JsonArray pins = resolved.getJsonArray("pins");
         if (pins == null) {
             return;

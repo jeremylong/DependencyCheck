@@ -210,6 +210,22 @@ public class SwiftAnalyzersTest extends BaseTest {
     }
 
     @Test
+    public void testSPMResolvedAnalyzerV3() throws AnalysisException {
+        final Engine engine = new Engine(getSettings());
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
+                "swift/spmV3/Package.resolved"));
+        sprAnalyzer.analyze(result, engine);
+
+        assertThat(engine.getDependencies().length, equalTo(3));
+        assertThat(engine.getDependencies()[0].getName(), equalTo("alamofire"));
+        assertThat(engine.getDependencies()[0].getVersion(), equalTo("5.4.3"));
+        assertThat(engine.getDependencies()[1].getName(), equalTo("alamofireimage"));
+        assertThat(engine.getDependencies()[1].getVersion(), equalTo("4.2.0"));
+        assertThat(engine.getDependencies()[2].getName(), equalTo("facebook-ios-sdk"));
+        assertThat(engine.getDependencies()[2].getVersion(), equalTo("9.3.0"));
+    }
+
+    @Test
     public void testIsEnabledIsTrueByDefault() {
         assertTrue(spmAnalyzer.isEnabled());
         assertTrue(sprAnalyzer.isEnabled());
