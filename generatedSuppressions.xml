@@ -1519,3 +1519,10 @@
    <cpe>cpe:/a:apache:camel</cpe>
 </suppress>
 <!-- suppressions above this line will be included in 9.1.1 -->
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6388
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.rat/apache-rat@.*$</packageUrl>
+   <cpe>cpe:/a:line:line</cpe>
+</suppress>
