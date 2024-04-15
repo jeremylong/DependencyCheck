@@ -117,7 +117,7 @@ Copyright (c) 2012 - Jeremy Long
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <github.global.server>github</github.global.server>
         
-        <apache.lucene.version>8.11.2</apache.lucene.version>
+        <apache.lucene.version>8.11.3</apache.lucene.version>
         <apache.ant.version>1.10.14</apache.ant.version>
         
         <!-- upgrading slf4j and logback can cause issues ;) https://github.com/jeremylong/DependencyCheck/issues/4846 -->
