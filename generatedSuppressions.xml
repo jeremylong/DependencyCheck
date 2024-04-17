@@ -1540,3 +1540,10 @@
    <packageUrl regex="true">^pkg:nuget/MongoDB\.Bson@.*$</packageUrl>
    <cpe>cpe:/a:mongodb:mongodb</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6595
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.opentelemetry\.contrib/opentelemetry-prometheus-client-bridge@.*$</packageUrl>
+   <cpe>cpe:/a:prometheus:prometheus</cpe>
+</suppress>
