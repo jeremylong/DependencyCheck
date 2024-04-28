@@ -1587,3 +1587,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
 <packageUrl regex="true">^pkg:(?!maven/org\.clojure/clojure@).*$</packageUrl>
 <cpe>cpe:/a:clojure:clojure</cpe>
 </suppress>
+
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6415
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.pivotal\.cfenv/java-cfenv@.*$</packageUrl>
+   <cpe>cpe:/a:vmware:spring_framework</cpe>
+</suppress>
