@@ -1561,3 +1561,21 @@
    <packageUrl regex="true">^pkg:maven/org\.glassfish\.expressly/expressly@.*$</packageUrl>
    <cpe>cpe:/a:eclipse:glassfish</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+      FP per issue #6507
+      ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.shiro\.crypto/shiro.*@2.0.0$</packageUrl>
+   <cve>CVE-2023-34478</cve>
+   <cve>CVE-2023-46749</cve>
+   <cve>CVE-2023-46750</cve>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+      FP per issue #6507
+      ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.shiro/shiro.*@2.0.0$</packageUrl>
+   <cve>CVE-2023-34478</cve>
+   <cve>CVE-2023-46749</cve>
+   <cve>CVE-2023-46750</cve>
+</suppress>
