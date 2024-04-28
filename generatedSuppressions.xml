@@ -1579,3 +1579,11 @@
    <cve>CVE-2023-46749</cve>
    <cve>CVE-2023-46750</cve>
 </suppress>
+<suppress base="true">
+<notes><![CDATA[
+FP per issue #6438
+only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
+]]></notes>
+<packageUrl regex="true">^pkg:(?!maven/org\.clojure/clojure@).*$</packageUrl>
+<cpe>cpe:/a:clojure:clojure</cpe>
+</suppress>
