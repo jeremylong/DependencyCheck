@@ -139,8 +139,10 @@
             "path": "pom.xml",
             "package_manager": "maven",
             "dependencies": [
+                #set($addComma=0)
                 #foreach( $dependency in $dependencies )
                     #if( $dependency.name )
+                    #if( $addComma>0 ),#end
                     {
                         "package": {
                             "name": "$enc.json($dependency.name)"
@@ -152,7 +154,7 @@
                         ##"direct": false, --> not implemeten
                         ##"dependency_path": [] --> not implemented
                     }
-                    #if( $foreach.hasNext ),#end
+                    #set($addComma=1)
                     #end
                 #end
             ]
