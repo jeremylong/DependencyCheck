@@ -356,6 +356,10 @@ public class Check extends Update {
      * Whether or not the CocoaPods Analyzer is enabled.
      */
     private Boolean cocoapodsAnalyzerEnabled;
+    /**
+     * Whether or not the Carthage Analyzer is enabled.
+     */
+    private Boolean carthageAnalyzerEnabled;
 
     /**
      * Whether or not the Swift package Analyzer is enabled.
@@ -1103,6 +1107,24 @@ public class Check extends Update {
      */
     public void setCocoapodsAnalyzerEnabled(Boolean cocoapodsAnalyzerEnabled) {
         this.cocoapodsAnalyzerEnabled = cocoapodsAnalyzerEnabled;
+    }
+
+    /**
+     * Returns if the Carthage analyzer is enabled.
+     *
+     * @return if the Carthage analyzer is enabled
+     */
+    public boolean isCarthageAnalyzerEnabled() {
+        return carthageAnalyzerEnabled;
+    }
+
+    /**
+     * Sets whether or not the Carthage analyzer is enabled.
+     *
+     * @param carthageAnalyzerEnabled the state of the Carthage analyzer
+     */
+    public void setCarthageAnalyzerEnabled(Boolean carthageAnalyzerEnabled) {
+        this.carthageAnalyzerEnabled = carthageAnalyzerEnabled;
     }
 
     /**
@@ -2144,6 +2166,7 @@ public class Check extends Update {
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_MANAGER_ENABLED, swiftPackageManagerAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_SWIFT_PACKAGE_RESOLVED_ENABLED, swiftPackageResolvedAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_COCOAPODS_ENABLED, cocoapodsAnalyzerEnabled);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_CARTHAGE_ENABLED, carthageAnalyzerEnabled);
         getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_ENABLED, bundleAuditAnalyzerEnabled);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_PATH, bundleAuditPath);
         getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_BUNDLE_AUDIT_WORKING_DIRECTORY, bundleAuditWorkingDirectory);

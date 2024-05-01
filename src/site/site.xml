@@ -132,6 +132,9 @@ Copyright (c) 2013 Jeremy Long. All Rights Reserved.
                 <item name="CocoaPods" href="./analyzers/cocoapods.html">
                     <description>CocoaPods Analyzer</description>
                 </item>
+                <item name="Carthage" href="./analyzers/carthage.html">
+                    <description>Carthage Analyzer</description>
+                </item>
                 <item name="Jar" href="./analyzers/jar-analyzer.html">
                     <description>Jar Analyzer</description>
                 </item>

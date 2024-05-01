@@ -42,6 +42,7 @@ public enum AnalysisPhase {
      * {@link AutoconfAnalyzer}
      * {@link CMakeAnalyzer}
      * {@link CentralAnalyzer}
+     * {@link CarthageAnalyzer}
      * {@link CocoaPodsAnalyzer}
      * {@link ComposerLockAnalyzer}
      * {@link DartAnalyzer}

@@ -18,10 +18,11 @@ import java.io.File;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 
 /**
- * Unit tests for CocoaPodsAnalyzer and SwiftPackageManagerAnalyzer.
+ * Unit tests for CocoaPodsAnalyzer, CarthageAnalyzer and SwiftPackageManagerAnalyzer.
  *
  * @author Bianca Jiang
  * @author Jorge Mendes
+ * @author Alin Radut
  */
 public class SwiftAnalyzersTest extends BaseTest {
 
@@ -29,6 +30,7 @@ public class SwiftAnalyzersTest extends BaseTest {
      * The analyzer to test.
      */
     private CocoaPodsAnalyzer podsAnalyzer;
+    private CarthageAnalyzer carthageAnalyzer;
     private SwiftPackageManagerAnalyzer spmAnalyzer;
     private SwiftPackageResolvedAnalyzer sprAnalyzer;
 
@@ -45,6 +47,11 @@ public class SwiftAnalyzersTest extends BaseTest {
         podsAnalyzer.initialize(getSettings());
         podsAnalyzer.setFilesMatched(true);
         podsAnalyzer.prepare(null);
+
+        carthageAnalyzer = new CarthageAnalyzer();
+        carthageAnalyzer.initialize(getSettings());
+        carthageAnalyzer.setFilesMatched(true);
+        carthageAnalyzer.prepare(null);
 
         spmAnalyzer = new SwiftPackageManagerAnalyzer();
         spmAnalyzer.initialize(getSettings());
@@ -83,6 +90,14 @@ public class SwiftAnalyzersTest extends BaseTest {
     }
 
     /**
+     * Test of getName method, of class CarthageAnalyzer.
+     */
+    @Test
+    public void testCarthageGetName() {
+        assertThat(carthageAnalyzer.getName(), is("Carthage Package Analyzer"));
+    }
+
+    /**
      * Test of getName method, of class SwiftPackageManagerAnalyzer.
      */
     @Test
@@ -97,6 +112,14 @@ public class SwiftAnalyzersTest extends BaseTest {
     public void testPodsSupportsFiles() {
         assertThat(podsAnalyzer.accept(new File("test.podspec")), is(true));
         assertThat(podsAnalyzer.accept(new File("Podfile.lock")), is(true));
+    }
+
+    /**
+     * Test of supportsFiles method, of class CocoaPodsAnalyzer.
+     */
+    @Test
+    public void testCarthageSupportsFiles() {
+        assertThat(carthageAnalyzer.accept(new File("Cartfile.resolved")), is(true));
     }
 
     /**
@@ -157,6 +180,39 @@ public class SwiftAnalyzersTest extends BaseTest {
         assertThat(result.getDisplayFileName(), equalTo("EasyPeasy:0.2.3"));
         assertThat(result.getLicense(), containsString("MIT"));
         assertThat(result.getEcosystem(), equalTo(CocoaPodsAnalyzer.DEPENDENCY_ECOSYSTEM));
+    }
+
+    /**
+     * Test of analyze method, of class CarthageAnalyzer.
+     *
+     * @throws AnalysisException is thrown when an exception occurs.
+     */
+    @Test
+    public void testCarthageCartfileResolvedAnalyzer() throws AnalysisException {
+        final Engine engine = new Engine(getSettings());
+        final Dependency result = new Dependency(BaseTest.getResourceAsFile(this,
+                "swift/carthage/Cartfile.resolved"));
+        carthageAnalyzer.analyze(result, engine);
+
+        assertThat(engine.getDependencies().length, equalTo(9));
+        assertThat(engine.getDependencies()[0].getName(), equalTo("GoogleMaps"));
+        assertThat(engine.getDependencies()[0].getVersion(), equalTo("7.2.0"));
+        assertThat(engine.getDependencies()[1].getName(), equalTo("olm"));
+        assertThat(engine.getDependencies()[1].getVersion(), equalTo("3.2.16"));
+        assertThat(engine.getDependencies()[2].getName(), equalTo("CocoaLumberjack"));
+        assertThat(engine.getDependencies()[2].getVersion(), equalTo("3.8.5"));
+        assertThat(engine.getDependencies()[3].getName(), equalTo("libidn-framework"));
+        assertThat(engine.getDependencies()[3].getVersion(), equalTo("1.35.1"));
+        assertThat(engine.getDependencies()[4].getName(), equalTo("SQLite.swift"));
+        assertThat(engine.getDependencies()[4].getVersion(), equalTo("0.12.2"));
+        assertThat(engine.getDependencies()[5].getName(), equalTo("KissXML"));
+        assertThat(engine.getDependencies()[5].getVersion(), equalTo("5.3.3"));
+        assertThat(engine.getDependencies()[6].getName(), equalTo("XMPPFramework"));
+        assertThat(engine.getDependencies()[6].getVersion(), equalTo("4.1.0"));
+        assertThat(engine.getDependencies()[7].getName(), equalTo("Alamofire"));
+        assertThat(engine.getDependencies()[7].getVersion(), equalTo("4.8.2"));
+        assertThat(engine.getDependencies()[8].getName(), equalTo("DateTools"));
+        assertThat(engine.getDependencies()[8].getVersion(), equalTo("0.0.0"));
     }
 
     /**

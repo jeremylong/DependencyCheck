@@ -32,6 +32,7 @@ _odc_completions()
             --disableCentralCache
             --disableCmake
             --disableCocoapodsAnalyzer
+            --disableCarthageAnalyzer
             --disableComposer
             --disableDart
             --disableFileName

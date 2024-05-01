@@ -125,6 +125,7 @@ analyzers    | composerEnabled       | Sets whether the [experimental](../analyz
 analyzers    | cpanEnabled           | Sets whether the [experimental](../analyzers/index.html) Perl CPAN File Analyzer should be used. `experimentalEnabled` must be set to true. | true
 analyzers    | nodeEnabled           | Sets whether the Node.js Analyzer should be used.                                                          | true
 analyzers    | cocoapodsEnabled      | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used. `experimentalEnabled` must be set to true. | true
+analyzers    | carthageEnabled       | Sets whether the [experimental](../analyzers/index.html) Carthage Analyzer should be used. `experimentalEnabled` must be set to true. | true
 analyzers    | swiftEnabled          | Sets whether the [experimental](../analyzers/index.html) Swift Package Manager Analyzer should be used. `experimentalEnabled` must be set to true. | true
 analyzers    | swiftPackageResolvedEnabled | Sets whether the [experimental](../analyzers/index.html) Swift Package Resolved Analyzer should be used. `experimentalEnabled` must be set to true. | true
 analyzers    | bundleAuditEnabled    | Sets whether the [experimental](../analyzers/index.html) Ruby Bundle Audit Analyzer should be used. `experimentalEnabled` must be set to true. | true

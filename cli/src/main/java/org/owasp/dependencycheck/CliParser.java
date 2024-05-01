@@ -494,6 +494,7 @@ public final class CliParser {
                 .addOption(newOption(ARGUMENT.DISABLE_OSSINDEX, "Disable the Sonatype OSS Index Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_OSSINDEX_CACHE, "Disallow the OSS Index Analyzer from caching results"))
                 .addOption(newOption(ARGUMENT.DISABLE_COCOAPODS, "Disable the CocoaPods Analyzer."))
+                .addOption(newOption(ARGUMENT.DISABLE_CARTHAGE, "Disable the Carthage Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_SWIFT, "Disable the swift package Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_SWIFT_RESOLVED, "Disable the swift package resolved Analyzer."))
                 .addOption(newOption(ARGUMENT.DISABLE_GO_DEP, "Disable the Golang Package Analyzer."))
@@ -1286,6 +1287,10 @@ public final class CliParser {
          * Disables the cocoapods analyzer.
          */
         public static final String DISABLE_COCOAPODS = "disableCocoapodsAnalyzer";
+        /**
+         * Disables the Carthage analyzer.
+         */
+        public static final String DISABLE_CARTHAGE = "disableCarthageAnalyzer";
         /**
          * Disables the swift package manager analyzer.
          */

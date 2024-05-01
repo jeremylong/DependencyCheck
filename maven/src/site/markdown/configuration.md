@@ -105,6 +105,7 @@ nuspecAnalyzerEnabled               | Sets whether the .NET Nuget Nuspec Analyze
 nugetconfAnalyzerEnabled            | Sets whether the [experimental](../analyzers/index.html) .NET Nuget packages.config Analyzer will be used. `enableExperimental` must be set to true. | true
 libmanAnalyzerEnabled               | Sets whether the Libman Analyzer will be used.                                                                                                      | true
 cocoapodsAnalyzerEnabled            | Sets whether the [experimental](../analyzers/index.html) Cocoapods Analyzer should be used. `enableExperimental` must be set to true.               | true
+carthageAnalyzerEnabled             | Sets whether the [experimental](../analyzers/index.html) Carthage Analyzer should be used. `enableExperimental` must be set to true.                | true
 bundleAuditAnalyzerEnabled          | Sets whether the [experimental](../analyzers/index.html) Bundle Audit Analyzer should be used. `enableExperimental` must be set to true.            | true
 bundleAuditPath                     | Sets the path to the bundle audit executable; only used if bundle audit analyzer is enabled and experimental analyzers are enabled.                 | &nbsp;
 swiftPackageManagerAnalyzerEnabled  | Sets whether the [experimental](../analyzers/index.html) Swift Package Analyzer should be used. `enableExperimental` must be set to true.           | true
