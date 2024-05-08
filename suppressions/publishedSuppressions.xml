@@ -1610,4 +1610,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/io\.pivotal\.cfenv/java-cfenv-boot@.*$</packageUrl>
    <cpe>cpe:/a:vmware:spring_framework</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6640
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.togglz/togglz-mongodb@.*$</packageUrl>
+   <cpe>cpe:/a:mongodb:mongodb</cpe>
+</suppress>
 </suppressions>
