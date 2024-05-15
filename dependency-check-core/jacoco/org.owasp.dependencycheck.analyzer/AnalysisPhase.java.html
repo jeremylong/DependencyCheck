@@ -42,6 +42,7 @@ package org.owasp.dependencycheck.analyzer;
      * {@link AutoconfAnalyzer}
      * {@link CMakeAnalyzer}
      * {@link CentralAnalyzer}
+     * {@link CarthageAnalyzer}
      * {@link CocoaPodsAnalyzer}
      * {@link ComposerLockAnalyzer}
      * {@link DartAnalyzer}
@@ -68,55 +69,55 @@ package org.owasp.dependencycheck.analyzer;
      * {@link SwiftPackageManagerAnalyzer}
      * {@link SwiftPackageResolvedAnalyzer}
      */
-<span class="fc" id="L71">    INFORMATION_COLLECTION,</span>
+<span class="fc" id="L72">    INFORMATION_COLLECTION,</span>
     /**
      * Information collection phase 2.
      * @implNote Bound analyzers are
      * {@link PEAnalyzer}
      */
-<span class="fc" id="L77">    INFORMATION_COLLECTION2,</span>
+<span class="fc" id="L78">    INFORMATION_COLLECTION2,</span>
     /**
      * Post information collection phase 1.
      * @implNote Bound analyzers are
      * {@link DependencyMergingAnalyzer}
      */
-<span class="fc" id="L83">    POST_INFORMATION_COLLECTION1,</span>
+<span class="fc" id="L84">    POST_INFORMATION_COLLECTION1,</span>
     /**
      * Post information collection phase 2.
      * @implNote Bound analyzers are
      * {@link HintAnalyzer} (must run before {@link VersionFilterAnalyzer}, should run after {@link DependencyMergingAnalyzer})
      */
-<span class="fc" id="L89">    POST_INFORMATION_COLLECTION2,</span>
+<span class="fc" id="L90">    POST_INFORMATION_COLLECTION2,</span>
     /**
      * Post information collection phase 3.
      * @implNote Bound analyzers are
      * {@link VersionFilterAnalyzer}
      */
-<span class="fc" id="L95">    POST_INFORMATION_COLLECTION3,</span>
+<span class="fc" id="L96">    POST_INFORMATION_COLLECTION3,</span>
     /**
      * Pre identifier analysis phase.
      * @implNote Bound analyzers are
      * {@link NpmCPEAnalyzer} (must run in a separate phase from {@link CPEAnalyzer} due to singleton re-use)
      */
-<span class="fc" id="L101">    PRE_IDENTIFIER_ANALYSIS,</span>
+<span class="fc" id="L102">    PRE_IDENTIFIER_ANALYSIS,</span>
     /**
      * Identifier analysis phase.
      * @implNote Bound analyzers are
      * {@link CPEAnalyzer}
      */
-<span class="fc" id="L107">    IDENTIFIER_ANALYSIS,</span>
+<span class="fc" id="L108">    IDENTIFIER_ANALYSIS,</span>
     /**
      * Post identifier analysis phase.
      * @implNote Bound analyzers are
      * {@link CpeSuppressionAnalyzer}
      * {@link FalsePositiveAnalyzer}
      */
-<span class="fc" id="L114">    POST_IDENTIFIER_ANALYSIS,</span>
+<span class="fc" id="L115">    POST_IDENTIFIER_ANALYSIS,</span>
     /**
      * Pre finding analysis phase.
      * @implNote No analyzers bound to this phase
      */
-<span class="fc" id="L119">    PRE_FINDING_ANALYSIS,</span>
+<span class="fc" id="L120">    PRE_FINDING_ANALYSIS,</span>
     /**
      * Finding analysis phase.
      * @implNote Bound analyzers are
@@ -127,26 +128,26 @@ package org.owasp.dependencycheck.analyzer;
      * {@link YarnAuditAnalyzer}
      *
      */
-<span class="fc" id="L130">    FINDING_ANALYSIS,</span>
+<span class="fc" id="L131">    FINDING_ANALYSIS,</span>
     /**
      * Finding analysis phase 2.
      * @implNote Bound analyzers are
      * {@link OssIndexAnalyzer}
      */
-<span class="fc" id="L136">    FINDING_ANALYSIS_PHASE2,</span>
+<span class="fc" id="L137">    FINDING_ANALYSIS_PHASE2,</span>
     /**
      * Post analysis phase.
      * @implNote Bound analyzers are
      * {@link KnownExploitedVulnerabilityAnalyzer}
      * {@link VulnerabilitySuppressionAnalyzer}
      */
-<span class="fc" id="L143">    POST_FINDING_ANALYSIS,</span>
+<span class="fc" id="L144">    POST_FINDING_ANALYSIS,</span>
     /**
      * The final analysis phase.
      * @implNote Bound analyzers are
      * {@link DependencyBundlingAnalyzer}
      * {@link UnusedSuppressionRuleAnalyzer}
      */
-<span class="fc" id="L150">    FINAL</span>
+<span class="fc" id="L151">    FINAL</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

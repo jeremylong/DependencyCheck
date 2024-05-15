@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CarthageAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">CarthageAnalyzer.java</span></div><h1>CarthageAnalyzer.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-core.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2023 The OWASP Foundation. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.analyzer;
+
+import com.github.packageurl.MalformedPackageURLException;
+import com.github.packageurl.PackageURL;
+import com.github.packageurl.PackageURLBuilder;
+import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
+import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
+import org.owasp.dependencycheck.dependency.Confidence;
+import org.owasp.dependencycheck.dependency.Dependency;
+import org.owasp.dependencycheck.dependency.EvidenceType;
+import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
+import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
+import org.owasp.dependencycheck.utils.Checksum;
+import org.owasp.dependencycheck.utils.FileFilterBuilder;
+import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * This analyzer is used to analyze SWIFT and Objective-C packages by collecting
+ * information from Cartfile files. Carthage dependency manager see
+ * https://github.com/Carthage/Carthage.
+ *
+ * Based on CocoaPodsAnalyzer by Bianca Jiang.
+ *
+ * @author Alin Radut (https://github.com/alinradut)
+ */
+@Experimental
+@ThreadSafe
+<span class="fc" id="L57">public class CarthageAnalyzer extends AbstractFileTypeAnalyzer {</span>
+
+    /**
+     * A descriptor for the type of dependencies processed or added by this
+     * analyzer.
+     */
+    public static final String DEPENDENCY_ECOSYSTEM = Ecosystem.IOS;
+
+    /**
+     * The logger.
+     */
+<span class="fc" id="L68">    private static final Logger LOGGER = LoggerFactory.getLogger(CarthageAnalyzer.class);</span>
+    /**
+     * The name of the analyzer.
+     */
+    private static final String ANALYZER_NAME = &quot;Carthage Package Analyzer&quot;;
+
+    /**
+     * The phase that this analyzer is intended to run in.
+     */
+<span class="fc" id="L77">    private static final AnalysisPhase ANALYSIS_PHASE = AnalysisPhase.INFORMATION_COLLECTION;</span>
+
+    /**
+     * The file name to scan.
+     */
+    public static final String CARTFILE_RESOLVED = &quot;Cartfile.resolved&quot;;
+    /**
+     * Filter that detects files named &quot;Cartfile.resolved&quot;.
+     */
+<span class="fc" id="L86">    private static final FileFilter CARTHAGE_FILTER = FileFilterBuilder.newInstance().addFilenames(CARTFILE_RESOLVED).build();</span>
+
+    /**
+     * The capture group #1 is the dependency type, #2 is the name, #3 is dependency version.
+     * The version can be a commit ref, so we can't assume it's a number
+     *
+     * Example values:
+     * - binary &quot;https://dl.google.com/geosdk/GoogleMaps.json&quot; &quot;7.2.0&quot;
+     * - git &quot;https://gitlab.matrix.org/matrix-org/olm.git&quot; &quot;3.2.16&quot;
+     * - github &quot;alinradut/SwiftEntryKit&quot; &quot;95f4a08f41ddcf2c02e2b22789038774c8c94df5&quot;&quot;
+     * - github &quot;CocoaLumberjack/CocoaLumberjack&quot; &quot;3.8.5&quot;
+     * - github &quot;realm/realm-swift&quot; &quot;v10.44.0&quot;
+     */
+<span class="fc" id="L99">    private static final Pattern CARTFILE_RESOLVED_DEPENDENCY_PATTERN = Pattern.compile(&quot;(github|git|binary) \&quot;([^\&quot;]+)\&quot; \&quot;([^\&quot;]+)\&quot;&quot;);</span>
+
+    /**
+     * The capture group #1 is the actual numerical version.
+     */
+<span class="fc" id="L104">    private static final Pattern CARTFILE_VERSION_PATTERN = Pattern.compile(&quot;^v?(\\d+(\\.\\d+){0,4})$&quot;);</span>
+
+    /**
+     * Capture group #1 is the dependency name.
+     *
+     * Example values:
+     * - robbiehanson/XMPPFramework
+     * - CocoaLumberjack/CocoaLumberjack
+     */
+<span class="fc" id="L113">    private static final Pattern CARTFILE_RESOLVED_GITHUB_DEPENDENCY = Pattern.compile(&quot;[a-zA-Z0-9-_]+/([a-zA-Z0-9\\-_\\.]+)&quot;);</span>
+
+    /**
+     * Capture group #1 is the dependency name.
+     */
+<span class="fc" id="L118">    private static final Pattern CARTFILE_RESOLVED_GIT_DEPENDENCY = Pattern.compile(&quot;.*?/([a-zA-Z0-9\\-_\\.]+).git&quot;);</span>
+
+    /**
+     * Capture group #1 is the dependency name.
+     *
+     * Example values:
+     * - https://my.domain.com/release/MyFramework.json
+     * - file:///some/Path/MyFramework.json
+     * - relative/path/MyFramework.json
+     * - /absolute/path/MyFramework.json
+     */
+<span class="fc" id="L129">    private static final Pattern CARTFILE_RESOLVED_BINARY_DEPENDENCY = Pattern.compile(&quot;([a-zA-Z0-9\\-_\\.]+).json&quot;);</span>
+
+    /**
+     * Returns the FileFilter
+     *
+     * @return the FileFilter
+     */
+    @Override
+    protected FileFilter getFileFilter() {
+<span class="fc" id="L138">        return CARTHAGE_FILTER;</span>
+    }
+
+    @Override
+    protected void prepareFileTypeAnalyzer(Engine engine) {
+        // NO-OP
+<span class="fc" id="L144">    }</span>
+
+    /**
+     * Returns the name of the analyzer.
+     *
+     * @return the name of the analyzer.
+     */
+    @Override
+    public String getName() {
+<span class="fc" id="L153">        return ANALYZER_NAME;</span>
+    }
+
+    /**
+     * Returns the phase that the analyzer is intended to run in.
+     *
+     * @return the phase that the analyzer is intended to run in.
+     */
+    @Override
+    public AnalysisPhase getAnalysisPhase() {
+<span class="fc" id="L163">        return ANALYSIS_PHASE;</span>
+    }
+
+    /**
+     * Returns the key used in the properties file to reference the analyzer's
+     * enabled property.
+     *
+     * @return the analyzer's enabled property setting key
+     */
+    @Override
+    protected String getAnalyzerEnabledSettingKey() {
+<span class="fc" id="L174">        return Settings.KEYS.ANALYZER_CARTHAGE_ENABLED;</span>
+    }
+
+    @Override
+    protected void analyzeDependency(Dependency dependency, Engine engine)
+            throws AnalysisException {
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (CARTFILE_RESOLVED.equals(dependency.getFileName())) {</span>
+<span class="fc" id="L181">            analyzeCartfileResolvedDependency(dependency, engine);</span>
+        }
+<span class="fc" id="L183">    }</span>
+
+    /**
+     * Analyzes the Cartfile.resolved and adds the evidence to the dependency.
+     *
+     * @param cartfileResolved the dependency
+     * @throws AnalysisException thrown if there is an error analyzing the
+     * Cartfile
+     */
+    private void analyzeCartfileResolvedDependency(Dependency cartfileResolved, Engine engine)
+            throws AnalysisException {
+<span class="fc" id="L194">        engine.removeDependency(cartfileResolved);</span>
+
+        final String contents;
+        try {
+<span class="fc" id="L198">            contents = new String(Files.readAllBytes(cartfileResolved.getActualFile().toPath()), StandardCharsets.UTF_8);</span>
+<span class="nc" id="L199">        } catch (IOException e) {</span>
+<span class="nc" id="L200">            throw new AnalysisException(</span>
+                    &quot;Problem occurred while reading dependency file.&quot;, e);
+<span class="fc" id="L202">        }</span>
+
+<span class="fc" id="L204">        final Matcher matcher = CARTFILE_RESOLVED_DEPENDENCY_PATTERN.matcher(contents);</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        while (matcher.find()) {</span>
+<span class="fc" id="L206">            final String type = matcher.group(1);</span>
+<span class="fc" id="L207">            String name = matcher.group(2);</span>
+<span class="fc" id="L208">            String version = matcher.group(3);</span>
+
+<span class="fc" id="L210">            final Matcher versionMatcher = CARTFILE_VERSION_PATTERN.matcher(version);</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">            if (versionMatcher.find()) {</span>
+<span class="fc" id="L212">                version = versionMatcher.group(1);</span>
+            }
+            else {
+                // this is probably a git commit reference, so we'll default to 0.0.0.
+                // this will probably bubble up a ton of CVEs, but serves you right for
+                // not using semantic versioning.
+<span class="fc" id="L218">                version = &quot;0.0.0&quot;;</span>
+            }
+
+<span class="fc bfc" id="L221" title="All 2 branches covered.">            if (type.contentEquals(&quot;git&quot;)) {</span>
+<span class="fc" id="L222">                final Matcher nameMatcher = CARTFILE_RESOLVED_GIT_DEPENDENCY.matcher(name);</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">                if (!nameMatcher.find()) {</span>
+<span class="nc" id="L224">                    continue;</span>
+                }
+<span class="fc" id="L226">                name = nameMatcher.group(1);</span>
+<span class="fc" id="L227">            }</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">            else if (type.contentEquals(&quot;github&quot;)) {</span>
+<span class="fc" id="L229">                final Matcher nameMatcher = CARTFILE_RESOLVED_GITHUB_DEPENDENCY.matcher(name);</span>
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">                if (!nameMatcher.find()) {</span>
+<span class="nc" id="L231">                    continue;</span>
+                }
+<span class="fc" id="L233">                name = nameMatcher.group(1);</span>
+<span class="fc" id="L234">            }</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">            else if (type.contentEquals(&quot;binary&quot;)) {</span>
+<span class="fc" id="L236">                final Matcher nameMatcher = CARTFILE_RESOLVED_BINARY_DEPENDENCY.matcher(name);</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">                if (!nameMatcher.find()) {</span>
+<span class="nc" id="L238">                    continue;</span>
+                }
+<span class="fc" id="L240">                name = nameMatcher.group(1);</span>
+            }
+
+<span class="fc" id="L243">            final Dependency dependency = new Dependency(cartfileResolved.getActualFile(), true);</span>
+<span class="fc" id="L244">            dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L245">            dependency.setName(name);</span>
+<span class="fc" id="L246">            dependency.setVersion(version);</span>
+
+            try {
+<span class="fc" id="L249">                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;carthage&quot;).withName(dependency.getName());</span>
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">                if (dependency.getVersion() != null) {</span>
+<span class="fc" id="L251">                    builder.withVersion(dependency.getVersion());</span>
+                }
+<span class="fc" id="L253">                final PackageURL purl = builder.build();</span>
+<span class="fc" id="L254">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L255">            } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L256">                LOGGER.debug(&quot;Unable to build package url for carthage&quot;, ex);</span>
+                final GenericIdentifier id;
+<span class="nc bnc" id="L258" title="All 2 branches missed.">                if (dependency.getVersion() != null) {</span>
+<span class="nc" id="L259">                    id = new GenericIdentifier(&quot;carthage:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
+                } else {
+<span class="nc" id="L261">                    id = new GenericIdentifier(&quot;carthage:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
+                }
+<span class="nc" id="L263">                dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L264">            }</span>
+
+<span class="fc" id="L266">            final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
+<span class="fc" id="L267">            dependency.setPackagePath(packagePath);</span>
+<span class="fc" id="L268">            dependency.setDisplayFileName(packagePath);</span>
+<span class="fc" id="L269">            dependency.setSha1sum(Checksum.getSHA1Checksum(packagePath));</span>
+<span class="fc" id="L270">            dependency.setSha256sum(Checksum.getSHA256Checksum(packagePath));</span>
+<span class="fc" id="L271">            dependency.setMd5sum(Checksum.getMD5Checksum(packagePath));</span>
+<span class="fc" id="L272">            dependency.addEvidence(EvidenceType.VENDOR, CARTFILE_RESOLVED, &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L273">            dependency.addEvidence(EvidenceType.PRODUCT, CARTFILE_RESOLVED, &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L274">            dependency.addEvidence(EvidenceType.VERSION, CARTFILE_RESOLVED, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+<span class="fc" id="L275">            engine.addDependency(dependency);</span>
+<span class="fc" id="L276">        }</span>
+<span class="fc" id="L277">    }</span>
+
+    /**
+     * Sets the package path on the given dependency.
+     *
+     * @param dep the dependency to update
+     */
+    private void setPackagePath(Dependency dep) {
+<span class="nc" id="L285">        final File file = new File(dep.getFilePath());</span>
+<span class="nc" id="L286">        final String parent = file.getParent();</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">        if (parent != null) {</span>
+<span class="nc" id="L288">            dep.setPackagePath(parent);</span>
+        }
+<span class="nc" id="L290">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
