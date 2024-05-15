@@ -1,5 +1,15 @@
 # Change Log
 
+## [Version 9.2.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.2.0) (2024-05-15)
+
+ - docs: update logo per intellj (#6660)
+ - feat: Carthage analyzer (#6614)
+ - fix: Ensure valid JSON output for gitlab report (#6630)
+ - feat: Support Package.swift version 3 Specification (#6578)
+ - chore: Update the packaged suppressions to include new hosted suppressions (#6567)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/82?closed=1). 
+
 ## [Version 9.1.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.1.0) (2024-03-31)
 
 - feat: Add v2 support for maven_install.json (#6528)
