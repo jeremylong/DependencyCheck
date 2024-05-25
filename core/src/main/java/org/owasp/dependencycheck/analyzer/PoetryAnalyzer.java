@@ -147,18 +147,19 @@ public class PoetryAnalyzer extends AbstractFileTypeAnalyzer {
         //do not report on the build file itself
         engine.removeDependency(dependency);
 
+        final Toml result = new Toml().read(dependency.getActualFile());
         if (PYPROJECT_TOML.equals(dependency.getActualFile().getName())) {
+            if (result.getTable("tool.poetry") == null) {
+                LOGGER.debug("skipping {} as it does not contain `tool.poetry`", dependency.getDisplayFileName());
+                return;
+            }
+
             final File parentPath = dependency.getActualFile().getParentFile();
             ensureLock(parentPath);
             //exit as we can't analyze pyproject.toml - insufficient version information
             return;
         }
 
-        final Toml result = new Toml().read(dependency.getActualFile());
-        if (PYPROJECT_TOML.equals(dependency.getActualFile().getName()) && result.getTables("tool.poetry") == null) {
-            LOGGER.debug("skipping {} as it does not contain `tool.poetry`", dependency.getDisplayFileName());
-            return;
-        }
         final List<Toml> projectsLocks = result.getTables("package");
         if (projectsLocks == null) {
             return;
