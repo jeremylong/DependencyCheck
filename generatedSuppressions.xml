@@ -1651,3 +1651,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/io\.ktor/ktor-server-call-logging-jvm@.*$</packageUrl>
    <cpe>cpe:/a:call_project:call</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6693
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.ktor/ktor-client-content-negotiation-jvm@.*$</packageUrl>
+   <cpe>cpe:/a:content_project:content</cpe>
+</suppress>
