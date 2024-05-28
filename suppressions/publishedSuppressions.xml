@@ -1631,4 +1631,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.toolchain/jetty-servlet-api@.*$</packageUrl>
    <cpe>cpe:/a:jetty:jetty</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6696
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.lz4/lz4-java@.*$</packageUrl>
+   <cpe>cpe:/a:lz4_project:lz4</cpe>
+</suppress>
 </suppressions>
