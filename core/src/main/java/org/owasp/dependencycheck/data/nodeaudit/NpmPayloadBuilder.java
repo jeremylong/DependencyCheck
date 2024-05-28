@@ -115,7 +115,16 @@ public final class NpmPayloadBuilder {
                     key = key.substring(indexOfNodeModule + NodePackageAnalyzer.NODE_MODULES_DIRNAME.length() + 1);
                 }
 
-                final JsonObject dep = ((JsonObject) value);
+                JsonObject dep = ((JsonObject) value);
+
+                //After Version 3, dependencies can't be taken directly from package-lock.json
+                if (lockJsonVersion > 2 && dep.containsKey("dependencies") && dep.get("dependencies") instanceof JsonObject) {
+                    JsonObjectBuilder depBuilder = Json.createObjectBuilder(dep);
+                    depBuilder.remove("dependencies");
+                    depBuilder.add("requires", dep.get("dependencies"));
+                    dep = depBuilder.build();
+                }
+                
                 final String version = dep.getString("version", "");
                 final boolean isDev = dep.getBoolean("dev", false);
                 if (skipDevDependencies && isDev) {
