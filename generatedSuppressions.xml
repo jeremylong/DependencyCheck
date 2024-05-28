@@ -1644,3 +1644,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j-slf4j2-impl@.*$</packageUrl>
    <cpe>cpe:/a:apache:log4j</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6694
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.ktor/ktor-server-call-logging-jvm@.*$</packageUrl>
+   <cpe>cpe:/a:call_project:call</cpe>
+</suppress>
