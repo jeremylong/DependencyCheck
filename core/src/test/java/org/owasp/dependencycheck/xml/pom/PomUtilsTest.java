@@ -23,6 +23,7 @@ import java.util.jar.JarFile;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.owasp.dependencycheck.BaseTest;
+import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 
 /**
  * Test the PomUtils object.
@@ -67,6 +68,16 @@ public class PomUtilsTest extends BaseTest {
         String expResult = "Commons Validator";
         Model result = PomUtils.readPom("META-INF/maven/commons-validator/commons-validator/pom.xml", jar);
         assertEquals(expResult, result.getName());
+    }
+
+    @Test
+    public void testReadPom_should_trim_version() throws AnalysisException {
+        File input = BaseTest.getResourceAsFile(this, "pom/pom-with-new-line.xml");
+        String expectedOutputVersion = "2.2.0";
+
+        Model output = PomUtils.readPom(input);
+
+        assertEquals(expectedOutputVersion, output.getVersion());
     }
 
 }

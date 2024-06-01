@@ -174,7 +174,7 @@ public class PomHandler extends DefaultHandler {
                                 model.setArtifactId(currentText.toString());
                                 break;
                             case VERSION:
-                                model.setVersion(currentText.toString());
+                                model.setVersion(currentText.toString().trim());
                                 break;
                             case NAME:
                                 model.setName(currentText.toString());
