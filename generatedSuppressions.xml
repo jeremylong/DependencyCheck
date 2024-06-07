@@ -1686,3 +1686,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/io\.prometheus/prometheus-metrics-model@.*$</packageUrl>
    <cpe>cpe:/a:model_project:model</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6701
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.zipkin\.contrib\.brave-propagation-w3c/brave-propagation-tracecontext@.*$</packageUrl>
+   <cpe>cpe:/a:brave:brave</cpe>
+</suppress>
