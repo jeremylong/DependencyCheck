@@ -1665,3 +1665,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/org\.hibernate\.validator/hibernate-validator@.*$</packageUrl>
    <cpe>cpe:/a:validator_project:validator</cpe>
 </suppress>
+<suppress base="true">
+<notes><![CDATA[
+       FP per issue #6257
+       ]]></notes>
+<packageUrl regex="true">^pkg:generic/Mono.Cecil@.*$</packageUrl>
+<cpe>cpe:/a:cecil:cecil</cpe>
+</suppress>
