@@ -1672,3 +1672,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
 <packageUrl regex="true">^pkg:generic/Mono.Cecil@.*$</packageUrl>
 <cpe>cpe:/a:cecil:cecil</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6711
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.google\.http-client/google-http-client-protobuf@.*$</packageUrl>
+   <cpe>cpe:/a:google:protobuf-java</cpe>
+</suppress>
