@@ -149,7 +149,7 @@ Copyright (c) 2012 - Jeremy Long
         <!-- note that logging will be noisy and broken until we upgrade to 3.2
             See https://issues.apache.org/jira/browse/JCS-232 and
             https://github.com/apache/commons-jcs/pull/120 -->
-        <commons-jcs-core.version>3.2</commons-jcs-core.version>
+        <commons-jcs-core.version>3.2.1</commons-jcs-core.version>
         <aho-corasick-double-array-trie.version>1.2.3</aho-corasick-double-array-trie.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
