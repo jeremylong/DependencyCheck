@@ -1707,3 +1707,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
 <packageUrl regex="true">^pkg:maven/org\.junit\..*/junit-.*@.*$</packageUrl>
 <cpe>cpe:/a:1e:platform</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6725
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-jarmode-tools@.*$</packageUrl>
+   <cpe>cpe:/a:vmware:tools</cpe>
+</suppress>
