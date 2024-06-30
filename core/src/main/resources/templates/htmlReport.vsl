@@ -152,7 +152,7 @@ Copyright (c) 2012 Jeremy Long. All Rights Reserved.
                 }
             }
             function escapeRegExp(text) {
-              return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+              return text.replace(/[[\]{}()*+?.\\^$|\s]/g, '\\$&');
             }
             function setCopyText(name, matchType, matchValue, suppressType, suppressVal) {
                 xml =  '<suppress>\n';
