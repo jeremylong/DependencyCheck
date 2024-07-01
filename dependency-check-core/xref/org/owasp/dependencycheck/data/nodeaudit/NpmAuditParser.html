@@ -140,13 +140,13 @@
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>             }
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>             <strong class="jxr_keyword">if</strong> (baseScore &gt;= 0.0) {
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>                 <strong class="jxr_keyword">final</strong> String vector = jsonCvss.optString(<span class="jxr_string">"vectorString"</span>);
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>                 <strong class="jxr_keyword">if</strong> (vector != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>                 <strong class="jxr_keyword">if</strong> (vector != <strong class="jxr_keyword">null</strong> &amp;&amp; !<span class="jxr_string">"null"</span>.equals(vector)) {
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>                     <strong class="jxr_keyword">if</strong> (vector.startsWith(<span class="jxr_string">"CVSS:3"</span>) &amp;&amp; baseScore &gt;= 0.0) {
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>                         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>                             <strong class="jxr_keyword">final</strong> CvssV3 cvss = CvssUtil.vectorToCvssV3(vector, baseScore);
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>                             advisory.setCvssV3(cvss);
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>                         } <strong class="jxr_keyword">catch</strong> (IllegalArgumentException iae) {
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>                             LOGGER.warn(<span class="jxr_string">"Invalid CVSS vector format encountered in NPM Audit results '{}' "</span>, vector, iae);
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>                             LOGGER.warn(<span class="jxr_string">"Invalid CVSS vector format encountered in NPM Audit results '{}': {} "</span>, vector, iae.getMessage());
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>                         }
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>                     } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>                         LOGGER.warn(<span class="jxr_string">"Unsupported CVSS vector format in NPM Audit results, please file a feature "</span>

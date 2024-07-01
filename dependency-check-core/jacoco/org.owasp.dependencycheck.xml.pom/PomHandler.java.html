@@ -174,7 +174,7 @@ import org.xml.sax.helpers.DefaultHandler;
 <span class="fc" id="L174">                                model.setArtifactId(currentText.toString());</span>
 <span class="fc" id="L175">                                break;</span>
                             case VERSION:
-<span class="fc" id="L177">                                model.setVersion(currentText.toString());</span>
+<span class="fc" id="L177">                                model.setVersion(currentText.toString().trim());</span>
 <span class="fc" id="L178">                                break;</span>
                             case NAME:
 <span class="fc" id="L180">                                model.setName(currentText.toString());</span>
