@@ -1,5 +1,17 @@
 # Change Log
 
+## [Version 10.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.0) (2024-07-01)
+
+- **breaking change**: upgrade to dotnet 8.0 (#6580)
+  - Users of the AssemblyAnalyzer must upgrade/utilize dotnet 8 to analyze assemblies
+- feat: fix the NVD API related errors by adding cvssV4 support (#6756)
+- fix: avoid escaping unnecessary chars in HTML report suppression regexes (#6749)
+- fix: #6688 Trim version number when parsin POM (#6705)
+- fix: change request if lockfile is file v3 (#6690)
+- fix: skip pyproject.toml unless it contains `tool.poetry` before ensuring lockfiles (#6681)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/83?closed=1). 
+
 ## [Version 9.2.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v9.2.0) (2024-05-15)
 
  - docs: update logo per intellj (#6660)
