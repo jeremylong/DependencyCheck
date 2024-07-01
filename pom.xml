@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>9.2.1-SNAPSHOT</version>
+    <version>10.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -972,7 +972,13 @@ Copyright (c) 2012 - Jeremy Long
             <dependency>
                 <groupId>io.github.jeremylong</groupId>
                 <artifactId>open-vulnerability-clients</artifactId>
-                <version>6.0.1</version>
+                <version>6.1.0</version>
+            </dependency>
+            <!-- downgrade required to stay on Java 8 -->
+            <dependency>
+                <groupId>com.samskivert</groupId>
+                <artifactId>jmustache</artifactId>
+                <version>1.15</version>
             </dependency>
             <dependency>
                 <groupId>org.anarres.jdiagnostics</groupId>

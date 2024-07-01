@@ -8,6 +8,10 @@ Dependency-Check is a Software Composition Analysis (SCA) tool that attempts to 
 
 Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/). Additionally, more information about the architecture and ways to extend dependency-check can be found on the [wiki].
 
+## Notice
+
+This product uses the NVD API but is not endorsed or certified by the NVD.
+
 ## 9.0.0 Upgrade Notice
 
 **Upgrading to 9.0.0 or later is mandatory**; previous versions of dependency-check
