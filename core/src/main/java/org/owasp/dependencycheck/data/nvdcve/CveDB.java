@@ -1297,7 +1297,6 @@ public final class CveDB implements AutoCloseable {
                 optCvssv4 = cve.getCve().getMetrics().getCvssMetricV40().stream().sorted(Comparator.comparing(CvssV4::getType)).findFirst();
             }
             if (optCvssv4 != null && optCvssv4.isPresent()) {
-                LOGGER.error("Updating CVE: {}" , cve.getCve().getId());
                 CvssV4 cvssv4 = optCvssv4.get();
                 setUpdateColumn(callUpdate, 32, cvssv4.getCvssData().getVersion());
                 setUpdateColumn(callUpdate, 33, cvssv4.getCvssData().getAttackVector());
