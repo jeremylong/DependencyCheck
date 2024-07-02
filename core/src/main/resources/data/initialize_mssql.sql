@@ -210,7 +210,7 @@ BEGIN
         v4modifiedSubConfidentialityImpact, v4modifiedSubIntegrityImpact, v4modifiedSubAvailabilityImpact, 
         v4safety, v4automatable, v4recovery, v4valueDensity, v4vulnerabilityResponseEffort, 
         v4providerUrgency, v4baseScore, v4baseSeverity, v4threatScore, v4threatSeverity, 
-        v4environmentalScore, v4environmentalSeverity, v4sourcey, v4type)
+        v4environmentalScore, v4environmentalSeverity, v4source, v4type)
         VALUES (@cveId, @description, 
         @v2Severity, @v2ExploitabilityScore, 
         @v2ImpactScore, @v2AcInsufInfo, @v2ObtainAllPrivilege, 
@@ -311,7 +311,7 @@ END;
 
 GO
 
-INSERT INTO properties(id,value) VALUES ('version','5.4');
+INSERT INTO properties(id,value) VALUES ('version','5.5');
 
 GO
 /**
