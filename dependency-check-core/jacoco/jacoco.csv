@@ -77,7 +77,7 @@ Dependency-Check Core,org.owasp.dependencycheck.data.lucene,AlphaNumericFilter,5
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,DependencySimilarity,5,0,0,0,2,0,2,0,2,0
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,AbstractTokenizingFilter,0,51,0,4,0,15,0,7,0,5
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,SearchFieldAnalyzer,0,119,1,1,0,19,1,5,0,5
-Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveDB,3717,1330,340,70,903,270,253,45,69,24
+Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveDB,3711,1330,340,70,902,270,253,45,69,24
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DatabaseException,13,0,0,0,6,0,3,0,3,0
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DriverShim,91,27,8,0,25,6,12,4,8,4
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveDB.PreparedStatementCveDb,0,274,0,0,0,28,0,1,0,1
