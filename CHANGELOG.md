@@ -1,5 +1,15 @@
 # Change Log
 
+## [Version 10.0.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.1) (2024-07-02)
+
+- build(deps): bump open-vulnerability-client (#6772)
+- fix: remove debug logging (#6770)
+- fix: postgresql column count error (#6773)
+- fix: mssql column name and version (#6761)
+- docs: update supported versions (#6771)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/85?closed=1). 
+
 ## [Version 10.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.0) (2024-07-01)
 
 - **breaking change**: upgrade to dotnet 8.0 (#6580)
