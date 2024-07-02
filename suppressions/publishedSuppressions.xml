@@ -1715,4 +1715,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-jarmode-tools@.*$</packageUrl>
    <cpe>cpe:/a:vmware:tools</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6757
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.sandesha2/sandesha2-core@.*$</packageUrl>
+   <cpe>cpe:/a:apache:axis2</cpe>
+</suppress>
 </suppressions>
