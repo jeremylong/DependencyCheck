@@ -171,7 +171,7 @@ CREATE FUNCTION update_vulnerability (
     IN p_v4automatable VARCHAR(15), IN p_v4recovery VARCHAR(15), IN p_v4valueDensity VARCHAR(15), IN p_v4vulnerabilityResponseEffort VARCHAR(15), 
     IN p_v4providerUrgency VARCHAR(15), IN p_v4baseScore DECIMAL(3,1), IN p_v4baseSeverity VARCHAR(15), IN p_v4threatScore DECIMAL(3,1), 
     IN p_v4threatSeverity VARCHAR(15), IN p_v4environmentalScore DECIMAL(3,1), IN p_v4environmentalSeverity VARCHAR(15),
-    IN p_v4source VARCHAR(15), IN p_v4type VARCHAR(15))
+    IN p_v4source VARCHAR(50), IN p_v4type VARCHAR(15))
 RETURNS TABLE (vulnerabilityId INT)
 AS $$
 DECLARE vulnerabilityId integer := 0;
