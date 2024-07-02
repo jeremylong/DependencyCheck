@@ -86,6 +86,7 @@ public class CveEcosystemMapper {
             final List<CpeMatch> cpeEntries = cve.getCve().getConfigurations().stream()
                     .map(Config::getNodes)
                     .flatMap(List::stream)
+                    .filter(cpe -> cpe.getCpeMatch() != null)
                     .map(Node::getCpeMatch)
                     .flatMap(List::stream)
                     .filter(match -> match.getCriteria() != null)
