@@ -538,4 +538,4 @@ CREATE OR REPLACE VIEW v_update_ecosystems AS
     ON c.vendor=e.vendor
         AND c.product=e.product;
 
-INSERT INTO properties(id,value) VALUES ('version','5.4');
+INSERT INTO properties(id,value) VALUES ('version','5.5');
