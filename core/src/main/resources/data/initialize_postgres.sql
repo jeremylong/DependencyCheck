@@ -74,7 +74,7 @@ CREATE TABLE knownExploited (cveID varchar(20) PRIMARY KEY,
     notes VARCHAR(2000));
 
 CREATE INDEX idxCwe ON cweEntry(cveid);
-CREATE INDEX idxVulnerability ON vulnerability(cve);
+--CREATE INDEX idxVulnerability ON vulnerability(cve);
 CREATE INDEX idxReference ON reference(cveid);
 CREATE INDEX idxCpe ON cpeEntry(vendor, product);
 CREATE INDEX idxSoftwareCve ON software(cveid);
