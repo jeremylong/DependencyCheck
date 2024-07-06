@@ -2,6 +2,8 @@
 
 ## [Version 10.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.2) (2024-07-06)
 
+**Mandatory Upgrade** - due to older versions of dependency-check causing numerous, spurious requests that end in processing failures, this upgrade is mandatory so that the NVD can differentiate valid requests and block the old clients.
+
 - build(deps): bump open-vulnerability-clients (#6810)
 - fix(db): #6788 removing redundant db index "idxVulnerability" on "vulnerability.cve" (#6807)
 - docs: Further improve formatting and docs of H2 database caching strats (#6804)
