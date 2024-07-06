@@ -1,5 +1,19 @@
 # Change Log
 
+## [Version 10.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.2) (2024-07-06)
+
+**Mandatory Upgrade** - due to older versions of dependency-check causing numerous, spurious requests that end in processing failures, this upgrade is mandatory so that the NVD can differentiate valid requests and block the old clients.
+
+- build(deps): bump open-vulnerability-clients (#6810)
+- fix(db): #6788 removing redundant db index "idxVulnerability" on "vulnerability.cve" (#6807)
+- docs: Further improve formatting and docs of H2 database caching strats (#6804)
+- fix: update_vulnerability in dbStatements_oracle.properties (#6803)
+- fix: fix NPE  (#6778)
+- fix: add hint to resolve false negative (#6802)
+- chore: update configure (#6794)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/86?closed=1). 
+
 ## [Version 10.0.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.1) (2024-07-02)
 
 - build(deps): bump open-vulnerability-client (#6772)

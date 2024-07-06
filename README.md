@@ -12,15 +12,18 @@ Documentation and links to production binary releases can be found on the [githu
 
 This product uses the NVD API but is not endorsed or certified by the NVD.
 
-## 9.0.0 Upgrade Notice
+## Mandatory Upgrade Notive
 
-**Upgrading to 9.0.0 or later is mandatory**; previous versions of dependency-check
-utilize the NVD data feeds which will be deprecated on Dec 15th, 2023. Versions
-earlier then 9.0.0 are no longer supported and could fail to work after Dec 15th, 2023.
+**Upgrading to 10.0.2 or later is mandatory**
+
+Older versions of dependency-check are causing numerous, duplicative requests that
+end in processing failures are causing unnecassary load on the NVD API. Dependency-check
+10.0.2 uses an updated `User-Agent` header that will allow the NVD to block calls
+from the older client.
 
 ### NVD API Key Highly Recommended
 
-With 9.0.0 dependency-check has moved from using the NVD data-feed to the NVD API.
+Dependency-check has moved from using the NVD data-feed to the NVD API.
 Users of dependency-check are **highly** encouraged to obtain an NVD API Key; see https://nvd.nist.gov/developers/request-an-api-key
 Without an NVD API Key dependency-check's updates will be **extremely slow**.
 Please see the documentation for the cli, maven, gradle, or ant integrations on
