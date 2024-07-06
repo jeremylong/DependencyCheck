@@ -70,7 +70,7 @@ Dependency-Check Core,org.owasp.dependencycheck.data.update,RetireJSDataSource,1
 Dependency-Check Core,org.owasp.dependencycheck.data.update,NvdApiDataSource.UrlData,0,15,0,0,0,6,0,3,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.update,HostedSuppressionsDataSource,207,144,24,12,47,29,18,7,3,4
 Dependency-Check Core,org.owasp.dependencycheck.data.update,NvdApiDataSource,1470,91,155,7,310,24,90,7,11,5
-Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,11,76,0,10,3,18,0,8,0,3
+Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,15,72,1,9,4,17,1,7,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,LuceneUtils,0,61,1,11,0,17,1,8,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,TokenPairConcatenatingFilter,59,99,6,10,17,28,5,8,2,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,AlphaNumericFilter,51,114,6,14,15,28,5,11,2,4
@@ -188,7 +188,7 @@ Dependency-Check Core,org.owasp.dependencycheck.xml.hints,EvidenceMatcher,41,90,
 Dependency-Check Core,org.owasp.dependencycheck.agent,DependencyCheckScanAgent,426,405,39,13,131,100,86,17,61,16
 Dependency-Check Core,org.owasp.dependencycheck.data.nvd.ecosystem,DescriptionEcosystemMapper,19,446,11,63,7,96,12,42,1,16
 Dependency-Check Core,org.owasp.dependencycheck.data.nvd.ecosystem,UrlHostHint,2,96,0,0,1,14,1,5,1,5
-Dependency-Check Core,org.owasp.dependencycheck.data.nvd.ecosystem,CveEcosystemMapper,53,58,9,5,6,18,8,4,2,3
+Dependency-Check Core,org.owasp.dependencycheck.data.nvd.ecosystem,CveEcosystemMapper,83,42,13,5,15,10,11,4,3,3
 Dependency-Check Core,org.owasp.dependencycheck.data.nvd.ecosystem,EcosystemHintNature,0,44,0,0,0,5,0,1,0,1
 Dependency-Check Core,org.owasp.dependencycheck.data.nvd.ecosystem,DescriptionKeywordHint,0,206,0,0,0,24,0,6,0,6
 Dependency-Check Core,org.owasp.dependencycheck.data.nvd.ecosystem,FileExtensionHint,0,146,0,0,0,19,0,6,0,6
