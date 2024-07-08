@@ -12,7 +12,7 @@ Documentation and links to production binary releases can be found on the [githu
 
 This product uses the NVD API but is not endorsed or certified by the NVD.
 
-## Mandatory Upgrade Notive
+## Mandatory Upgrade Notice
 
 **Upgrading to 10.0.2 or later is mandatory**
 
