@@ -1723,3 +1723,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <cpe>cpe:/a:apache:axis2</cpe>
    <cpe>cpe:/a:apache:axis</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6829
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty/jetty-openid@.*$</packageUrl>
+   <cpe>cpe:/a:openid:openid</cpe>
+</suppress>
