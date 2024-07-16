@@ -1,5 +1,17 @@
 # Change Log
 
+## [Version 10.0.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.3) (2024-07-16)
+
+- feat: Enable configuration of a lower resultsPerPage on NVD API (#6843)
+- build(deps): bump open-vulnerability-clients from 6.1.6 to 6.1.7 (#6848)
+- build(deps): bump JamesIves/github-pages-deploy-action from 4.6.1 to 4.6.3 (#6814)
+- build(deps): bump org.codehaus.mojo:versions-maven-plugin from 2.16.2 to 2.17.0 (#6762)
+- build(deps): bump org.apache.maven.plugins:maven-checkstyle-plugin from 3.3.1 to 3.4.0 (#6815)
+- build(deps): bump golang from 1.22.4-alpine to 1.22.5-alpine (#6805)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/84?closed=1). 
+
+
 ## [Version 10.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.2) (2024-07-06)
 
 **Mandatory Upgrade** - due to older versions of dependency-check causing numerous, spurious requests that end in processing failures, this upgrade is mandatory so that the NVD can differentiate valid requests and block the old clients.
