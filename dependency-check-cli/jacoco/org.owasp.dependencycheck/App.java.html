@@ -661,21 +661,22 @@ public class App {
 <span class="fc" id="L661">        settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_ENDPOINT,</span>
 <span class="fc" id="L662">                cli.getStringArgument(CliParser.ARGUMENT.NVD_API_ENDPOINT));</span>
 <span class="fc" id="L663">        settings.setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, cli.getIntegerValue(CliParser.ARGUMENT.NVD_API_DELAY));</span>
-<span class="fc" id="L664">        settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, cli.getStringArgument(CliParser.ARGUMENT.NVD_API_DATAFEED_URL));</span>
-<span class="fc" id="L665">        settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, cli.getStringArgument(CliParser.ARGUMENT.NVD_API_DATAFEED_USER));</span>
-<span class="fc" id="L666">        settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_PASSWORD, cli.getStringArgument(CliParser.ARGUMENT.NVD_API_DATAFEED_PASSWORD));</span>
-<span class="fc" id="L667">        settings.setIntIfNotNull(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, cli.getIntegerValue(CliParser.ARGUMENT.NVD_API_MAX_RETRY_COUNT));</span>
-<span class="fc" id="L668">        settings.setIntIfNotNull(Settings.KEYS.NVD_API_VALID_FOR_HOURS, cli.getIntegerValue(CliParser.ARGUMENT.NVD_API_VALID_FOR_HOURS));</span>
+<span class="fc" id="L664">        settings.setIntIfNotNull(Settings.KEYS.NVD_API_RESULTS_PER_PAGE, cli.getIntegerValue(CliParser.ARGUMENT.NVD_API_RESULTS_PER_PAGE));</span>
+<span class="fc" id="L665">        settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, cli.getStringArgument(CliParser.ARGUMENT.NVD_API_DATAFEED_URL));</span>
+<span class="fc" id="L666">        settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, cli.getStringArgument(CliParser.ARGUMENT.NVD_API_DATAFEED_USER));</span>
+<span class="fc" id="L667">        settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_PASSWORD, cli.getStringArgument(CliParser.ARGUMENT.NVD_API_DATAFEED_PASSWORD));</span>
+<span class="fc" id="L668">        settings.setIntIfNotNull(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, cli.getIntegerValue(CliParser.ARGUMENT.NVD_API_MAX_RETRY_COUNT));</span>
+<span class="fc" id="L669">        settings.setIntIfNotNull(Settings.KEYS.NVD_API_VALID_FOR_HOURS, cli.getIntegerValue(CliParser.ARGUMENT.NVD_API_VALID_FOR_HOURS));</span>
 
-<span class="fc" id="L670">        settings.setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_URL,</span>
-<span class="fc" id="L671">                cli.getStringArgument(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_URL));</span>
-<span class="fc" id="L672">        settings.setBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED,</span>
-<span class="pc bpc" id="L673" title="1 of 2 branches missed.">                !cli.isDisabled(CliParser.ARGUMENT.DISABLE_HOSTED_SUPPRESSIONS, Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED));</span>
-<span class="fc" id="L674">        settings.setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE,</span>
-<span class="fc" id="L675">                cli.hasOption(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_FORCEUPDATE));</span>
-<span class="fc" id="L676">        settings.setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS,</span>
-<span class="fc" id="L677">                cli.getIntegerValue(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS));</span>
-<span class="fc" id="L678">    }</span>
+<span class="fc" id="L671">        settings.setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_URL,</span>
+<span class="fc" id="L672">                cli.getStringArgument(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_URL));</span>
+<span class="fc" id="L673">        settings.setBoolean(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED,</span>
+<span class="pc bpc" id="L674" title="1 of 2 branches missed.">                !cli.isDisabled(CliParser.ARGUMENT.DISABLE_HOSTED_SUPPRESSIONS, Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED));</span>
+<span class="fc" id="L675">        settings.setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE,</span>
+<span class="fc" id="L676">                cli.hasOption(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_FORCEUPDATE));</span>
+<span class="fc" id="L677">        settings.setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS,</span>
+<span class="fc" id="L678">                cli.getIntegerValue(CliParser.ARGUMENT.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS));</span>
+<span class="fc" id="L679">    }</span>
 
     //CSON: MethodLength
     /**
@@ -684,33 +685,33 @@ public class App {
      * @param verboseLog the path to the verbose log file
      */
     private void prepareLogger(String verboseLog) {
-<span class="nc" id="L687">        final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();</span>
-<span class="nc" id="L688">        final PatternLayoutEncoder encoder = new PatternLayoutEncoder();</span>
-<span class="nc" id="L689">        encoder.setPattern(&quot;%d %C:%L%n%-5level - %msg%n&quot;);</span>
-<span class="nc" id="L690">        encoder.setContext(context);</span>
-<span class="nc" id="L691">        encoder.start();</span>
-<span class="nc" id="L692">        final FileAppender&lt;ILoggingEvent&gt; fa = new FileAppender&lt;&gt;();</span>
-<span class="nc" id="L693">        fa.setAppend(true);</span>
-<span class="nc" id="L694">        fa.setEncoder(encoder);</span>
-<span class="nc" id="L695">        fa.setContext(context);</span>
-<span class="nc" id="L696">        fa.setFile(verboseLog);</span>
-<span class="nc" id="L697">        final File f = new File(verboseLog);</span>
-<span class="nc" id="L698">        String name = f.getName();</span>
-<span class="nc" id="L699">        final int i = name.lastIndexOf('.');</span>
-<span class="nc bnc" id="L700" title="All 2 branches missed.">        if (i &gt; 1) {</span>
-<span class="nc" id="L701">            name = name.substring(0, i);</span>
+<span class="nc" id="L688">        final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();</span>
+<span class="nc" id="L689">        final PatternLayoutEncoder encoder = new PatternLayoutEncoder();</span>
+<span class="nc" id="L690">        encoder.setPattern(&quot;%d %C:%L%n%-5level - %msg%n&quot;);</span>
+<span class="nc" id="L691">        encoder.setContext(context);</span>
+<span class="nc" id="L692">        encoder.start();</span>
+<span class="nc" id="L693">        final FileAppender&lt;ILoggingEvent&gt; fa = new FileAppender&lt;&gt;();</span>
+<span class="nc" id="L694">        fa.setAppend(true);</span>
+<span class="nc" id="L695">        fa.setEncoder(encoder);</span>
+<span class="nc" id="L696">        fa.setContext(context);</span>
+<span class="nc" id="L697">        fa.setFile(verboseLog);</span>
+<span class="nc" id="L698">        final File f = new File(verboseLog);</span>
+<span class="nc" id="L699">        String name = f.getName();</span>
+<span class="nc" id="L700">        final int i = name.lastIndexOf('.');</span>
+<span class="nc bnc" id="L701" title="All 2 branches missed.">        if (i &gt; 1) {</span>
+<span class="nc" id="L702">            name = name.substring(0, i);</span>
         }
-<span class="nc" id="L703">        fa.setName(name);</span>
-<span class="nc" id="L704">        fa.start();</span>
-<span class="nc" id="L705">        final ch.qos.logback.classic.Logger rootLogger = context.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);</span>
-<span class="nc" id="L706">        rootLogger.setLevel(Level.DEBUG);</span>
-<span class="nc" id="L707">        final ThresholdFilter filter = new ThresholdFilter();</span>
-<span class="nc" id="L708">        filter.setLevel(LogLevel.INFO.getValue());</span>
-<span class="nc" id="L709">        filter.setContext(context);</span>
-<span class="nc" id="L710">        filter.start();</span>
-<span class="nc" id="L711">        rootLogger.iteratorForAppenders().forEachRemaining(action -&gt; action.addFilter(filter));</span>
-<span class="nc" id="L712">        rootLogger.addAppender(fa);</span>
-<span class="nc" id="L713">    }</span>
+<span class="nc" id="L704">        fa.setName(name);</span>
+<span class="nc" id="L705">        fa.start();</span>
+<span class="nc" id="L706">        final ch.qos.logback.classic.Logger rootLogger = context.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);</span>
+<span class="nc" id="L707">        rootLogger.setLevel(Level.DEBUG);</span>
+<span class="nc" id="L708">        final ThresholdFilter filter = new ThresholdFilter();</span>
+<span class="nc" id="L709">        filter.setLevel(LogLevel.INFO.getValue());</span>
+<span class="nc" id="L710">        filter.setContext(context);</span>
+<span class="nc" id="L711">        filter.start();</span>
+<span class="nc" id="L712">        rootLogger.iteratorForAppenders().forEachRemaining(action -&gt; action.addFilter(filter));</span>
+<span class="nc" id="L713">        rootLogger.addAppender(fa);</span>
+<span class="nc" id="L714">    }</span>
 
     /**
      * Takes a path and resolves it to be a canonical &amp;amp; absolute path. The
@@ -723,32 +724,32 @@ public class App {
      */
     protected String ensureCanonicalPath(String path) {
         final String basePath;
-<span class="fc" id="L726">        String wildCards = null;</span>
-<span class="fc" id="L727">        final String file = path.replace('\\', '/');</span>
-<span class="pc bpc" id="L728" title="1 of 4 branches missed.">        if (file.contains(&quot;*&quot;) || file.contains(&quot;?&quot;)) {</span>
+<span class="fc" id="L727">        String wildCards = null;</span>
+<span class="fc" id="L728">        final String file = path.replace('\\', '/');</span>
+<span class="pc bpc" id="L729" title="1 of 4 branches missed.">        if (file.contains(&quot;*&quot;) || file.contains(&quot;?&quot;)) {</span>
 
-<span class="fc" id="L730">            int pos = getLastFileSeparator(file);</span>
-<span class="pc bpc" id="L731" title="1 of 2 branches missed.">            if (pos &lt; 0) {</span>
-<span class="nc" id="L732">                return file;</span>
+<span class="fc" id="L731">            int pos = getLastFileSeparator(file);</span>
+<span class="pc bpc" id="L732" title="1 of 2 branches missed.">            if (pos &lt; 0) {</span>
+<span class="nc" id="L733">                return file;</span>
             }
-<span class="fc" id="L734">            pos += 1;</span>
-<span class="fc" id="L735">            basePath = file.substring(0, pos);</span>
-<span class="fc" id="L736">            wildCards = file.substring(pos);</span>
-<span class="fc" id="L737">        } else {</span>
-<span class="fc" id="L738">            basePath = file;</span>
+<span class="fc" id="L735">            pos += 1;</span>
+<span class="fc" id="L736">            basePath = file.substring(0, pos);</span>
+<span class="fc" id="L737">            wildCards = file.substring(pos);</span>
+<span class="fc" id="L738">        } else {</span>
+<span class="fc" id="L739">            basePath = file;</span>
         }
 
-<span class="fc" id="L741">        File f = new File(basePath);</span>
+<span class="fc" id="L742">        File f = new File(basePath);</span>
         try {
-<span class="fc" id="L743">            f = f.getCanonicalFile();</span>
-<span class="fc bfc" id="L744" title="All 2 branches covered.">            if (wildCards != null) {</span>
-<span class="fc" id="L745">                f = new File(f, wildCards);</span>
+<span class="fc" id="L744">            f = f.getCanonicalFile();</span>
+<span class="fc bfc" id="L745" title="All 2 branches covered.">            if (wildCards != null) {</span>
+<span class="fc" id="L746">                f = new File(f, wildCards);</span>
             }
-<span class="nc" id="L747">        } catch (IOException ex) {</span>
-<span class="nc" id="L748">            LOGGER.warn(&quot;Invalid path '{}' was provided.&quot;, path);</span>
-<span class="nc" id="L749">            LOGGER.debug(&quot;Invalid path provided&quot;, ex);</span>
-<span class="fc" id="L750">        }</span>
-<span class="fc" id="L751">        return f.getAbsolutePath().replace('\\', '/');</span>
+<span class="nc" id="L748">        } catch (IOException ex) {</span>
+<span class="nc" id="L749">            LOGGER.warn(&quot;Invalid path '{}' was provided.&quot;, path);</span>
+<span class="nc" id="L750">            LOGGER.debug(&quot;Invalid path provided&quot;, ex);</span>
+<span class="fc" id="L751">        }</span>
+<span class="fc" id="L752">        return f.getAbsolutePath().replace('\\', '/');</span>
     }
 
     /**
@@ -759,16 +760,16 @@ public class App {
      */
     @SuppressWarnings(&quot;ManualMinMaxCalculation&quot;)
     private int getLastFileSeparator(String file) {
-<span class="pc bpc" id="L762" title="3 of 4 branches missed.">        if (file.contains(&quot;*&quot;) || file.contains(&quot;?&quot;)) {</span>
-<span class="fc" id="L763">            int p1 = file.indexOf('*');</span>
-<span class="fc" id="L764">            int p2 = file.indexOf('?');</span>
-<span class="pc bpc" id="L765" title="1 of 2 branches missed.">            p1 = p1 &gt; 0 ? p1 : file.length();</span>
-<span class="pc bpc" id="L766" title="1 of 2 branches missed.">            p2 = p2 &gt; 0 ? p2 : file.length();</span>
-<span class="pc bpc" id="L767" title="1 of 2 branches missed.">            int pos = p1 &lt; p2 ? p1 : p2;</span>
-<span class="fc" id="L768">            pos = file.lastIndexOf('/', pos);</span>
-<span class="fc" id="L769">            return pos;</span>
+<span class="pc bpc" id="L763" title="3 of 4 branches missed.">        if (file.contains(&quot;*&quot;) || file.contains(&quot;?&quot;)) {</span>
+<span class="fc" id="L764">            int p1 = file.indexOf('*');</span>
+<span class="fc" id="L765">            int p2 = file.indexOf('?');</span>
+<span class="pc bpc" id="L766" title="1 of 2 branches missed.">            p1 = p1 &gt; 0 ? p1 : file.length();</span>
+<span class="pc bpc" id="L767" title="1 of 2 branches missed.">            p2 = p2 &gt; 0 ? p2 : file.length();</span>
+<span class="pc bpc" id="L768" title="1 of 2 branches missed.">            int pos = p1 &lt; p2 ? p1 : p2;</span>
+<span class="fc" id="L769">            pos = file.lastIndexOf('/', pos);</span>
+<span class="fc" id="L770">            return pos;</span>
         } else {
-<span class="nc" id="L771">            return file.lastIndexOf('/');</span>
+<span class="nc" id="L772">            return file.lastIndexOf('/');</span>
         }
     }
 }

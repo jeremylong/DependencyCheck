@@ -71,6 +71,11 @@ public class Update extends Purge {
 <span class="fc" id="L71">    private int nvdApiDelay = 0;</span>
 
     /**
+     * The number of records per page of NVD API data.
+     */
+    private Integer nvdApiResultsPerPage;
+
+    /**
      * The Proxy Server.
      */
     private String proxyServer;
@@ -137,11 +142,11 @@ public class Update extends Purge {
      * Construct a new UpdateTask.
      */
     public Update() {
-<span class="fc" id="L140">        super();</span>
+<span class="fc" id="L145">        super();</span>
         // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
         // core end up coming through this tasks logger
-<span class="fc" id="L143">        StaticLoggerBinder.getSingleton().setTask(this);</span>
-<span class="fc" id="L144">    }</span>
+<span class="fc" id="L148">        StaticLoggerBinder.getSingleton().setTask(this);</span>
+<span class="fc" id="L149">    }</span>
 
     /**
      * Get the value of nvdApiEndpoint.
@@ -149,7 +154,7 @@ public class Update extends Purge {
      * @return the value of nvdApiEndpoint
      */
     public String getNvdApiEndpoint() {
-<span class="nc" id="L152">        return nvdApiEndpoint;</span>
+<span class="nc" id="L157">        return nvdApiEndpoint;</span>
     }
 
     /**
@@ -158,8 +163,8 @@ public class Update extends Purge {
      * @param nvdApiEndpoint new value of nvdApiEndpoint
      */
     public void setNvdApiEndpoint(String nvdApiEndpoint) {
-<span class="nc" id="L161">        this.nvdApiEndpoint = nvdApiEndpoint;</span>
-<span class="nc" id="L162">    }</span>
+<span class="nc" id="L166">        this.nvdApiEndpoint = nvdApiEndpoint;</span>
+<span class="nc" id="L167">    }</span>
 
     /**
      * Get the value of nvdApiKey.
@@ -167,7 +172,7 @@ public class Update extends Purge {
      * @return the value of nvdApiKey
      */
     public String getNvdApiKey() {
-<span class="nc" id="L170">        return nvdApiKey;</span>
+<span class="nc" id="L175">        return nvdApiKey;</span>
     }
 
     /**
@@ -176,8 +181,8 @@ public class Update extends Purge {
      * @param nvdApiKey new value of nvdApiKey
      */
     public void setNvdApiKey(String nvdApiKey) {
-<span class="nc" id="L179">        this.nvdApiKey = nvdApiKey;</span>
-<span class="nc" id="L180">    }</span>
+<span class="nc" id="L184">        this.nvdApiKey = nvdApiKey;</span>
+<span class="nc" id="L185">    }</span>
 
     /**
      * Get the value of nvdMaxRetryCount.
@@ -185,7 +190,7 @@ public class Update extends Purge {
      * @return the value of nvdMaxRetryCount
      */
     public int getNvdMaxRetryCounts() {
-<span class="nc" id="L188">        return nvdMaxRetryCount;</span>
+<span class="nc" id="L193">        return nvdMaxRetryCount;</span>
     }
 
     /**
@@ -194,8 +199,8 @@ public class Update extends Purge {
      * @param nvdMaxRetryCount new value of nvdMaxRetryCount
      */
     public void setNvdMaxRetryCount(int nvdMaxRetryCount) {
-<span class="nc" id="L197">        this.nvdMaxRetryCount = nvdMaxRetryCount;</span>
-<span class="nc" id="L198">    }</span>
+<span class="nc" id="L202">        this.nvdMaxRetryCount = nvdMaxRetryCount;</span>
+<span class="nc" id="L203">    }</span>
 
     /**
      * Get the value of nvdValidForHours.
@@ -203,7 +208,7 @@ public class Update extends Purge {
      * @return the value of nvdValidForHours
      */
     public int getNvdValidForHours() {
-<span class="nc" id="L206">        return nvdValidForHours;</span>
+<span class="nc" id="L211">        return nvdValidForHours;</span>
     }
 
     /**
@@ -212,8 +217,8 @@ public class Update extends Purge {
      * @param nvdValidForHours new value of nvdValidForHours
      */
     public void setNvdValidForHours(int nvdValidForHours) {
-<span class="nc" id="L215">        this.nvdValidForHours = nvdValidForHours;</span>
-<span class="nc" id="L216">    }</span>
+<span class="nc" id="L220">        this.nvdValidForHours = nvdValidForHours;</span>
+<span class="nc" id="L221">    }</span>
 
     /**
      * Get the value of nvdDatafeedUrl.
@@ -221,7 +226,7 @@ public class Update extends Purge {
      * @return the value of nvdDatafeedUrl
      */
     public String getNvdDatafeedUrl() {
-<span class="nc" id="L224">        return nvdDatafeedUrl;</span>
+<span class="nc" id="L229">        return nvdDatafeedUrl;</span>
     }
 
     /**
@@ -230,8 +235,8 @@ public class Update extends Purge {
      * @param nvdDatafeedUrl new value of nvdDatafeedUrl
      */
     public void setNvdDatafeedUrl(String nvdDatafeedUrl) {
-<span class="nc" id="L233">        this.nvdDatafeedUrl = nvdDatafeedUrl;</span>
-<span class="nc" id="L234">    }</span>
+<span class="nc" id="L238">        this.nvdDatafeedUrl = nvdDatafeedUrl;</span>
+<span class="nc" id="L239">    }</span>
 
     /**
      * Get the value of nvdUser.
@@ -239,7 +244,7 @@ public class Update extends Purge {
      * @return the value of nvdUser
      */
     public String getNvdUser() {
-<span class="nc" id="L242">        return nvdUser;</span>
+<span class="nc" id="L247">        return nvdUser;</span>
     }
 
     /**
@@ -248,8 +253,8 @@ public class Update extends Purge {
      * @param nvdUser new value of nvdUser
      */
     public void setNvdUser(String nvdUser) {
-<span class="nc" id="L251">        this.nvdUser = nvdUser;</span>
-<span class="nc" id="L252">    }</span>
+<span class="nc" id="L256">        this.nvdUser = nvdUser;</span>
+<span class="nc" id="L257">    }</span>
 
     /**
      * Get the value of nvdPassword.
@@ -257,7 +262,7 @@ public class Update extends Purge {
      * @return the value of nvdPassword
      */
     public String getNvdPassword() {
-<span class="nc" id="L260">        return nvdPassword;</span>
+<span class="nc" id="L265">        return nvdPassword;</span>
     }
 
     /**
@@ -266,8 +271,8 @@ public class Update extends Purge {
      * @param nvdPassword new value of nvdPassword
      */
     public void setNvdPassword(String nvdPassword) {
-<span class="nc" id="L269">        this.nvdPassword = nvdPassword;</span>
-<span class="nc" id="L270">    }</span>
+<span class="nc" id="L274">        this.nvdPassword = nvdPassword;</span>
+<span class="nc" id="L275">    }</span>
 
     /**
      * Get the value of nvdApiDelay.
@@ -275,7 +280,7 @@ public class Update extends Purge {
      * @return the value of nvdApiDelay
      */
     public int getNvdApiDelay() {
-<span class="nc" id="L278">        return nvdApiDelay;</span>
+<span class="nc" id="L283">        return nvdApiDelay;</span>
     }
 
     /**
@@ -284,8 +289,26 @@ public class Update extends Purge {
      * @param nvdApiDelay new value of nvdApiDelay
      */
     public void setNvdApiDelay(int nvdApiDelay) {
-<span class="nc" id="L287">        this.nvdApiDelay = nvdApiDelay;</span>
-<span class="nc" id="L288">    }</span>
+<span class="nc" id="L292">        this.nvdApiDelay = nvdApiDelay;</span>
+<span class="nc" id="L293">    }</span>
+
+    /**
+     * Get the value of nvdApiResultsPerPage.
+     *
+     * @return the value of nvdApiResultsPerPage
+     */
+    public int getNvdApiResultsPerPage() {
+<span class="nc" id="L301">        return nvdApiResultsPerPage;</span>
+    }
+
+    /**
+     * Set the value of nvdApiResultsPerPage.
+     *
+     * @param nvdApiResultsPerPage new value of nvdApiResultsPerPage
+     */
+    public void setApiResultsPerPage(int nvdApiResultsPerPage) {
+<span class="nc" id="L310">        this.nvdApiResultsPerPage = nvdApiResultsPerPage;</span>
+<span class="nc" id="L311">    }</span>
 
     /**
      * Get the value of proxyServer.
@@ -293,7 +316,7 @@ public class Update extends Purge {
      * @return the value of proxyServer
      */
     public String getProxyServer() {
-<span class="nc" id="L296">        return proxyServer;</span>
+<span class="nc" id="L319">        return proxyServer;</span>
     }
 
     /**
@@ -302,8 +325,8 @@ public class Update extends Purge {
      * @param server new value of proxyServer
      */
     public void setProxyServer(String server) {
-<span class="nc" id="L305">        this.proxyServer = server;</span>
-<span class="nc" id="L306">    }</span>
+<span class="nc" id="L328">        this.proxyServer = server;</span>
+<span class="nc" id="L329">    }</span>
 
     /**
      * Get the value of proxyPort.
@@ -311,7 +334,7 @@ public class Update extends Purge {
      * @return the value of proxyPort
      */
     public String getProxyPort() {
-<span class="nc" id="L314">        return proxyPort;</span>
+<span class="nc" id="L337">        return proxyPort;</span>
     }
 
     /**
@@ -320,8 +343,8 @@ public class Update extends Purge {
      * @param proxyPort new value of proxyPort
      */
     public void setProxyPort(String proxyPort) {
-<span class="nc" id="L323">        this.proxyPort = proxyPort;</span>
-<span class="nc" id="L324">    }</span>
+<span class="nc" id="L346">        this.proxyPort = proxyPort;</span>
+<span class="nc" id="L347">    }</span>
 
     /**
      * Get the value of proxyUsername.
@@ -329,7 +352,7 @@ public class Update extends Purge {
      * @return the value of proxyUsername
      */
     public String getProxyUsername() {
-<span class="nc" id="L332">        return proxyUsername;</span>
+<span class="nc" id="L355">        return proxyUsername;</span>
     }
 
     /**
@@ -338,8 +361,8 @@ public class Update extends Purge {
      * @param proxyUsername new value of proxyUsername
      */
     public void setProxyUsername(String proxyUsername) {
-<span class="nc" id="L341">        this.proxyUsername = proxyUsername;</span>
-<span class="nc" id="L342">    }</span>
+<span class="nc" id="L364">        this.proxyUsername = proxyUsername;</span>
+<span class="nc" id="L365">    }</span>
 
     /**
      * Get the value of proxyPassword.
@@ -347,7 +370,7 @@ public class Update extends Purge {
      * @return the value of proxyPassword
      */
     public String getProxyPassword() {
-<span class="nc" id="L350">        return proxyPassword;</span>
+<span class="nc" id="L373">        return proxyPassword;</span>
     }
 
     /**
@@ -356,8 +379,8 @@ public class Update extends Purge {
      * @param proxyPassword new value of proxyPassword
      */
     public void setProxyPassword(String proxyPassword) {
-<span class="nc" id="L359">        this.proxyPassword = proxyPassword;</span>
-<span class="nc" id="L360">    }</span>
+<span class="nc" id="L382">        this.proxyPassword = proxyPassword;</span>
+<span class="nc" id="L383">    }</span>
 
     /**
      * Get the value of nonProxyHosts.
@@ -365,7 +388,7 @@ public class Update extends Purge {
      * @return the value of nonProxyHosts
      */
     public String getNonProxyHosts() {
-<span class="nc" id="L368">        return nonProxyHosts;</span>
+<span class="nc" id="L391">        return nonProxyHosts;</span>
     }
 
     /**
@@ -374,8 +397,8 @@ public class Update extends Purge {
      * @param nonProxyHosts new value of nonProxyHosts
      */
     public void setNonProxyHosts(String nonProxyHosts) {
-<span class="nc" id="L377">        this.nonProxyHosts = nonProxyHosts;</span>
-<span class="nc" id="L378">    }</span>
+<span class="nc" id="L400">        this.nonProxyHosts = nonProxyHosts;</span>
+<span class="nc" id="L401">    }</span>
 
     /**
      * Get the value of connectionTimeout.
@@ -383,7 +406,7 @@ public class Update extends Purge {
      * @return the value of connectionTimeout
      */
     public String getConnectionTimeout() {
-<span class="nc" id="L386">        return connectionTimeout;</span>
+<span class="nc" id="L409">        return connectionTimeout;</span>
     }
 
     /**
@@ -392,8 +415,8 @@ public class Update extends Purge {
      * @param connectionTimeout new value of connectionTimeout
      */
     public void setConnectionTimeout(String connectionTimeout) {
-<span class="nc" id="L395">        this.connectionTimeout = connectionTimeout;</span>
-<span class="nc" id="L396">    }</span>
+<span class="nc" id="L418">        this.connectionTimeout = connectionTimeout;</span>
+<span class="nc" id="L419">    }</span>
 
     /**
      * Get the value of readTimeout.
@@ -401,7 +424,7 @@ public class Update extends Purge {
      * @return the value of readTimeout
      */
     public String getReadTimeout() {
-<span class="nc" id="L404">        return readTimeout;</span>
+<span class="nc" id="L427">        return readTimeout;</span>
     }
 
     /**
@@ -410,8 +433,8 @@ public class Update extends Purge {
      * @param readTimeout new value of readTimeout
      */
     public void setReadTimeout(String readTimeout) {
-<span class="nc" id="L413">        this.readTimeout = readTimeout;</span>
-<span class="nc" id="L414">    }</span>
+<span class="nc" id="L436">        this.readTimeout = readTimeout;</span>
+<span class="nc" id="L437">    }</span>
 
     /**
      * Get the value of databaseDriverName.
@@ -419,7 +442,7 @@ public class Update extends Purge {
      * @return the value of databaseDriverName
      */
     public String getDatabaseDriverName() {
-<span class="nc" id="L422">        return databaseDriverName;</span>
+<span class="nc" id="L445">        return databaseDriverName;</span>
     }
 
     /**
@@ -428,8 +451,8 @@ public class Update extends Purge {
      * @param databaseDriverName new value of databaseDriverName
      */
     public void setDatabaseDriverName(String databaseDriverName) {
-<span class="nc" id="L431">        this.databaseDriverName = databaseDriverName;</span>
-<span class="nc" id="L432">    }</span>
+<span class="nc" id="L454">        this.databaseDriverName = databaseDriverName;</span>
+<span class="nc" id="L455">    }</span>
 
     /**
      * Get the value of databaseDriverPath.
@@ -437,7 +460,7 @@ public class Update extends Purge {
      * @return the value of databaseDriverPath
      */
     public String getDatabaseDriverPath() {
-<span class="nc" id="L440">        return databaseDriverPath;</span>
+<span class="nc" id="L463">        return databaseDriverPath;</span>
     }
 
     /**
@@ -446,8 +469,8 @@ public class Update extends Purge {
      * @param databaseDriverPath new value of databaseDriverPath
      */
     public void setDatabaseDriverPath(String databaseDriverPath) {
-<span class="nc" id="L449">        this.databaseDriverPath = databaseDriverPath;</span>
-<span class="nc" id="L450">    }</span>
+<span class="nc" id="L472">        this.databaseDriverPath = databaseDriverPath;</span>
+<span class="nc" id="L473">    }</span>
 
     /**
      * Get the value of connectionString.
@@ -455,7 +478,7 @@ public class Update extends Purge {
      * @return the value of connectionString
      */
     public String getConnectionString() {
-<span class="nc" id="L458">        return connectionString;</span>
+<span class="nc" id="L481">        return connectionString;</span>
     }
 
     /**
@@ -464,8 +487,8 @@ public class Update extends Purge {
      * @param connectionString new value of connectionString
      */
     public void setConnectionString(String connectionString) {
-<span class="nc" id="L467">        this.connectionString = connectionString;</span>
-<span class="nc" id="L468">    }</span>
+<span class="nc" id="L490">        this.connectionString = connectionString;</span>
+<span class="nc" id="L491">    }</span>
 
     /**
      * Get the value of databaseUser.
@@ -473,7 +496,7 @@ public class Update extends Purge {
      * @return the value of databaseUser
      */
     public String getDatabaseUser() {
-<span class="nc" id="L476">        return databaseUser;</span>
+<span class="nc" id="L499">        return databaseUser;</span>
     }
 
     /**
@@ -482,8 +505,8 @@ public class Update extends Purge {
      * @param databaseUser new value of databaseUser
      */
     public void setDatabaseUser(String databaseUser) {
-<span class="nc" id="L485">        this.databaseUser = databaseUser;</span>
-<span class="nc" id="L486">    }</span>
+<span class="nc" id="L508">        this.databaseUser = databaseUser;</span>
+<span class="nc" id="L509">    }</span>
 
     /**
      * Get the value of databasePassword.
@@ -491,7 +514,7 @@ public class Update extends Purge {
      * @return the value of databasePassword
      */
     public String getDatabasePassword() {
-<span class="nc" id="L494">        return databasePassword;</span>
+<span class="nc" id="L517">        return databasePassword;</span>
     }
 
     /**
@@ -500,8 +523,8 @@ public class Update extends Purge {
      * @param databasePassword new value of databasePassword
      */
     public void setDatabasePassword(String databasePassword) {
-<span class="nc" id="L503">        this.databasePassword = databasePassword;</span>
-<span class="nc" id="L504">    }</span>
+<span class="nc" id="L526">        this.databasePassword = databasePassword;</span>
+<span class="nc" id="L527">    }</span>
 
     /**
      * Get the value of hostedSuppressionsValidForHours.
@@ -509,7 +532,7 @@ public class Update extends Purge {
      * @return the value of hostedSuppressionsValidForHours
      */
     public Integer getHostedSuppressionsValidForHours() {
-<span class="nc" id="L512">        return hostedSuppressionsValidForHours;</span>
+<span class="nc" id="L535">        return hostedSuppressionsValidForHours;</span>
     }
 
     /**
@@ -519,8 +542,8 @@ public class Update extends Purge {
      * hostedSuppressionsValidForHours
      */
     public void setHostedSuppressionsValidForHours(final Integer hostedSuppressionsValidForHours) {
-<span class="nc" id="L522">        this.hostedSuppressionsValidForHours = hostedSuppressionsValidForHours;</span>
-<span class="nc" id="L523">    }</span>
+<span class="nc" id="L545">        this.hostedSuppressionsValidForHours = hostedSuppressionsValidForHours;</span>
+<span class="nc" id="L546">    }</span>
 
     /**
      * Get the value of hostedSuppressionsForceUpdate.
@@ -528,7 +551,7 @@ public class Update extends Purge {
      * @return the value of hostedSuppressionsForceUpdate
      */
     public Boolean isHostedSuppressionsForceUpdate() {
-<span class="nc" id="L531">        return hostedSuppressionsForceUpdate;</span>
+<span class="nc" id="L554">        return hostedSuppressionsForceUpdate;</span>
     }
 
     /**
@@ -538,8 +561,8 @@ public class Update extends Purge {
      * hostedSuppressionsForceUpdate
      */
     public void setHostedSuppressionsForceUpdate(final Boolean hostedSuppressionsForceUpdate) {
-<span class="nc" id="L541">        this.hostedSuppressionsForceUpdate = hostedSuppressionsForceUpdate;</span>
-<span class="nc" id="L542">    }</span>
+<span class="nc" id="L564">        this.hostedSuppressionsForceUpdate = hostedSuppressionsForceUpdate;</span>
+<span class="nc" id="L565">    }</span>
 
     /**
      * Get the value of hostedSuppressionsEnabled.
@@ -547,7 +570,7 @@ public class Update extends Purge {
      * @return the value of hostedSuppressionsEnabled
      */
     public Boolean isHostedSuppressionsEnabled() {
-<span class="nc" id="L550">        return hostedSuppressionsEnabled;</span>
+<span class="nc" id="L573">        return hostedSuppressionsEnabled;</span>
     }
 
     /**
@@ -556,8 +579,8 @@ public class Update extends Purge {
      * @param hostedSuppressionsEnabled new value of hostedSuppressionsEnabled
      */
     public void setHostedSuppressionsEnabled(Boolean hostedSuppressionsEnabled) {
-<span class="nc" id="L559">        this.hostedSuppressionsEnabled = hostedSuppressionsEnabled;</span>
-<span class="nc" id="L560">    }</span>
+<span class="nc" id="L582">        this.hostedSuppressionsEnabled = hostedSuppressionsEnabled;</span>
+<span class="nc" id="L583">    }</span>
 
     /**
      * Executes the update by initializing the settings, downloads the NVD XML
@@ -570,24 +593,24 @@ public class Update extends Purge {
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     @Override
     protected void executeWithContextClassloader() throws BuildException {
-<span class="nc" id="L573">        populateSettings();</span>
-<span class="nc" id="L574">        try (Engine engine = new Engine(Update.class.getClassLoader(), getSettings())) {</span>
-<span class="nc" id="L575">            engine.doUpdates();</span>
-<span class="nc" id="L576">        } catch (UpdateException ex) {</span>
-<span class="nc bnc" id="L577" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
-<span class="nc" id="L578">                throw new BuildException(ex);</span>
+<span class="nc" id="L596">        populateSettings();</span>
+<span class="nc" id="L597">        try (Engine engine = new Engine(Update.class.getClassLoader(), getSettings())) {</span>
+<span class="nc" id="L598">            engine.doUpdates();</span>
+<span class="nc" id="L599">        } catch (UpdateException ex) {</span>
+<span class="nc bnc" id="L600" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
+<span class="nc" id="L601">                throw new BuildException(ex);</span>
             }
-<span class="nc" id="L580">            log(ex.getMessage(), Project.MSG_ERR);</span>
-<span class="nc" id="L581">        } catch (DatabaseException ex) {</span>
-<span class="nc" id="L582">            final String msg = &quot;Unable to connect to the dependency-check database; unable to update the NVD data&quot;;</span>
-<span class="nc bnc" id="L583" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
-<span class="nc" id="L584">                throw new BuildException(msg, ex);</span>
+<span class="nc" id="L603">            log(ex.getMessage(), Project.MSG_ERR);</span>
+<span class="nc" id="L604">        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L605">            final String msg = &quot;Unable to connect to the dependency-check database; unable to update the NVD data&quot;;</span>
+<span class="nc bnc" id="L606" title="All 2 branches missed.">            if (this.isFailOnError()) {</span>
+<span class="nc" id="L607">                throw new BuildException(msg, ex);</span>
             }
-<span class="nc" id="L586">            log(msg, Project.MSG_ERR);</span>
+<span class="nc" id="L609">            log(msg, Project.MSG_ERR);</span>
         } finally {
-<span class="nc" id="L588">            getSettings().cleanup();</span>
+<span class="nc" id="L611">            getSettings().cleanup();</span>
         }
-<span class="nc" id="L590">    }</span>
+<span class="nc" id="L613">    }</span>
 
     /**
      * Takes the properties supplied and updates the dependency-check settings.
@@ -600,43 +623,44 @@ public class Update extends Purge {
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     @Override
     protected void populateSettings() throws BuildException {
-<span class="fc" id="L603">        super.populateSettings();</span>
-<span class="fc" id="L604">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);</span>
-<span class="fc" id="L605">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);</span>
-<span class="fc" id="L606">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);</span>
-<span class="fc" id="L607">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);</span>
-<span class="fc" id="L608">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS, nonProxyHosts);</span>
-<span class="fc" id="L609">        getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);</span>
-<span class="fc" id="L610">        getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_READ_TIMEOUT, readTimeout);</span>
-<span class="fc" id="L611">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);</span>
-<span class="fc" id="L612">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);</span>
-<span class="fc" id="L613">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
-<span class="fc" id="L614">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
-<span class="fc" id="L615">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
-<span class="fc" id="L616">        getSettings().setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);</span>
-<span class="fc" id="L617">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);</span>
-<span class="fc" id="L618">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);</span>
+<span class="fc" id="L626">        super.populateSettings();</span>
+<span class="fc" id="L627">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);</span>
+<span class="fc" id="L628">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);</span>
+<span class="fc" id="L629">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);</span>
+<span class="fc" id="L630">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);</span>
+<span class="fc" id="L631">        getSettings().setStringIfNotEmpty(Settings.KEYS.PROXY_NON_PROXY_HOSTS, nonProxyHosts);</span>
+<span class="fc" id="L632">        getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);</span>
+<span class="fc" id="L633">        getSettings().setStringIfNotEmpty(Settings.KEYS.CONNECTION_READ_TIMEOUT, readTimeout);</span>
+<span class="fc" id="L634">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);</span>
+<span class="fc" id="L635">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);</span>
+<span class="fc" id="L636">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
+<span class="fc" id="L637">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
+<span class="fc" id="L638">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
+<span class="fc" id="L639">        getSettings().setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);</span>
+<span class="fc" id="L640">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);</span>
+<span class="fc" id="L641">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);</span>
 
-<span class="fc" id="L620">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);</span>
-<span class="fc" id="L621">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_ENDPOINT, nvdApiEndpoint);</span>
-<span class="fc" id="L622">        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, nvdApiDelay);</span>
-<span class="fc" id="L623">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);</span>
-<span class="fc" id="L624">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, nvdUser);</span>
-<span class="fc" id="L625">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_PASSWORD, nvdPassword);</span>
-<span class="pc bpc" id="L626" title="1 of 2 branches missed.">        if (nvdMaxRetryCount != null) {</span>
-<span class="nc bnc" id="L627" title="All 2 branches missed.">            if (nvdMaxRetryCount &gt; 0) {</span>
-<span class="nc" id="L628">                getSettings().setInt(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, nvdMaxRetryCount);</span>
+<span class="fc" id="L643">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);</span>
+<span class="fc" id="L644">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_ENDPOINT, nvdApiEndpoint);</span>
+<span class="fc" id="L645">        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, nvdApiDelay);</span>
+<span class="fc" id="L646">        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_RESULTS_PER_PAGE, nvdApiResultsPerPage);</span>
+<span class="fc" id="L647">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);</span>
+<span class="fc" id="L648">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, nvdUser);</span>
+<span class="fc" id="L649">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_PASSWORD, nvdPassword);</span>
+<span class="pc bpc" id="L650" title="1 of 2 branches missed.">        if (nvdMaxRetryCount != null) {</span>
+<span class="nc bnc" id="L651" title="All 2 branches missed.">            if (nvdMaxRetryCount &gt; 0) {</span>
+<span class="nc" id="L652">                getSettings().setInt(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, nvdMaxRetryCount);</span>
             } else {
-<span class="nc" id="L630">                throw new BuildException(&quot;Invalid setting: `nvdMaxRetryCount` must be greater than zero&quot;);</span>
+<span class="nc" id="L654">                throw new BuildException(&quot;Invalid setting: `nvdMaxRetryCount` must be greater than zero&quot;);</span>
             }
         }
-<span class="pc bpc" id="L633" title="1 of 2 branches missed.">        if (nvdValidForHours != null) {</span>
-<span class="nc bnc" id="L634" title="All 2 branches missed.">            if (nvdValidForHours &gt;= 0) {</span>
-<span class="nc" id="L635">                getSettings().setInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);</span>
+<span class="pc bpc" id="L657" title="1 of 2 branches missed.">        if (nvdValidForHours != null) {</span>
+<span class="nc bnc" id="L658" title="All 2 branches missed.">            if (nvdValidForHours &gt;= 0) {</span>
+<span class="nc" id="L659">                getSettings().setInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);</span>
             } else {
-<span class="nc" id="L637">                throw new BuildException(&quot;Invalid setting: `nvdValidForHours` must be 0 or greater&quot;);</span>
+<span class="nc" id="L661">                throw new BuildException(&quot;Invalid setting: `nvdValidForHours` must be 0 or greater&quot;);</span>
             }
         }
-<span class="fc" id="L640">    }</span>
+<span class="fc" id="L664">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
