@@ -319,7 +319,10 @@ public class NvdApiDataSource implements CachedWebDataSource {
                     + "an NVD API key as the update can take a VERY long time without an API Key");
             builder.withDelay(10000);
         }
-        builder.withResultsPerPage(RESULTS_PER_PAGE);
+
+        final int resultsPerPage = Math.min(settings.getInt(Settings.KEYS.NVD_API_RESULTS_PER_PAGE, RESULTS_PER_PAGE), RESULTS_PER_PAGE);
+
+        builder.withResultsPerPage(resultsPerPage);
         //removed due to the virtualMatch filter causing overhead with the NVD API
         //final String virtualMatch = settings.getString(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER);
         //if (virtualMatch != null) {

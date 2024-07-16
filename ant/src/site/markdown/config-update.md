@@ -38,6 +38,7 @@ nvdApiKey            | The API Key to access the NVD API; obtained from https://
 nvdApiEndpoint       | The NVD API endpoint URL; setting this is uncommon.                                                                  | https://services.nvd.nist.gov/rest/json/cves/2.0
 nvdMaxRetryCount     | The maximum number of retry requests for a single call to the NVD API.                                               | 10
 nvdApiDelay          | The number of milliseconds to wait between calls to the NVD API.                                                     | 3500 with an NVD API Key or 8000 without an API Key
+nvdApiResultsPerPage | The number records for a single page from NVD API (must be <=2000).                                                  | 2000
 nvdDatafeedUrl       | The URL for the NVD API Data feed that can be generated using https://github.com/jeremylong/Open-Vulnerability-Project/tree/main/vulnz#caching-the-nvd-cve-data - example value `https://internal.server/cache/nvdcve-{0}.json.gz` | &nbsp;
 nvdUser              | Credentials used for basic authentication for the NVD API Data feed.                                                 | &nbsp;
 nvdPassword          | Credentials used for basic authentication for the NVD API Data feed.                                                 | &nbsp;
