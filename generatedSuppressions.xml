@@ -1737,3 +1737,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-oauth2-resource-server@.*$</packageUrl>
    <cpe>cpe:/a:vmware:server</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6856
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-oauth2-authorization-server@.*$</packageUrl>
+   <cpe>cpe:/a:oauth2-server_project:oauth2-server</cpe>
+</suppress>
