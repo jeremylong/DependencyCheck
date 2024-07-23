@@ -22,7 +22,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - uses: actions/setup-dotnet@v4.0.0
+      - uses: actions/setup-dotnet@v4.0.1
         with:
           dotnet-version: '8.0.x'
       - name: Set up JDK 1.8
@@ -59,7 +59,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - uses: actions/setup-dotnet@v4.0.0
+      - uses: actions/setup-dotnet@v4.0.1
         with:
           dotnet-version: '8.0.x'
       - name: Set up JDK 1.8
