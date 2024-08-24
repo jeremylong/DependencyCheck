@@ -1643,7 +1643,7 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    FP per issue #6695
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/org\.apache\.logging\.log4j/log4j-slf4j2-impl@.*$</packageUrl>
-   <cpe>cpe:/a:apache:log4j</cpe>
+   <cpe>cpe:/a:log4js_project:log4js</cpe>
 </suppress>
 <suppress base="true">
    <notes><![CDATA[
