@@ -1759,4 +1759,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/io\.pivotal\.cfenv/java-cfenv-boot@.*$</packageUrl>
    <cpe>cpe:/a:vmware:spring_boot</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6906
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jeecgframework/autopoi-web@.*$</packageUrl>
+   <cpe>cpe:/a:web_project:web</cpe>
+</suppress>
 </suppressions>
