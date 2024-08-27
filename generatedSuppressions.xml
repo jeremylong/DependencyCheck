@@ -1801,3 +1801,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/com\.azure/azure-core@.*$</packageUrl>
    <cpe>cpe:/a:microsoft:azure_cli</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6925
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.tukaani/xz@.*$</packageUrl>
+   <cpe>cpe:/a:tukaani:xz</cpe>
+</suppress>
