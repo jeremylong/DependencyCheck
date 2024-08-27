@@ -1813,14 +1813,21 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <notes><![CDATA[
    FP per issue #6926
    ]]></notes>
-   <packageUrl regex="true">^pkg:maven/org\.bouncycastle/bcpg-fips@.*$</packageUrl>
+   <packageUrl regex="true">^pkg:maven/org\.bouncycastle/bc(pg)?-fips@.*$</packageUrl>
    <cpe>cpe:/a:bouncycastle:legion-of-the-bouncy-castle</cpe>
 </suppress>
 <suppress base="true">
    <notes><![CDATA[
    FP per issue #6854
    ]]></notes>
-   <packageUrl regex="true">^pkg:maven/org\.bouncycastle/bcpg-fips@.*$</packageUrl>
+   <packageUrl regex="true">^pkg:maven/org\.bouncycastle/bc(pg)?-fips@.*$</packageUrl>
    <cpe>cpe:/a:bouncycastle:bouncy_castle_for_java</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6839
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/commons-discovery/commons-discovery@.*$</packageUrl>
+   <cpe>cpe:/a:spirit-project:spirit</cpe>
 </suppress>
 </suppressions>
