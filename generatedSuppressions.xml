@@ -1829,3 +1829,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/commons-discovery/commons-discovery@.*$</packageUrl>
    <cpe>cpe:/a:spirit-project:spirit</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   cpe:/a:services_project:services is Drupal services module in PHP #6448
+   ]]></notes>
+   <filePath regex="true">.*(\.(dll|jar|ear|war|pom|nupkg|nuspec|aar)|pom\.xml|package.json|packages.config)$</filePath>
+   <cpe>cpe:/a:services_project:services</cpe>
+</suppress>
