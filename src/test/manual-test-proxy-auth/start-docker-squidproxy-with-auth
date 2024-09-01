@@ -1,0 +1,2 @@
+docker run --rm -d --name odc-squid-testproxy -e TZ=UTC -v $(pwd)/debian.conf.override:/etc/squid/conf.d/debian.conf:ro -v $(pwd)/squid-auth-for-localnet.conf:/etc/squid/conf.d/squid-auth-for-localnet.conf:ro -v $(pwd)/user-proxy-passwd-insecure:/etc/squid/passwords:ro -p 127.0.0.1:53128:3128 -p ::1:53128:3128 ubuntu/squid:5.2-22.04_beta
+
