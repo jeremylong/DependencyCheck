@@ -1,5 +1,19 @@
 # Change Log
 
+## [Version 10.0.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.4) (2024-09-01)
+
+ - build(deps): exclude unused dependency (#6916)
+ - fix: improve regex (#6917)
+ - fix: correctly handle null values in cpeMatch (#6915)
+ - fix(site): Update Fluido skin to resolve broken fork-me-on-github image (#6914)
+ - fix: do not report over 100% download complete (#6899)
+ - fix: Correct spelling of occurring in NvdApiDataSource.java (#6883)
+ - fix: skip blank lines in requirements.txt (#6867)
+ - fix: correct percentage calculation (#6868)
+ - docs: remove old recommendation (#6860)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/88?closed=1). 
+
 ## [Version 10.0.3](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.3) (2024-07-16)
 
 - feat: Enable configuration of a lower resultsPerPage on NVD API (#6843)
@@ -10,7 +24,6 @@
 - build(deps): bump golang from 1.22.4-alpine to 1.22.5-alpine (#6805)
 
 See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/84?closed=1). 
-
 
 ## [Version 10.0.2](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.2) (2024-07-06)
 
