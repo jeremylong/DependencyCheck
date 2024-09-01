@@ -10,14 +10,14 @@ Dependency-Check Utils,org.owasp.dependencycheck.utils,InvalidSettingException,1
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFactory.new Authenticator() {...},52,0,6,0,7,0,5,0,2,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFailureException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFactory,283,106,53,7,62,31,30,8,2,6
-Dependency-Check Utils,org.owasp.dependencycheck.utils,ResourceNotFoundException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader,119,76,3,3,25,21,6,5,4,4
+Dependency-Check Utils,org.owasp.dependencycheck.utils,ResourceNotFoundException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,ExtractionException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,TooManyRequestsException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,DownloadFailedException,16,0,0,0,8,0,4,0,4,0
+Dependency-Check Utils,org.owasp.dependencycheck.utils,XmlUtils,209,0,19,0,50,0,15,0,5,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,Checksum,35,180,2,10,8,36,4,15,2,10
 Dependency-Check Utils,org.owasp.dependencycheck.utils,Checksum.FileChecksums,0,12,0,0,0,5,0,1,0,1
-Dependency-Check Utils,org.owasp.dependencycheck.utils,XmlUtils,209,0,19,0,50,0,15,0,5,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils.processing,Processor,38,0,4,0,12,0,7,0,5,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils.processing,ProcessReader.Gobbler,30,0,2,0,12,0,5,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils.processing,ProcessReader,139,0,14,0,39,0,15,0,8,0

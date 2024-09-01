@@ -168,7 +168,7 @@ public final class DatabaseManager {
 <span class="fc" id="L168">            boolean shouldCreateSchema = false;</span>
             try {
 <span class="pc bpc" id="L170" title="1 of 4 branches missed.">                if (autoUpdate &amp;&amp; isH2) {</span>
-<span class="pc bpc" id="L171" title="1 of 2 branches missed.">                    shouldCreateSchema = !h2DataFileExists();</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">                    shouldCreateSchema = !h2DataFileExists();</span>
 <span class="fc" id="L172">                    LOGGER.debug(&quot;Need to create DB Structure: {}&quot;, shouldCreateSchema);</span>
                 }
 <span class="nc" id="L174">            } catch (IOException ioex) {</span>
@@ -207,13 +207,13 @@ public final class DatabaseManager {
 <span class="fc" id="L207">            }</span>
 <span class="fc" id="L208">            databaseProductName = determineDatabaseProductName(conn);</span>
 <span class="fc" id="L209">            isOracle = &quot;oracle&quot;.equals(databaseProductName);</span>
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">            if (shouldCreateSchema) {</span>
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            if (shouldCreateSchema) {</span>
                 try {
-<span class="nc" id="L212">                    createTables(conn);</span>
+<span class="fc" id="L212">                    createTables(conn);</span>
 <span class="nc" id="L213">                } catch (DatabaseException dex) {</span>
 <span class="nc" id="L214">                    LOGGER.debug(&quot;&quot;, dex);</span>
 <span class="nc" id="L215">                    throw new DatabaseException(&quot;Unable to create the database structure&quot;, dex);</span>
-<span class="nc" id="L216">                }</span>
+<span class="fc" id="L216">                }</span>
             }
             try {
 <span class="fc" id="L219">                ensureSchemaVersion(conn);</span>
@@ -368,27 +368,27 @@ public final class DatabaseManager {
      * @throws DatabaseException thrown if there is a Database Exception
      */
     private void createTables(Connection conn) throws DatabaseException {
-<span class="nc" id="L371">        LOGGER.debug(&quot;Creating database structure&quot;);</span>
+<span class="fc" id="L371">        LOGGER.debug(&quot;Creating database structure&quot;);</span>
         final String dbStructure;
         try {
-<span class="nc" id="L374">            dbStructure = getResource(DB_STRUCTURE_RESOURCE);</span>
+<span class="fc" id="L374">            dbStructure = getResource(DB_STRUCTURE_RESOURCE);</span>
 
-<span class="nc" id="L376">            Statement statement = null;</span>
+<span class="fc" id="L376">            Statement statement = null;</span>
             try {
-<span class="nc" id="L378">                statement = conn.createStatement();</span>
-<span class="nc" id="L379">                statement.execute(dbStructure);</span>
+<span class="fc" id="L378">                statement = conn.createStatement();</span>
+<span class="fc" id="L379">                statement.execute(dbStructure);</span>
 <span class="nc" id="L380">            } catch (SQLException ex) {</span>
 <span class="nc" id="L381">                LOGGER.debug(&quot;&quot;, ex);</span>
 <span class="nc" id="L382">                throw new DatabaseException(&quot;Unable to create database statement&quot;, ex);</span>
             } finally {
-<span class="nc" id="L384">                DBUtils.closeStatement(statement);</span>
+<span class="fc" id="L384">                DBUtils.closeStatement(statement);</span>
             }
 <span class="nc" id="L386">        } catch (IOException ex) {</span>
 <span class="nc" id="L387">            throw new DatabaseException(&quot;Unable to create database schema&quot;, ex);</span>
 <span class="nc" id="L388">        } catch (LinkageError ex) {</span>
 <span class="nc" id="L389">            LOGGER.debug(new DefaultQuery(ex).call().toString());</span>
-<span class="nc" id="L390">        }</span>
-<span class="nc" id="L391">    }</span>
+<span class="fc" id="L390">        }</span>
+<span class="fc" id="L391">    }</span>
 
     private String getResource(String resource) throws IOException {
         String dbStructure;

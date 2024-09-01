@@ -1,1 +1,1 @@
-/opt/hostedtoolcache/Java_Zulu_jdk/8.0.412-8/x64/jre/../bin/javadoc @options @argfile
+/opt/hostedtoolcache/Java_Zulu_jdk/8.0.422-5/x64/jre/../bin/javadoc @options @argfile

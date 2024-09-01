@@ -216,18 +216,20 @@ public class CveItemOperator {
      * @return &lt;code&gt;true&lt;/code&gt; if the CVE affects CPEs identified by the
      * configured CPE Starts with filter
      */
-    protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
-<span class="nc bnc" id="L220" title="All 2 branches missed.">        if (cve.getCve().getConfigurations() != null) {</span>
+    boolean testCveCpeStartWithFilter(final DefCveItem cve) {
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">        if (cve.getCve().getConfigurations() != null) {</span>
             //cycle through to see if this is a CPE we care about (use the CPE filters
-<span class="nc" id="L222">            return cve.getCve().getConfigurations().stream()</span>
-<span class="nc" id="L223">                    .map(Config::getNodes)</span>
-<span class="nc" id="L224">                    .flatMap(List::stream)</span>
-<span class="nc" id="L225">                    .map(Node::getCpeMatch)</span>
-<span class="nc" id="L226">                    .flatMap(List::stream)</span>
-<span class="nc bnc" id="L227" title="All 2 branches missed.">                    .filter(cpe -&gt; cpe.getCriteria() != null)</span>
-<span class="nc" id="L228">                    .anyMatch(cpe -&gt; cpe.getCriteria().startsWith(cpeStartsWithFilter));</span>
+<span class="fc" id="L222">            boolean result = cve.getCve().getConfigurations().stream()</span>
+<span class="fc" id="L223">                    .map(Config::getNodes)</span>
+<span class="fc" id="L224">                    .flatMap(List::stream)</span>
+<span class="fc bfc" id="L225" title="All 2 branches covered.">                    .filter(node -&gt; node != null)</span>
+<span class="fc" id="L226">                    .map(Node::getCpeMatch)</span>
+<span class="fc" id="L227">                    .flatMap(List::stream)</span>
+<span class="pc bpc" id="L228" title="1 of 4 branches missed.">                    .filter(cpe -&gt; cpe != null &amp;&amp; cpe.getCriteria() != null)</span>
+<span class="fc" id="L229">                    .anyMatch(cpe -&gt; cpe.getCriteria().startsWith(cpeStartsWithFilter));</span>
+<span class="fc" id="L230">            return result;</span>
         }
-<span class="nc" id="L230">        return false;</span>
+<span class="nc" id="L232">        return false;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

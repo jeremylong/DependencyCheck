@@ -385,7 +385,7 @@ import org.apache.commons.io.IOUtils;
 <span class="fc" id="L385">                            final List&lt;String&gt; value = entry.getValue();</span>
                             // CSOFF: NeedBraces
 <span class="pc bpc" id="L387" title="1 of 2 branches missed.">                            if (null != key) {</span>
-<span class="pc bpc" id="L388" title="3 of 5 branches missed.">                                switch (key) {</span>
+<span class="pc bpc" id="L388" title="2 of 5 branches missed.">                                switch (key) {</span>
                                     case &quot;summary&quot;:
 <span class="pc bpc" id="L390" title="1 of 2 branches missed.">                                        if (null == individualVuln.getName()) {</span>
 <span class="fc" id="L391">                                            individualVuln.setName(value.get(0));</span>
@@ -393,13 +393,13 @@ import org.apache.commons.io.IOUtils;
 <span class="fc" id="L393">                                        individualVuln.setDescription(value.get(0));</span>
 <span class="fc" id="L394">                                        break;</span>
                                     case &quot;issue&quot;:
-<span class="nc" id="L396">                                        individualVuln.setName(libraryResult.getLibrary().getName() + &quot; issue: &quot; + value.get(0));</span>
-<span class="nc bnc" id="L397" title="All 2 branches missed.">                                        if (UrlValidator.getInstance().isValid(value.get(0))) {</span>
+<span class="fc" id="L396">                                        individualVuln.setName(libraryResult.getLibrary().getName() + &quot; issue: &quot; + value.get(0));</span>
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">                                        if (UrlValidator.getInstance().isValid(value.get(0))) {</span>
 <span class="nc" id="L398">                                            individualVuln.addReference(key, key, value.get(0));</span>
                                         } else {
-<span class="nc" id="L400">                                            individualVuln.addReference(key, value.get(0), null);</span>
+<span class="fc" id="L400">                                            individualVuln.addReference(key, value.get(0), null);</span>
                                         }
-<span class="nc" id="L402">                                        break;</span>
+<span class="fc" id="L402">                                        break;</span>
                                     case &quot;bug&quot;:
 <span class="nc" id="L404">                                        individualVuln.setName(libraryResult.getLibrary().getName() + &quot; bug: &quot; + value.get(0));</span>
 <span class="nc bnc" id="L405" title="All 2 branches missed.">                                        if (UrlValidator.getInstance().isValid(value.get(0))) {</span>

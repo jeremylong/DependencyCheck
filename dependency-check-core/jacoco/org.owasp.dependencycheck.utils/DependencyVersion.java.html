@@ -78,7 +78,7 @@ public class DependencyVersion implements Iterable&lt;String&gt;, Comparable&lt;
 <span class="fc" id="L78">        versionParts = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L79" title="All 2 branches covered.">        if (version != null) {</span>
 <span class="fc" id="L80">            final Pattern rx = Pattern</span>
-<span class="fc" id="L81">                    .compile(&quot;(\\d+[a-z]{1,3}$|[a-z]{1,3}[_-]?\\d+|\\d+|(rc|release|snapshot|beta|alpha)$)&quot;,</span>
+<span class="fc" id="L81">                    .compile(&quot;(\\d{1,100}[a-z]{1,3}$|[a-z]{1,3}[_-]?\\d{1,100}|\\d{1,100}|(rc|release|snapshot|beta|alpha)$)&quot;,</span>
                             Pattern.CASE_INSENSITIVE);
 <span class="fc" id="L83">            final Matcher matcher = rx.matcher(version.toLowerCase());</span>
 <span class="fc bfc" id="L84" title="All 2 branches covered.">            while (matcher.find()) {</span>
