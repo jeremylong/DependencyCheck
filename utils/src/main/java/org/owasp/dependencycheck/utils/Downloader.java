@@ -20,21 +20,35 @@ package org.owasp.dependencycheck.utils;
 import org.apache.hc.client5.http.HttpResponseException;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.CredentialsStore;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
-import org.apache.hc.client5.http.impl.auth.CredentialsProviderBuilder;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.auth.SystemDefaultCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.Method;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
+import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -42,6 +56,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Collections;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -77,8 +93,25 @@ public final class Downloader {
         // Singleton class
         final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
         //TODO: ensure proper closure and eviction policy
-        httpClientBuilder = HttpClientBuilder.create().useSystemProperties().setConnectionManager(connectionManager).setConnectionManagerShared(true);
-        httpClientBuilderExplicitNoproxy = HttpClientBuilder.create().setConnectionManager(connectionManager).setConnectionManagerShared(true);
+        httpClientBuilder = HttpClientBuilder.create()
+                .useSystemProperties()
+                .setConnectionManager(connectionManager)
+                .setConnectionManagerShared(true);
+        httpClientBuilderExplicitNoproxy = HttpClientBuilder.create()
+                .useSystemProperties()
+                .setConnectionManager(connectionManager)
+                .setConnectionManagerShared(true)
+                .setProxySelector(new ProxySelector() {
+                    @Override
+                    public List<Proxy> select(URI uri) {
+                        return Collections.singletonList(Proxy.NO_PROXY);
+                    }
+
+                    @Override
+                    public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
+
+                    }
+                });
     }
 
     /**
@@ -100,7 +133,8 @@ public final class Downloader {
      */
     public void configure(Settings settings) throws InvalidSettingException {
         this.settings = settings;
-        final CredentialsProviderBuilder credentialsProviderBuilder = CredentialsProviderBuilder.create();
+
+        final SystemDefaultCredentialsProvider credentialsProvider = new SystemDefaultCredentialsProvider();
         if (settings.getString(Settings.KEYS.PROXY_SERVER) != null) {
             // Legacy proxy configuration present
             // So don't rely on the system properties for proxy; use the legacy settings configuration
@@ -110,20 +144,20 @@ public final class Downloader {
             if (settings.getString(Settings.KEYS.PROXY_USERNAME) != null) {
                 final String proxyuser = settings.getString(Settings.KEYS.PROXY_USERNAME);
                 final char[] proxypass = settings.getString(Settings.KEYS.PROXY_PASSWORD).toCharArray();
-                credentialsProviderBuilder.add(new AuthScope(null, proxyHost, proxyPort, null, null), proxyuser, proxypass);
+                credentialsProvider.setCredentials(new AuthScope(null, proxyHost, proxyPort, null, null), new UsernamePasswordCredentials(proxyuser, proxypass));
             }
         }
-        tryAddRetireJSCredentials(settings, credentialsProviderBuilder);
-        tryAddHostedSuppressionCredentials(settings, credentialsProviderBuilder);
-        tryAddKEVCredentials(settings, credentialsProviderBuilder);
-        tryAddNexusAnalyzerCredentials(settings, credentialsProviderBuilder);
-        httpClientBuilder.setDefaultCredentialsProvider(credentialsProviderBuilder.build());
-        httpClientBuilderExplicitNoproxy.setDefaultCredentialsProvider(credentialsProviderBuilder.build());
+        tryAddRetireJSCredentials(settings, credentialsProvider);
+        tryAddHostedSuppressionCredentials(settings, credentialsProvider);
+        tryAddKEVCredentials(settings, credentialsProvider);
+        tryAddNexusAnalyzerCredentials(settings, credentialsProvider);
+        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+        httpClientBuilderExplicitNoproxy.setDefaultCredentialsProvider(credentialsProvider);
     }
 
-    private void tryAddRetireJSCredentials(Settings settings, CredentialsProviderBuilder credentialsProviderBuilder) throws InvalidSettingException {
+    private void tryAddRetireJSCredentials(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD) != null) {
-            validateAndAddUsernamePasswordCredentials(settings, credentialsProviderBuilder,
+            validateAndAddUsernamePasswordCredentials(settings, credentialsStore,
                     Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER,
                     Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
                     Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD,
@@ -131,9 +165,9 @@ public final class Downloader {
         }
     }
 
-    private void tryAddHostedSuppressionCredentials(Settings settings, CredentialsProviderBuilder credentialsProviderBuilder) throws InvalidSettingException {
+    private void tryAddHostedSuppressionCredentials(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.HOSTED_SUPPRESSIONS_PASSWORD) != null) {
-            validateAndAddUsernamePasswordCredentials(settings, credentialsProviderBuilder,
+            validateAndAddUsernamePasswordCredentials(settings, credentialsStore,
                     Settings.KEYS.HOSTED_SUPPRESSIONS_USER,
                     Settings.KEYS.HOSTED_SUPPRESSIONS_URL,
                     Settings.KEYS.HOSTED_SUPPRESSIONS_PASSWORD,
@@ -141,9 +175,9 @@ public final class Downloader {
         }
     }
 
-    private void tryAddKEVCredentials(Settings settings, CredentialsProviderBuilder credProviderBuilder) throws InvalidSettingException {
+    private void tryAddKEVCredentials(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.KEV_PASSWORD) != null) {
-            validateAndAddUsernamePasswordCredentials(settings, credProviderBuilder,
+            validateAndAddUsernamePasswordCredentials(settings, credentialsStore,
                     Settings.KEYS.KEV_USER,
                     Settings.KEYS.KEV_URL,
                     Settings.KEYS.KEV_PASSWORD,
@@ -151,9 +185,9 @@ public final class Downloader {
         }
     }
 
-    private void tryAddNexusAnalyzerCredentials(Settings settings, CredentialsProviderBuilder credProviderBuilder) throws InvalidSettingException {
+    private void tryAddNexusAnalyzerCredentials(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD) != null) {
-            validateAndAddUsernamePasswordCredentials(settings, credProviderBuilder,
+            validateAndAddUsernamePasswordCredentials(settings, credentialsStore,
                     Settings.KEYS.ANALYZER_NEXUS_URL,
                     Settings.KEYS.ANALYZER_NEXUS_USER,
                     Settings.KEYS.ANALYZER_NEXUS_PASSWORD,
@@ -161,9 +195,9 @@ public final class Downloader {
         }
     }
 
-    private void tryAddNVDApiDatafeed(Settings settings, CredentialsProviderBuilder credProviderBuilder) throws InvalidSettingException {
+    private void tryAddNVDApiDatafeed(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.NVD_API_DATAFEED_PASSWORD) != null) {
-            validateAndAddUsernamePasswordCredentials(settings, credProviderBuilder,
+            validateAndAddUsernamePasswordCredentials(settings, credentialsStore,
                     Settings.KEYS.NVD_API_DATAFEED_URL,
                     Settings.KEYS.NVD_API_DATAFEED_USER,
                     Settings.KEYS.NVD_API_DATAFEED_PASSWORD,
@@ -171,7 +205,7 @@ public final class Downloader {
         }
     }
 
-    private void validateAndAddUsernamePasswordCredentials(Settings settings, CredentialsProviderBuilder credentialsProviderBuilder, String userKey, String urlKey, String passwordKey, String messageScope) throws InvalidSettingException {
+    private void validateAndAddUsernamePasswordCredentials(Settings settings, CredentialsStore credentialsStore, String userKey, String urlKey, String passwordKey, String messageScope) throws InvalidSettingException {
         final String theUser = settings.getString(userKey);
         final String theURL = settings.getString(urlKey);
         final char[] thePass = settings.getString(passwordKey, "").toCharArray();
@@ -180,13 +214,13 @@ public final class Downloader {
         }
         try {
             final URL parsedURL = new URL(theURL);
-            addCredentials(credentialsProviderBuilder, messageScope, parsedURL, theUser, thePass);
+            addCredentials(credentialsStore, messageScope, parsedURL, theUser, thePass);
         } catch (MalformedURLException e) {
             throw new InvalidSettingException(messageScope + " URL must be a valid URL", e);
         }
     }
 
-    private static void addCredentials(CredentialsProviderBuilder credentialsProviderBuilder, String messageScope, URL parsedURL, String theUser, char[] thePass) throws InvalidSettingException {
+    private static void addCredentials(CredentialsStore credentialsStore, String messageScope, URL parsedURL, String theUser, char[] thePass) throws InvalidSettingException {
         final String theProtocol = parsedURL.getProtocol();
         if ("file".equals(theProtocol)) {
             LOGGER.warn("Credentials are not supported for file-protocol, double-check your configuration options for {}.", messageScope);
@@ -200,7 +234,7 @@ public final class Downloader {
         final int thePort = parsedURL.getPort();
         final Credentials creds = new UsernamePasswordCredentials(theUser, thePass);
         final AuthScope scope = new AuthScope(theProtocol, theHost, thePort, null, null);
-        credentialsProviderBuilder.add(scope, creds);
+        credentialsStore.setCredentials(scope, creds);
     }
 
     /**
@@ -294,9 +328,9 @@ public final class Downloader {
         }
         try {
             final HttpClientContext context = HttpClientContext.create();
-            final CredentialsProviderBuilder credBuilder = new CredentialsProviderBuilder();
-            addCredentials(credBuilder, url.toExternalForm(), url, settings.getString(userKey), settings.getString(passwordKey).toCharArray());
-            context.setCredentialsProvider(credBuilder.build());
+            final BasicCredentialsProvider localCredentials = new BasicCredentialsProvider();
+            addCredentials(localCredentials, url.toExternalForm(), url, settings.getString(userKey), settings.getString(passwordKey).toCharArray());
+            context.setCredentialsProvider(localCredentials);
             try (CloseableHttpClient hc = useProxy ? httpClientBuilder.build() : httpClientBuilderExplicitNoproxy.build()) {
                 final BasicClassicHttpRequest req = new BasicClassicHttpRequest(Method.GET, url.toURI());
                 final SaveToFileResponseHandler responseHandler = new SaveToFileResponseHandler(outputPath);
@@ -378,4 +412,54 @@ public final class Downloader {
         return result;
     }
 
+    /**
+     * Download a resource from the given URL and have its content handled by the given ResponseHandler.
+     *
+     * @param url The url of the resource
+     * @param responseHandler The responsehandler that handles the response's inputstream
+     * @return The response handler result
+     * @param <T> The return-type for the responseHandler
+     * @throws IOException on I/O Exceptions
+     * @throws TooManyRequestsException When HTTP status 429 is encountered
+     * @throws ResourceNotFoundException When HTTP status 404 is encountered
+     */
+    public <T> T fetchAndHandleContent(URL url, HttpClientResponseHandler<T> responseHandler) throws IOException, TooManyRequestsException, ResourceNotFoundException {
+        try {
+            T data = null;
+            if ("file".equals(url.getProtocol())) {
+                final Path p = Paths.get(url.toURI());
+                try (InputStream is = Files.newInputStream(p)) {
+                    final HttpEntity dummyEntity = new BasicHttpEntity(is, ContentType.APPLICATION_JSON);
+                    final ClassicHttpResponse dummyResponse = new BasicClassicHttpResponse(200);
+                    dummyResponse.setEntity(dummyEntity);
+                    data = responseHandler.handleResponse(dummyResponse);
+                } catch (HttpException e) {
+                    throw new IllegalStateException("HttpException encountered without HTTP traffic", e);
+                }
+            } else {
+                final String theProtocol = url.getProtocol();
+                if (!("http".equals(theProtocol) || "https".equals(theProtocol))) {
+                    throw new DownloadFailedException("Unsupported protocol in the URL; only file://, http:// and https:// are supported");
+                }
+                try (CloseableHttpClient hc = httpClientBuilder.build()) {
+                    final BasicClassicHttpRequest req = new BasicClassicHttpRequest(Method.GET, url.toURI());
+                    data = hc.execute(req, responseHandler);
+                }
+            }
+            return data;
+        } catch (HttpResponseException hre) {
+            final String messageFormat = "%s - Server status: %d - Server reason: %s";
+            switch (hre.getStatusCode()) {
+                case 404:
+                    throw new ResourceNotFoundException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
+                case 429:
+                    throw new TooManyRequestsException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
+                default:
+                    throw new IOException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
+            }
+        } catch (RuntimeException | URISyntaxException ex) {
+            final String msg = format("Download failed, unable to retrieve and parse '%s'; %s", url, ex.getMessage());
+            throw new IOException(msg, ex);
+        }
+    }
 }
