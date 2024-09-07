@@ -20,7 +20,7 @@ Copyright (c) 2012 - Jeremy Long
 
     <groupId>org.owasp</groupId>
     <artifactId>dependency-check-parent</artifactId>
-    <version>10.0.5-SNAPSHOT</version>
+    <version>11.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -111,6 +111,7 @@ Copyright (c) 2012 - Jeremy Long
         </license>
     </licenses>
     <properties>
+        <maven.compiler.release>11</maven.compiler.release>
         <!--reproducible build-->
         <project.build.outputTimestamp>2024-09-01T11:39:49Z</project.build.outputTimestamp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -153,8 +154,7 @@ Copyright (c) 2012 - Jeremy Long
         <aho-corasick-double-array-trie.version>1.2.3</aho-corasick-double-array-trie.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <jmockit.version>1.49</jmockit.version>
-        <mockito-core.version>4.11.0</mockito-core.version>
+        <mockito-core.version>5.12.0</mockito-core.version>
         <jsoup.version>1.17.2</jsoup.version>
         <commons-compress.version>1.27.0</commons-compress.version>
         <org.apache.maven.shared.file-management.version>3.1.0</org.apache.maven.shared.file-management.version>
@@ -440,9 +440,7 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <forceJavacCompilerUse>true</forceJavacCompilerUse>
                     <showDeprecation>true</showDeprecation>
-                    <release>8</release>
                     <compilerArgs>
                         <arg>-Xlint</arg>
                     </compilerArgs>
@@ -521,7 +519,6 @@ Copyright (c) 2012 - Jeremy Long
                     <sourceFileExcludes>
                         <exclude>**/generated-sources/**/*.java</exclude>
                     </sourceFileExcludes>
-                    <source>8</source>
                     <detectJavaApiLink>false</detectJavaApiLink>
                 </configuration>
             </plugin>
@@ -555,7 +552,7 @@ Copyright (c) 2012 - Jeremy Long
                         <configuration>
                             <rules>
                                 <byteCodeRule implementation="org.owasp.maven.enforcer.rule.ClassFileFormatRule">
-                                    <supportedClassFileFormat>52</supportedClassFileFormat>
+                                    <supportedClassFileFormat>55</supportedClassFileFormat>
                                 </byteCodeRule>
                             </rules>
                         </configuration>
@@ -654,7 +651,7 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>@{surefireArgLine} -Dfile.encoding=UTF-8 -javaagent:${settings.localRepository}/org/jmockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar</argLine>
+                    <argLine>@{surefireArgLine} -Dfile.encoding=UTF-8</argLine>
                     <systemPropertyVariables>
                         <data.directory>${project.build.directory}/data</data.directory>
                         <temp.directory>${project.build.directory}/temp</temp.directory>
@@ -666,7 +663,7 @@ Copyright (c) 2012 - Jeremy Long
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <argLine>@{failsafeArgLine} -javaagent:${settings.localRepository}/org/jmockit/jmockit/${jmockit.version}/jmockit-${jmockit.version}.jar</argLine>
+                    <argLine>@{failsafeArgLine}</argLine>
                     <systemPropertyVariables>
                         <data.directory>${project.build.directory}/data</data.directory>
                         <temp.directory>${project.build.directory}/temp</temp.directory>
@@ -846,7 +843,6 @@ Copyright (c) 2012 - Jeremy Long
                             <sourceFileExcludes>
                                 <exclude>**/generated-sources/**/*.java</exclude>
                             </sourceFileExcludes>
-                            <source>8</source>
                             <detectJavaApiLink>false</detectJavaApiLink>
                         </configuration>
                     </reportSet>
@@ -991,12 +987,6 @@ Copyright (c) 2012 - Jeremy Long
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.jmockit</groupId>
-                <artifactId>jmockit</artifactId>
-                <version>${jmockit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito-core.version}</version>
@@ -1075,9 +1065,13 @@ Copyright (c) 2012 - Jeremy Long
                 <version>4.0.1</version>
             </dependency>
             <dependency>
+                <!--
+                    https://github.com/codehaus-plexus/plexus-utils/blob/master/README.md
+                    for Maven 3 compatibility plexus-xml should be at version 3.x
+                    -->
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-xml</artifactId>
-                <version>4.0.4</version>
+                <version>3.0.1</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
@@ -1350,11 +1344,6 @@ Copyright (c) 2012 - Jeremy Long
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jmockit</groupId>
-            <artifactId>jmockit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
