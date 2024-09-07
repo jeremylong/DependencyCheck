@@ -49,8 +49,8 @@ public class DownloaderIT extends BaseTest {
         final String str = getSettings().getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, "https://jeremylong.github.io/DependencyCheck/current.txt");
         URL url = new URL(str);
         File outputPath = new File("target/current.txt");
-        Downloader downloader = new Downloader(getSettings());
-        downloader.fetchFile(url, outputPath);
+        Downloader.getInstance().configure(getSettings());
+        Downloader.getInstance().fetchFile(url, outputPath);
         assertTrue(outputPath.isFile());
     }
 

@@ -137,8 +137,7 @@ public class RetireJSDataSource extends LocalDataSource {
     private void initializeRetireJsRepo(Settings settings, URL repoUrl, File repoFile) throws UpdateException {
         try (WriteLock lock = new WriteLock(settings, true, repoFile.getName() + ".lock")) {
             LOGGER.debug("RetireJS Repo URL: {}", repoUrl.toExternalForm());
-            final Downloader downloader = new Downloader(settings);
-            downloader.fetchFile(repoUrl, repoFile, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD);
+            Downloader.getInstance().fetchFile(repoUrl, repoFile);
         } catch (IOException | TooManyRequestsException | ResourceNotFoundException | WriteLockException ex) {
             throw new UpdateException("Failed to initialize the RetireJS repo", ex);
         }

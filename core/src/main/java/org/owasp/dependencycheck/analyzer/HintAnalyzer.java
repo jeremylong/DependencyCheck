@@ -267,13 +267,12 @@ public class HintAnalyzer extends AbstractAnalyzer {
                     deleteTempFile = true;
                     file = getSettings().getTempFile("hint", "xml");
                     final URL url = new URL(filePath);
-                    final Downloader downloader = new Downloader(getSettings());
                     try {
-                        downloader.fetchFile(url, file, false);
+                        Downloader.getInstance().fetchFile(url, file, false);
                     } catch (DownloadFailedException ex) {
                         try {
                             Thread.sleep(500);
-                            downloader.fetchFile(url, file, true);
+                            Downloader.getInstance().fetchFile(url, file, true);
                         } catch (TooManyRequestsException ex1) {
                             throw new HintParseException("Unable to download hint file `" + file + "`; received 429 - too many requests", ex1);
                         } catch (ResourceNotFoundException ex1) {

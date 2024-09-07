@@ -282,8 +282,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
                         LOGGER.debug("Unable to delete temp file");
                     }
                     LOGGER.debug("Downloading {}", ma.getPomUrl());
-                    final Downloader downloader = new Downloader(getSettings());
-                    downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
+                    Downloader.getInstance().fetchFile(new URL(ma.getPomUrl()), pomFile);
                     PomUtils.analyzePOM(dependency, pomFile);
                 } catch (DownloadFailedException ex) {
                     LOGGER.warn("Unable to download pom.xml for {} from Nexus repository; "

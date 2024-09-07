@@ -133,8 +133,7 @@ public class HostedSuppressionsDataSource extends LocalDataSource {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Hosted Suppressions URL: {}", repoUrl.toExternalForm());
             }
-            final Downloader downloader = new Downloader(settings);
-            downloader.fetchFile(repoUrl, repoFile);
+            Downloader.getInstance().fetchFile(repoUrl, repoFile);
         } catch (IOException | TooManyRequestsException | ResourceNotFoundException | WriteLockException ex) {
             throw new UpdateException("Failed to update the hosted suppressions file", ex);
         }

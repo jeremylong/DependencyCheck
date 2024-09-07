@@ -68,6 +68,8 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.Filter;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
@@ -2158,8 +2160,17 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * @return a newly instantiated <code>Engine</code>
      * @throws DatabaseException thrown if there is a database exception
      */
-    protected Engine initializeEngine() throws DatabaseException {
+    protected Engine initializeEngine() throws DatabaseException, MojoExecutionException, MojoFailureException {
         populateSettings();
+        try {
+            Downloader.getInstance().configure(settings);
+        } catch (InvalidSettingException e) {
+            if (this.failOnError) {
+                throw new MojoFailureException(e.getMessage(), e);
+            } else {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
+        }
         return new Engine(settings);
     }
 

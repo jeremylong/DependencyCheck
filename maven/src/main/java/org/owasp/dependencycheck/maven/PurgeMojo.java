@@ -25,6 +25,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 
 /**
  * Maven Plugin that purges the local copy of the NVD data.
@@ -63,6 +65,15 @@ public class PurgeMojo extends BaseDependencyCheckMojo {
     @Override
     protected void runCheck() throws MojoExecutionException, MojoFailureException {
         populateSettings();
+        try {
+            Downloader.getInstance().configure(getSettings());
+        } catch (InvalidSettingException e) {
+            if (isFailOnError()) {
+                throw new MojoFailureException(e.getMessage(), e);
+            } else {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
+        }
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
             engine.purge();
         } finally {

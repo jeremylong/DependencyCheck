@@ -38,6 +38,8 @@ import org.owasp.dependencycheck.dependency.Vulnerability;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.reporting.ReportGenerator.Format;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.SeverityUtil;
 import org.slf4j.impl.StaticLoggerBinder;
@@ -2050,6 +2052,11 @@ public class Check extends Update {
         dealWithReferences();
         validateConfiguration();
         populateSettings();
+        try {
+            Downloader.getInstance().configure(getSettings());
+        } catch (InvalidSettingException e) {
+            throw new BuildException(e);
+        }
         try (Engine engine = new Engine(Check.class.getClassLoader(), getSettings())) {
             for (Resource resource : getPath()) {
                 final FileProvider provider = resource.as(FileProvider.class);

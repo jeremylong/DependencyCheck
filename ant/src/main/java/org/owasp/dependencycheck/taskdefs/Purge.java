@@ -26,6 +26,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -179,6 +181,11 @@ public class Purge extends Task {
     @SuppressWarnings("squid:RedundantThrowsDeclarationCheck")
     protected void executeWithContextClassloader() throws BuildException {
         populateSettings();
+        try {
+            Downloader.getInstance().configure(settings);
+        } catch (InvalidSettingException e) {
+            throw new BuildException(e);
+        }
         try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {
             engine.purge();
         } finally {
