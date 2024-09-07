@@ -18,13 +18,10 @@
 package org.owasp.dependencycheck.data.update;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import javax.annotation.concurrent.ThreadSafe;
-import org.apache.commons.io.IOUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
@@ -32,9 +29,10 @@ import org.owasp.dependencycheck.data.nvdcve.DatabaseProperties;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.utils.DateUtil;
 import org.owasp.dependencycheck.utils.DependencyVersion;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.URLConnectionFactory;
-import org.owasp.dependencycheck.utils.URLConnectionFailureException;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -208,30 +206,20 @@ public class EngineVersionCheck implements CachedWebDataSource {
      * @return the current released version number
      */
     protected String getCurrentReleaseVersion() {
-        HttpURLConnection conn = null;
         try {
             final String str = settings.getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, "https://jeremylong.github.io/DependencyCheck/current.txt");
             final URL url = new URL(str);
-            final URLConnectionFactory factory = new URLConnectionFactory(settings);
-            conn = factory.createHttpURLConnection(url);
-            conn.connect();
-            if (conn.getResponseCode() != 200) {
-                return null;
-            }
-            try (InputStream is = conn.getInputStream()) {
-                final String releaseVersion = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
-                return releaseVersion.trim();
-            }
+            String releaseVersion = null;
+            releaseVersion = Downloader.getInstance().fetchContent(url, StandardCharsets.UTF_8);
+            return releaseVersion.trim();
+        } catch (TooManyRequestsException ex) {
+            LOGGER.debug("Unable to retrieve current release version of dependency-check - downloader failed on HTTP 429 Too many requests");
+        } catch (ResourceNotFoundException ex) {
+            LOGGER.debug("Unable to retrieve current release version of dependency-check - downloader  failed on HTTP 404 ResourceNotFound");
         } catch (MalformedURLException ex) {
             LOGGER.debug("Unable to retrieve current release version of dependency-check - malformed url?");
-        } catch (URLConnectionFailureException ex) {
-            LOGGER.debug("Unable to retrieve current release version of dependency-check - connection failed");
         } catch (IOException ex) {
             LOGGER.debug("Unable to retrieve current release version of dependency-check - i/o exception");
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
         }
         return null;
     }
