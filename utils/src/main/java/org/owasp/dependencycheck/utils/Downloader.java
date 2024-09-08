@@ -153,6 +153,7 @@ public final class Downloader {
         tryAddHostedSuppressionCredentials(settings, credentialsProvider);
         tryAddKEVCredentials(settings, credentialsProvider);
         tryAddNexusAnalyzerCredentials(settings, credentialsProvider);
+        tryAddNVDApiDatafeed(settings, credentialsProvider);
         httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         httpClientBuilderExplicitNoproxy.setDefaultCredentialsProvider(credentialsProvider);
     }
