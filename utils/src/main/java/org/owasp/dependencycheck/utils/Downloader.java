@@ -30,6 +30,7 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpHost;
@@ -38,6 +39,7 @@ import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -307,10 +309,9 @@ public final class Downloader {
      *                                                                 if there is an error downloading the file
      * @throws TooManyRequestsException                                thrown when a 429 is received
      * @throws ResourceNotFoundException                               thrown when a 404 is received
-     * @implNote This method should only be used in cases where the URL cannot be
-     * determined beforehand from settings, so that ad-hoc Credentials needs to
-     * be constructed for the target URL when the user/password keys point to configured credentials.
-     * The method delegates to {@link #fetchFile(URL, File, boolean)} when credentials are not configured for the given keys or the resource points to a file.
+     * @implNote This method should only be used in cases where the target host cannot be determined beforehand from settings, so that ad-hoc
+     * Credentials needs to be constructed for the target URL when the user/password keys point to configured credentials. The method delegates to
+     * {@link #fetchFile(URL, File, boolean)} when credentials are not configured for the given keys or the resource points to a file.
      */
     public void fetchFile(URL url, File outputPath, boolean useProxy, String userKey, String passwordKey) throws DownloadFailedException,
             TooManyRequestsException, ResourceNotFoundException {
@@ -355,8 +356,8 @@ public final class Downloader {
     /**
      * Retrieves a file from a given URL and returns the contents.
      *
-     * @param url         the URL of the file to download
-     * @param charset    The characterset to use to interpret the binary content of the file
+     * @param url     the URL of the file to download
+     * @param charset The characterset to use to interpret the binary content of the file
      * @return the content of the file
      * @throws DownloadFailedException   is thrown if there is an error
      *                                   downloading the file
@@ -370,10 +371,10 @@ public final class Downloader {
     /**
      * Retrieves a file from a given URL and returns the contents.
      *
-     * @param url         the URL of the file to download
-     * @param useProxy    whether to use the configured proxy when downloading
-     *                    files
-     * @param charset    The characterset to use to interpret the binary content of the file
+     * @param url      the URL of the file to download
+     * @param useProxy whether to use the configured proxy when downloading
+     *                 files
+     * @param charset  The characterset to use to interpret the binary content of the file
      * @return the content of the file
      * @throws DownloadFailedException   is thrown if there is an error
      *                                   downloading the file
@@ -415,15 +416,51 @@ public final class Downloader {
     /**
      * Download a resource from the given URL and have its content handled by the given ResponseHandler.
      *
-     * @param url The url of the resource
-     * @param responseHandler The responsehandler that handles the response's inputstream
+     * @param url             The url of the resource
+     * @param responseHandler   The responsehandler to handle the response
+     * @param <T>             The return-type for the responseHandler
      * @return The response handler result
-     * @param <T> The return-type for the responseHandler
-     * @throws IOException on I/O Exceptions
-     * @throws TooManyRequestsException When HTTP status 429 is encountered
+     * @throws IOException               on I/O Exceptions
+     * @throws TooManyRequestsException  When HTTP status 429 is encountered
      * @throws ResourceNotFoundException When HTTP status 404 is encountered
      */
-    public <T> T fetchAndHandleContent(URL url, HttpClientResponseHandler<T> responseHandler) throws IOException, TooManyRequestsException, ResourceNotFoundException {
+    public <T> T fetchAndHandle(@NotNull URL url, @NotNull HttpClientResponseHandler<T> responseHandler)
+            throws IOException, TooManyRequestsException, ResourceNotFoundException {
+        return fetchAndHandle(url, responseHandler, Collections.emptyList(), true);
+    }
+
+    /**
+     * Download a resource from the given URL and have its content handled by the given ResponseHandler.
+     *
+     * @param url               The url of the resource
+     * @param handler   The responsehandler to handle the response
+     * @param hdr Additional headers to add to the HTTP request
+     * @param <T>               The return-type for the responseHandler
+     * @return The response handler result
+     * @throws IOException               on I/O Exceptions
+     * @throws TooManyRequestsException  When HTTP status 429 is encountered
+     * @throws ResourceNotFoundException When HTTP status 404 is encountered
+     */
+    public <T> T fetchAndHandle(@NotNull URL url, @NotNull HttpClientResponseHandler<T> handler, @NotNull List<Header> hdr)
+            throws IOException, TooManyRequestsException, ResourceNotFoundException {
+        return fetchAndHandle(url, handler, hdr, true);
+    }
+
+    /**
+     * Download a resource from the given URL and have its content handled by the given ResponseHandler.
+     *
+     * @param url               The url of the resource
+     * @param handler   The responsehandler to handle the response
+     * @param hdr Additional headers to add to the HTTP request
+     * @param useProxy          Whether to use the configured proxy for the connection
+     * @param <T>               The return-type for the responseHandler
+     * @return The response handler result
+     * @throws IOException               on I/O Exceptions
+     * @throws TooManyRequestsException  When HTTP status 429 is encountered
+     * @throws ResourceNotFoundException When HTTP status 404 is encountered
+     */
+    public <T> T fetchAndHandle(@NotNull URL url, @NotNull HttpClientResponseHandler<T> handler, @NotNull List<Header> hdr, boolean useProxy)
+            throws IOException, TooManyRequestsException, ResourceNotFoundException {
         try {
             T data = null;
             if ("file".equals(url.getProtocol())) {
@@ -432,7 +469,7 @@ public final class Downloader {
                     final HttpEntity dummyEntity = new BasicHttpEntity(is, ContentType.APPLICATION_JSON);
                     final ClassicHttpResponse dummyResponse = new BasicClassicHttpResponse(200);
                     dummyResponse.setEntity(dummyEntity);
-                    data = responseHandler.handleResponse(dummyResponse);
+                    data = handler.handleResponse(dummyResponse);
                 } catch (HttpException e) {
                     throw new IllegalStateException("HttpException encountered without HTTP traffic", e);
                 }
@@ -441,9 +478,12 @@ public final class Downloader {
                 if (!("http".equals(theProtocol) || "https".equals(theProtocol))) {
                     throw new DownloadFailedException("Unsupported protocol in the URL; only file://, http:// and https:// are supported");
                 }
-                try (CloseableHttpClient hc = httpClientBuilder.build()) {
+                try (CloseableHttpClient hc = useProxy ? httpClientBuilder.build() : httpClientBuilderExplicitNoproxy.build()) {
                     final BasicClassicHttpRequest req = new BasicClassicHttpRequest(Method.GET, url.toURI());
-                    data = hc.execute(req, responseHandler);
+                    for (Header h : hdr) {
+                        req.addHeader(h);
+                    }
+                    data = hc.execute(req, handler);
                 }
             }
             return data;

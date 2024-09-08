@@ -81,7 +81,7 @@ public class DownloaderIT extends BaseTest {
                 return "";
             }
         };
-        Downloader.getInstance().fetchAndHandleContent(url, versionHandler);
+        Downloader.getInstance().fetchAndHandle(url, versionHandler);
     }
 
     /**
