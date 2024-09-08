@@ -85,12 +85,6 @@ public final class OssindexClientFactory {
         final int batchSize = settings.getInt(Settings.KEYS.ANALYZER_OSSINDEX_BATCH_SIZE, OssindexClientConfiguration.DEFAULT_BATCH_SIZE);
         config.setBatchSize(batchSize);
 
-        // proxy likely does not need to be configured here as we are using the
-        // URLConnectionFactory#createHttpURLConnection() which automatically configures
-        // the proxy on the connection.
-//        ProxyConfiguration proxy = new ProxyConfiguration();
-//        settings.getString(Settings.KEYS.PROXY_PASSWORD);
-//        config.setProxyConfiguration(proxy);
         if (settings.getBoolean(Settings.KEYS.ANALYZER_OSSINDEX_USE_CACHE, true)) {
             final DirectoryCache.Configuration cache = new DirectoryCache.Configuration();
             final File data;
@@ -101,7 +95,7 @@ public final class OssindexClientFactory {
                     cache.setBaseDir(cacheDir.toPath());
                     cache.setExpireAfter(Duration.standardHours(24));
                     config.setCacheConfiguration(cache);
-                    LOGGER.debug("OSS Index Cache: " + cache);
+                    LOGGER.debug("OSS Index Cache: {}", cache);
                 } else {
                     LOGGER.warn("Unable to use a cache for the OSS Index");
                 }
@@ -115,7 +109,7 @@ public final class OssindexClientFactory {
                 settings.getString(Settings.KEYS.APPLICATION_VERSION, "unknown")
         );
 
-        final Transport transport = new ODCConnectionTransport(settings, config, userAgent);
+        final Transport transport = new ODCConnectionTransport(config, userAgent);
 
         final Marshaller marshaller = new GsonMarshaller();
 

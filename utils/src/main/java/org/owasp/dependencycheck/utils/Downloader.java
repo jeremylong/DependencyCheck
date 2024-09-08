@@ -24,6 +24,7 @@ import org.apache.hc.client5.http.auth.CredentialsStore;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.auth.SystemDefaultCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
@@ -37,6 +38,7 @@ import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.Method;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.BasicHttpEntity;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
 import org.jetbrains.annotations.NotNull;
@@ -54,12 +56,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import static java.lang.String.format;
 
@@ -146,7 +150,10 @@ public final class Downloader {
             if (settings.getString(Settings.KEYS.PROXY_USERNAME) != null) {
                 final String proxyuser = settings.getString(Settings.KEYS.PROXY_USERNAME);
                 final char[] proxypass = settings.getString(Settings.KEYS.PROXY_PASSWORD).toCharArray();
-                credentialsProvider.setCredentials(new AuthScope(null, proxyHost, proxyPort, null, null), new UsernamePasswordCredentials(proxyuser, proxypass));
+                credentialsProvider.setCredentials(
+                        new AuthScope(null, proxyHost, proxyPort, null, null),
+                        new UsernamePasswordCredentials(proxyuser, proxypass)
+                );
             }
         }
         tryAddRetireJSCredentials(settings, credentialsProvider);
@@ -160,7 +167,7 @@ public final class Downloader {
 
     private void tryAddRetireJSCredentials(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD) != null) {
-            validateAndAddUsernamePasswordCredentials(settings, credentialsStore,
+            addUserPasswordCreds(settings, credentialsStore,
                     Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER,
                     Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
                     Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD,
@@ -170,7 +177,7 @@ public final class Downloader {
 
     private void tryAddHostedSuppressionCredentials(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.HOSTED_SUPPRESSIONS_PASSWORD) != null) {
-            validateAndAddUsernamePasswordCredentials(settings, credentialsStore,
+            addUserPasswordCreds(settings, credentialsStore,
                     Settings.KEYS.HOSTED_SUPPRESSIONS_USER,
                     Settings.KEYS.HOSTED_SUPPRESSIONS_URL,
                     Settings.KEYS.HOSTED_SUPPRESSIONS_PASSWORD,
@@ -180,7 +187,7 @@ public final class Downloader {
 
     private void tryAddKEVCredentials(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.KEV_PASSWORD) != null) {
-            validateAndAddUsernamePasswordCredentials(settings, credentialsStore,
+            addUserPasswordCreds(settings, credentialsStore,
                     Settings.KEYS.KEV_USER,
                     Settings.KEYS.KEV_URL,
                     Settings.KEYS.KEV_PASSWORD,
@@ -190,7 +197,7 @@ public final class Downloader {
 
     private void tryAddNexusAnalyzerCredentials(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD) != null) {
-            validateAndAddUsernamePasswordCredentials(settings, credentialsStore,
+            addUserPasswordCreds(settings, credentialsStore,
                     Settings.KEYS.ANALYZER_NEXUS_URL,
                     Settings.KEYS.ANALYZER_NEXUS_USER,
                     Settings.KEYS.ANALYZER_NEXUS_PASSWORD,
@@ -200,7 +207,7 @@ public final class Downloader {
 
     private void tryAddNVDApiDatafeed(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.NVD_API_DATAFEED_PASSWORD) != null) {
-            validateAndAddUsernamePasswordCredentials(settings, credentialsStore,
+            addUserPasswordCreds(settings, credentialsStore,
                     Settings.KEYS.NVD_API_DATAFEED_URL,
                     Settings.KEYS.NVD_API_DATAFEED_USER,
                     Settings.KEYS.NVD_API_DATAFEED_PASSWORD,
@@ -208,30 +215,45 @@ public final class Downloader {
         }
     }
 
-    private void validateAndAddUsernamePasswordCredentials(Settings settings, CredentialsStore credentialsStore, String userKey, String urlKey, String passwordKey, String messageScope) throws InvalidSettingException {
+    /**
+     * Add user/password credentials for the host/port of the URL, all configured in the settings, to the credential-store.
+     *
+     * @param settings The settings to retrieve the values from
+     * @param store The credentialStore
+     * @param userKey The key for a configured username credential part
+     * @param passwordKey The key for a configured password credential part
+     * @param urlKey The key for a configured url for which the credentials hold
+     * @param desc A descriptive text for use in error messages for this credential
+     * @throws InvalidSettingException When the password is empty or one of the other keys are not found in the settings.
+     */
+    private void addUserPasswordCreds(Settings settings, CredentialsStore store, String userKey, String urlKey, String passwordKey, String desc)
+            throws InvalidSettingException {
         final String theUser = settings.getString(userKey);
         final String theURL = settings.getString(urlKey);
         final char[] thePass = settings.getString(passwordKey, "").toCharArray();
         if (theUser == null || theURL == null || thePass.length == 0) {
-            throw new InvalidSettingException(messageScope + " URL and username are required when setting " + messageScope + " password");
+            throw new InvalidSettingException(desc + " URL and username are required when setting " + desc + " password");
         }
         try {
             final URL parsedURL = new URL(theURL);
-            addCredentials(credentialsStore, messageScope, parsedURL, theUser, thePass);
+            addCredentials(store, desc, parsedURL, theUser, thePass);
         } catch (MalformedURLException e) {
-            throw new InvalidSettingException(messageScope + " URL must be a valid URL", e);
+            throw new InvalidSettingException(desc + " URL must be a valid URL", e);
         }
     }
 
-    private static void addCredentials(CredentialsStore credentialsStore, String messageScope, URL parsedURL, String theUser, char[] thePass) throws InvalidSettingException {
+    private static void addCredentials(CredentialsStore credentialsStore, String messageScope, URL parsedURL, String theUser, char[] thePass)
+            throws InvalidSettingException {
         final String theProtocol = parsedURL.getProtocol();
         if ("file".equals(theProtocol)) {
             LOGGER.warn("Credentials are not supported for file-protocol, double-check your configuration options for {}.", messageScope);
             return;
         } else if ("http".equals(theProtocol)) {
-            LOGGER.warn("Insecure configuration: Basic Credentials are configured to be used over a plain http connection for {}. Consider migrating to https to guard the credentials.", messageScope);
+            LOGGER.warn("Insecure configuration: Basic Credentials are configured to be used over a plain http connection for {}. "
+                    + "Consider migrating to https to guard the credentials.", messageScope);
         } else if (!"https".equals(theProtocol)) {
-            throw new InvalidSettingException("Unsupported protocol in the " + messageScope + " URL; only file://, http:// and https:// are supported");
+            throw new InvalidSettingException("Unsupported protocol in the " + messageScope
+                    + " URL; only file://, http:// and https:// are supported");
         }
         final String theHost = parsedURL.getHost();
         final int thePort = parsedURL.getPort();
@@ -281,18 +303,23 @@ public final class Downloader {
                 }
             }
         } catch (HttpResponseException hre) {
-            final String messageFormat = "%s - Server status: %d - Server reason: %s";
-            switch (hre.getStatusCode()) {
-                case 404:
-                    throw new ResourceNotFoundException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
-                case 429:
-                    throw new TooManyRequestsException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
-                default:
-                    throw new DownloadFailedException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
-            }
+            wrapAndThrowHttpResponseException(url.toString(), hre);
         } catch (RuntimeException | URISyntaxException | IOException ex) {
             final String msg = format("Download failed, unable to copy '%s' to '%s'; %s", url, outputPath.getAbsolutePath(), ex.getMessage());
             throw new DownloadFailedException(msg, ex);
+        }
+    }
+
+    private static void wrapAndThrowHttpResponseException(String url, HttpResponseException hre)
+            throws ResourceNotFoundException, TooManyRequestsException, DownloadFailedException {
+        final String messageFormat = "%s - Server status: %d - Server reason: %s";
+        switch (hre.getStatusCode()) {
+            case 404:
+                throw new ResourceNotFoundException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
+            case 429:
+                throw new TooManyRequestsException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
+            default:
+                throw new DownloadFailedException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
         }
     }
 
@@ -331,7 +358,7 @@ public final class Downloader {
         try {
             final HttpClientContext context = HttpClientContext.create();
             final BasicCredentialsProvider localCredentials = new BasicCredentialsProvider();
-            addCredentials(localCredentials, url.toExternalForm(), url, settings.getString(userKey), settings.getString(passwordKey).toCharArray());
+            addCredentials(localCredentials, url.toString(), url, settings.getString(userKey), settings.getString(passwordKey).toCharArray());
             context.setCredentialsProvider(localCredentials);
             try (CloseableHttpClient hc = useProxy ? httpClientBuilder.build() : httpClientBuilderExplicitNoproxy.build()) {
                 final BasicClassicHttpRequest req = new BasicClassicHttpRequest(Method.GET, url.toURI());
@@ -339,17 +366,49 @@ public final class Downloader {
                 hc.execute(req, context, responseHandler);
             }
         } catch (HttpResponseException hre) {
-            final String messageFormat = "%s - Server status: %d - Server reason: %s";
-            switch (hre.getStatusCode()) {
-                case 404:
-                    throw new ResourceNotFoundException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
-                case 429:
-                    throw new TooManyRequestsException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
-                default:
-                    throw new DownloadFailedException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
-            }
+            wrapAndThrowHttpResponseException(url.toString(), hre);
         } catch (RuntimeException | URISyntaxException | IOException ex) {
             final String msg = format("Download failed, unable to copy '%s' to '%s'; %s", url, outputPath.getAbsolutePath(), ex.getMessage());
+            throw new DownloadFailedException(msg, ex);
+        }
+    }
+
+    /**
+     * Posts a payload to the URL and returns the response as a string.
+     *
+     * @param url     the URL to POST to
+     * @param payload the Payload to post
+     * @param payloadType the string describing the payload's mime-type
+     * @param hdr Additional headers to add to the HTTP request
+     * @return the content of the response
+     * @throws DownloadFailedException   is thrown if there is an error
+     *                                   downloading the file
+     * @throws TooManyRequestsException  thrown when a 429 is received
+     * @throws ResourceNotFoundException thrown when a 404 is received
+     */
+    public String postBasedFetchContent(URI url, String payload, String payloadType, List<Header> hdr)
+            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+        try {
+            if (url.getScheme() == null || !url.getScheme().toLowerCase(Locale.ROOT).matches("^https?")) {
+                throw new IllegalArgumentException("Unsupported protocol in the URL; only http and https are supported");
+            } else {
+                final BasicClassicHttpRequest req;
+                req = new BasicClassicHttpRequest(Method.POST, url);
+                req.setEntity(new StringEntity(payload, ContentType.create(payloadType, StandardCharsets.UTF_8)));
+                for (Header h : hdr) {
+                    req.addHeader(h);
+                }
+                final String result;
+                try (CloseableHttpClient hc = httpClientBuilder.build()) {
+                    result = hc.execute(req, new BasicHttpClientResponseHandler());
+                }
+                return result;
+            }
+        } catch (HttpResponseException hre) {
+            wrapAndThrowHttpResponseException(url.toString(), hre);
+            throw new InternalError("wrapAndThrowHttpResponseException will always throw an exception but Java compiler fails to spot it");
+        } catch (RuntimeException | IOException ex) {
+            final String msg = format("Download failed, error downloading '%s'; %s", url, ex.getMessage());
             throw new DownloadFailedException(msg, ex);
         }
     }
@@ -384,11 +443,11 @@ public final class Downloader {
      */
     public String fetchContent(URL url, boolean useProxy, Charset charset)
             throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
-        String result = "";
         try {
+            final String result;
             if ("file".equals(url.getProtocol())) {
                 final Path p = Paths.get(url.toURI());
-                result = new String(Files.readAllBytes(p), charset);
+                result = Files.readString(p, charset);
             } else {
                 final BasicClassicHttpRequest req;
                 req = new BasicClassicHttpRequest(Method.GET, url.toURI());
@@ -397,21 +456,14 @@ public final class Downloader {
                     result = hc.execute(req, responseHandler);
                 }
             }
+            return result;
         } catch (HttpResponseException hre) {
-            final String messageFormat = "%s - Server status: %d - Server reason: %s";
-            switch (hre.getStatusCode()) {
-                case 404:
-                    throw new ResourceNotFoundException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
-                case 429:
-                    throw new TooManyRequestsException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
-                default:
-                    throw new DownloadFailedException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
-            }
+            wrapAndThrowHttpResponseException(url.toString(), hre);
+            throw new InternalError("wrapAndThrowHttpResponseException will always throw an exception but Java compiler fails to spot it");
         } catch (RuntimeException | URISyntaxException | IOException ex) {
             final String msg = format("Download failed, error downloading '%s'; %s", url, ex.getMessage());
             throw new DownloadFailedException(msg, ex);
         }
-        return result;
     }
 
     /**
@@ -463,7 +515,7 @@ public final class Downloader {
     public <T> T fetchAndHandle(@NotNull URL url, @NotNull HttpClientResponseHandler<T> handler, @NotNull List<Header> hdr, boolean useProxy)
             throws IOException, TooManyRequestsException, ResourceNotFoundException {
         try {
-            T data = null;
+            final T data;
             if ("file".equals(url.getProtocol())) {
                 final Path p = Paths.get(url.toURI());
                 try (InputStream is = Files.newInputStream(p)) {
