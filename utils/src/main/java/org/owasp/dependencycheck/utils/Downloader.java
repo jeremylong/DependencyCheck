@@ -45,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +57,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -253,7 +253,7 @@ public final class Downloader {
                     + "Consider migrating to https to guard the credentials.", messageScope);
         } else if (!"https".equals(theProtocol)) {
             throw new InvalidSettingException("Unsupported protocol in the " + messageScope
-                    + " URL; only file://, http:// and https:// are supported");
+                    + " URL; only file, http and https are supported");
         }
         final String theHost = parsedURL.getHost();
         final int thePort = parsedURL.getPort();
@@ -272,7 +272,8 @@ public final class Downloader {
      * @throws TooManyRequestsException                                thrown when a 429 is received
      * @throws ResourceNotFoundException                               thrown when a 404 is received
      */
-    public void fetchFile(URL url, File outputPath) throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+    public void fetchFile(URL url, File outputPath)
+            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException, URLConnectionFailureException {
         fetchFile(url, outputPath, true);
     }
 
@@ -289,7 +290,7 @@ public final class Downloader {
      * @throws ResourceNotFoundException                               thrown when a 404 is received
      */
     public void fetchFile(URL url, File outputPath, boolean useProxy) throws DownloadFailedException,
-            TooManyRequestsException, ResourceNotFoundException {
+            TooManyRequestsException, ResourceNotFoundException, URLConnectionFailureException {
         try {
             if ("file".equals(url.getProtocol())) {
                 final Path p = Paths.get(url.toURI());
@@ -304,6 +305,14 @@ public final class Downloader {
             }
         } catch (HttpResponseException hre) {
             wrapAndThrowHttpResponseException(url.toString(), hre);
+        } catch (SSLHandshakeException ex) {
+            if (ex.getMessage().contains("unable to find valid certification path to requested target")) {
+                final String msg = String.format("Unable to connect to '%s' - the Java trust store does not contain a trusted root for the cert. "
+                        + "Please see https://github.com/jeremylong/InstallCert for one method of updating the trusted certificates.", url);
+                throw new URLConnectionFailureException(msg, ex);
+            }
+            final String msg = format("Download failed, unable to copy '%s' to '%s'; %s", url, outputPath.getAbsolutePath(), ex.getMessage());
+            throw new DownloadFailedException(msg, ex);
         } catch (RuntimeException | URISyntaxException | IOException ex) {
             final String msg = format("Download failed, unable to copy '%s' to '%s'; %s", url, outputPath.getAbsolutePath(), ex.getMessage());
             throw new DownloadFailedException(msg, ex);
@@ -315,11 +324,11 @@ public final class Downloader {
         final String messageFormat = "%s - Server status: %d - Server reason: %s";
         switch (hre.getStatusCode()) {
             case 404:
-                throw new ResourceNotFoundException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
+                throw new ResourceNotFoundException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()), hre);
             case 429:
-                throw new TooManyRequestsException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
+                throw new TooManyRequestsException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()), hre);
             default:
-                throw new DownloadFailedException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()));
+                throw new DownloadFailedException(String.format(messageFormat, url, hre.getStatusCode(), hre.getReasonPhrase()), hre);
         }
     }
 
@@ -342,7 +351,7 @@ public final class Downloader {
      * {@link #fetchFile(URL, File, boolean)} when credentials are not configured for the given keys or the resource points to a file.
      */
     public void fetchFile(URL url, File outputPath, boolean useProxy, String userKey, String passwordKey) throws DownloadFailedException,
-            TooManyRequestsException, ResourceNotFoundException {
+            TooManyRequestsException, ResourceNotFoundException, URLConnectionFailureException {
         if ("file".equals(url.getProtocol())
                 || userKey == null || settings.getString(userKey) == null
                 || passwordKey == null || settings.getString(passwordKey) == null
@@ -353,7 +362,7 @@ public final class Downloader {
         }
         final String theProtocol = url.getProtocol();
         if (!("http".equals(theProtocol) || "https".equals(theProtocol))) {
-            throw new DownloadFailedException("Unsupported protocol in the URL; only file://, http:// and https:// are supported");
+            throw new DownloadFailedException("Unsupported protocol in the URL; only file, http and https are supported");
         }
         try {
             final HttpClientContext context = HttpClientContext.create();
@@ -367,6 +376,14 @@ public final class Downloader {
             }
         } catch (HttpResponseException hre) {
             wrapAndThrowHttpResponseException(url.toString(), hre);
+        } catch (SSLHandshakeException ex) {
+            if (ex.getMessage().contains("unable to find valid certification path to requested target")) {
+                final String msg = String.format("Unable to connect to '%s' - the Java trust store does not contain a trusted root for the cert. "
+                        + "Please see https://github.com/jeremylong/InstallCert for one method of updating the trusted certificates.", url);
+                throw new URLConnectionFailureException(msg, ex);
+            }
+            final String msg = format("Download failed, unable to copy '%s' to '%s'; %s", url, outputPath.getAbsolutePath(), ex.getMessage());
+            throw new DownloadFailedException(msg, ex);
         } catch (RuntimeException | URISyntaxException | IOException ex) {
             final String msg = format("Download failed, unable to copy '%s' to '%s'; %s", url, outputPath.getAbsolutePath(), ex.getMessage());
             throw new DownloadFailedException(msg, ex);
@@ -386,15 +403,15 @@ public final class Downloader {
      * @throws TooManyRequestsException  thrown when a 429 is received
      * @throws ResourceNotFoundException thrown when a 404 is received
      */
-    public String postBasedFetchContent(URI url, String payload, String payloadType, List<Header> hdr)
-            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException {
+    public String postBasedFetchContent(URI url, String payload, ContentType payloadType, List<Header> hdr)
+            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException, URLConnectionFailureException {
         try {
             if (url.getScheme() == null || !url.getScheme().toLowerCase(Locale.ROOT).matches("^https?")) {
                 throw new IllegalArgumentException("Unsupported protocol in the URL; only http and https are supported");
             } else {
                 final BasicClassicHttpRequest req;
                 req = new BasicClassicHttpRequest(Method.POST, url);
-                req.setEntity(new StringEntity(payload, ContentType.create(payloadType, StandardCharsets.UTF_8)));
+                req.setEntity(new StringEntity(payload, payloadType));
                 for (Header h : hdr) {
                     req.addHeader(h);
                 }
@@ -407,7 +424,15 @@ public final class Downloader {
         } catch (HttpResponseException hre) {
             wrapAndThrowHttpResponseException(url.toString(), hre);
             throw new InternalError("wrapAndThrowHttpResponseException will always throw an exception but Java compiler fails to spot it");
-        } catch (RuntimeException | IOException ex) {
+        } catch (SSLHandshakeException ex) {
+            if (ex.getMessage().contains("unable to find valid certification path to requested target")) {
+                final String msg = String.format("Unable to connect to '%s' - the Java trust store does not contain a trusted root for the cert. "
+                        + "Please see https://github.com/jeremylong/InstallCert for one method of updating the trusted certificates.", url);
+                throw new URLConnectionFailureException(msg, ex);
+            }
+            final String msg = format("Download failed, error downloading '%s'; %s", url, ex.getMessage());
+            throw new DownloadFailedException(msg, ex);
+        } catch (IOException | RuntimeException ex) {
             final String msg = format("Download failed, error downloading '%s'; %s", url, ex.getMessage());
             throw new DownloadFailedException(msg, ex);
         }
@@ -470,16 +495,16 @@ public final class Downloader {
      * Download a resource from the given URL and have its content handled by the given ResponseHandler.
      *
      * @param url             The url of the resource
-     * @param responseHandler   The responsehandler to handle the response
+     * @param handler   The responsehandler to handle the response
      * @param <T>             The return-type for the responseHandler
      * @return The response handler result
      * @throws IOException               on I/O Exceptions
      * @throws TooManyRequestsException  When HTTP status 429 is encountered
      * @throws ResourceNotFoundException When HTTP status 404 is encountered
      */
-    public <T> T fetchAndHandle(@NotNull URL url, @NotNull HttpClientResponseHandler<T> responseHandler)
+    public <T> T fetchAndHandle(@NotNull URL url, @NotNull HttpClientResponseHandler<T> handler)
             throws IOException, TooManyRequestsException, ResourceNotFoundException {
-        return fetchAndHandle(url, responseHandler, Collections.emptyList(), true);
+        return fetchAndHandle(url, handler, Collections.emptyList(), true);
     }
 
     /**
@@ -529,7 +554,7 @@ public final class Downloader {
             } else {
                 final String theProtocol = url.getProtocol();
                 if (!("http".equals(theProtocol) || "https".equals(theProtocol))) {
-                    throw new DownloadFailedException("Unsupported protocol in the URL; only file://, http:// and https:// are supported");
+                    throw new DownloadFailedException("Unsupported protocol in the URL; only file, http and https are supported");
                 }
                 try (CloseableHttpClient hc = useProxy ? httpClientBuilder.build() : httpClientBuilderExplicitNoproxy.build()) {
                     final BasicClassicHttpRequest req = new BasicClassicHttpRequest(Method.GET, url.toURI());

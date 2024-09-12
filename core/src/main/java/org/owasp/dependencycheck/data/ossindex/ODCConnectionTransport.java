@@ -19,9 +19,11 @@ package org.owasp.dependencycheck.data.ossindex;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.message.BasicHeader;
@@ -77,7 +79,7 @@ public class ODCConnectionTransport implements Transport {
             if (authorization != null) {
                 headers.add(new BasicHeader(HttpHeaders.AUTHORIZATION, authorization));
             }
-            return Downloader.getInstance().postBasedFetchContent(url, payload, payloadType, headers);
+            return Downloader.getInstance().postBasedFetchContent(url, payload, ContentType.create(payloadType, StandardCharsets.UTF_8), headers);
         } catch (TooManyRequestsException e) {
             throw new TransportException("Too many requests for " + url.toString() + " HTTP status 429", e);
         } catch (ResourceNotFoundException e) {

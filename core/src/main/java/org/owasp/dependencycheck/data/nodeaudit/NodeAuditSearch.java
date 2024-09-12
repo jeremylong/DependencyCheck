@@ -17,28 +17,31 @@
  */
 package org.owasp.dependencycheck.data.nodeaudit;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.apache.hc.client5.http.HttpResponseException;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonReader;
 import org.apache.commons.jcs3.access.exception.CacheException;
 
 import static org.owasp.dependencycheck.analyzer.NodeAuditAnalyzer.DEFAULT_URL;
@@ -146,80 +149,63 @@ public class NodeAuditSearch {
      * @throws IOException if it's unable to connect to Node Audit API
      */
     private List<Advisory> submitPackage(JsonObject packageJson, String key, int count) throws SearchException, IOException {
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("----------------------------------------");
+            LOGGER.trace("Node Audit Payload:");
+            LOGGER.trace(packageJson.toString());
+            LOGGER.trace("----------------------------------------");
+            LOGGER.trace("----------------------------------------");
+        }
+        final List<Header> additionalHeaders = new ArrayList<>();
+        additionalHeaders.add(new BasicHeader(HttpHeaders.USER_AGENT, "npm/6.1.0 node/v10.5.0 linux x64"));
+        additionalHeaders.add(new BasicHeader("npm-in-ci", "false"));
+        additionalHeaders.add(new BasicHeader("npm-scope", ""));
+        additionalHeaders.add(new BasicHeader("npm-session", generateRandomSession()));
+
         try {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("----------------------------------------");
-                LOGGER.trace("Node Audit Payload:");
-                LOGGER.trace(packageJson.toString());
-                LOGGER.trace("----------------------------------------");
-                LOGGER.trace("----------------------------------------");
+            final String response = Downloader.getInstance().postBasedFetchContent(nodeAuditUrl.toURI(), packageJson.toString(), ContentType.APPLICATION_JSON, additionalHeaders);
+            final JSONObject jsonResponse = new JSONObject(response);
+            final NpmAuditParser parser = new NpmAuditParser();
+            final List<Advisory> advisories = parser.parse(jsonResponse);
+            if (cache != null) {
+                cache.put(key, advisories);
             }
-            final byte[] packageDatabytes = packageJson.toString().getBytes(StandardCharsets.UTF_8);
-            final URLConnectionFactory factory = new URLConnectionFactory(settings);
-            final HttpURLConnection conn = factory.createHttpURLConnection(nodeAuditUrl, useProxy);
-            conn.setDoOutput(true);
-            conn.setDoInput(true);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("user-agent", "npm/6.1.0 node/v10.5.0 linux x64");
-            conn.setRequestProperty("npm-in-ci", "false");
-            conn.setRequestProperty("npm-scope", "");
-            conn.setRequestProperty("npm-session", generateRandomSession());
-            conn.setRequestProperty("content-type", "application/json");
-            conn.setRequestProperty("Content-Length", Integer.toString(packageDatabytes.length));
-            conn.connect();
-
-            try (OutputStream os = new BufferedOutputStream(conn.getOutputStream())) {
-                os.write(packageDatabytes);
-                os.flush();
-            }
-
-            switch (conn.getResponseCode()) {
-                case 200:
-                    try (InputStream in = new BufferedInputStream(conn.getInputStream());
-                            JsonReader jsonReader = Json.createReader(in)) {
-                        final JSONObject jsonResponse = new JSONObject(jsonReader.readObject().toString());
-                        final NpmAuditParser parser = new NpmAuditParser();
-                        final List<Advisory> advisories = parser.parse(jsonResponse);
-                        if (cache != null) {
-                            cache.put(key, advisories);
+            return advisories;
+        } catch (RuntimeException | URISyntaxException | JSONException | TooManyRequestsException | ResourceNotFoundException ex) {
+            LOGGER.debug("Error connecting to Node Audit API. Error: {}",
+                    ex.getMessage());
+            throw new SearchException("Could not connect to Node Audit API: " + ex.getMessage(), ex);
+        } catch (DownloadFailedException e) {
+            if (e.getCause() instanceof HttpResponseException) {
+                final HttpResponseException hre = (HttpResponseException) e.getCause();
+                switch (hre.getStatusCode()) {
+                    case 503:
+                        LOGGER.debug("Node Audit API returned `{} {}` - retrying request.",
+                                hre.getStatusCode(), hre.getReasonPhrase());
+                        if (count < 5) {
+                            final int next = count + 1;
+                            try {
+                                Thread.sleep(1500L * next);
+                            } catch (InterruptedException ex) {
+                                Thread.currentThread().interrupt();
+                                throw new UnexpectedAnalysisException(ex);
+                            }
+                            return submitPackage(packageJson, key, next);
                         }
-                        return advisories;
-                    } catch (Exception ex) {
-                        LOGGER.debug("Error connecting to Node Audit API. Error: {}",
-                                ex.getMessage());
-                        throw new SearchException("Could not connect to Node Audit API: " + ex.getMessage(), ex);
-                    }
-                case 503:
-                    LOGGER.debug("Node Audit API returned `{} {}` - retrying request.",
-                            conn.getResponseCode(), conn.getResponseMessage());
-                    if (count < 5) {
-                        final int next = count + 1;
-                        try {
-                            Thread.sleep(1500L * next);
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                            throw new UnexpectedAnalysisException(ex);
-                        }
-                        return submitPackage(packageJson, key, next);
-                    }
-                    throw new SearchException("Could not perform Node Audit analysis - service returned a 503.");
-                case 400:
-                    LOGGER.debug("Invalid payload submitted to Node Audit API. Received response code: {} {}",
-                            conn.getResponseCode(), conn.getResponseMessage());
-                    throw new SearchException("Could not perform Node Audit analysis. Invalid payload submitted to Node Audit API.");
-                default:
-                    LOGGER.debug("Could not connect to Node Audit API. Received response code: {} {}",
-                            conn.getResponseCode(), conn.getResponseMessage());
-                    throw new IOException("Could not connect to Node Audit API");
+                        throw new SearchException("Could not perform Node Audit analysis - service returned a 503.", e);
+                    case 400:
+                        LOGGER.debug("Invalid payload submitted to Node Audit API. Received response code: {} {}",
+                                hre.getStatusCode(), hre.getReasonPhrase());
+                        throw new SearchException("Could not perform Node Audit analysis. Invalid payload submitted to Node Audit API.", e);
+                    default:
+                        LOGGER.debug("Could not connect to Node Audit API. Received response code: {} {}",
+                                hre.getStatusCode(), hre.getReasonPhrase());
+                        throw new IOException("Could not connect to Node Audit API", e);
+                }
+            } else {
+                LOGGER.debug("Could not connect to Node Audit API. Received generic DownloadException", e);
+                throw new IOException("Could not connect to Node Audit API", e);
             }
-        } catch (IOException ex) {
-            if (ex instanceof javax.net.ssl.SSLHandshakeException
-                    && ex.getMessage().contains("unable to find valid certification path to requested target")) {
-                final String msg = String.format("Unable to connect to '%s' - the Java trust store does not contain a trusted root for the cert. "
-                        + " Please see https://github.com/jeremylong/InstallCert for one method of updating the trusted certificates.", nodeAuditUrl);
-                throw new URLConnectionFailureException(msg, ex);
-            }
-            throw ex;
         }
     }
 
@@ -235,6 +221,6 @@ public class NodeAuditSearch {
         while (sb.length() < length) {
             sb.append(Integer.toHexString(r.nextInt()));
         }
-        return sb.toString().substring(0, length);
+        return sb.substring(0, length);
     }
 }
