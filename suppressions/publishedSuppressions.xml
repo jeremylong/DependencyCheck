@@ -1844,4 +1844,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/io\.github\.reactivecircus\.cache4k/cache4k-jvm@.*$</packageUrl>
    <cpe>cpe:/a:cache_project:cache</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6967
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.jmdns/jmdns@.*$</packageUrl>
+   <cpe>cpe:/a:openhab:openhab</cpe>
+</suppress>
 </suppressions>
