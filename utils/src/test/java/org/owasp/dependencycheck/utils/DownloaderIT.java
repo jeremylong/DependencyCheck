@@ -18,8 +18,15 @@
 package org.owasp.dependencycheck.utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+
+import org.apache.hc.client5.http.impl.classic.AbstractHttpClientResponseHandler;
+import org.apache.hc.core5.http.HttpEntity;
 import org.junit.Test;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 
@@ -49,9 +56,32 @@ public class DownloaderIT extends BaseTest {
         final String str = getSettings().getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL, "https://jeremylong.github.io/DependencyCheck/current.txt");
         URL url = new URL(str);
         File outputPath = new File("target/current.txt");
-        Downloader downloader = new Downloader(getSettings());
-        downloader.fetchFile(url, outputPath);
+        Downloader.getInstance().configure(getSettings());
+        Downloader.getInstance().fetchFile(url, outputPath);
         assertTrue(outputPath.isFile());
+    }
+
+    /**
+     * Test of fetchAndHandleContent method.
+     *
+     * @throws Exception thrown when an exception occurs.
+     */
+    @Test
+    public void testfetchAndHandleContent() throws Exception {
+        URL url = new URL(getSettings().getString(Settings.KEYS.ENGINE_VERSION_CHECK_URL));
+        AbstractHttpClientResponseHandler<String> versionHandler = new AbstractHttpClientResponseHandler<String>() {
+            @Override
+            public String handleEntity(HttpEntity entity) throws IOException {
+                try (InputStream in = entity.getContent()) {
+                    byte[] read = new byte[90];
+                    in.read(read);
+                    String text = new String(read, UTF_8);
+                    assertTrue(text.matches("^\\d+\\.\\d+\\.\\d+.*"));
+                }
+                return "";
+            }
+        };
+        Downloader.getInstance().fetchAndHandle(url, versionHandler);
     }
 
     /**

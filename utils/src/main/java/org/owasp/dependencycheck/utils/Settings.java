@@ -228,6 +228,19 @@ public final class Settings {
          * Vulnerabilities..
          */
         public static final String KEV_URL = "kev.url";
+
+        /**
+         * The properties key for the hosted suppressions username.
+         * For use when hosted suppressions are mirrored locally on a site requiring authentication
+         */
+        public static final String KEV_USER = "kev.user";
+
+        /**
+         * The properties key for the hosted suppressions password.
+         * For use when hosted suppressions are mirrored locally on a site requiring authentication
+         */
+        public static final String KEV_PASSWORD = "kev.password";
+
         /**
          * The properties key to control the skipping of the check for Known
          * Exploited Vulnerabilities updates.
@@ -301,6 +314,18 @@ public final class Settings {
          * The key for the hosted suppressions file URL.
          */
         public static final String HOSTED_SUPPRESSIONS_URL = "hosted.suppressions.url";
+
+        /**
+         * The properties key for the hosted suppressions username.
+         * For use when hosted suppressions are mirrored locally on a site requiring authentication
+         */
+        public static final String HOSTED_SUPPRESSIONS_USER = "hosted.suppressions.user";
+
+        /**
+         * The properties key for the hosted suppressions password.
+         * For use when hosted suppressions are mirrored locally on a site requiring authentication
+         */
+        public static final String HOSTED_SUPPRESSIONS_PASSWORD = "hosted.suppressions.password";
 
         /**
          * The properties key for defining whether the hosted suppressions file

@@ -22,6 +22,8 @@ import org.apache.tools.ant.Project;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -594,6 +596,11 @@ public class Update extends Purge {
     @Override
     protected void executeWithContextClassloader() throws BuildException {
         populateSettings();
+        try {
+            Downloader.getInstance().configure(getSettings());
+        } catch (InvalidSettingException e) {
+            throw new BuildException(e);
+        }
         try (Engine engine = new Engine(Update.class.getClassLoader(), getSettings())) {
             engine.doUpdates();
         } catch (UpdateException ex) {

@@ -241,7 +241,6 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                                     + "this could result in undetected CPE/CVEs.", dependency.getFileName());
                             LOGGER.debug("Unable to delete temp file");
                         }
-                        final Downloader downloader = new Downloader(getSettings());
                         final int maxAttempts = this.getSettings().getInt(Settings.KEYS.ANALYZER_CENTRAL_RETRY_COUNT, 3);
                         int retryCount = 0;
                         long sleepingTimeBetweenRetriesInMillis = BASE_RETRY_WAIT;
@@ -258,7 +257,7 @@ public class CentralAnalyzer extends AbstractFileTypeAnalyzer {
                             do {
                                 //CSOFF: NestedTryDepth
                                 try {
-                                    downloader.fetchFile(new URL(ma.getPomUrl()), pomFile);
+                                    Downloader.getInstance().fetchFile(new URL(ma.getPomUrl()), pomFile);
                                     success = true;
                                 } catch (DownloadFailedException ex) {
                                     try {

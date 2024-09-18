@@ -18,13 +18,21 @@
 package org.owasp.dependencycheck.data.ossindex;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.sonatype.ossindex.service.client.OssindexClientConfiguration;
 import org.sonatype.ossindex.service.client.transport.BasicAuthHelper;
-import org.sonatype.ossindex.service.client.transport.HttpUrlConnectionTransport;
+import org.sonatype.ossindex.service.client.transport.Transport;
 import org.sonatype.ossindex.service.client.transport.UserAgentSupplier;
 
 /**
@@ -33,20 +41,12 @@ import org.sonatype.ossindex.service.client.transport.UserAgentSupplier;
  *
  * @author Jeremy Long
  */
-public class ODCConnectionTransport extends HttpUrlConnectionTransport {
+public class ODCConnectionTransport implements Transport {
 
-    /**
-     * The authorization header.
-     */
-    private static final String AUTHORIZATION = "Authorization";
     /**
      * The OSS Index client configuration.
      */
     private final OssindexClientConfiguration configuration;
-    /**
-     * The URL Connection factory.
-     */
-    private final URLConnectionFactory connectionFactory;
     /**
      * The user agent to send in the HTTP connection.
      */
@@ -55,27 +55,40 @@ public class ODCConnectionTransport extends HttpUrlConnectionTransport {
     /**
      * Constructs a new transport object to connect to the OSS Index.
      *
-     * @param settings the ODC settings
      * @param config the OSS client configuration
      * @param userAgent the user agent to send to OSS Index
      */
-    public ODCConnectionTransport(Settings settings, OssindexClientConfiguration config, UserAgentSupplier userAgent) {
-        super(userAgent);
+    public ODCConnectionTransport(OssindexClientConfiguration config, UserAgentSupplier userAgent) {
         this.userAgent = userAgent;
         this.configuration = config;
-        connectionFactory = new URLConnectionFactory(settings);
     }
 
     @Override
-    protected HttpURLConnection connect(final URL url) throws IOException {
-        final HttpURLConnection connection = connectionFactory.createHttpURLConnection(url);
-        connection.setRequestProperty("User-Agent", userAgent.get());
-
-        final String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());
-        if (authorization != null) {
-            connection.setRequestProperty(AUTHORIZATION, authorization);
-        }
-        return connection;
+    public void init(OssindexClientConfiguration configuration) {
+        // no initialisation needed
     }
 
+    @Override
+    public String post(URI url, String payloadType, String payload, String acceptType) throws TransportException, IOException {
+        try {
+            final List<Header> headers = new ArrayList<>(3);
+            headers.add(new BasicHeader(HttpHeaders.ACCEPT, acceptType));
+            headers.add(new BasicHeader(HttpHeaders.USER_AGENT, userAgent.get()));
+            // TODO consider to promote pre-emptive authentication by default to the Downloader and also load the OSSIndex credentials there.
+            final String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());
+            if (authorization != null) {
+                headers.add(new BasicHeader(HttpHeaders.AUTHORIZATION, authorization));
+            }
+            return Downloader.getInstance().postBasedFetchContent(url, payload, ContentType.create(payloadType, StandardCharsets.UTF_8), headers);
+        } catch (TooManyRequestsException e) {
+            throw new TransportException("Too many requests for " + url.toString() + " HTTP status 429", e);
+        } catch (ResourceNotFoundException e) {
+            throw new TransportException("Not found for " + url.toString() + "HTTP status 404", e);
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        // no resource closure needed; fully delegated to HTTPClient
+    }
 }

@@ -30,6 +30,7 @@ import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -596,11 +597,10 @@ public class NvdApiDataSource implements CachedWebDataSource {
      * downloaded
      */
     protected final Properties getRemoteCacheProperties(String url, String pattern) throws UpdateException {
-        final Downloader d = new Downloader(settings);
         final Properties properties = new Properties();
         try {
             final URL u = new URI(url + "cache.properties").toURL();
-            final String content = d.fetchContent(u, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
+            final String content = Downloader.getInstance().fetchContent(u, StandardCharsets.UTF_8);
             properties.load(new StringReader(content));
 
         } catch (URISyntaxException ex) {
@@ -614,7 +614,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
             }
             try {
                 URL metaUrl = new URI(url + MessageFormat.format(metaPattern, "modified")).toURL();
-                String content = d.fetchContent(metaUrl, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
+                String content = Downloader.getInstance().fetchContent(metaUrl, StandardCharsets.UTF_8);
                 Properties props = new Properties();
                 props.load(new StringReader(content));
                 ZonedDateTime lmd = DatabaseProperties.getIsoTimestamp(props, "lastModifiedDate");
@@ -625,7 +625,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
                 final int endYear = now.withZoneSameInstant(ZoneId.of("UTC+14:00")).getYear();
                 for (int y = startYear; y <= endYear; y++) {
                     metaUrl = new URI(url + MessageFormat.format(metaPattern, String.valueOf(y))).toURL();
-                    content = d.fetchContent(metaUrl, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);
+                    content = Downloader.getInstance().fetchContent(metaUrl, StandardCharsets.UTF_8);
                     props.clear();
                     props.load(new StringReader(content));
                     lmd = DatabaseProperties.getIsoTimestamp(props, "lastModifiedDate");

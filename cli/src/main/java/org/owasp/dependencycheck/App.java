@@ -33,6 +33,7 @@ import org.apache.tools.ant.types.LogLevel;
 import org.owasp.dependencycheck.data.update.exception.UpdateException;
 import org.owasp.dependencycheck.exception.ExceptionCollection;
 import org.owasp.dependencycheck.exception.ReportException;
+import org.owasp.dependencycheck.utils.Downloader;
 import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
@@ -141,6 +142,7 @@ public class App {
             } else {
                 try {
                     populateSettings(cli);
+                    Downloader.getInstance().configure(settings);
                 } catch (InvalidSettingException ex) {
                     LOGGER.error(ex.getMessage());
                     LOGGER.debug(ERROR_LOADING_PROPERTIES_FILE, ex);
@@ -162,6 +164,7 @@ public class App {
             try {
                 populateSettings(cli);
                 settings.setBoolean(Settings.KEYS.AUTO_UPDATE, true);
+                Downloader.getInstance().configure(settings);
             } catch (InvalidSettingException ex) {
                 LOGGER.error(ex.getMessage());
                 LOGGER.debug(ERROR_LOADING_PROPERTIES_FILE, ex);
@@ -182,6 +185,7 @@ public class App {
         } else if (cli.isRunScan()) {
             try {
                 populateSettings(cli);
+                Downloader.getInstance().configure(settings);
             } catch (InvalidSettingException ex) {
                 LOGGER.error(ex.getMessage(), ex);
                 LOGGER.debug(ERROR_LOADING_PROPERTIES_FILE, ex);
