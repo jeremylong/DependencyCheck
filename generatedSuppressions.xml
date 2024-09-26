@@ -1857,3 +1857,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/com\.azure/azure-identity@.*$</packageUrl>
    <cpe>cpe:/a:microsoft:azure_cli</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6991
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.apollographql\.federation/federation-graphql-java-support@.*$</packageUrl>
+   <cpe>cpe:/a:apollo_project:apollo</cpe>
+</suppress>
