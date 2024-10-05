@@ -90,12 +90,14 @@ public class CarthageAnalyzer extends AbstractFileTypeAnalyzer {
      * dependency version. The version can be a commit ref, so we can't assume
      * it's a number
      *
-     * Example values: - binary "https://dl.google.com/geosdk/GoogleMaps.json"
-     * "7.2.0" - git "https://gitlab.matrix.org/matrix-org/olm.git" "3.2.16" -
-     * github "alinradut/SwiftEntryKit"
-     * "95f4a08f41ddcf2c02e2b22789038774c8c94df5"" - github
-     * "CocoaLumberjack/CocoaLumberjack" "3.8.5" - github "realm/realm-swift"
-     * "v10.44.0"
+     * Example values:
+     * <ul>
+     * <li>binary "https://dl.google.com/geosdk/GoogleMaps.json" "7.2.0"</li>
+     * <li>git "https://gitlab.matrix.org/matrix-org/olm.git" "3.2.16"</li>
+     * <li>github "alinradut/SwiftEntryKit" "95f4a08f41ddcf2c02e2b22789038774c8c94df5"</li>
+     * <li>github "CocoaLumberjack/CocoaLumberjack" "3.8.5"</li>
+     * <li>github "realm/realm-swift" "v10.44.0"</li>
+     * </ul>
      */
     private static final Pattern CARTFILE_RESOLVED_DEPENDENCY_PATTERN = Pattern.compile("(github|git|binary) \"([^\"]+)\" \"([^\"]+)\"");
 
