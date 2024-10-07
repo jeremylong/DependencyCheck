@@ -94,7 +94,8 @@ public class CarthageAnalyzer extends AbstractFileTypeAnalyzer {
      * <ul>
      * <li>binary "https://dl.google.com/geosdk/GoogleMaps.json" "7.2.0"</li>
      * <li>git "https://gitlab.matrix.org/matrix-org/olm.git" "3.2.16"</li>
-     * <li>github "alinradut/SwiftEntryKit" "95f4a08f41ddcf2c02e2b22789038774c8c94df5"</li>
+     * <li>github "alinradut/SwiftEntryKit"
+     * "95f4a08f41ddcf2c02e2b22789038774c8c94df5"</li>
      * <li>github "CocoaLumberjack/CocoaLumberjack" "3.8.5"</li>
      * <li>github "realm/realm-swift" "v10.44.0"</li>
      * </ul>
@@ -109,8 +110,11 @@ public class CarthageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Capture group #1 is the dependency name.
      *
-     * Example values: - robbiehanson/XMPPFramework -
-     * CocoaLumberjack/CocoaLumberjack
+     * Example values:
+     * <ul>
+     * <li>robbiehanson/XMPPFramework</li>
+     * <li>CocoaLumberjack/CocoaLumberjack</li>
+     * </ul>
      */
     private static final Pattern CARTFILE_RESOLVED_GITHUB_DEPENDENCY = Pattern.compile("[a-zA-Z0-9-_]+/([a-zA-Z0-9\\-_\\.]+)");
 
@@ -122,9 +126,13 @@ public class CarthageAnalyzer extends AbstractFileTypeAnalyzer {
     /**
      * Capture group #1 is the dependency name.
      *
-     * Example values: - https://my.domain.com/release/MyFramework.json -
-     * file:///some/Path/MyFramework.json - relative/path/MyFramework.json -
-     * /absolute/path/MyFramework.json
+     * Example values:
+     * <ul>
+     * <li>https://my.domain.com/release/MyFramework.json</li>
+     * <li>file:///some/Path/MyFramework.json -
+     * relative/path/MyFramework.json</li>
+     * <li>/absolute/path/MyFramework.json</li>
+     * </ul>
      */
     private static final Pattern CARTFILE_RESOLVED_BINARY_DEPENDENCY = Pattern.compile("([a-zA-Z0-9\\-_\\.]+).json");
 
