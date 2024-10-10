@@ -1864,3 +1864,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/com\.apollographql\.federation/federation-graphql-java-support@.*$</packageUrl>
    <cpe>cpe:/a:apollo_project:apollo</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7018
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/fi\.solita\.clamav/clamav-client@.*$</packageUrl>
+   <cpe>cpe:/a:clamav:clamav</cpe>
+</suppress>
