@@ -144,7 +144,7 @@ public class WriteLock implements AutoCloseable {
             return;
         }
         try {
-            final File dir = settings.getDataDirectory();
+            final File dir = settings.getTempDirectory();
             lockFile = new File(dir, lockFileName);
             checkState();
             int ctr = 0;
