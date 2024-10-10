@@ -1557,9 +1557,9 @@
 </suppress>
 <suppress base="true">
    <notes><![CDATA[
-   FP per issue #6626
+   hand-curated better suppression for FP per issues #6626, #7015, #7019, #7020, #7021, #7022
    ]]></notes>
-   <packageUrl regex="true">^pkg:maven/org\.glassfish\.expressly/expressly@.*$</packageUrl>
+   <packageUrl regex="true">^pkg:maven/org\.glassfish(?!\.main).*$</packageUrl>
    <cpe>cpe:/a:eclipse:glassfish</cpe>
 </suppress>
 <suppress base="true">
@@ -1864,5 +1864,12 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/com\.apollographql\.federation/federation-graphql-java-support@.*$</packageUrl>
    <cpe>cpe:/a:apollo_project:apollo</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7018
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/fi\.solita\.clamav/clamav-client@.*$</packageUrl>
+   <cpe>cpe:/a:clamav:clamav</cpe>
 </suppress>
 </suppressions>
