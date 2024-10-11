@@ -202,8 +202,8 @@ public final class Downloader {
     private void tryAddNexusAnalyzerCredentials(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD) != null) {
             addUserPasswordCreds(settings, credentialsStore,
-                    Settings.KEYS.ANALYZER_NEXUS_URL,
                     Settings.KEYS.ANALYZER_NEXUS_USER,
+                    Settings.KEYS.ANALYZER_NEXUS_URL,
                     Settings.KEYS.ANALYZER_NEXUS_PASSWORD,
                     "Nexus Analyzer");
         }
@@ -212,8 +212,8 @@ public final class Downloader {
     private void tryAddNVDApiDatafeed(Settings settings, CredentialsStore credentialsStore) throws InvalidSettingException {
         if (settings.getString(Settings.KEYS.NVD_API_DATAFEED_PASSWORD) != null) {
             addUserPasswordCreds(settings, credentialsStore,
-                    Settings.KEYS.NVD_API_DATAFEED_URL,
                     Settings.KEYS.NVD_API_DATAFEED_USER,
+                    Settings.KEYS.NVD_API_DATAFEED_URL,
                     Settings.KEYS.NVD_API_DATAFEED_PASSWORD,
                     "NVD API Datafeed");
         }
