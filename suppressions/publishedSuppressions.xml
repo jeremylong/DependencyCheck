@@ -1872,4 +1872,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/fi\.solita\.clamav/clamav-client@.*$</packageUrl>
    <cpe>cpe:/a:clamav:clamav</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7034
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/jakarta\.json/jakarta\.json-api@.*$</packageUrl>
+   <cpe>cpe:/a:eclipse:glassfish</cpe>
+</suppress>
 </suppressions>
