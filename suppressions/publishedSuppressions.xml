@@ -1893,4 +1893,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/org\.apache\.ftpserver/ftplet-api@.*$</packageUrl>
    <cpe>cpe:/a:apache:apache_http_server</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7035
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.apache\.ftpserver/ftpserver-core@.*$</packageUrl>
+   <cpe>cpe:/a:apache:apache_http_server</cpe>
+</suppress>
 </suppressions>
