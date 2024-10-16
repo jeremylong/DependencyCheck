@@ -1900,4 +1900,18 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/org\.apache\.ftpserver/ftpserver-core@.*$</packageUrl>
    <cpe>cpe:/a:apache:apache_http_server</cpe>
 </suppress>
+<suppress base="true">
+<notes><![CDATA[
+   FP per issue #7043
+   ]]></notes>
+<packageUrl regex="true">^pkg:maven/org\.apache\.ftpserver/ftplet-api@.*$</packageUrl>
+<cpe regex="true">^cpe:/a:apache:mina:.*</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6981
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.etcd/jetcd-core@.*$</packageUrl>
+   <cpe>cpe:/a:etcd:etcd</cpe>
+</suppress>
 </suppressions>
