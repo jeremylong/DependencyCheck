@@ -1922,3 +1922,13 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
 <packageUrl regex="true">^pkg:maven/io\.prometheus/prometheus-.*$</packageUrl>
 <cpe>cpe:/a:prometheus:prometheus</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   Original suppression as per #952 suppressed individual CVEs.
+   As per false negative #7057 MySQL java connector has CPEs of its own, so it's proper to suppress the server CPE
+   NOTE: the additional colon in the CPE is required to not match on prefix with cpe:/a:mysql:mysql_connector_j etc
+   ]]></notes>
+   <gav regex="true">^(mysql:mysql-connector-java|com\.mysql:mysql-connector-j|org\.drizzle\.jdbc:drizzle-jdbc):.*$</gav>
+   <cpe>cpe:/a:mysql:mysql:</cpe>
+   <cpe>cpe:/a:oracle:mysql:</cpe>
+</suppress>
