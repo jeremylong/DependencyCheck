@@ -12,6 +12,21 @@ Documentation and links to production binary releases can be found on the [githu
 
 This product uses the NVD API but is not endorsed or certified by the NVD.
 
+
+## Breaking Changes in 11.0.0
+
+- Java 11 is now required to run dependency-check 11.0.0 or higher
+- H2 database upgrade
+
+    11.0.0 contains breaking changes using the local H2 database. A full download
+    of the NVD data will occur. Note that if you are using a shared data directory
+    the h2 database file is not compatible with older versions of dependency-check.
+    If you run into problems you may need to run a purge:
+
+    - gradle: `./gradlew dependencyCheckPurge`
+    - maven: `mvn org.owasp:dependency-check-maven:9.0.0:purge`
+    - cli: `dependency-check.sh --purge`
+
 ## Mandatory Upgrade Notice
 
 **Upgrading to 10.0.2 or later is mandatory**
@@ -34,18 +49,6 @@ how to set the NVD API key.
 The NVD API has enforced rate limits. If you are using a single API KEY and
 multiple builds occur you could hit the rate limit and receive 403 errors. In
 a CI environment one must use a caching strategy.
-
-
-### Breaking Changes
-
-9.0.0 contains breaking changes which requires updates to the database. If using
-an externally hosted database the schema will need to be updated. When using the
-embedded H2 database, the schema should be upgraded automatically. However, if
-issues arise you may need to purge the database:
-
-- gradle: `./gradlew dependencyCheckPurge`
-- maven: `mvn org.owasp:dependency-check-maven:9.0.0:purge`
-- cli: `dependency-check.sh --purge`
 
 #### Gradle build Environment
 
@@ -171,7 +174,7 @@ For instructions on the use of the Ant Task, please see the [dependency-check-an
 ## Development Prerequisites
 
 For installation to pass, you must have the following components installed:
-* Java: `java -version` 1.8
+* Java: `java -version` 11.0
 * Maven: `mvn -version` 3.5.0 and higher
 
 Tests cases require:
