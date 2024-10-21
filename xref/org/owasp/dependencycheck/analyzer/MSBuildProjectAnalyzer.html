@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>MSBuildProjectAnalyzer xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -158,7 +158,7 @@
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>             <strong class="jxr_keyword">final</strong> List&lt;NugetPackageReference&gt; packages;
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> 
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">try</strong> (FileInputStream fis = <strong class="jxr_keyword">new</strong> FileInputStream(dependency.getActualFilePath());
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>                     BOMInputStream bis = <strong class="jxr_keyword">new</strong> BOMInputStream(fis)) {
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>                     BOMInputStream bis = BOMInputStream.builder().setInputStream(fis).get()) {
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>                 <em class="jxr_comment">//skip BOM if it exists</em>
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>                 bis.getBOM();
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>                 packages = parser.parse(bis, props, centrallyManaged);
@@ -323,7 +323,7 @@
 <a class="jxr_linenumber" name="L315" href="#L315">315</a>         <strong class="jxr_keyword">if</strong> (directoryProps != <strong class="jxr_keyword">null</strong> &amp;&amp; directoryProps.isFile()) {
 <a class="jxr_linenumber" name="L316" href="#L316">316</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/data/nuget/DirectoryBuildPropsParser.html">DirectoryBuildPropsParser</a> parser = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/data/nuget/DirectoryBuildPropsParser.html">DirectoryBuildPropsParser</a>();
 <a class="jxr_linenumber" name="L317" href="#L317">317</a>             <strong class="jxr_keyword">try</strong> (FileInputStream fis = <strong class="jxr_keyword">new</strong> FileInputStream(directoryProps);
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>                     BOMInputStream bis = <strong class="jxr_keyword">new</strong> BOMInputStream(fis)) {
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>                     BOMInputStream bis = BOMInputStream.builder().setInputStream(fis).get()) {
 <a class="jxr_linenumber" name="L319" href="#L319">319</a>                 <em class="jxr_comment">//skip BOM if it exists</em>
 <a class="jxr_linenumber" name="L320" href="#L320">320</a>                 bis.getBOM();
 <a class="jxr_linenumber" name="L321" href="#L321">321</a>                 entries = parser.parse(bis);
@@ -352,7 +352,7 @@
 <a class="jxr_linenumber" name="L344" href="#L344">344</a>         <strong class="jxr_keyword">if</strong> (packages != <strong class="jxr_keyword">null</strong> &amp;&amp; packages.isFile()) {
 <a class="jxr_linenumber" name="L345" href="#L345">345</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/data/nuget/DirectoryPackagesPropsParser.html">DirectoryPackagesPropsParser</a> parser = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/data/nuget/DirectoryPackagesPropsParser.html">DirectoryPackagesPropsParser</a>();
 <a class="jxr_linenumber" name="L346" href="#L346">346</a>             <strong class="jxr_keyword">try</strong> (FileInputStream fis = <strong class="jxr_keyword">new</strong> FileInputStream(packages);
-<a class="jxr_linenumber" name="L347" href="#L347">347</a>                     BOMInputStream bis = <strong class="jxr_keyword">new</strong> BOMInputStream(fis)) {
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>                     BOMInputStream bis = BOMInputStream.builder().setInputStream(fis).get()) {
 <a class="jxr_linenumber" name="L348" href="#L348">348</a>                 <em class="jxr_comment">//skip BOM if it exists</em>
 <a class="jxr_linenumber" name="L349" href="#L349">349</a>                 bis.getBOM();
 <a class="jxr_linenumber" name="L350" href="#L350">350</a>                 <strong class="jxr_keyword">return</strong> parser.parse(bis, props);

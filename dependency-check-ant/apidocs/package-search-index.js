@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.owasp.dependencycheck.ant.logging"},{"l":"org.owasp.dependencycheck.taskdefs"},{"l":"org.slf4j.impl"}]

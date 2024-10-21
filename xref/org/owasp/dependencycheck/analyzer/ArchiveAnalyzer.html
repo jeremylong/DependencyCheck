@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>ArchiveAnalyzer xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -36,7 +36,7 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.compress.compressors.gzip.GzipUtils;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.compress.utils.IOUtils;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.IOUtils;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.eclipse.packager.rpm.RpmTag;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.eclipse.packager.rpm.parse.RpmInputStream;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.owasp.dependencycheck.Engine;
@@ -468,7 +468,7 @@
 <a class="jxr_linenumber" name="L460" href="#L460">460</a>                     tin = <strong class="jxr_keyword">new</strong> TarArchiveInputStream(in);
 <a class="jxr_linenumber" name="L461" href="#L461">461</a>                     extractArchive(tin, destination, engine);
 <a class="jxr_linenumber" name="L462" href="#L462">462</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"gz"</span>.equals(archiveExt) || <span class="jxr_string">"tgz"</span>.equals(archiveExt)) {
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>                     <strong class="jxr_keyword">final</strong> String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>                     <strong class="jxr_keyword">final</strong> String uncompressedName = GzipUtils.getUncompressedFileName(archive.getName());
 <a class="jxr_linenumber" name="L464" href="#L464">464</a>                     <strong class="jxr_keyword">final</strong> File f = <strong class="jxr_keyword">new</strong> File(destination, uncompressedName);
 <a class="jxr_linenumber" name="L465" href="#L465">465</a>                     <strong class="jxr_keyword">if</strong> (engine.accept(f)) {
 <a class="jxr_linenumber" name="L466" href="#L466">466</a>                         <strong class="jxr_keyword">final</strong> String destPath = destination.getCanonicalPath();
@@ -483,7 +483,7 @@
 <a class="jxr_linenumber" name="L475" href="#L475">475</a>                         decompressFile(gin, f);
 <a class="jxr_linenumber" name="L476" href="#L476">476</a>                     }
 <a class="jxr_linenumber" name="L477" href="#L477">477</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"bz2"</span>.equals(archiveExt) || <span class="jxr_string">"tbz2"</span>.equals(archiveExt)) {
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>                     <strong class="jxr_keyword">final</strong> String uncompressedName = BZip2Utils.getUncompressedFilename(archive.getName());
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>                     <strong class="jxr_keyword">final</strong> String uncompressedName = BZip2Utils.getUncompressedFileName(archive.getName());
 <a class="jxr_linenumber" name="L479" href="#L479">479</a>                     <strong class="jxr_keyword">final</strong> File f = <strong class="jxr_keyword">new</strong> File(destination, uncompressedName);
 <a class="jxr_linenumber" name="L480" href="#L480">480</a>                     <strong class="jxr_keyword">if</strong> (engine.accept(f)) {
 <a class="jxr_linenumber" name="L481" href="#L481">481</a>                         <strong class="jxr_keyword">final</strong> String destPath = destination.getCanonicalPath();
@@ -736,7 +736,7 @@
 <a class="jxr_linenumber" name="L728" href="#L728">728</a>         <strong class="jxr_keyword">boolean</strong> isJar = false;
 <a class="jxr_linenumber" name="L729" href="#L729">729</a>         ZipFile zip = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L730" href="#L730">730</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L731" href="#L731">731</a>             zip = <strong class="jxr_keyword">new</strong> ZipFile(dependency.getActualFilePath());
+<a class="jxr_linenumber" name="L731" href="#L731">731</a>             zip = ZipFile.builder().setFile(dependency.getActualFilePath()).get();
 <a class="jxr_linenumber" name="L732" href="#L732">732</a>             <strong class="jxr_keyword">if</strong> (zip.getEntry(<span class="jxr_string">"META-INF/MANIFEST.MF"</span>) != <strong class="jxr_keyword">null</strong>
 <a class="jxr_linenumber" name="L733" href="#L733">733</a>                     || zip.getEntry(<span class="jxr_string">"META-INF/maven"</span>) != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L734" href="#L734">734</a>                 <strong class="jxr_keyword">final</strong> Enumeration&lt;ZipArchiveEntry&gt; entries = zip.getEntries();

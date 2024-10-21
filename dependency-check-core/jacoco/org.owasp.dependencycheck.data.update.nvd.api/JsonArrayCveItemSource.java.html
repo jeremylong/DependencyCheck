@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonArrayCveItemSource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.update.nvd.api</a> &gt; <span class="el_source">JsonArrayCveItemSource.java</span></div><h1>JsonArrayCveItemSource.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JsonArrayCveItemSource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.update.nvd.api</a> &gt; <span class="el_source">JsonArrayCveItemSource.java</span></div><h1>JsonArrayCveItemSource.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -22,65 +22,86 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.jeremylong.openvulnerability.client.nvd.DefCveItem;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class JsonArrayCveItemSource implements CveItemSource&lt;DefCveItem&gt; {
 
+    /**
+     * The object mapper.
+     */
     private final ObjectMapper mapper;
+    /**
+     * The input stream.
+     */
     private final InputStream inputStream;
+    /**
+     * The JSON parser.
+     */
     private final JsonParser jsonParser;
+    /**
+     * The current item.
+     */
     private DefCveItem currentItem;
+    /**
+     * The next item.
+     */
     private DefCveItem nextItem;
 
-<span class="fc" id="L38">    public JsonArrayCveItemSource(InputStream inputStream) throws IOException {</span>
-<span class="fc" id="L39">        mapper = new ObjectMapper();</span>
-<span class="fc" id="L40">        mapper.registerModule(new JavaTimeModule());</span>
-<span class="fc" id="L41">        this.inputStream = inputStream;</span>
-<span class="fc" id="L42">        jsonParser = mapper.getFactory().createParser(inputStream);</span>
+    /**
+     * Constructs a new Item Source.
+     *
+     * @param inputStream the input stream to read from
+     * @throws IOException thrown if there is a problem reading from the input
+     * stream
+     */
+<span class="fc" id="L59">    public JsonArrayCveItemSource(InputStream inputStream) throws IOException {</span>
+<span class="fc" id="L60">        mapper = new ObjectMapper();</span>
+<span class="fc" id="L61">        mapper.registerModule(new JavaTimeModule());</span>
+<span class="fc" id="L62">        this.inputStream = inputStream;</span>
+<span class="fc" id="L63">        jsonParser = mapper.getFactory().createParser(inputStream);</span>
 
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (jsonParser.nextToken() == JsonToken.START_ARRAY) {</span>
-<span class="fc" id="L45">            nextItem = readItem(jsonParser);</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (jsonParser.nextToken() == JsonToken.START_ARRAY) {</span>
+<span class="fc" id="L66">            nextItem = readItem(jsonParser);</span>
         }
-<span class="fc" id="L47">    }</span>
+<span class="fc" id="L68">    }</span>
 
     @Override
     public void close() throws Exception {
-<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if (jsonParser != null) {</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if (jsonParser != null) {</span>
             try {
-<span class="fc" id="L53">                jsonParser.close();</span>
-<span class="nc" id="L54">            } catch (IOException ex) {</span>
+<span class="fc" id="L74">                jsonParser.close();</span>
+<span class="nc" id="L75">            } catch (IOException ex) {</span>
                 //ignore
-<span class="fc" id="L56">            }</span>
+<span class="fc" id="L77">            }</span>
         }
-<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if (inputStream != null) {</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (inputStream != null) {</span>
             try {
-<span class="fc" id="L60">                inputStream.close();</span>
-<span class="nc" id="L61">            } catch (IOException ex) {</span>
+<span class="fc" id="L81">                inputStream.close();</span>
+<span class="nc" id="L82">            } catch (IOException ex) {</span>
                 //ignore
-<span class="fc" id="L63">            }</span>
+<span class="fc" id="L84">            }</span>
         }
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L86">    }</span>
 
     @Override
     public boolean hasNext() {
-<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        return nextItem != null;</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        return nextItem != null;</span>
     }
 
     @Override
     public DefCveItem next() throws IOException {
-<span class="nc" id="L74">        currentItem = nextItem;</span>
-<span class="nc" id="L75">        nextItem = readItem(jsonParser);</span>
-<span class="nc" id="L76">        return currentItem;</span>
+<span class="nc" id="L95">        currentItem = nextItem;</span>
+<span class="nc" id="L96">        nextItem = readItem(jsonParser);</span>
+<span class="nc" id="L97">        return currentItem;</span>
     }
 
     private DefCveItem readItem(JsonParser jsonParser) throws IOException {
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (jsonParser.nextToken() == JsonToken.START_OBJECT) {</span>
-<span class="nc" id="L81">            return mapper.readValue(jsonParser, DefCveItem.class);</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        if (jsonParser.nextToken() == JsonToken.START_OBJECT) {</span>
+<span class="nc" id="L102">            return mapper.readValue(jsonParser, DefCveItem.class);</span>
         }
-<span class="fc" id="L83">        return null;</span>
+<span class="fc" id="L104">        return null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

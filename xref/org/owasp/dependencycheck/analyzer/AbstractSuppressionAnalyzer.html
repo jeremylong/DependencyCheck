@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>AbstractSuppressionAnalyzer xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -353,105 +353,106 @@
 <a class="jxr_linenumber" name="L345" href="#L345">345</a>                 deleteTempFile = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L346" href="#L346">346</a>                 file = getSettings().getTempFile(<span class="jxr_string">"suppression"</span>, <span class="jxr_string">"xml"</span>);
 <a class="jxr_linenumber" name="L347" href="#L347">347</a>                 <strong class="jxr_keyword">final</strong> URL url = <strong class="jxr_keyword">new</strong> URL(suppressionFilePath);
-<a class="jxr_linenumber" name="L348" href="#L348">348</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/utils/Downloader.html">Downloader</a> downloader = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/utils/Downloader.html">Downloader</a>(getSettings());
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>                     downloader.fetchFile(url, file, false, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>                     Downloader.getInstance().fetchFile(url, file, false, Settings.KEYS.SUPPRESSION_FILE_USER,
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>                             Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
 <a class="jxr_linenumber" name="L351" href="#L351">351</a>                 } <strong class="jxr_keyword">catch</strong> (DownloadFailedException ex) {
 <a class="jxr_linenumber" name="L352" href="#L352">352</a>                     LOGGER.trace(<span class="jxr_string">"Failed download suppression file - first attempt"</span>, ex);
 <a class="jxr_linenumber" name="L353" href="#L353">353</a>                     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L354" href="#L354">354</a>                         Thread.sleep(500);
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>                         downloader.fetchFile(url, file, <strong class="jxr_keyword">true</strong>, Settings.KEYS.SUPPRESSION_FILE_USER, Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>                     } <strong class="jxr_keyword">catch</strong> (TooManyRequestsException ex1) {
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>                                 + <span class="jxr_string">"`; received 429 - too many requests"</span>, ex1);
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>                     } <strong class="jxr_keyword">catch</strong> (ResourceNotFoundException ex1) {
-<a class="jxr_linenumber" name="L360" href="#L360">360</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>                                 + <span class="jxr_string">"`; received 404 - resource not found"</span>, ex1);
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>                     } <strong class="jxr_keyword">catch</strong> (InterruptedException ex1) {
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>                         Thread.currentThread().interrupt();
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file + <span class="jxr_string">"`"</span>, ex1);
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>                     }
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>                 } <strong class="jxr_keyword">catch</strong> (TooManyRequestsException ex) {
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>                             + <span class="jxr_string">"`; received 429 - too many requests"</span>, ex);
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>                 } <strong class="jxr_keyword">catch</strong> (ResourceNotFoundException ex) {
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file + <span class="jxr_string">"`; received 404 - resource not found"</span>, ex);
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>                 }
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>                 file = <strong class="jxr_keyword">new</strong> File(suppressionFilePath);
-<a class="jxr_linenumber" name="L374" href="#L374">374</a> 
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>                 <strong class="jxr_keyword">if</strong> (!file.exists()) {
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>                     <strong class="jxr_keyword">try</strong> (InputStream suppressionFromClasspath = FileUtils.getResourceAsStream(suppressionFilePath)) {
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>                         deleteTempFile = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>                         file = getSettings().getTempFile(<span class="jxr_string">"suppression"</span>, <span class="jxr_string">"xml"</span>);
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>                         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>                             Files.copy(suppressionFromClasspath, file.toPath());
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>                         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>                             throwSuppressionParseException(<span class="jxr_string">"Unable to locate suppression file in classpath"</span>, ex, suppressionFilePath);
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>                         }
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>                     }
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>                 }
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>             }
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>             <strong class="jxr_keyword">if</strong> (file != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>                 <strong class="jxr_keyword">if</strong> (!file.exists()) {
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>                     <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Suppression file '%s' does not exist"</span>, file.getPath());
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>                     LOGGER.warn(msg);
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(msg);
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>                 }
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>                     list.addAll(parser.parseSuppressionRules(file));
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>                 } <strong class="jxr_keyword">catch</strong> (SuppressionParseException ex) {
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>                     LOGGER.warn(<span class="jxr_string">"Unable to parse suppression xml file '{}'"</span>, file.getPath());
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>                     LOGGER.warn(ex.getMessage());
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>                     <strong class="jxr_keyword">throw</strong> ex;
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>                 }
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>             }
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>         } <strong class="jxr_keyword">catch</strong> (DownloadFailedException ex) {
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>             throwSuppressionParseException(<span class="jxr_string">"Unable to fetch the configured suppression file"</span>, ex, suppressionFilePath);
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>         } <strong class="jxr_keyword">catch</strong> (MalformedURLException ex) {
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>             throwSuppressionParseException(<span class="jxr_string">"Configured suppression file has an invalid URL"</span>, ex, suppressionFilePath);
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>         } <strong class="jxr_keyword">catch</strong> (SuppressionParseException ex) {
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>             <strong class="jxr_keyword">throw</strong> ex;
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>             throwSuppressionParseException(<span class="jxr_string">"Unable to read suppression file"</span>, ex, suppressionFilePath);
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>         } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>             <strong class="jxr_keyword">if</strong> (deleteTempFile &amp;&amp; file != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>                 FileUtils.delete(file);
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>             }
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>         }
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>         <strong class="jxr_keyword">return</strong> list;
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>     }
-<a class="jxr_linenumber" name="L416" href="#L416">416</a> 
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L418" href="#L418">418</a> <em class="jxr_javadoccomment">     * Utility method to throw parse exceptions.</em>
-<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">     * @param message the exception message</em>
-<a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">     * @param exception the cause of the exception</em>
-<a class="jxr_linenumber" name="L422" href="#L422">422</a> <em class="jxr_javadoccomment">     * @param suppressionFilePath the path file</em>
-<a class="jxr_linenumber" name="L423" href="#L423">423</a> <em class="jxr_javadoccomment">     * @throws SuppressionParseException throws the generated</em>
-<a class="jxr_linenumber" name="L424" href="#L424">424</a> <em class="jxr_javadoccomment">     * SuppressionParseException</em>
-<a class="jxr_linenumber" name="L425" href="#L425">425</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> throwSuppressionParseException(String message, Exception exception, String suppressionFilePath) <strong class="jxr_keyword">throws</strong> SuppressionParseException {
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>         LOGGER.warn(String.format(message + <span class="jxr_string">" '%s'"</span>, suppressionFilePath));
-<a class="jxr_linenumber" name="L428" href="#L428">428</a>         LOGGER.debug(<span class="jxr_string">""</span>, exception);
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(message, exception);
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>     }
-<a class="jxr_linenumber" name="L431" href="#L431">431</a> 
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L433" href="#L433">433</a> <em class="jxr_javadoccomment">     * Returns the number of suppression rules currently loaded in the engine.</em>
-<a class="jxr_linenumber" name="L434" href="#L434">434</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L435" href="#L435">435</a> <em class="jxr_javadoccomment">     * @param engine a reference to the ODC engine</em>
-<a class="jxr_linenumber" name="L436" href="#L436">436</a> <em class="jxr_javadoccomment">     * @return the count of rules loaded</em>
-<a class="jxr_linenumber" name="L437" href="#L437">437</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> getRuleCount(<a href="../../../../org/owasp/dependencycheck/Engine.html">Engine</a> engine) {
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>         <strong class="jxr_keyword">if</strong> (engine.hasObject(SUPPRESSION_OBJECT_KEY)) {
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>             @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>             <strong class="jxr_keyword">final</strong> List&lt;SuppressionRule&gt; rules = (List&lt;SuppressionRule&gt;) engine.getObject(SUPPRESSION_OBJECT_KEY);
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>             <strong class="jxr_keyword">return</strong> rules.size();
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>         }
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>         <strong class="jxr_keyword">return</strong> 0;
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>     }
-<a class="jxr_linenumber" name="L446" href="#L446">446</a> }
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>                         Downloader.getInstance().fetchFile(url, file, <strong class="jxr_keyword">true</strong>, Settings.KEYS.SUPPRESSION_FILE_USER,
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>                                 Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>                     } <strong class="jxr_keyword">catch</strong> (TooManyRequestsException ex1) {
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>                                 + <span class="jxr_string">"`; received 429 - too many requests"</span>, ex1);
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>                     } <strong class="jxr_keyword">catch</strong> (ResourceNotFoundException ex1) {
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>                                 + <span class="jxr_string">"`; received 404 - resource not found"</span>, ex1);
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>                     } <strong class="jxr_keyword">catch</strong> (InterruptedException ex1) {
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>                         Thread.currentThread().interrupt();
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file + <span class="jxr_string">"`"</span>, ex1);
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>                     }
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>                 } <strong class="jxr_keyword">catch</strong> (TooManyRequestsException ex) {
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>                             + <span class="jxr_string">"`; received 429 - too many requests"</span>, ex);
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>                 } <strong class="jxr_keyword">catch</strong> (ResourceNotFoundException ex) {
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file + <span class="jxr_string">"`; received 404 - resource not found"</span>, ex);
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>                 }
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>                 file = <strong class="jxr_keyword">new</strong> File(suppressionFilePath);
+<a class="jxr_linenumber" name="L375" href="#L375">375</a> 
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>                 <strong class="jxr_keyword">if</strong> (!file.exists()) {
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>                     <strong class="jxr_keyword">try</strong> (InputStream suppressionFromClasspath = FileUtils.getResourceAsStream(suppressionFilePath)) {
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>                         deleteTempFile = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>                         file = getSettings().getTempFile(<span class="jxr_string">"suppression"</span>, <span class="jxr_string">"xml"</span>);
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>                         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>                             Files.copy(suppressionFromClasspath, file.toPath());
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>                         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>                             throwSuppressionParseException(<span class="jxr_string">"Unable to locate suppression file in classpath"</span>, ex, suppressionFilePath);
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>                         }
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>                     }
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>                 }
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>             }
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>             <strong class="jxr_keyword">if</strong> (file != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>                 <strong class="jxr_keyword">if</strong> (!file.exists()) {
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>                     <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"Suppression file '%s' does not exist"</span>, file.getPath());
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>                     LOGGER.warn(msg);
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(msg);
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>                 }
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>                     list.addAll(parser.parseSuppressionRules(file));
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>                 } <strong class="jxr_keyword">catch</strong> (SuppressionParseException ex) {
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>                     LOGGER.warn(<span class="jxr_string">"Unable to parse suppression xml file '{}'"</span>, file.getPath());
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>                     LOGGER.warn(ex.getMessage());
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>                     <strong class="jxr_keyword">throw</strong> ex;
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>                 }
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>             }
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>         } <strong class="jxr_keyword">catch</strong> (DownloadFailedException ex) {
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>             throwSuppressionParseException(<span class="jxr_string">"Unable to fetch the configured suppression file"</span>, ex, suppressionFilePath);
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>         } <strong class="jxr_keyword">catch</strong> (MalformedURLException ex) {
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>             throwSuppressionParseException(<span class="jxr_string">"Configured suppression file has an invalid URL"</span>, ex, suppressionFilePath);
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>         } <strong class="jxr_keyword">catch</strong> (SuppressionParseException ex) {
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>             <strong class="jxr_keyword">throw</strong> ex;
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>         } <strong class="jxr_keyword">catch</strong> (IOException ex) {
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>             throwSuppressionParseException(<span class="jxr_string">"Unable to read suppression file"</span>, ex, suppressionFilePath);
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>             <strong class="jxr_keyword">if</strong> (deleteTempFile &amp;&amp; file != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>                 FileUtils.delete(file);
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>             }
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>         }
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>         <strong class="jxr_keyword">return</strong> list;
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>     }
+<a class="jxr_linenumber" name="L417" href="#L417">417</a> 
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">     * Utility method to throw parse exceptions.</em>
+<a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">     * @param message the exception message</em>
+<a class="jxr_linenumber" name="L422" href="#L422">422</a> <em class="jxr_javadoccomment">     * @param exception the cause of the exception</em>
+<a class="jxr_linenumber" name="L423" href="#L423">423</a> <em class="jxr_javadoccomment">     * @param suppressionFilePath the path file</em>
+<a class="jxr_linenumber" name="L424" href="#L424">424</a> <em class="jxr_javadoccomment">     * @throws SuppressionParseException throws the generated</em>
+<a class="jxr_linenumber" name="L425" href="#L425">425</a> <em class="jxr_javadoccomment">     * SuppressionParseException</em>
+<a class="jxr_linenumber" name="L426" href="#L426">426</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> throwSuppressionParseException(String message, Exception exception, String suppressionFilePath) <strong class="jxr_keyword">throws</strong> SuppressionParseException {
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>         LOGGER.warn(String.format(message + <span class="jxr_string">" '%s'"</span>, suppressionFilePath));
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>         LOGGER.debug(<span class="jxr_string">""</span>, exception);
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(message, exception);
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>     }
+<a class="jxr_linenumber" name="L432" href="#L432">432</a> 
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L434" href="#L434">434</a> <em class="jxr_javadoccomment">     * Returns the number of suppression rules currently loaded in the engine.</em>
+<a class="jxr_linenumber" name="L435" href="#L435">435</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L436" href="#L436">436</a> <em class="jxr_javadoccomment">     * @param engine a reference to the ODC engine</em>
+<a class="jxr_linenumber" name="L437" href="#L437">437</a> <em class="jxr_javadoccomment">     * @return the count of rules loaded</em>
+<a class="jxr_linenumber" name="L438" href="#L438">438</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> getRuleCount(<a href="../../../../org/owasp/dependencycheck/Engine.html">Engine</a> engine) {
+<a class="jxr_linenumber" name="L440" href="#L440">440</a>         <strong class="jxr_keyword">if</strong> (engine.hasObject(SUPPRESSION_OBJECT_KEY)) {
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>             @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>             <strong class="jxr_keyword">final</strong> List&lt;SuppressionRule&gt; rules = (List&lt;SuppressionRule&gt;) engine.getObject(SUPPRESSION_OBJECT_KEY);
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>             <strong class="jxr_keyword">return</strong> rules.size();
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>         }
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>         <strong class="jxr_keyword">return</strong> 0;
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>     }
+<a class="jxr_linenumber" name="L447" href="#L447">447</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2024 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

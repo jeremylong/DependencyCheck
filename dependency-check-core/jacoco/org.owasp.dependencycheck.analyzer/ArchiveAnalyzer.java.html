@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ArchiveAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">ArchiveAnalyzer.java</span></div><h1>ArchiveAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ArchiveAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">ArchiveAnalyzer.java</span></div><h1>ArchiveAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -28,7 +28,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2Utils;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipUtils;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.packager.rpm.RpmTag;
 import org.eclipse.packager.rpm.parse.RpmInputStream;
 import org.owasp.dependencycheck.Engine;
@@ -345,7 +345,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @throws AnalysisException thrown if there is an issue
      */
     private void addDisguisedJarsToDependencies(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="pc bpc" id="L348" title="3 of 4 branches missed.">        if (ZIP_FILTER.accept(dependency.getActualFile()) &amp;&amp; isZipFileActuallyJarFile(dependency)) {</span>
+<span class="pc bpc" id="L348" title="1 of 4 branches missed.">        if (ZIP_FILTER.accept(dependency.getActualFile()) &amp;&amp; isZipFileActuallyJarFile(dependency)) {</span>
 <span class="nc" id="L349">            final File tempDir = getNextTempDirectory();</span>
 <span class="nc" id="L350">            final String fileName = dependency.getFileName();</span>
 
@@ -460,9 +460,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 <span class="fc" id="L460">                    tin = new TarArchiveInputStream(in);</span>
 <span class="fc" id="L461">                    extractArchive(tin, destination, engine);</span>
 <span class="fc bfc" id="L462" title="All 4 branches covered.">                } else if (&quot;gz&quot;.equals(archiveExt) || &quot;tgz&quot;.equals(archiveExt)) {</span>
-<span class="fc" id="L463">                    final String uncompressedName = GzipUtils.getUncompressedFilename(archive.getName());</span>
+<span class="fc" id="L463">                    final String uncompressedName = GzipUtils.getUncompressedFileName(archive.getName());</span>
 <span class="fc" id="L464">                    final File f = new File(destination, uncompressedName);</span>
-<span class="pc bpc" id="L465" title="1 of 2 branches missed.">                    if (engine.accept(f)) {</span>
+<span class="fc bfc" id="L465" title="All 2 branches covered.">                    if (engine.accept(f)) {</span>
 <span class="fc" id="L466">                        final String destPath = destination.getCanonicalPath();</span>
 <span class="pc bpc" id="L467" title="1 of 2 branches missed.">                        if (!f.getCanonicalPath().startsWith(destPath)) {</span>
 <span class="nc" id="L468">                            final String msg = String.format(</span>
@@ -475,7 +475,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 <span class="fc" id="L475">                        decompressFile(gin, f);</span>
                     }
 <span class="fc bfc" id="L477" title="All 4 branches covered.">                } else if (&quot;bz2&quot;.equals(archiveExt) || &quot;tbz2&quot;.equals(archiveExt)) {</span>
-<span class="fc" id="L478">                    final String uncompressedName = BZip2Utils.getUncompressedFilename(archive.getName());</span>
+<span class="fc" id="L478">                    final String uncompressedName = BZip2Utils.getUncompressedFileName(archive.getName());</span>
 <span class="fc" id="L479">                    final File f = new File(destination, uncompressedName);</span>
 <span class="pc bpc" id="L480" title="1 of 2 branches missed.">                    if (engine.accept(f)) {</span>
 <span class="fc" id="L481">                        final String destPath = destination.getCanonicalPath();</span>
@@ -497,10 +497,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 <span class="fc" id="L497">                    cain = new CpioArchiveInputStream(rin);</span>
 <span class="fc" id="L498">                    extractArchive(cain, destination, engine);</span>
                 }
-<span class="nc" id="L500">            } catch (ArchiveExtractionException ex) {</span>
-<span class="nc" id="L501">                LOGGER.error(&quot;Exception extracting archive '{}'.&quot;, archive.getName());</span>
-<span class="nc" id="L502">                LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L503">                throw new AnalysisException(ex.getMessage(), ex);</span>
+<span class="fc" id="L500">            } catch (ArchiveExtractionException ex) {</span>
+<span class="fc" id="L501">                LOGGER.error(&quot;Exception extracting archive '{}'.&quot;, archive.getName());</span>
+<span class="fc" id="L502">                LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L503">                throw new AnalysisException(ex.getMessage(), ex);</span>
 <span class="nc" id="L504">            } catch (IOException ex) {</span>
 <span class="nc" id="L505">                LOGGER.error(&quot;Exception reading archive '{}'.&quot;, archive.getName());</span>
 <span class="nc" id="L506">                LOGGER.debug(&quot;&quot;, ex);</span>
@@ -581,12 +581,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 <span class="fc bfc" id="L581" title="All 2 branches covered.">            while ((entry = input.getNextEntry()) != null) {</span>
                 //final File file = new File(destination, entry.getName());
 <span class="fc" id="L583">                final Path f = d.resolve(entry.getName()).normalize();</span>
-<span class="pc bpc" id="L584" title="1 of 2 branches missed.">                if (!f.startsWith(d)) {</span>
-<span class="nc" id="L585">                    LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + d + &quot;\n-Path: &quot; + f);</span>
-<span class="nc" id="L586">                    final String msg = String.format(</span>
+<span class="fc bfc" id="L584" title="All 2 branches covered.">                if (!f.startsWith(d)) {</span>
+<span class="fc" id="L585">                    LOGGER.debug(&quot;ZipSlip detected\n-Destination: &quot; + d + &quot;\n-Path: &quot; + f);</span>
+<span class="fc" id="L586">                    final String msg = String.format(</span>
                             &quot;Archive contains a file (%s) that would be extracted outside of the target directory.&quot;,
-<span class="nc" id="L588">                            entry.getName());</span>
-<span class="nc" id="L589">                    throw new ArchiveExtractionException(msg);</span>
+<span class="fc" id="L588">                            entry.getName());</span>
+<span class="fc" id="L589">                    throw new ArchiveExtractionException(msg);</span>
                 }
 <span class="fc" id="L591">                final File file = f.toFile();</span>
 <span class="fc bfc" id="L592" title="All 2 branches covered.">                if (entry.isDirectory()) {</span>
@@ -630,12 +630,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 <span class="nc" id="L630">                    throw new ArchiveExtractionException(msg);</span>
                 }
 <span class="fc" id="L632">                final File file = f.toFile();</span>
-<span class="pc bpc" id="L633" title="1 of 2 branches missed.">                if (entry.isDirectory()) {</span>
-<span class="nc bnc" id="L634" title="All 4 branches missed.">                    if (!file.exists() &amp;&amp; !file.mkdirs()) {</span>
+<span class="fc bfc" id="L633" title="All 2 branches covered.">                if (entry.isDirectory()) {</span>
+<span class="pc bpc" id="L634" title="2 of 4 branches missed.">                    if (!file.exists() &amp;&amp; !file.mkdirs()) {</span>
 <span class="nc" id="L635">                        final String msg = String.format(&quot;Unable to create directory '%s'.&quot;, file.getAbsolutePath());</span>
 <span class="nc" id="L636">                        throw new AnalysisException(msg);</span>
                     }
-<span class="pc bpc" id="L638" title="1 of 2 branches missed.">                } else if (engine.accept(file)) {</span>
+<span class="fc bfc" id="L638" title="All 2 branches covered.">                } else if (engine.accept(file)) {</span>
 <span class="fc" id="L639">                    extractAcceptedFile(input, file);</span>
                 }
 <span class="fc" id="L641">            }</span>
@@ -656,7 +656,7 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
     private static void extractAcceptedFile(ZipInputStream input, File file) throws AnalysisException {
 <span class="fc" id="L657">        LOGGER.debug(&quot;Extracting '{}'&quot;, file.getPath());</span>
 <span class="fc" id="L658">        final File parent = file.getParentFile();</span>
-<span class="pc bpc" id="L659" title="3 of 4 branches missed.">        if (!parent.isDirectory() &amp;&amp; !parent.mkdirs()) {</span>
+<span class="pc bpc" id="L659" title="1 of 4 branches missed.">        if (!parent.isDirectory() &amp;&amp; !parent.mkdirs()) {</span>
 <span class="nc" id="L660">            final String msg = String.format(&quot;Unable to build directory '%s'.&quot;, parent.getAbsolutePath());</span>
 <span class="nc" id="L661">            throw new AnalysisException(msg);</span>
         }
@@ -725,12 +725,12 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
      * @return true if the dependency appears to be a JAR file; otherwise false
      */
     private boolean isZipFileActuallyJarFile(Dependency dependency) {
-<span class="nc" id="L728">        boolean isJar = false;</span>
-<span class="nc" id="L729">        ZipFile zip = null;</span>
+<span class="fc" id="L728">        boolean isJar = false;</span>
+<span class="fc" id="L729">        ZipFile zip = null;</span>
         try {
-<span class="nc" id="L731">            zip = new ZipFile(dependency.getActualFilePath());</span>
-<span class="nc bnc" id="L732" title="All 2 branches missed.">            if (zip.getEntry(&quot;META-INF/MANIFEST.MF&quot;) != null</span>
-<span class="nc bnc" id="L733" title="All 2 branches missed.">                    || zip.getEntry(&quot;META-INF/maven&quot;) != null) {</span>
+<span class="fc" id="L731">            zip = ZipFile.builder().setFile(dependency.getActualFilePath()).get();</span>
+<span class="pc bpc" id="L732" title="1 of 2 branches missed.">            if (zip.getEntry(&quot;META-INF/MANIFEST.MF&quot;) != null</span>
+<span class="pc bpc" id="L733" title="1 of 2 branches missed.">                    || zip.getEntry(&quot;META-INF/maven&quot;) != null) {</span>
 <span class="nc" id="L734">                final Enumeration&lt;ZipArchiveEntry&gt; entries = zip.getEntries();</span>
 <span class="nc bnc" id="L735" title="All 2 branches missed.">                while (entries.hasMoreElements()) {</span>
 <span class="nc" id="L736">                    final ZipArchiveEntry entry = entries.nextElement();</span>
@@ -746,9 +746,9 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 <span class="nc" id="L746">        } catch (IOException ex) {</span>
 <span class="nc" id="L747">            LOGGER.debug(&quot;Unable to unzip zip file '{}'&quot;, dependency.getFilePath(), ex);</span>
         } finally {
-<span class="nc" id="L749">            ZipFile.closeQuietly(zip);</span>
+<span class="fc" id="L749">            ZipFile.closeQuietly(zip);</span>
         }
-<span class="nc" id="L751">        return isJar;</span>
+<span class="fc" id="L751">        return isJar;</span>
     }
 
     /**
@@ -760,10 +760,10 @@ public class ArchiveAnalyzer extends AbstractFileTypeAnalyzer {
 <span class="fc" id="L760">        final Set&lt;String&gt; extensions = new HashSet&lt;&gt;(EXTENSIONS);</span>
 <span class="fc" id="L761">        extensions.addAll(KNOWN_ZIP_EXT);</span>
 <span class="fc" id="L762">        final String additionalZipExt = getSettings().getString(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS);</span>
-<span class="pc bpc" id="L763" title="1 of 2 branches missed.">        if (additionalZipExt != null) {</span>
-<span class="nc" id="L764">            final String[] ext = additionalZipExt.split(&quot;\\s*,\\s*&quot;);</span>
-<span class="nc" id="L765">            Collections.addAll(extensions, ext);</span>
-<span class="nc" id="L766">            Collections.addAll(ADDITIONAL_ZIP_EXT, ext);</span>
+<span class="fc bfc" id="L763" title="All 2 branches covered.">        if (additionalZipExt != null) {</span>
+<span class="fc" id="L764">            final String[] ext = additionalZipExt.split(&quot;\\s*,\\s*&quot;);</span>
+<span class="fc" id="L765">            Collections.addAll(extensions, ext);</span>
+<span class="fc" id="L766">            Collections.addAll(ADDITIONAL_ZIP_EXT, ext);</span>
         }
 <span class="fc" id="L768">        fileFilter = FileFilterBuilder.newInstance().addExtensions(extensions).build();</span>
 <span class="fc" id="L769">    }</span>

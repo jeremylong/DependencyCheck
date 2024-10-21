@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>YarnAuditAnalyzer xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -288,7 +288,7 @@
 <a class="jxr_linenumber" name="L280" href="#L280">280</a>             <strong class="jxr_keyword">final</strong> JsonObject lockJson = fetchYarnAuditJson(dependency, skipDevDependencies);
 <a class="jxr_linenumber" name="L281" href="#L281">281</a>             <em class="jxr_comment">// Retrieves the contents of package-lock.json from the Dependency</em>
 <a class="jxr_linenumber" name="L282" href="#L282">282</a>             <strong class="jxr_keyword">final</strong> JsonObject packageJson;
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>             <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> JsonReader packageReader = Json.createReader(Files.newInputStream(packageFile.toPath()))) {
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>             <strong class="jxr_keyword">try</strong> (JsonReader packageReader = Json.createReader(Files.newInputStream(packageFile.toPath()))) {
 <a class="jxr_linenumber" name="L284" href="#L284">284</a>                 packageJson = packageReader.readObject();
 <a class="jxr_linenumber" name="L285" href="#L285">285</a>             }
 <a class="jxr_linenumber" name="L286" href="#L286">286</a>             <em class="jxr_comment">// Modify the payload to meet the NPM Audit API requirements</em>

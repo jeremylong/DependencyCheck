@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CveApiJson20CveItemSource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.update.nvd.api</a> &gt; <span class="el_source">CveApiJson20CveItemSource.java</span></div><h1>CveApiJson20CveItemSource.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CveApiJson20CveItemSource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.update.nvd.api</a> &gt; <span class="el_source">CveApiJson20CveItemSource.java</span></div><h1>CveApiJson20CveItemSource.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -29,52 +29,74 @@ import java.io.InputStream;
 
 public class CveApiJson20CveItemSource implements CveItemSource&lt;DefCveItem&gt; {
 
+    /**
+     * The object mapper.
+     */
     private final ObjectMapper mapper;
+    /**
+     * The input stream.
+     */
     private final InputStream inputStream;
+    /**
+     * The JSON Parser
+     */
     private final JsonParser jsonParser;
+    /**
+     * The current item.
+     */
     private DefCveItem currentItem;
+    /**
+     * The next item.
+     */
     private DefCveItem nextItem;
 
-<span class="nc" id="L38">    public CveApiJson20CveItemSource(InputStream inputStream) throws IOException {</span>
-<span class="nc" id="L39">        mapper = new ObjectMapper();</span>
-<span class="nc" id="L40">        mapper.registerModule(new JavaTimeModule());</span>
-<span class="nc" id="L41">        this.inputStream = inputStream;</span>
-<span class="nc" id="L42">        jsonParser = mapper.getFactory().createParser(inputStream);</span>
+    /**
+     * Constructs a CVE Item Source record.
+     *
+     * @param inputStream the input source to read from
+     * @throws IOException thrown if there is an issue reading from the input
+     * stream
+     */
+<span class="nc" id="L60">    public CveApiJson20CveItemSource(InputStream inputStream) throws IOException {</span>
+<span class="nc" id="L61">        mapper = new ObjectMapper();</span>
+<span class="nc" id="L62">        mapper.registerModule(new JavaTimeModule());</span>
+<span class="nc" id="L63">        this.inputStream = inputStream;</span>
+<span class="nc" id="L64">        jsonParser = mapper.getFactory().createParser(inputStream);</span>
 
-<span class="nc" id="L44">        JsonToken token = null;</span>
+<span class="nc" id="L66">        JsonToken token = null;</span>
         do {
-<span class="nc" id="L46">            token = jsonParser.nextToken();</span>
-<span class="nc bnc" id="L47" title="All 2 branches missed.">            if (token == JsonToken.FIELD_NAME) {</span>
-<span class="nc" id="L48">                String fieldName = jsonParser.getCurrentName();</span>
-<span class="nc bnc" id="L49" title="All 4 branches missed.">                if (fieldName.equals(&quot;vulnerabilities&quot;) &amp;&amp; (jsonParser.nextToken() == JsonToken.START_ARRAY)) {</span>
-<span class="nc" id="L50">                    nextItem = readItem(jsonParser);</span>
+<span class="nc" id="L68">            token = jsonParser.nextToken();</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            if (token == JsonToken.FIELD_NAME) {</span>
+<span class="nc" id="L70">                final String fieldName = jsonParser.currentName();</span>
+<span class="nc bnc" id="L71" title="All 4 branches missed.">                if (&quot;vulnerabilities&quot;.equals(fieldName) &amp;&amp; (jsonParser.nextToken() == JsonToken.START_ARRAY)) {</span>
+<span class="nc" id="L72">                    nextItem = readItem(jsonParser);</span>
                 }
             }
-<span class="nc bnc" id="L53" title="All 4 branches missed.">        } while (token != null &amp;&amp; nextItem == null);</span>
-<span class="nc" id="L54">    }</span>
+<span class="nc bnc" id="L75" title="All 4 branches missed.">        } while (token != null &amp;&amp; nextItem == null);</span>
+<span class="nc" id="L76">    }</span>
 
     @Override
     public void close() throws Exception {
-<span class="nc" id="L58">        IOUtils.closeQuietly(jsonParser, inputStream);</span>
-<span class="nc" id="L59">    }</span>
+<span class="nc" id="L80">        IOUtils.closeQuietly(jsonParser, inputStream);</span>
+<span class="nc" id="L81">    }</span>
 
     @Override
     public boolean hasNext() {
-<span class="nc bnc" id="L63" title="All 2 branches missed.">        return nextItem != null;</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        return nextItem != null;</span>
     }
 
     @Override
     public DefCveItem next() throws IOException {
-<span class="nc" id="L68">        currentItem = nextItem;</span>
-<span class="nc" id="L69">        nextItem = readItem(jsonParser);</span>
-<span class="nc" id="L70">        return currentItem;</span>
+<span class="nc" id="L90">        currentItem = nextItem;</span>
+<span class="nc" id="L91">        nextItem = readItem(jsonParser);</span>
+<span class="nc" id="L92">        return currentItem;</span>
     }
 
     private DefCveItem readItem(JsonParser jsonParser) throws IOException {
-<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (jsonParser.nextToken() == JsonToken.START_OBJECT) {</span>
-<span class="nc" id="L75">            return mapper.readValue(jsonParser, DefCveItem.class);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (jsonParser.nextToken() == JsonToken.START_OBJECT) {</span>
+<span class="nc" id="L97">            return mapper.readValue(jsonParser, DefCveItem.class);</span>
         }
-<span class="nc" id="L77">        return null;</span>
+<span class="nc" id="L99">        return null;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

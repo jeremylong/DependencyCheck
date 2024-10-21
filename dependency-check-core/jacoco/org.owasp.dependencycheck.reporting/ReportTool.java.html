@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReportTool.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.reporting</a> &gt; <span class="el_source">ReportTool.java</span></div><h1>ReportTool.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReportTool.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.reporting</a> &gt; <span class="el_source">ReportTool.java</span></div><h1>ReportTool.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -122,21 +122,26 @@ import us.springett.parsers.cpe.util.Convert;
 <span class="nc" id="L122">        return &quot;unknown&quot;;</span>
     }
 
+    /**
+     * Map severity names from various sources to a standard set of severity names.
+     * @param sev the severity name
+     * @return the standardized severity name (critical, high, medium, low, unknown)
+     */
     public String normalizeSeverity(String sev) {
-<span class="pc bpc" id="L126" title="1 of 5 branches missed.">        switch (sev.toLowerCase()) {</span>
+<span class="pc bpc" id="L131" title="1 of 5 branches missed.">        switch (sev.toLowerCase()) {</span>
             case &quot;critical&quot;:
-<span class="fc" id="L128">                return &quot;critical&quot;;</span>
+<span class="fc" id="L133">                return &quot;critical&quot;;</span>
             case &quot;high&quot;:
-<span class="fc" id="L130">                return &quot;high&quot;;</span>
+<span class="fc" id="L135">                return &quot;high&quot;;</span>
             case &quot;medium&quot;:
             case &quot;moderate&quot;:
-<span class="fc" id="L133">                return &quot;medium&quot;;</span>
+<span class="fc" id="L138">                return &quot;medium&quot;;</span>
             case &quot;low&quot;:
             case &quot;informational&quot;:
             case &quot;info&quot;:
-<span class="fc" id="L137">                return &quot;low&quot;;</span>
+<span class="fc" id="L142">                return &quot;low&quot;;</span>
             default:
-<span class="nc" id="L139">                return &quot;unknown&quot;;</span>
+<span class="nc" id="L144">                return &quot;unknown&quot;;</span>
         }
     }
 
@@ -149,61 +154,61 @@ import us.springett.parsers.cpe.util.Convert;
      * @return the short description
      */
     private String buildShortDescription(Dependency d, Vulnerability vuln, boolean knownExploited) {
-<span class="fc" id="L152">        final StringBuilder sb = new StringBuilder();</span>
-<span class="fc" id="L153">        sb.append(determineScore(vuln))</span>
-<span class="fc" id="L154">                .append(&quot; severity - &quot;)</span>
-<span class="fc" id="L155">                .append(vuln.getName());</span>
-<span class="pc bpc" id="L156" title="1 of 4 branches missed.">        if (vuln.getCwes() != null &amp;&amp; !vuln.getCwes().isEmpty()) {</span>
-<span class="fc" id="L157">            final String cwe = vuln.getCwes().getFullCwes().values().iterator().next();</span>
-<span class="pc bpc" id="L158" title="2 of 6 branches missed.">            if (cwe != null &amp;&amp; !&quot;NVD-CWE-Other&quot;.equals(cwe) &amp;&amp; !&quot;NVD-CWE-noinfo&quot;.equals(cwe)) {</span>
-<span class="fc" id="L159">                sb.append(&quot; &quot;).append(cwe);</span>
+<span class="fc" id="L157">        final StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L158">        sb.append(determineScore(vuln))</span>
+<span class="fc" id="L159">                .append(&quot; severity - &quot;)</span>
+<span class="fc" id="L160">                .append(vuln.getName());</span>
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">        if (vuln.getCwes() != null &amp;&amp; !vuln.getCwes().isEmpty()) {</span>
+<span class="fc" id="L162">            final String cwe = vuln.getCwes().getFullCwes().values().iterator().next();</span>
+<span class="pc bpc" id="L163" title="2 of 6 branches missed.">            if (cwe != null &amp;&amp; !&quot;NVD-CWE-Other&quot;.equals(cwe) &amp;&amp; !&quot;NVD-CWE-noinfo&quot;.equals(cwe)) {</span>
+<span class="fc" id="L164">                sb.append(&quot; &quot;).append(cwe);</span>
             }
         }
-<span class="fc" id="L162">        sb.append(&quot; vulnerability in &quot;);</span>
-<span class="pc bpc" id="L163" title="2 of 4 branches missed.">        if (d.getSoftwareIdentifiers() != null &amp;&amp; !d.getSoftwareIdentifiers().isEmpty()) {</span>
-<span class="fc" id="L164">            sb.append(d.getSoftwareIdentifiers().iterator().next());</span>
+<span class="fc" id="L167">        sb.append(&quot; vulnerability in &quot;);</span>
+<span class="pc bpc" id="L168" title="1 of 4 branches missed.">        if (d.getSoftwareIdentifiers() != null &amp;&amp; !d.getSoftwareIdentifiers().isEmpty()) {</span>
+<span class="fc" id="L169">            sb.append(d.getSoftwareIdentifiers().iterator().next());</span>
         } else {
-<span class="nc" id="L166">            sb.append(d.getDisplayFileName());</span>
+<span class="fc" id="L171">            sb.append(d.getDisplayFileName());</span>
         }
-<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        if (knownExploited) {</span>
-<span class="nc" id="L169">            sb.append(&quot; *Known Exploited Vulnerability*&quot;);</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if (knownExploited) {</span>
+<span class="nc" id="L174">            sb.append(&quot; *Known Exploited Vulnerability*&quot;);</span>
         }
-<span class="fc" id="L171">        return sb.toString();</span>
+<span class="fc" id="L176">        return sb.toString();</span>
     }
 
     private String buildDescription(String description,
             org.owasp.dependencycheck.data.knownexploited.json.Vulnerability knownExploitedVulnerability) {
-<span class="fc" id="L176">        final StringBuilder sb = new StringBuilder();</span>
-<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (knownExploitedVulnerability != null) {</span>
-<span class="nc" id="L178">            sb.append(&quot;CISA Known Exploited Vulnerability\n&quot;);</span>
-<span class="nc bnc" id="L179" title="All 2 branches missed.">            if (knownExploitedVulnerability.getVendorProject() != null) {</span>
-<span class="nc" id="L180">                sb.append(&quot;Vendor/Project: &quot;).append(knownExploitedVulnerability.getVendorProject()).append(&quot;\n&quot;);</span>
+<span class="fc" id="L181">        final StringBuilder sb = new StringBuilder();</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">        if (knownExploitedVulnerability != null) {</span>
+<span class="nc" id="L183">            sb.append(&quot;CISA Known Exploited Vulnerability\n&quot;);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">            if (knownExploitedVulnerability.getVendorProject() != null) {</span>
+<span class="nc" id="L185">                sb.append(&quot;Vendor/Project: &quot;).append(knownExploitedVulnerability.getVendorProject()).append(&quot;\n&quot;);</span>
             }
-<span class="nc bnc" id="L182" title="All 2 branches missed.">            if (knownExploitedVulnerability.getProduct() != null) {</span>
-<span class="nc" id="L183">                sb.append(&quot;Product: &quot;).append(knownExploitedVulnerability.getProduct()).append(&quot;\n&quot;);</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">            if (knownExploitedVulnerability.getProduct() != null) {</span>
+<span class="nc" id="L188">                sb.append(&quot;Product: &quot;).append(knownExploitedVulnerability.getProduct()).append(&quot;\n&quot;);</span>
             }
-<span class="nc bnc" id="L185" title="All 2 branches missed.">            if (knownExploitedVulnerability.getVulnerabilityName() != null) {</span>
-<span class="nc" id="L186">                sb.append(&quot;Vulnerability Name: &quot;).append(knownExploitedVulnerability.getVulnerabilityName()).append(&quot;\n&quot;);</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">            if (knownExploitedVulnerability.getVulnerabilityName() != null) {</span>
+<span class="nc" id="L191">                sb.append(&quot;Vulnerability Name: &quot;).append(knownExploitedVulnerability.getVulnerabilityName()).append(&quot;\n&quot;);</span>
             }
-<span class="nc bnc" id="L188" title="All 2 branches missed.">            if (knownExploitedVulnerability.getDateAdded() != null) {</span>
-<span class="nc" id="L189">                sb.append(&quot;Date Added: &quot;).append(knownExploitedVulnerability.getDateAdded()).append(&quot;\n&quot;);</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            if (knownExploitedVulnerability.getDateAdded() != null) {</span>
+<span class="nc" id="L194">                sb.append(&quot;Date Added: &quot;).append(knownExploitedVulnerability.getDateAdded()).append(&quot;\n&quot;);</span>
             }
-<span class="nc bnc" id="L191" title="All 2 branches missed.">            if (knownExploitedVulnerability.getShortDescription() != null) {</span>
-<span class="nc" id="L192">                sb.append(&quot;Short Description: &quot;).append(knownExploitedVulnerability.getShortDescription()).append(&quot;\n&quot;);</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">            if (knownExploitedVulnerability.getShortDescription() != null) {</span>
+<span class="nc" id="L197">                sb.append(&quot;Short Description: &quot;).append(knownExploitedVulnerability.getShortDescription()).append(&quot;\n&quot;);</span>
             }
-<span class="nc bnc" id="L194" title="All 2 branches missed.">            if (knownExploitedVulnerability.getRequiredAction() != null) {</span>
-<span class="nc" id="L195">                sb.append(&quot;Required Action: &quot;).append(knownExploitedVulnerability.getRequiredAction()).append(&quot;\n&quot;);</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">            if (knownExploitedVulnerability.getRequiredAction() != null) {</span>
+<span class="nc" id="L200">                sb.append(&quot;Required Action: &quot;).append(knownExploitedVulnerability.getRequiredAction()).append(&quot;\n&quot;);</span>
             }
-<span class="nc bnc" id="L197" title="All 2 branches missed.">            if (knownExploitedVulnerability.getDueDate() != null) {</span>
-<span class="nc" id="L198">                sb.append(&quot;Due Date&quot;).append(knownExploitedVulnerability.getDueDate()).append(&quot;\n&quot;);</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            if (knownExploitedVulnerability.getDueDate() != null) {</span>
+<span class="nc" id="L203">                sb.append(&quot;Due Date&quot;).append(knownExploitedVulnerability.getDueDate()).append(&quot;\n&quot;);</span>
             }
-<span class="nc bnc" id="L200" title="All 2 branches missed.">            if (knownExploitedVulnerability.getNotes() != null) {</span>
-<span class="nc" id="L201">                sb.append(&quot;Notes: &quot;).append(knownExploitedVulnerability.getNotes()).append(&quot;\n&quot;);</span>
+<span class="nc bnc" id="L205" title="All 2 branches missed.">            if (knownExploitedVulnerability.getNotes() != null) {</span>
+<span class="nc" id="L206">                sb.append(&quot;Notes: &quot;).append(knownExploitedVulnerability.getNotes()).append(&quot;\n&quot;);</span>
             }
-<span class="nc" id="L203">            sb.append(&quot;\n&quot;);</span>
+<span class="nc" id="L208">            sb.append(&quot;\n&quot;);</span>
         }
-<span class="fc" id="L205">        sb.append(description);</span>
-<span class="fc" id="L206">        return sb.toString();</span>
+<span class="fc" id="L210">        sb.append(description);</span>
+<span class="fc" id="L211">        return sb.toString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SSLSocketFactoryEx.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">SSLSocketFactoryEx.java</span></div><h1>SSLSocketFactoryEx.java</h1><pre class="source lang-java linenums">package org.owasp.dependencycheck.utils;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SSLSocketFactoryEx.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">SSLSocketFactoryEx.java</span></div><h1>SSLSocketFactoryEx.java</h1><pre class="source lang-java linenums">package org.owasp.dependencycheck.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     /**
      * The Logger for use throughout the class.
      */
-<span class="fc" id="L47">    private static final Logger LOGGER = LoggerFactory.getLogger(SSLSocketFactoryEx.class);</span>
+<span class="nc" id="L47">    private static final Logger LOGGER = LoggerFactory.getLogger(SSLSocketFactoryEx.class);</span>
 
     /**
      * The SSL context.
@@ -62,7 +62,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
     /**
      * Simple boolean flag to prevent logging the protocols repeatedly.
      */
-<span class="fc" id="L65">    private static boolean protocolsLogged = false;</span>
+<span class="nc" id="L65">    private static boolean protocolsLogged = false;</span>
 
     /**
      * Constructs a new SSLSocketFactory.
@@ -73,13 +73,13 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      * @throws java.security.KeyManagementException thrown if initialization
      * fails
      */
-<span class="fc" id="L76">    public SSLSocketFactoryEx(Settings settings) throws NoSuchAlgorithmException, KeyManagementException {</span>
-<span class="fc" id="L77">        this.settings = settings;</span>
-<span class="fc" id="L78">        final KeyManager[] km = getKeyManagers();</span>
-<span class="fc" id="L79">        final TrustManager[] tm = getTrustManagers();</span>
+<span class="nc" id="L76">    public SSLSocketFactoryEx(Settings settings) throws NoSuchAlgorithmException, KeyManagementException {</span>
+<span class="nc" id="L77">        this.settings = settings;</span>
+<span class="nc" id="L78">        final KeyManager[] km = getKeyManagers();</span>
+<span class="nc" id="L79">        final TrustManager[] tm = getTrustManagers();</span>
 
-<span class="fc" id="L81">        initSSLSocketFactoryEx(km, tm, null);</span>
-<span class="fc" id="L82">    }</span>
+<span class="nc" id="L81">        initSSLSocketFactoryEx(km, tm, null);</span>
+<span class="nc" id="L82">    }</span>
 
     /**
      * Constructs a new SSLSocketFactory.
@@ -159,12 +159,12 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     @Override
     public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
-<span class="fc" id="L162">        final SSLSocketFactory factory = sslCtxt.getSocketFactory();</span>
-<span class="fc" id="L163">        final SSLSocket ss = (SSLSocket) factory.createSocket(s, host, port, autoClose);</span>
+<span class="nc" id="L162">        final SSLSocketFactory factory = sslCtxt.getSocketFactory();</span>
+<span class="nc" id="L163">        final SSLSocket ss = (SSLSocket) factory.createSocket(s, host, port, autoClose);</span>
 
-<span class="fc" id="L165">        ss.setEnabledProtocols(protocols);</span>
+<span class="nc" id="L165">        ss.setEnabledProtocols(protocols);</span>
 
-<span class="fc" id="L167">        return ss;</span>
+<span class="nc" id="L167">        return ss;</span>
     }
 
     /**
@@ -239,11 +239,11 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     private void initSSLSocketFactoryEx(KeyManager[] km, TrustManager[] tm, SecureRandom random)
             throws NoSuchAlgorithmException, KeyManagementException {
-<span class="fc" id="L242">        sslCtxt = SSLContext.getInstance(&quot;TLS&quot;);</span>
-<span class="fc" id="L243">        sslCtxt.init(km, tm, random);</span>
+<span class="nc" id="L242">        sslCtxt = SSLContext.getInstance(&quot;TLS&quot;);</span>
+<span class="nc" id="L243">        sslCtxt.init(km, tm, random);</span>
 
-<span class="fc" id="L245">        protocols = getProtocolList();</span>
-<span class="fc" id="L246">    }</span>
+<span class="nc" id="L245">        protocols = getProtocolList();</span>
+<span class="nc" id="L246">    }</span>
 
     /**
      * Initializes the SSL Socket Factory Extension.
@@ -266,19 +266,19 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
      */
     @SuppressWarnings(&quot;StringSplitter&quot;)
     protected String[] getProtocolList() {
-<span class="fc" id="L269">        SSLSocket socket = null;</span>
+<span class="nc" id="L269">        SSLSocket socket = null;</span>
         final String[] availableProtocols;
-<span class="fc" id="L271">        final String[] preferredProtocols = settings.getString(</span>
+<span class="nc" id="L271">        final String[] preferredProtocols = settings.getString(</span>
                 Settings.KEYS.DOWNLOADER_TLS_PROTOCOL_LIST,
                 &quot;TLSv1.1,TLSv1.2,TLSv1.3&quot;)
-<span class="fc" id="L274">                .split(&quot;,&quot;);</span>
+<span class="nc" id="L274">                .split(&quot;,&quot;);</span>
         try {
-<span class="fc" id="L276">            final SSLSocketFactory factory = sslCtxt.getSocketFactory();</span>
-<span class="fc" id="L277">            socket = (SSLSocket) factory.createSocket();</span>
+<span class="nc" id="L276">            final SSLSocketFactory factory = sslCtxt.getSocketFactory();</span>
+<span class="nc" id="L277">            socket = (SSLSocket) factory.createSocket();</span>
 
-<span class="fc" id="L279">            availableProtocols = socket.getSupportedProtocols();</span>
-<span class="fc" id="L280">            Arrays.sort(availableProtocols);</span>
-<span class="pc bpc" id="L281" title="3 of 4 branches missed.">            if (LOGGER.isDebugEnabled() &amp;&amp; !protocolsLogged) {</span>
+<span class="nc" id="L279">            availableProtocols = socket.getSupportedProtocols();</span>
+<span class="nc" id="L280">            Arrays.sort(availableProtocols);</span>
+<span class="nc bnc" id="L281" title="All 4 branches missed.">            if (LOGGER.isDebugEnabled() &amp;&amp; !protocolsLogged) {</span>
 <span class="nc" id="L282">                protocolsLogged = true;</span>
 <span class="nc" id="L283">                LOGGER.debug(&quot;Available Protocols:&quot;);</span>
 <span class="nc bnc" id="L284" title="All 2 branches missed.">                for (String p : availableProtocols) {</span>
@@ -289,33 +289,33 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 <span class="nc" id="L289">            LOGGER.debug(&quot;Error getting protocol list, using TLSv1.1-1.3&quot;, ex);</span>
 <span class="nc" id="L290">            return new String[]{&quot;TLSv1.1&quot;, &quot;TLSv1.2&quot;, &quot;TLSv1.3&quot;};</span>
         } finally {
-<span class="pc bpc" id="L292" title="1 of 2 branches missed.">            if (socket != null) {</span>
+<span class="nc bnc" id="L292" title="All 2 branches missed.">            if (socket != null) {</span>
                 try {
-<span class="fc" id="L294">                    socket.close();</span>
+<span class="nc" id="L294">                    socket.close();</span>
 <span class="nc" id="L295">                } catch (IOException ex) {</span>
 <span class="nc" id="L296">                    LOGGER.trace(&quot;Error closing socket&quot;, ex);</span>
-<span class="fc" id="L297">                }</span>
+<span class="nc" id="L297">                }</span>
             }
         }
 
-<span class="fc" id="L301">        final List&lt;String&gt; aa = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L302" title="All 2 branches covered.">        for (String preferredProtocol : preferredProtocols) {</span>
-<span class="fc" id="L303">            final int idx = Arrays.binarySearch(availableProtocols, preferredProtocol);</span>
-<span class="pc bpc" id="L304" title="1 of 2 branches missed.">            if (idx &gt;= 0) {</span>
-<span class="fc" id="L305">                aa.add(preferredProtocol);</span>
+<span class="nc" id="L301">        final List&lt;String&gt; aa = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">        for (String preferredProtocol : preferredProtocols) {</span>
+<span class="nc" id="L303">            final int idx = Arrays.binarySearch(availableProtocols, preferredProtocol);</span>
+<span class="nc bnc" id="L304" title="All 2 branches missed.">            if (idx &gt;= 0) {</span>
+<span class="nc" id="L305">                aa.add(preferredProtocol);</span>
             }
         }
 
-<span class="fc" id="L309">        return aa.toArray(new String[0]);</span>
+<span class="nc" id="L309">        return aa.toArray(new String[0]);</span>
     }
 
     private KeyManager[] getKeyManagers() {
-<span class="fc" id="L313">        KeyManager[] km = null;</span>
-<span class="fc" id="L314">        final String ksPath = System.getProperty(&quot;javax.net.ssl.keyStore&quot;);</span>
-<span class="fc" id="L315">        final String ksType = System.getProperty(&quot;javax.net.ssl.keyStoreType&quot;);</span>
-<span class="fc" id="L316">        final String ksPass = System.getProperty(&quot;javax.net.ssl.keyStorePassword&quot;);</span>
+<span class="nc" id="L313">        KeyManager[] km = null;</span>
+<span class="nc" id="L314">        final String ksPath = System.getProperty(&quot;javax.net.ssl.keyStore&quot;);</span>
+<span class="nc" id="L315">        final String ksType = System.getProperty(&quot;javax.net.ssl.keyStoreType&quot;);</span>
+<span class="nc" id="L316">        final String ksPass = System.getProperty(&quot;javax.net.ssl.keyStorePassword&quot;);</span>
 
-<span class="pc bpc" id="L318" title="1 of 2 branches missed.">        if (!StringUtils.isAnyEmpty(ksPath, ksType, ksPass)) {</span>
+<span class="nc bnc" id="L318" title="All 2 branches missed.">        if (!StringUtils.isAnyEmpty(ksPath, ksType, ksPass)) {</span>
 <span class="nc" id="L319">            try (FileInputStream fis = new FileInputStream(ksPath)) {</span>
 <span class="nc" id="L320">                final KeyStore ks = KeyStore.getInstance(ksType);</span>
 <span class="nc" id="L321">                ks.load(fis, ksPass.toCharArray());</span>
@@ -326,16 +326,16 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 <span class="nc" id="L326">                throw new RuntimeException(ex);</span>
 <span class="nc" id="L327">            }</span>
         }
-<span class="fc" id="L329">        return km;</span>
+<span class="nc" id="L329">        return km;</span>
     }
 
     private TrustManager[] getTrustManagers() {
-<span class="fc" id="L333">        TrustManager[] tm = null;</span>
-<span class="fc" id="L334">        final String ksType = System.getProperty(&quot;javax.net.ssl.keyStoreType&quot;);</span>
-<span class="fc" id="L335">        final String tsPath = System.getProperty(&quot;javax.net.ssl.trustStore&quot;);</span>
-<span class="fc" id="L336">        final String tsPass = System.getProperty(&quot;javax.net.ssl.trustStorePassword&quot;);</span>
+<span class="nc" id="L333">        TrustManager[] tm = null;</span>
+<span class="nc" id="L334">        final String ksType = System.getProperty(&quot;javax.net.ssl.keyStoreType&quot;);</span>
+<span class="nc" id="L335">        final String tsPath = System.getProperty(&quot;javax.net.ssl.trustStore&quot;);</span>
+<span class="nc" id="L336">        final String tsPass = System.getProperty(&quot;javax.net.ssl.trustStorePassword&quot;);</span>
 
-<span class="pc bpc" id="L338" title="1 of 2 branches missed.">        if (!StringUtils.isAnyEmpty(tsPath, ksType, tsPass)) {</span>
+<span class="nc bnc" id="L338" title="All 2 branches missed.">        if (!StringUtils.isAnyEmpty(tsPath, ksType, tsPass)) {</span>
 <span class="nc" id="L339">            try (FileInputStream fis = new FileInputStream(tsPath)) {</span>
 <span class="nc" id="L340">                final KeyStore ts = KeyStore.getInstance(ksType);</span>
 <span class="nc" id="L341">                ts.load(fis, tsPass.toCharArray());</span>
@@ -346,7 +346,7 @@ public class SSLSocketFactoryEx extends SSLSocketFactory {
 <span class="nc" id="L346">                throw new RuntimeException(ex);</span>
 <span class="nc" id="L347">            }</span>
         }
-<span class="fc" id="L349">        return tm;</span>
+<span class="nc" id="L349">        return tm;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

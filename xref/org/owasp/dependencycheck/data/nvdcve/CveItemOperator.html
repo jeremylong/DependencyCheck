@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>CveItemOperator xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
@@ -227,7 +227,7 @@
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>     <strong class="jxr_keyword">boolean</strong> testCveCpeStartWithFilter(<strong class="jxr_keyword">final</strong> DefCveItem cve) {
 <a class="jxr_linenumber" name="L220" href="#L220">220</a>         <strong class="jxr_keyword">if</strong> (cve.getCve().getConfigurations() != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L221" href="#L221">221</a>             <em class="jxr_comment">//cycle through to see if this is a CPE we care about (use the CPE filters</em>
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>             <strong class="jxr_keyword">boolean</strong> result = cve.getCve().getConfigurations().stream()
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> result = cve.getCve().getConfigurations().stream()
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>                     .map(Config::getNodes)
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>                     .flatMap(List::stream)
 <a class="jxr_linenumber" name="L225" href="#L225">225</a>                     .filter(node -&gt; node != <strong class="jxr_keyword">null</strong>)

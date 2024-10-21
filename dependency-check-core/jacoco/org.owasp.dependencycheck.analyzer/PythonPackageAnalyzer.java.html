@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PythonPackageAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">PythonPackageAnalyzer.java</span></div><h1>PythonPackageAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PythonPackageAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">PythonPackageAnalyzer.java</span></div><h1>PythonPackageAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -206,7 +206,7 @@ import java.util.regex.Pattern;
 <span class="fc" id="L206">        final File file = dependency.getActualFile();</span>
 <span class="fc" id="L207">        final File parent = file.getParentFile();</span>
 <span class="fc" id="L208">        final String parentName = parent.getName();</span>
-<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        if (INIT_PY_FILTER.accept(file)) {</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">        if (INIT_PY_FILTER.accept(file)) {</span>
             //by definition, the containing folder of __init__.py is considered the package, even the file is empty:
             //&quot;The __init__.py files are required to make Python treat the directories as containing packages&quot;
             //see section &quot;6.4 Packages&quot; from https://docs.python.org/2/tutorial/modules.html;
@@ -220,7 +220,7 @@ import java.util.regex.Pattern;
                 }
             }
 <span class="fc" id="L222">        } else {</span>
-<span class="nc" id="L223">            engine.removeDependency(dependency);</span>
+<span class="fc" id="L223">            engine.removeDependency(dependency);</span>
         }
 <span class="fc" id="L225">    }</span>
 
@@ -263,7 +263,7 @@ import java.util.regex.Pattern;
 
             try {
 <span class="fc" id="L265">                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;pypi&quot;).withName(dependency.getName());</span>
-<span class="pc bpc" id="L266" title="1 of 2 branches missed.">                if (dependency.getVersion() != null) {</span>
+<span class="fc bfc" id="L266" title="All 2 branches covered.">                if (dependency.getVersion() != null) {</span>
 <span class="fc" id="L267">                    builder.withVersion(dependency.getVersion());</span>
                 }
 <span class="fc" id="L269">                final PackageURL purl = builder.build();</span>

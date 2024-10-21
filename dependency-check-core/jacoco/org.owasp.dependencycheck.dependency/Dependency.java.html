@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Dependency.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.dependency</a> &gt; <span class="el_source">Dependency.java</span></div><h1>Dependency.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Dependency.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.dependency</a> &gt; <span class="el_source">Dependency.java</span></div><h1>Dependency.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -323,8 +323,8 @@ public class Dependency extends EvidenceCollection implements Serializable {
 <span class="fc bfc" id="L323" title="All 2 branches covered.">        if (!isVirtual) {</span>
 <span class="fc" id="L324">            return fileName;</span>
         }
-<span class="pc bpc" id="L326" title="1 of 2 branches missed.">        if (name == null) {</span>
-<span class="nc" id="L327">            return fileName;</span>
+<span class="fc bfc" id="L326" title="All 2 branches covered.">        if (name == null) {</span>
+<span class="fc" id="L327">            return fileName;</span>
         }
 <span class="fc bfc" id="L329" title="All 2 branches covered.">        if (version == null) {</span>
 <span class="fc" id="L330">            return name;</span>
@@ -870,11 +870,11 @@ public class Dependency extends EvidenceCollection implements Serializable {
                     + &quot;https://github.com/jeremylong/DependencyCheck/issues/172&quot;);
 <span class="nc" id="L871">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
 <span class="nc" id="L872">            LOGGER.debug(&quot;dependency: {}&quot;, dependency);</span>
-<span class="pc bpc" id="L873" title="1 of 2 branches missed.">        } else if (NAME_COMPARATOR.compare(this, dependency) == 0) {</span>
-<span class="nc" id="L874">            LOGGER.debug(&quot;Attempted to add the same dependency as this, likely due to merging identical dependencies &quot;</span>
+<span class="fc bfc" id="L873" title="All 2 branches covered.">        } else if (NAME_COMPARATOR.compare(this, dependency) == 0) {</span>
+<span class="fc" id="L874">            LOGGER.debug(&quot;Attempted to add the same dependency as this, likely due to merging identical dependencies &quot;</span>
                     + &quot;obtained from different modules&quot;);
-<span class="nc" id="L876">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
-<span class="nc" id="L877">            LOGGER.debug(&quot;dependency: {}&quot;, dependency);</span>
+<span class="fc" id="L876">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
+<span class="fc" id="L877">            LOGGER.debug(&quot;dependency: {}&quot;, dependency);</span>
 <span class="pc bpc" id="L878" title="1 of 2 branches missed.">        } else if (!relatedDependencies.add(dependency)) {</span>
 <span class="nc" id="L879">            LOGGER.debug(&quot;Failed to add dependency, likely due to referencing the same file as another dependency in the set.&quot;);</span>
 <span class="nc" id="L880">            LOGGER.debug(&quot;this: {}&quot;, this);</span>
@@ -888,8 +888,8 @@ public class Dependency extends EvidenceCollection implements Serializable {
      * @param dependency the dependency to remove
      */
     public synchronized void removeRelatedDependencies(Dependency dependency) {
-<span class="nc" id="L891">        this.relatedDependencies.remove(dependency);</span>
-<span class="nc" id="L892">    }</span>
+<span class="fc" id="L891">        this.relatedDependencies.remove(dependency);</span>
+<span class="fc" id="L892">    }</span>
 
     /**
      * Get the value of availableVersions.

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VulnerableSoftware.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.dependency</a> &gt; <span class="el_source">VulnerableSoftware.java</span></div><h1>VulnerableSoftware.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VulnerableSoftware.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.dependency</a> &gt; <span class="el_source">VulnerableSoftware.java</span></div><h1>VulnerableSoftware.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -231,10 +231,10 @@ public class VulnerableSoftware extends Cpe implements Serializable {
 <span class="fc bfc" id="L231" title="All 2 branches covered.">        } else if (LogicalValue.ANY.getAbbreviation().equals(left)) {</span>
             //2 3 4 - superset (4 is undefined - treating as true)
 <span class="fc" id="L233">            return true;</span>
-<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        } else if (LogicalValue.NA.getAbbreviation().equals(left)</span>
-<span class="nc bnc" id="L235" title="All 2 branches missed.">                &amp;&amp; LogicalValue.ANY.getAbbreviation().equals(right)) {</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        } else if (LogicalValue.NA.getAbbreviation().equals(left)</span>
+<span class="pc bpc" id="L235" title="1 of 2 branches missed.">                &amp;&amp; LogicalValue.ANY.getAbbreviation().equals(right)) {</span>
             //5 - subset
-<span class="nc" id="L237">            return true;</span>
+<span class="fc" id="L237">            return true;</span>
 <span class="pc bpc" id="L238" title="1 of 2 branches missed.">        } else if (LogicalValue.NA.getAbbreviation().equals(left)) {</span>
             //7 8 - disjoint, undefined
 <span class="nc" id="L240">            return false;</span>
@@ -485,13 +485,13 @@ public class VulnerableSoftware extends Cpe implements Serializable {
 <span class="fc" id="L485">                    .append(versionStartIncluding);</span>
 <span class="fc" id="L486">            textAdded = true;</span>
         }
-<span class="pc bpc" id="L488" title="3 of 4 branches missed.">        if (versionStartExcluding != null &amp;&amp; !versionStartExcluding.isEmpty()) {</span>
-<span class="nc bnc" id="L489" title="All 2 branches missed.">            if (textAdded) {</span>
+<span class="pc bpc" id="L488" title="1 of 4 branches missed.">        if (versionStartExcluding != null &amp;&amp; !versionStartExcluding.isEmpty()) {</span>
+<span class="pc bpc" id="L489" title="1 of 2 branches missed.">            if (textAdded) {</span>
 <span class="nc" id="L490">                sb.append(&quot;;&quot;);</span>
             }
-<span class="nc" id="L492">            sb.append(&quot; versions from (excluding) &quot;)</span>
-<span class="nc" id="L493">                    .append(versionStartExcluding);</span>
-<span class="nc" id="L494">            textAdded = true;</span>
+<span class="fc" id="L492">            sb.append(&quot; versions from (excluding) &quot;)</span>
+<span class="fc" id="L493">                    .append(versionStartExcluding);</span>
+<span class="fc" id="L494">            textAdded = true;</span>
         }
 <span class="pc bpc" id="L496" title="1 of 4 branches missed.">        if (versionEndIncluding != null &amp;&amp; !versionEndIncluding.isEmpty()) {</span>
 <span class="fc bfc" id="L497" title="All 2 branches covered.">            if (textAdded) {</span>
@@ -502,7 +502,7 @@ public class VulnerableSoftware extends Cpe implements Serializable {
 <span class="fc" id="L502">            textAdded = true;</span>
         }
 <span class="pc bpc" id="L504" title="1 of 4 branches missed.">        if (versionEndExcluding != null &amp;&amp; !versionEndExcluding.isEmpty()) {</span>
-<span class="pc bpc" id="L505" title="1 of 2 branches missed.">            if (textAdded) {</span>
+<span class="fc bfc" id="L505" title="All 2 branches covered.">            if (textAdded) {</span>
 <span class="fc" id="L506">                sb.append(&quot;;&quot;);</span>
             }
 <span class="fc" id="L508">            sb.append(&quot; versions up to (excluding) &quot;)</span>

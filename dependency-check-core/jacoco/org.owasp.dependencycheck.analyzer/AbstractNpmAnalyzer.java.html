@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractNpmAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">AbstractNpmAnalyzer.java</span></div><h1>AbstractNpmAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractNpmAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">AbstractNpmAnalyzer.java</span></div><h1>AbstractNpmAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -157,7 +157,7 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L157">        nodeModule.setMd5sum(Checksum.getMD5Checksum(String.format(&quot;%s:%s&quot;, name, version)));</span>
 <span class="fc" id="L158">        nodeModule.addEvidence(EvidenceType.PRODUCT, &quot;package.json&quot;, &quot;name&quot;, name, Confidence.HIGHEST);</span>
 <span class="fc" id="L159">        nodeModule.addEvidence(EvidenceType.VENDOR, &quot;package.json&quot;, &quot;name&quot;, name, Confidence.HIGH);</span>
-<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        if (!StringUtils.isBlank(version)) {</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        if (!StringUtils.isBlank(version)) {</span>
 <span class="fc" id="L161">            nodeModule.addEvidence(EvidenceType.VERSION, &quot;package.json&quot;, &quot;version&quot;, version, Confidence.HIGHEST);</span>
 <span class="fc" id="L162">            nodeModule.setVersion(version);</span>
         }
@@ -292,7 +292,7 @@ import us.springett.parsers.cpe.values.Part;
      */
     protected Dependency findDependency(Engine engine, String name, String version) {
 <span class="fc bfc" id="L294" title="All 2 branches covered.">        for (Dependency d : engine.getDependencies()) {</span>
-<span class="pc bpc" id="L295" title="2 of 8 branches missed.">            if (NPM_DEPENDENCY_ECOSYSTEM.equals(d.getEcosystem()) &amp;&amp; name.equals(d.getName()) &amp;&amp; version != null &amp;&amp; d.getVersion() != null) {</span>
+<span class="pc bpc" id="L295" title="1 of 8 branches missed.">            if (NPM_DEPENDENCY_ECOSYSTEM.equals(d.getEcosystem()) &amp;&amp; name.equals(d.getName()) &amp;&amp; version != null &amp;&amp; d.getVersion() != null) {</span>
 <span class="fc" id="L296">                final String dependencyVersion = d.getVersion();</span>
 <span class="fc bfc" id="L297" title="All 2 branches covered.">                if (DependencyBundlingAnalyzer.npmVersionsMatch(version, dependencyVersion)) {</span>
 <span class="fc" id="L298">                    return d;</span>
@@ -483,7 +483,7 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L483">            vuln.addVulnerableSoftware(vs);</span>
 
 <span class="fc" id="L485">            String version = advisory.getVersion();</span>
-<span class="pc bpc" id="L486" title="1 of 4 branches missed.">            if (version == null &amp;&amp; dependencyMap.containsKey(advisory.getModuleName())) {</span>
+<span class="fc bfc" id="L486" title="All 4 branches covered.">            if (version == null &amp;&amp; dependencyMap.containsKey(advisory.getModuleName())) {</span>
 <span class="fc" id="L487">                version = determineVersionFromMap(advisory.getVulnerableVersions(), dependencyMap.get(advisory.getModuleName()));</span>
             }
 <span class="fc" id="L489">            final Dependency existing = findDependency(engine, advisory.getModuleName(), version);</span>

@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"org.owasp.dependencycheck","l":"App"},{"p":"org.owasp.dependencycheck","l":"CliParser.ARGUMENT"},{"p":"org.owasp.dependencycheck","l":"CliParser"}]

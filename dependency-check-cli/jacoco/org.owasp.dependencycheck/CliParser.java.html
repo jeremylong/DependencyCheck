@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CliParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Command Line</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck</a> &gt; <span class="el_source">CliParser.java</span></div><h1>CliParser.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CliParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Command Line</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck</a> &gt; <span class="el_source">CliParser.java</span></div><h1>CliParser.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-cli.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -374,7 +374,7 @@ public final class CliParser {
                         &quot;Credentials for basic authentication to the NVD API Datafeed.&quot;))
 <span class="fc" id="L375">                .addOption(newOptionWithArg(ARGUMENT.NVD_API_DATAFEED_PASSWORD, &quot;password&quot;,</span>
                         &quot;Credentials for basic authentication to the NVD API Datafeed.&quot;))
-<span class="fc" id="L377">                .addOption(newOptionWithArg(ARGUMENT.NVD_API_MAX_RETRY_COUNT,&quot;count&quot;,</span>
+<span class="fc" id="L377">                .addOption(newOptionWithArg(ARGUMENT.NVD_API_MAX_RETRY_COUNT, &quot;count&quot;,</span>
                         &quot;The maximum number of retry requests for a single call to the NVD API.&quot;))
 <span class="fc" id="L379">                .addOption(newOptionWithArg(ARGUMENT.NVD_API_VALID_FOR_HOURS, &quot;hours&quot;,</span>
                         &quot;The number of hours to wait before checking for new updates from the NVD.&quot;))
@@ -1144,7 +1144,7 @@ public final class CliParser {
          */
         public static final String DATA_DIRECTORY = &quot;data&quot;;
         /**
-         * The CLI argument name for setting the URL for the NVD API Endpoint
+         * The CLI argument name for setting the URL for the NVD API Endpoint.
          */
         public static final String NVD_API_ENDPOINT = &quot;nvdApiEndpoint&quot;;
         /**
@@ -1152,8 +1152,9 @@ public final class CliParser {
          */
         public static final String NVD_API_KEY = &quot;nvdApiKey&quot;;
         /**
-        * The CLI argument name for setting the maximum number of retry requests for a single call to the NVD API.
-        */
+         * The CLI argument name for setting the maximum number of retry
+         * requests for a single call to the NVD API.
+         */
         public static final String NVD_API_MAX_RETRY_COUNT = &quot;nvdMaxRetryCount&quot;;
         /**
          * The CLI argument name for setting the number of hours to wait before

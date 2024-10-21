@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Purge.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Ant Task</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.taskdefs</a> &gt; <span class="el_source">Purge.java</span></div><h1>Purge.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Purge.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Ant Task</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.taskdefs</a> &gt; <span class="el_source">Purge.java</span></div><h1>Purge.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-ant.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -26,6 +26,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.owasp.dependencycheck.Engine;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -48,31 +50,31 @@ public class Purge extends Task {
     /**
      * The location of the data directory that contains
      */
-<span class="fc" id="L51">    private String dataDirectory = null;</span>
+<span class="fc" id="L53">    private String dataDirectory = null;</span>
     /**
      * Indicates if dependency-check should fail the build if an exception
      * occurs.
      */
-<span class="fc" id="L56">    private boolean failOnError = true;</span>
+<span class="fc" id="L58">    private boolean failOnError = true;</span>
 
     /**
      * The URL to hosted suppressions file with base FP suppressions.
      */
-<span class="fc" id="L61">    private String hostedSuppressionsUrl = null;</span>
+<span class="fc" id="L63">    private String hostedSuppressionsUrl = null;</span>
 
     /**
      * Construct a new DependencyCheckTask.
      */
     public Purge() {
-<span class="fc" id="L67">        super();</span>
+<span class="fc" id="L69">        super();</span>
 
         // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
         // core end up coming through this tasks logger
-<span class="fc" id="L71">        StaticLoggerBinder.getSingleton().setTask(this);</span>
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L73">        StaticLoggerBinder.getSingleton().setTask(this);</span>
+<span class="fc" id="L74">    }</span>
 
     public Settings getSettings() {
-<span class="fc" id="L75">        return settings;</span>
+<span class="fc" id="L77">        return settings;</span>
     }
 
     /**
@@ -81,7 +83,7 @@ public class Purge extends Task {
      * @return the value of dataDirectory
      */
     public String getDataDirectory() {
-<span class="nc" id="L84">        return dataDirectory;</span>
+<span class="nc" id="L86">        return dataDirectory;</span>
     }
 
     /**
@@ -90,8 +92,8 @@ public class Purge extends Task {
      * @param dataDirectory new value of dataDirectory
      */
     public void setDataDirectory(String dataDirectory) {
-<span class="nc" id="L93">        this.dataDirectory = dataDirectory;</span>
-<span class="nc" id="L94">    }</span>
+<span class="nc" id="L95">        this.dataDirectory = dataDirectory;</span>
+<span class="nc" id="L96">    }</span>
 
     /**
      * Get the value of failOnError.
@@ -99,7 +101,7 @@ public class Purge extends Task {
      * @return the value of failOnError
      */
     public boolean isFailOnError() {
-<span class="nc" id="L102">        return failOnError;</span>
+<span class="nc" id="L104">        return failOnError;</span>
     }
 
     /**
@@ -108,8 +110,8 @@ public class Purge extends Task {
      * @param failOnError new value of failOnError
      */
     public void setFailOnError(boolean failOnError) {
-<span class="nc" id="L111">        this.failOnError = failOnError;</span>
-<span class="nc" id="L112">    }</span>
+<span class="nc" id="L113">        this.failOnError = failOnError;</span>
+<span class="nc" id="L114">    }</span>
 
     /**
      * Get the value of hostedSuppressionsUrl.
@@ -117,7 +119,7 @@ public class Purge extends Task {
      * @return the value of hostedSuppressionsUrl
      */
     public String getHostedSuppressionsUrl() {
-<span class="nc" id="L120">        return hostedSuppressionsUrl;</span>
+<span class="nc" id="L122">        return hostedSuppressionsUrl;</span>
     }
 
     /**
@@ -126,8 +128,8 @@ public class Purge extends Task {
      * @param hostedSuppressionsUrl new value of hostedSuppressionsUrl
      */
     public void setHostedSuppressionsUrl(final String hostedSuppressionsUrl) {
-<span class="nc" id="L129">        this.hostedSuppressionsUrl = hostedSuppressionsUrl;</span>
-<span class="nc" id="L130">    }</span>
+<span class="nc" id="L131">        this.hostedSuppressionsUrl = hostedSuppressionsUrl;</span>
+<span class="nc" id="L132">    }</span>
 
     /**
      * Sets the
@@ -143,31 +145,31 @@ public class Purge extends Task {
      */
     @Override
     public final void execute() throws BuildException {
-<span class="fc" id="L146">        muteNoisyLoggers();</span>
-<span class="fc" id="L147">        final ClassLoader current = Thread.currentThread().getContextClassLoader();</span>
+<span class="fc" id="L148">        muteNoisyLoggers();</span>
+<span class="fc" id="L149">        final ClassLoader current = Thread.currentThread().getContextClassLoader();</span>
         try {
-<span class="fc" id="L149">            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());</span>
+<span class="fc" id="L151">            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());</span>
 
-<span class="fc" id="L151">            executeWithContextClassloader();</span>
+<span class="fc" id="L153">            executeWithContextClassloader();</span>
         } finally {
-<span class="fc" id="L153">            Thread.currentThread().setContextClassLoader(current);</span>
+<span class="fc" id="L155">            Thread.currentThread().setContextClassLoader(current);</span>
         }
-<span class="fc" id="L155">    }</span>
+<span class="fc" id="L157">    }</span>
 
     /**
      * Hacky method of muting the noisy logging from JCS.
      */
     private void muteNoisyLoggers() {
-<span class="fc" id="L161">        System.setProperty(&quot;jcs.logSystem&quot;, &quot;slf4j&quot;);</span>
-<span class="fc" id="L162">        Slf4jAdapter.muteLogging(true);</span>
+<span class="fc" id="L163">        System.setProperty(&quot;jcs.logSystem&quot;, &quot;slf4j&quot;);</span>
+<span class="fc" id="L164">        Slf4jAdapter.muteLogging(true);</span>
 
-<span class="fc" id="L164">        final String[] noisyLoggers = {</span>
+<span class="fc" id="L166">        final String[] noisyLoggers = {</span>
             &quot;org.apache.hc&quot;
         };
-<span class="fc bfc" id="L167" title="All 2 branches covered.">        for (String loggerName : noisyLoggers) {</span>
-<span class="fc" id="L168">            System.setProperty(&quot;org.slf4j.simpleLogger.log.&quot; + loggerName, &quot;error&quot;);</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        for (String loggerName : noisyLoggers) {</span>
+<span class="fc" id="L170">            System.setProperty(&quot;org.slf4j.simpleLogger.log.&quot; + loggerName, &quot;error&quot;);</span>
         }
-<span class="fc" id="L170">    }</span>
+<span class="fc" id="L172">    }</span>
 
     /**
      * Executes the dependency-check purge to delete the existing local copy of
@@ -178,13 +180,18 @@ public class Purge extends Task {
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     protected void executeWithContextClassloader() throws BuildException {
-<span class="nc" id="L181">        populateSettings();</span>
-<span class="nc" id="L182">        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {</span>
-<span class="nc" id="L183">            engine.purge();</span>
+<span class="nc" id="L183">        populateSettings();</span>
+        try {
+<span class="nc" id="L185">            Downloader.getInstance().configure(settings);</span>
+<span class="nc" id="L186">        } catch (InvalidSettingException e) {</span>
+<span class="nc" id="L187">            throw new BuildException(e);</span>
+<span class="nc" id="L188">        }</span>
+<span class="nc" id="L189">        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {</span>
+<span class="nc" id="L190">            engine.purge();</span>
         } finally {
-<span class="nc" id="L185">            settings.cleanup(true);</span>
+<span class="nc" id="L192">            settings.cleanup(true);</span>
         }
-<span class="nc" id="L187">    }</span>
+<span class="nc" id="L194">    }</span>
 
     /**
      * Takes the properties supplied and updates the dependency-check settings.
@@ -196,26 +203,26 @@ public class Purge extends Task {
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     protected void populateSettings() throws BuildException {
-<span class="fc" id="L199">        settings = new Settings();</span>
-<span class="fc" id="L200">        try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {</span>
-<span class="fc" id="L201">            settings.mergeProperties(taskProperties);</span>
-<span class="nc" id="L202">        } catch (IOException ex) {</span>
-<span class="nc" id="L203">            final String msg = &quot;Unable to load the dependency-check ant task.properties file.&quot;;</span>
-<span class="nc bnc" id="L204" title="All 2 branches missed.">            if (this.failOnError) {</span>
-<span class="nc" id="L205">                throw new BuildException(msg, ex);</span>
+<span class="fc" id="L206">        settings = new Settings();</span>
+<span class="fc" id="L207">        try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {</span>
+<span class="fc" id="L208">            settings.mergeProperties(taskProperties);</span>
+<span class="nc" id="L209">        } catch (IOException ex) {</span>
+<span class="nc" id="L210">            final String msg = &quot;Unable to load the dependency-check ant task.properties file.&quot;;</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">            if (this.failOnError) {</span>
+<span class="nc" id="L212">                throw new BuildException(msg, ex);</span>
             }
-<span class="nc" id="L207">            log(msg, ex, Project.MSG_WARN);</span>
-<span class="fc" id="L208">        }</span>
-<span class="fc" id="L209">        settings.setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);</span>
-<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
-<span class="nc" id="L211">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
+<span class="nc" id="L214">            log(msg, ex, Project.MSG_WARN);</span>
+<span class="fc" id="L215">        }</span>
+<span class="fc" id="L216">        settings.setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);</span>
+<span class="pc bpc" id="L217" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
+<span class="nc" id="L218">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
         } else {
-<span class="fc" id="L213">            final File jarPath = new File(Purge.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
-<span class="fc" id="L214">            final File base = jarPath.getParentFile();</span>
-<span class="fc" id="L215">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
-<span class="fc" id="L216">            final File dataDir = new File(base, sub);</span>
-<span class="fc" id="L217">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
+<span class="fc" id="L220">            final File jarPath = new File(Purge.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
+<span class="fc" id="L221">            final File base = jarPath.getParentFile();</span>
+<span class="fc" id="L222">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
+<span class="fc" id="L223">            final File dataDir = new File(base, sub);</span>
+<span class="fc" id="L224">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
         }
-<span class="fc" id="L219">    }</span>
+<span class="fc" id="L226">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

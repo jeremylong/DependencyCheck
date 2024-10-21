@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>H2Functions xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
@@ -241,10 +241,10 @@
 <a class="jxr_linenumber" name="L233" href="#L233">233</a>             Float v3ImpactScore, String v3AttackVector, String v3AttackComplexity,
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>             String v3PrivilegesRequired, String v3UserInteraction, String v3Scope,
 <a class="jxr_linenumber" name="L235" href="#L235">235</a>             String v3ConfidentialityImpact, String v3IntegrityImpact, String v3AvailabilityImpact,
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>             Float v3BaseScore, String v3BaseSeverity, String v3Version, String v4version, 
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>             String v4attackVector, String v4attackComplexity, String v4attackRequirements, 
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>             String v4privilegesRequired, String v4userInteraction, String v4vulnConfidentialityImpact, 
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>             String v4vulnIntegrityImpact, String v4vulnAvailabilityImpact, String v4subConfidentialityImpact, 
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>             Float v3BaseScore, String v3BaseSeverity, String v3Version, String v4version,
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>             String v4attackVector, String v4attackComplexity, String v4attackRequirements,
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>             String v4privilegesRequired, String v4userInteraction, String v4vulnConfidentialityImpact,
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>             String v4vulnIntegrityImpact, String v4vulnAvailabilityImpact, String v4subConfidentialityImpact,
 <a class="jxr_linenumber" name="L240" href="#L240">240</a>             String v4subIntegrityImpact, String v4subAvailabilityImpact, String v4exploitMaturity,
 <a class="jxr_linenumber" name="L241" href="#L241">241</a>             String v4confidentialityRequirement, String v4integrityRequirement, String v4availabilityRequirement,
 <a class="jxr_linenumber" name="L242" href="#L242">242</a>             String v4modifiedAttackVector, String v4modifiedAttackComplexity, String v4modifiedAttackRequirements,
@@ -253,7 +253,7 @@
 <a class="jxr_linenumber" name="L245" href="#L245">245</a>             String v4modifiedSubIntegrityImpact, String v4modifiedSubAvailabilityImpact, String v4safety,
 <a class="jxr_linenumber" name="L246" href="#L246">246</a>             String v4automatable, String v4recovery, String v4valueDensity, String v4vulnerabilityResponseEffort,
 <a class="jxr_linenumber" name="L247" href="#L247">247</a>             String v4providerUrgency, Float v4baseScore, String v4baseSeverity, Float v4threatScore,
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>             String v4threatSeverity, Float v4environmentalScore, String v4environmentalSeverity, 
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>             String v4threatSeverity, Float v4environmentalScore, String v4environmentalSeverity,
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>             String v4source, String v4type) <strong class="jxr_keyword">throws</strong> SQLException {
 <a class="jxr_linenumber" name="L250" href="#L250">250</a> 
 <a class="jxr_linenumber" name="L251" href="#L251">251</a>         <strong class="jxr_keyword">final</strong> SimpleResultSet ret = <strong class="jxr_keyword">new</strong> SimpleResultSet();
@@ -382,187 +382,186 @@
 <a class="jxr_linenumber" name="L374" href="#L374">374</a>             setFloatOrNull(merge, 28, v3BaseScore);
 <a class="jxr_linenumber" name="L375" href="#L375">375</a>             setStringOrNull(merge, 29, v3BaseSeverity);
 <a class="jxr_linenumber" name="L376" href="#L376">376</a>             setStringOrNull(merge, 30, v3Version);
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>             
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>             
-<a class="jxr_linenumber" name="L379" href="#L379">379</a> 
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>             setStringOrNull(merge, 31, v4version);
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>             setStringOrNull(merge, 32, v4attackVector);
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>             setStringOrNull(merge, 33, v4attackComplexity);
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>             setStringOrNull(merge, 34, v4attackRequirements);
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>             setStringOrNull(merge, 35, v4privilegesRequired);
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>             setStringOrNull(merge, 36, v4userInteraction);
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>             setStringOrNull(merge, 37, v4vulnConfidentialityImpact);
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>             setStringOrNull(merge, 38, v4vulnIntegrityImpact);
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>             setStringOrNull(merge, 39, v4vulnAvailabilityImpact);
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>             setStringOrNull(merge, 40, v4subConfidentialityImpact);
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>             setStringOrNull(merge, 41, v4subIntegrityImpact);
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>             setStringOrNull(merge, 42, v4subAvailabilityImpact);
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>             setStringOrNull(merge, 43, v4exploitMaturity);
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>             setStringOrNull(merge, 44, v4confidentialityRequirement);
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>             setStringOrNull(merge, 45, v4integrityRequirement);
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>             setStringOrNull(merge, 46, v4availabilityRequirement);
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>             setStringOrNull(merge, 47, v4modifiedAttackVector);
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>             setStringOrNull(merge, 48, v4modifiedAttackComplexity);
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>             setStringOrNull(merge, 49, v4modifiedAttackRequirements);
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>             setStringOrNull(merge, 50, v4modifiedPrivilegesRequired);
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>             setStringOrNull(merge, 51, v4modifiedUserInteraction);
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>             setStringOrNull(merge, 52, v4modifiedVulnConfidentialityImpact);
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>             setStringOrNull(merge, 53, v4modifiedVulnIntegrityImpact);
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>             setStringOrNull(merge, 54, v4modifiedVulnAvailabilityImpact);
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>             setStringOrNull(merge, 55, v4modifiedSubConfidentialityImpact);
-<a class="jxr_linenumber" name="L405" href="#L405">405</a>             setStringOrNull(merge, 56, v4modifiedSubIntegrityImpact);
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>             setStringOrNull(merge, 57, v4modifiedSubAvailabilityImpact);
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>             setStringOrNull(merge, 58, v4safety);
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>             setStringOrNull(merge, 59, v4automatable);
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>             setStringOrNull(merge, 60, v4recovery);
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>             setStringOrNull(merge, 61, v4valueDensity);
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>             setStringOrNull(merge, 62, v4vulnerabilityResponseEffort);
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>             setStringOrNull(merge, 63, v4providerUrgency);
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>             setFloatOrNull(merge, 64, v4baseScore);
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>             setStringOrNull(merge, 65, v4baseSeverity);
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>             setFloatOrNull(merge, 66, v4threatScore);
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>             setStringOrNull(merge, 67, v4threatSeverity);
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>             setFloatOrNull(merge, 68, v4environmentalScore);
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>             setStringOrNull(merge, 69, v4environmentalSeverity);
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>             setStringOrNull(merge, 70, v4source);
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>             setStringOrNull(merge, 71, v4type);
-<a class="jxr_linenumber" name="L421" href="#L421">421</a> 
-<a class="jxr_linenumber" name="L422" href="#L422">422</a>             <em class="jxr_comment">//cve must be the last entry</em>
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>             <strong class="jxr_keyword">if</strong> (vulnerabilityId == 0) {
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>                 merge.setString(72, cve);
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>                 merge.setInt(72, vulnerabilityId);
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>             }
-<a class="jxr_linenumber" name="L428" href="#L428">428</a>             
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> count = merge.executeUpdate();
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>             <strong class="jxr_keyword">if</strong> (vulnerabilityId == 0) {
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>                 <strong class="jxr_keyword">try</strong> (ResultSet rs = merge.getGeneratedKeys()) {
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>                     <strong class="jxr_keyword">if</strong> (rs.next()) {
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>                         vulnerabilityId = rs.getInt(1);
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>                     }
-<a class="jxr_linenumber" name="L435" href="#L435">435</a>                 }
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>             }
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>         } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>             <strong class="jxr_keyword">if</strong> (merge != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>                 merge.close();
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>             }
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>         }
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>         ret.addRow(vulnerabilityId);
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>         <strong class="jxr_keyword">return</strong> ret;
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>     }
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>     <em class="jxr_comment">//CSON: ParameterNumber</em>
-<a class="jxr_linenumber" name="L446" href="#L446">446</a> 
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>     <em class="jxr_comment">//CSOFF: ParameterNumber</em>
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L449" href="#L449">449</a> <em class="jxr_javadoccomment">     * Update or insert a known exploited vulnerability.</em>
-<a class="jxr_linenumber" name="L450" href="#L450">450</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L451" href="#L451">451</a> <em class="jxr_javadoccomment">     * @param conn the connection</em>
-<a class="jxr_linenumber" name="L452" href="#L452">452</a> <em class="jxr_javadoccomment">     * @param cveId the id</em>
-<a class="jxr_linenumber" name="L453" href="#L453">453</a> <em class="jxr_javadoccomment">     * @param vendorProject the vendor/project</em>
-<a class="jxr_linenumber" name="L454" href="#L454">454</a> <em class="jxr_javadoccomment">     * @param product the product</em>
-<a class="jxr_linenumber" name="L455" href="#L455">455</a> <em class="jxr_javadoccomment">     * @param vulnerabilityName the vulnerability name</em>
-<a class="jxr_linenumber" name="L456" href="#L456">456</a> <em class="jxr_javadoccomment">     * @param dateAdded the date added</em>
-<a class="jxr_linenumber" name="L457" href="#L457">457</a> <em class="jxr_javadoccomment">     * @param shortDescription the short description</em>
-<a class="jxr_linenumber" name="L458" href="#L458">458</a> <em class="jxr_javadoccomment">     * @param requiredAction the action required</em>
-<a class="jxr_linenumber" name="L459" href="#L459">459</a> <em class="jxr_javadoccomment">     * @param dueDate the due date</em>
-<a class="jxr_linenumber" name="L460" href="#L460">460</a> <em class="jxr_javadoccomment">     * @param notes notes</em>
-<a class="jxr_linenumber" name="L461" href="#L461">461</a> <em class="jxr_javadoccomment">     * @throws SQLException</em>
-<a class="jxr_linenumber" name="L462" href="#L462">462</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> mergeKnownExploited(<strong class="jxr_keyword">final</strong> Connection conn, String cveId,
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>             String vendorProject, String product, String vulnerabilityName,
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>             String dateAdded, String shortDescription, String requiredAction,
-<a class="jxr_linenumber" name="L466" href="#L466">466</a>             String dueDate, String notes) <strong class="jxr_keyword">throws</strong> SQLException {
-<a class="jxr_linenumber" name="L467" href="#L467">467</a> 
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>         String id = <span class="jxr_string">""</span>;
-<a class="jxr_linenumber" name="L469" href="#L469">469</a>         <strong class="jxr_keyword">try</strong> (PreparedStatement selectVulnerabilityId = conn.prepareStatement(<span class="jxr_string">"SELECT cveID FROM knownExploited cveID WHERE cveID=?"</span>)) {
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>             selectVulnerabilityId.setString(1, cveId);
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>             <strong class="jxr_keyword">try</strong> (ResultSet rs = selectVulnerabilityId.executeQuery()) {
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>                 <strong class="jxr_keyword">if</strong> (rs.next()) {
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>                     id = rs.getString(1);
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>                 }
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>             }
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>         }
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>         PreparedStatement merge = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>             <strong class="jxr_keyword">if</strong> (Strings.isNullOrEmpty(id)) {
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>                 merge = conn.prepareStatement(<span class="jxr_string">"INSERT INTO knownExploited ("</span>
-<a class="jxr_linenumber" name="L481" href="#L481">481</a>                         + <span class="jxr_string">"vendorProject, product, vulnerabilityName, "</span>
-<a class="jxr_linenumber" name="L482" href="#L482">482</a>                         + <span class="jxr_string">"dateAdded, shortDescription, requiredAction, "</span>
-<a class="jxr_linenumber" name="L483" href="#L483">483</a>                         + <span class="jxr_string">"dueDate, notes, cveID) "</span>
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>                         + <span class="jxr_string">"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"</span>);
-<a class="jxr_linenumber" name="L485" href="#L485">485</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>                 merge = conn.prepareStatement(<span class="jxr_string">"UPDATE knownExploited SET "</span>
-<a class="jxr_linenumber" name="L487" href="#L487">487</a>                         + <span class="jxr_string">"vendorProject=?, product=?, vulnerabilityName=?, "</span>
-<a class="jxr_linenumber" name="L488" href="#L488">488</a>                         + <span class="jxr_string">"dateAdded=?, shortDescription=?, requiredAction=?, "</span>
-<a class="jxr_linenumber" name="L489" href="#L489">489</a>                         + <span class="jxr_string">"dueDate=?, notes=? WHERE cveID=?"</span>);
-<a class="jxr_linenumber" name="L490" href="#L490">490</a>             }
-<a class="jxr_linenumber" name="L491" href="#L491">491</a> 
-<a class="jxr_linenumber" name="L492" href="#L492">492</a>             setStringOrNull(merge, 1, vendorProject);
-<a class="jxr_linenumber" name="L493" href="#L493">493</a>             setStringOrNull(merge, 2, product);
-<a class="jxr_linenumber" name="L494" href="#L494">494</a>             setStringOrNull(merge, 3, vulnerabilityName);
-<a class="jxr_linenumber" name="L495" href="#L495">495</a>             setStringOrNull(merge, 4, dateAdded);
-<a class="jxr_linenumber" name="L496" href="#L496">496</a>             setStringOrNull(merge, 5, shortDescription);
-<a class="jxr_linenumber" name="L497" href="#L497">497</a>             setStringOrNull(merge, 6, requiredAction);
-<a class="jxr_linenumber" name="L498" href="#L498">498</a>             setStringOrNull(merge, 7, dueDate);
-<a class="jxr_linenumber" name="L499" href="#L499">499</a>             setStringOrNull(merge, 8, notes);
-<a class="jxr_linenumber" name="L500" href="#L500">500</a>             setStringOrNull(merge, 9, cveId);
-<a class="jxr_linenumber" name="L501" href="#L501">501</a>             merge.execute();
-<a class="jxr_linenumber" name="L502" href="#L502">502</a>         } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L503" href="#L503">503</a>             <strong class="jxr_keyword">if</strong> (merge != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L504" href="#L504">504</a>                 merge.close();
-<a class="jxr_linenumber" name="L505" href="#L505">505</a>             }
-<a class="jxr_linenumber" name="L506" href="#L506">506</a>         }
-<a class="jxr_linenumber" name="L507" href="#L507">507</a>     }
-<a class="jxr_linenumber" name="L508" href="#L508">508</a>     <em class="jxr_comment">//CSON: ParameterNumber</em>
-<a class="jxr_linenumber" name="L509" href="#L509">509</a> 
-<a class="jxr_linenumber" name="L510" href="#L510">510</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L511" href="#L511">511</a> <em class="jxr_javadoccomment">     * Sets a parameter value on a prepared statement with null checks.</em>
-<a class="jxr_linenumber" name="L512" href="#L512">512</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L513" href="#L513">513</a> <em class="jxr_javadoccomment">     * @param ps the prepared statement</em>
-<a class="jxr_linenumber" name="L514" href="#L514">514</a> <em class="jxr_javadoccomment">     * @param i the parameter index</em>
-<a class="jxr_linenumber" name="L515" href="#L515">515</a> <em class="jxr_javadoccomment">     * @param value the value</em>
-<a class="jxr_linenumber" name="L516" href="#L516">516</a> <em class="jxr_javadoccomment">     * @throws SQLException thrown if there is an error setting the parameter</em>
-<a class="jxr_linenumber" name="L517" href="#L517">517</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L518" href="#L518">518</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setStringOrNull(PreparedStatement ps, <strong class="jxr_keyword">int</strong> i, String value) <strong class="jxr_keyword">throws</strong> SQLException {
-<a class="jxr_linenumber" name="L519" href="#L519">519</a>         <strong class="jxr_keyword">if</strong> (value == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L520" href="#L520">520</a>             ps.setNull(i, java.sql.Types.NULL);
-<a class="jxr_linenumber" name="L521" href="#L521">521</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L522" href="#L522">522</a>             ps.setString(i, value);
-<a class="jxr_linenumber" name="L523" href="#L523">523</a>         }
-<a class="jxr_linenumber" name="L524" href="#L524">524</a>     }
-<a class="jxr_linenumber" name="L525" href="#L525">525</a> 
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L527" href="#L527">527</a> <em class="jxr_javadoccomment">     * Sets a parameter value on a prepared statement with null checks.</em>
-<a class="jxr_linenumber" name="L528" href="#L528">528</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L529" href="#L529">529</a> <em class="jxr_javadoccomment">     * @param ps the prepared statement</em>
-<a class="jxr_linenumber" name="L530" href="#L530">530</a> <em class="jxr_javadoccomment">     * @param i the parameter index</em>
-<a class="jxr_linenumber" name="L531" href="#L531">531</a> <em class="jxr_javadoccomment">     * @param value the value</em>
-<a class="jxr_linenumber" name="L532" href="#L532">532</a> <em class="jxr_javadoccomment">     * @throws SQLException thrown if there is an error setting the parameter</em>
-<a class="jxr_linenumber" name="L533" href="#L533">533</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L534" href="#L534">534</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setFloatOrNull(PreparedStatement ps, <strong class="jxr_keyword">int</strong> i, Float value) <strong class="jxr_keyword">throws</strong> SQLException {
-<a class="jxr_linenumber" name="L535" href="#L535">535</a>         <strong class="jxr_keyword">if</strong> (value == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L536" href="#L536">536</a>             ps.setNull(i, java.sql.Types.NULL);
-<a class="jxr_linenumber" name="L537" href="#L537">537</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L538" href="#L538">538</a>             ps.setFloat(i, value);
-<a class="jxr_linenumber" name="L539" href="#L539">539</a>         }
-<a class="jxr_linenumber" name="L540" href="#L540">540</a>     }
-<a class="jxr_linenumber" name="L541" href="#L541">541</a> 
-<a class="jxr_linenumber" name="L542" href="#L542">542</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L543" href="#L543">543</a> <em class="jxr_javadoccomment">     * Sets a parameter value on a prepared statement with null checks.</em>
-<a class="jxr_linenumber" name="L544" href="#L544">544</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L545" href="#L545">545</a> <em class="jxr_javadoccomment">     * @param ps the prepared statement</em>
-<a class="jxr_linenumber" name="L546" href="#L546">546</a> <em class="jxr_javadoccomment">     * @param i the parameter index</em>
-<a class="jxr_linenumber" name="L547" href="#L547">547</a> <em class="jxr_javadoccomment">     * @param value the value</em>
-<a class="jxr_linenumber" name="L548" href="#L548">548</a> <em class="jxr_javadoccomment">     * @throws SQLException thrown if there is an error setting the parameter</em>
-<a class="jxr_linenumber" name="L549" href="#L549">549</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L550" href="#L550">550</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setBooleanOrNull(PreparedStatement ps, <strong class="jxr_keyword">int</strong> i, Boolean value) <strong class="jxr_keyword">throws</strong> SQLException {
-<a class="jxr_linenumber" name="L551" href="#L551">551</a>         <strong class="jxr_keyword">if</strong> (value == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L552" href="#L552">552</a>             ps.setNull(i, java.sql.Types.NULL);
-<a class="jxr_linenumber" name="L553" href="#L553">553</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L554" href="#L554">554</a>             ps.setBoolean(i, value);
-<a class="jxr_linenumber" name="L555" href="#L555">555</a>         }
-<a class="jxr_linenumber" name="L556" href="#L556">556</a>     }
-<a class="jxr_linenumber" name="L557" href="#L557">557</a> }
+<a class="jxr_linenumber" name="L377" href="#L377">377</a> 
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>             setStringOrNull(merge, 31, v4version);
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>             setStringOrNull(merge, 32, v4attackVector);
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>             setStringOrNull(merge, 33, v4attackComplexity);
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>             setStringOrNull(merge, 34, v4attackRequirements);
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>             setStringOrNull(merge, 35, v4privilegesRequired);
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>             setStringOrNull(merge, 36, v4userInteraction);
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>             setStringOrNull(merge, 37, v4vulnConfidentialityImpact);
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>             setStringOrNull(merge, 38, v4vulnIntegrityImpact);
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>             setStringOrNull(merge, 39, v4vulnAvailabilityImpact);
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>             setStringOrNull(merge, 40, v4subConfidentialityImpact);
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>             setStringOrNull(merge, 41, v4subIntegrityImpact);
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>             setStringOrNull(merge, 42, v4subAvailabilityImpact);
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>             setStringOrNull(merge, 43, v4exploitMaturity);
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>             setStringOrNull(merge, 44, v4confidentialityRequirement);
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>             setStringOrNull(merge, 45, v4integrityRequirement);
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>             setStringOrNull(merge, 46, v4availabilityRequirement);
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>             setStringOrNull(merge, 47, v4modifiedAttackVector);
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>             setStringOrNull(merge, 48, v4modifiedAttackComplexity);
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>             setStringOrNull(merge, 49, v4modifiedAttackRequirements);
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>             setStringOrNull(merge, 50, v4modifiedPrivilegesRequired);
+<a class="jxr_linenumber" name="L398" href="#L398">398</a>             setStringOrNull(merge, 51, v4modifiedUserInteraction);
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>             setStringOrNull(merge, 52, v4modifiedVulnConfidentialityImpact);
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>             setStringOrNull(merge, 53, v4modifiedVulnIntegrityImpact);
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>             setStringOrNull(merge, 54, v4modifiedVulnAvailabilityImpact);
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>             setStringOrNull(merge, 55, v4modifiedSubConfidentialityImpact);
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>             setStringOrNull(merge, 56, v4modifiedSubIntegrityImpact);
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>             setStringOrNull(merge, 57, v4modifiedSubAvailabilityImpact);
+<a class="jxr_linenumber" name="L405" href="#L405">405</a>             setStringOrNull(merge, 58, v4safety);
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>             setStringOrNull(merge, 59, v4automatable);
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>             setStringOrNull(merge, 60, v4recovery);
+<a class="jxr_linenumber" name="L408" href="#L408">408</a>             setStringOrNull(merge, 61, v4valueDensity);
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>             setStringOrNull(merge, 62, v4vulnerabilityResponseEffort);
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>             setStringOrNull(merge, 63, v4providerUrgency);
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>             setFloatOrNull(merge, 64, v4baseScore);
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>             setStringOrNull(merge, 65, v4baseSeverity);
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>             setFloatOrNull(merge, 66, v4threatScore);
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>             setStringOrNull(merge, 67, v4threatSeverity);
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>             setFloatOrNull(merge, 68, v4environmentalScore);
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>             setStringOrNull(merge, 69, v4environmentalSeverity);
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>             setStringOrNull(merge, 70, v4source);
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>             setStringOrNull(merge, 71, v4type);
+<a class="jxr_linenumber" name="L419" href="#L419">419</a> 
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>             <em class="jxr_comment">//cve must be the last entry</em>
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>             <strong class="jxr_keyword">if</strong> (vulnerabilityId == 0) {
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>                 merge.setString(72, cve);
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>                 merge.setInt(72, vulnerabilityId);
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>             }
+<a class="jxr_linenumber" name="L426" href="#L426">426</a> 
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> count = merge.executeUpdate();
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>             <strong class="jxr_keyword">if</strong> (vulnerabilityId == 0) {
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>                 <strong class="jxr_keyword">try</strong> (ResultSet rs = merge.getGeneratedKeys()) {
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>                     <strong class="jxr_keyword">if</strong> (rs.next()) {
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>                         vulnerabilityId = rs.getInt(1);
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>                     }
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>                 }
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>             }
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>             <strong class="jxr_keyword">if</strong> (merge != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>                 merge.close();
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>             }
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>         }
+<a class="jxr_linenumber" name="L440" href="#L440">440</a>         ret.addRow(vulnerabilityId);
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>         <strong class="jxr_keyword">return</strong> ret;
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>     }
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>     <em class="jxr_comment">//CSON: ParameterNumber</em>
+<a class="jxr_linenumber" name="L444" href="#L444">444</a> 
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>     <em class="jxr_comment">//CSOFF: ParameterNumber</em>
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L447" href="#L447">447</a> <em class="jxr_javadoccomment">     * Update or insert a known exploited vulnerability.</em>
+<a class="jxr_linenumber" name="L448" href="#L448">448</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L449" href="#L449">449</a> <em class="jxr_javadoccomment">     * @param conn the connection</em>
+<a class="jxr_linenumber" name="L450" href="#L450">450</a> <em class="jxr_javadoccomment">     * @param cveId the id</em>
+<a class="jxr_linenumber" name="L451" href="#L451">451</a> <em class="jxr_javadoccomment">     * @param vendorProject the vendor/project</em>
+<a class="jxr_linenumber" name="L452" href="#L452">452</a> <em class="jxr_javadoccomment">     * @param product the product</em>
+<a class="jxr_linenumber" name="L453" href="#L453">453</a> <em class="jxr_javadoccomment">     * @param vulnerabilityName the vulnerability name</em>
+<a class="jxr_linenumber" name="L454" href="#L454">454</a> <em class="jxr_javadoccomment">     * @param dateAdded the date added</em>
+<a class="jxr_linenumber" name="L455" href="#L455">455</a> <em class="jxr_javadoccomment">     * @param shortDescription the short description</em>
+<a class="jxr_linenumber" name="L456" href="#L456">456</a> <em class="jxr_javadoccomment">     * @param requiredAction the action required</em>
+<a class="jxr_linenumber" name="L457" href="#L457">457</a> <em class="jxr_javadoccomment">     * @param dueDate the due date</em>
+<a class="jxr_linenumber" name="L458" href="#L458">458</a> <em class="jxr_javadoccomment">     * @param notes notes</em>
+<a class="jxr_linenumber" name="L459" href="#L459">459</a> <em class="jxr_javadoccomment">     * @throws SQLException thrown if there is a database error merging the</em>
+<a class="jxr_linenumber" name="L460" href="#L460">460</a> <em class="jxr_javadoccomment">     * Known Exploited information to the database</em>
+<a class="jxr_linenumber" name="L461" href="#L461">461</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> mergeKnownExploited(<strong class="jxr_keyword">final</strong> Connection conn, String cveId,
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>             String vendorProject, String product, String vulnerabilityName,
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>             String dateAdded, String shortDescription, String requiredAction,
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>             String dueDate, String notes) <strong class="jxr_keyword">throws</strong> SQLException {
+<a class="jxr_linenumber" name="L466" href="#L466">466</a> 
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>         String id = <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>         <strong class="jxr_keyword">try</strong> (PreparedStatement selectVulnerabilityId = conn.prepareStatement(<span class="jxr_string">"SELECT cveID FROM knownExploited cveID WHERE cveID=?"</span>)) {
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>             selectVulnerabilityId.setString(1, cveId);
+<a class="jxr_linenumber" name="L470" href="#L470">470</a>             <strong class="jxr_keyword">try</strong> (ResultSet rs = selectVulnerabilityId.executeQuery()) {
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>                 <strong class="jxr_keyword">if</strong> (rs.next()) {
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>                     id = rs.getString(1);
+<a class="jxr_linenumber" name="L473" href="#L473">473</a>                 }
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>             }
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>         }
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>         PreparedStatement merge = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L477" href="#L477">477</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L478" href="#L478">478</a>             <strong class="jxr_keyword">if</strong> (Strings.isNullOrEmpty(id)) {
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>                 merge = conn.prepareStatement(<span class="jxr_string">"INSERT INTO knownExploited ("</span>
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>                         + <span class="jxr_string">"vendorProject, product, vulnerabilityName, "</span>
+<a class="jxr_linenumber" name="L481" href="#L481">481</a>                         + <span class="jxr_string">"dateAdded, shortDescription, requiredAction, "</span>
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>                         + <span class="jxr_string">"dueDate, notes, cveID) "</span>
+<a class="jxr_linenumber" name="L483" href="#L483">483</a>                         + <span class="jxr_string">"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"</span>);
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>                 merge = conn.prepareStatement(<span class="jxr_string">"UPDATE knownExploited SET "</span>
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>                         + <span class="jxr_string">"vendorProject=?, product=?, vulnerabilityName=?, "</span>
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>                         + <span class="jxr_string">"dateAdded=?, shortDescription=?, requiredAction=?, "</span>
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>                         + <span class="jxr_string">"dueDate=?, notes=? WHERE cveID=?"</span>);
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>             }
+<a class="jxr_linenumber" name="L490" href="#L490">490</a> 
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>             setStringOrNull(merge, 1, vendorProject);
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>             setStringOrNull(merge, 2, product);
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>             setStringOrNull(merge, 3, vulnerabilityName);
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>             setStringOrNull(merge, 4, dateAdded);
+<a class="jxr_linenumber" name="L495" href="#L495">495</a>             setStringOrNull(merge, 5, shortDescription);
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>             setStringOrNull(merge, 6, requiredAction);
+<a class="jxr_linenumber" name="L497" href="#L497">497</a>             setStringOrNull(merge, 7, dueDate);
+<a class="jxr_linenumber" name="L498" href="#L498">498</a>             setStringOrNull(merge, 8, notes);
+<a class="jxr_linenumber" name="L499" href="#L499">499</a>             setStringOrNull(merge, 9, cveId);
+<a class="jxr_linenumber" name="L500" href="#L500">500</a>             merge.execute();
+<a class="jxr_linenumber" name="L501" href="#L501">501</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L502" href="#L502">502</a>             <strong class="jxr_keyword">if</strong> (merge != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L503" href="#L503">503</a>                 merge.close();
+<a class="jxr_linenumber" name="L504" href="#L504">504</a>             }
+<a class="jxr_linenumber" name="L505" href="#L505">505</a>         }
+<a class="jxr_linenumber" name="L506" href="#L506">506</a>     }
+<a class="jxr_linenumber" name="L507" href="#L507">507</a>     <em class="jxr_comment">//CSON: ParameterNumber</em>
+<a class="jxr_linenumber" name="L508" href="#L508">508</a> 
+<a class="jxr_linenumber" name="L509" href="#L509">509</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L510" href="#L510">510</a> <em class="jxr_javadoccomment">     * Sets a parameter value on a prepared statement with null checks.</em>
+<a class="jxr_linenumber" name="L511" href="#L511">511</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L512" href="#L512">512</a> <em class="jxr_javadoccomment">     * @param ps the prepared statement</em>
+<a class="jxr_linenumber" name="L513" href="#L513">513</a> <em class="jxr_javadoccomment">     * @param i the parameter index</em>
+<a class="jxr_linenumber" name="L514" href="#L514">514</a> <em class="jxr_javadoccomment">     * @param value the value</em>
+<a class="jxr_linenumber" name="L515" href="#L515">515</a> <em class="jxr_javadoccomment">     * @throws SQLException thrown if there is an error setting the parameter</em>
+<a class="jxr_linenumber" name="L516" href="#L516">516</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setStringOrNull(PreparedStatement ps, <strong class="jxr_keyword">int</strong> i, String value) <strong class="jxr_keyword">throws</strong> SQLException {
+<a class="jxr_linenumber" name="L518" href="#L518">518</a>         <strong class="jxr_keyword">if</strong> (value == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L519" href="#L519">519</a>             ps.setNull(i, java.sql.Types.NULL);
+<a class="jxr_linenumber" name="L520" href="#L520">520</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L521" href="#L521">521</a>             ps.setString(i, value);
+<a class="jxr_linenumber" name="L522" href="#L522">522</a>         }
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>     }
+<a class="jxr_linenumber" name="L524" href="#L524">524</a> 
+<a class="jxr_linenumber" name="L525" href="#L525">525</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L526" href="#L526">526</a> <em class="jxr_javadoccomment">     * Sets a parameter value on a prepared statement with null checks.</em>
+<a class="jxr_linenumber" name="L527" href="#L527">527</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L528" href="#L528">528</a> <em class="jxr_javadoccomment">     * @param ps the prepared statement</em>
+<a class="jxr_linenumber" name="L529" href="#L529">529</a> <em class="jxr_javadoccomment">     * @param i the parameter index</em>
+<a class="jxr_linenumber" name="L530" href="#L530">530</a> <em class="jxr_javadoccomment">     * @param value the value</em>
+<a class="jxr_linenumber" name="L531" href="#L531">531</a> <em class="jxr_javadoccomment">     * @throws SQLException thrown if there is an error setting the parameter</em>
+<a class="jxr_linenumber" name="L532" href="#L532">532</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L533" href="#L533">533</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setFloatOrNull(PreparedStatement ps, <strong class="jxr_keyword">int</strong> i, Float value) <strong class="jxr_keyword">throws</strong> SQLException {
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>         <strong class="jxr_keyword">if</strong> (value == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L535" href="#L535">535</a>             ps.setNull(i, java.sql.Types.NULL);
+<a class="jxr_linenumber" name="L536" href="#L536">536</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L537" href="#L537">537</a>             ps.setFloat(i, value);
+<a class="jxr_linenumber" name="L538" href="#L538">538</a>         }
+<a class="jxr_linenumber" name="L539" href="#L539">539</a>     }
+<a class="jxr_linenumber" name="L540" href="#L540">540</a> 
+<a class="jxr_linenumber" name="L541" href="#L541">541</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L542" href="#L542">542</a> <em class="jxr_javadoccomment">     * Sets a parameter value on a prepared statement with null checks.</em>
+<a class="jxr_linenumber" name="L543" href="#L543">543</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L544" href="#L544">544</a> <em class="jxr_javadoccomment">     * @param ps the prepared statement</em>
+<a class="jxr_linenumber" name="L545" href="#L545">545</a> <em class="jxr_javadoccomment">     * @param i the parameter index</em>
+<a class="jxr_linenumber" name="L546" href="#L546">546</a> <em class="jxr_javadoccomment">     * @param value the value</em>
+<a class="jxr_linenumber" name="L547" href="#L547">547</a> <em class="jxr_javadoccomment">     * @throws SQLException thrown if there is an error setting the parameter</em>
+<a class="jxr_linenumber" name="L548" href="#L548">548</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L549" href="#L549">549</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> setBooleanOrNull(PreparedStatement ps, <strong class="jxr_keyword">int</strong> i, Boolean value) <strong class="jxr_keyword">throws</strong> SQLException {
+<a class="jxr_linenumber" name="L550" href="#L550">550</a>         <strong class="jxr_keyword">if</strong> (value == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L551" href="#L551">551</a>             ps.setNull(i, java.sql.Types.NULL);
+<a class="jxr_linenumber" name="L552" href="#L552">552</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L553" href="#L553">553</a>             ps.setBoolean(i, value);
+<a class="jxr_linenumber" name="L554" href="#L554">554</a>         }
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>     }
+<a class="jxr_linenumber" name="L556" href="#L556">556</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2024 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

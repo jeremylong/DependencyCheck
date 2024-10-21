@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ArtifactoryAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">ArtifactoryAnalyzer.java</span></div><h1>ArtifactoryAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ArtifactoryAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">ArtifactoryAnalyzer.java</span></div><h1>ArtifactoryAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -234,29 +234,28 @@ import java.util.List;
 <span class="nc" id="L234">            Files.delete(pomFile.toPath());</span>
 <span class="nc" id="L235">            LOGGER.debug(&quot;Downloading {}&quot;, ma.getPomUrl());</span>
             //TODO add caching
-<span class="nc" id="L237">            final Downloader downloader = new Downloader(getSettings());</span>
-<span class="nc" id="L238">            downloader.fetchFile(new URL(ma.getPomUrl()), pomFile,</span>
+<span class="nc" id="L237">            Downloader.getInstance().fetchFile(new URL(ma.getPomUrl()), pomFile, true,</span>
                     Settings.KEYS.ANALYZER_ARTIFACTORY_API_USERNAME,
                     Settings.KEYS.ANALYZER_ARTIFACTORY_API_TOKEN);
-<span class="nc" id="L241">            PomUtils.analyzePOM(dependency, pomFile);</span>
+<span class="nc" id="L240">            PomUtils.analyzePOM(dependency, pomFile);</span>
 
-<span class="nc" id="L243">        } catch (DownloadFailedException ex) {</span>
-<span class="nc" id="L244">            LOGGER.warn(&quot;Unable to download pom.xml for {} from Artifactory; &quot;</span>
-<span class="nc" id="L245">                    + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
-<span class="nc" id="L246">        } catch (TooManyRequestsException ex) {</span>
-<span class="nc" id="L247">            this.setEnabled(false);</span>
-<span class="nc" id="L248">            throw new AnalysisException(&quot;Received a 429 - too many requests from Artifactory; &quot;</span>
+<span class="nc" id="L242">        } catch (DownloadFailedException ex) {</span>
+<span class="nc" id="L243">            LOGGER.warn(&quot;Unable to download pom.xml for {} from Artifactory; &quot;</span>
+<span class="nc" id="L244">                    + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
+<span class="nc" id="L245">        } catch (TooManyRequestsException ex) {</span>
+<span class="nc" id="L246">            this.setEnabled(false);</span>
+<span class="nc" id="L247">            throw new AnalysisException(&quot;Received a 429 - too many requests from Artifactory; &quot;</span>
                     + &quot;the artifactory analyzer is being disabled.&quot;, ex);
-<span class="nc" id="L250">        } catch (ResourceNotFoundException ex) {</span>
-<span class="nc" id="L251">            LOGGER.warn(&quot;pom.xml not found for {} from Artifactory; &quot;</span>
-<span class="nc" id="L252">                    + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
+<span class="nc" id="L249">        } catch (ResourceNotFoundException ex) {</span>
+<span class="nc" id="L250">            LOGGER.warn(&quot;pom.xml not found for {} from Artifactory; &quot;</span>
+<span class="nc" id="L251">                    + &quot;this could result in undetected CPE/CVEs.&quot;, dependency.getFileName());</span>
         } finally {
-<span class="nc bnc" id="L254" title="All 6 branches missed.">            if (pomFile != null &amp;&amp; pomFile.exists() &amp;&amp; !FileUtils.delete(pomFile)) {</span>
-<span class="nc" id="L255">                LOGGER.debug(&quot;Failed to delete temporary pom file {}&quot;, pomFile);</span>
-<span class="nc" id="L256">                pomFile.deleteOnExit();</span>
+<span class="nc bnc" id="L253" title="All 6 branches missed.">            if (pomFile != null &amp;&amp; pomFile.exists() &amp;&amp; !FileUtils.delete(pomFile)) {</span>
+<span class="nc" id="L254">                LOGGER.debug(&quot;Failed to delete temporary pom file {}&quot;, pomFile);</span>
+<span class="nc" id="L255">                pomFile.deleteOnExit();</span>
             }
         }
-<span class="nc" id="L259">    }</span>
+<span class="nc" id="L258">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

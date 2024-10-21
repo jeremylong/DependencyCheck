@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>URLConnectionFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">URLConnectionFactory.java</span></div><h1>URLConnectionFactory.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>URLConnectionFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">URLConnectionFactory.java</span></div><h1>URLConnectionFactory.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-utils.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -238,8 +238,8 @@ public final class URLConnectionFactory {
      * thrown if there is an exception
      */
     public HttpURLConnection createHttpURLConnection(URL url, boolean proxy) throws URLConnectionFailureException {
-<span class="pc bpc" id="L241" title="1 of 2 branches missed.">        if (proxy) {</span>
-<span class="fc" id="L242">            return createHttpURLConnection(url);</span>
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        if (proxy) {</span>
+<span class="nc" id="L242">            return createHttpURLConnection(url);</span>
         }
         final HttpURLConnection conn;
         try {
@@ -264,16 +264,16 @@ public final class URLConnectionFactory {
      * @param conn the connection
      */
     private void configureTLS(URL url, URLConnection conn) {
-<span class="fc bfc" id="L267" title="All 2 branches covered.">        if (&quot;https&quot;.equals(url.getProtocol())) {</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if (&quot;https&quot;.equals(url.getProtocol())) {</span>
             try {
-<span class="fc" id="L269">                final HttpsURLConnection secCon = (HttpsURLConnection) conn;</span>
-<span class="fc" id="L270">                final SSLSocketFactoryEx factory = new SSLSocketFactoryEx(settings);</span>
-<span class="fc" id="L271">                secCon.setSSLSocketFactory(factory);</span>
+<span class="nc" id="L269">                final HttpsURLConnection secCon = (HttpsURLConnection) conn;</span>
+<span class="nc" id="L270">                final SSLSocketFactoryEx factory = new SSLSocketFactoryEx(settings);</span>
+<span class="nc" id="L271">                secCon.setSSLSocketFactory(factory);</span>
 <span class="nc" id="L272">            } catch (NoSuchAlgorithmException ex) {</span>
 <span class="nc" id="L273">                LOGGER.debug(&quot;Unsupported algorithm in SSLSocketFactoryEx&quot;, ex);</span>
 <span class="nc" id="L274">            } catch (KeyManagementException ex) {</span>
 <span class="nc" id="L275">                LOGGER.debug(&quot;Key management exception in SSLSocketFactoryEx&quot;, ex);</span>
-<span class="pc" id="L276">            }</span>
+<span class="nc" id="L276">            }</span>
         }
 <span class="fc" id="L278">    }</span>
 }

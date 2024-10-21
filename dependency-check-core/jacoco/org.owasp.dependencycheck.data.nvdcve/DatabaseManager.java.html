@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatabaseManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvdcve</a> &gt; <span class="el_source">DatabaseManager.java</span></div><h1>DatabaseManager.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DatabaseManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvdcve</a> &gt; <span class="el_source">DatabaseManager.java</span></div><h1>DatabaseManager.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -147,90 +147,93 @@ public final class DatabaseManager {
 <span class="nc" id="L147">                        driver = DriverLoader.load(driverName, driverPath);</span>
                     } else {
 <span class="nc" id="L149">                        driver = DriverLoader.load(driverName);</span>
+<span class="nc" id="L150">                        LOGGER.warn(&quot;Explicitly loaded driver {} from classpath; if JDBCv4 service loading is supported &quot;</span>
+                                + &quot;by the driver you should remove the dbDriver configuration&quot;, driverName);
                     }
-<span class="nc" id="L151">                } catch (DriverLoadException ex) {</span>
-<span class="nc" id="L152">                    LOGGER.debug(&quot;Unable to load database driver&quot;, ex);</span>
-<span class="nc" id="L153">                    throw new DatabaseException(&quot;Unable to load database driver&quot;, ex);</span>
-<span class="nc" id="L154">                }</span>
+<span class="nc" id="L153">                } catch (DriverLoadException ex) {</span>
+<span class="nc" id="L154">                    LOGGER.debug(&quot;Unable to load database driver&quot;, ex);</span>
+<span class="nc" id="L155">                    throw new DatabaseException(&quot;Unable to load database driver&quot;, ex);</span>
+<span class="nc" id="L156">                }</span>
             }
-<span class="fc" id="L156">            userName = settings.getString(Settings.KEYS.DB_USER, &quot;dcuser&quot;);</span>
+<span class="fc" id="L158">            userName = settings.getString(Settings.KEYS.DB_USER, &quot;dcuser&quot;);</span>
             //yes, yes - hard-coded password - only if there isn't one in the properties file.
-<span class="fc" id="L158">            password = settings.getString(Settings.KEYS.DB_PASSWORD, &quot;DC-Pass1337!&quot;);</span>
+<span class="fc" id="L160">            password = settings.getString(Settings.KEYS.DB_PASSWORD, &quot;DC-Pass1337!&quot;);</span>
             try {
-<span class="fc" id="L160">                connectionString = settings.getConnectionString(</span>
+<span class="fc" id="L162">                connectionString = settings.getConnectionString(</span>
                         Settings.KEYS.DB_CONNECTION_STRING,
                         Settings.KEYS.DB_FILE_NAME);
-<span class="nc" id="L163">            } catch (IOException ex) {</span>
-<span class="nc" id="L164">                LOGGER.debug(&quot;Unable to retrieve the database connection string&quot;, ex);</span>
-<span class="nc" id="L165">                throw new DatabaseException(&quot;Unable to retrieve the database connection string&quot;, ex);</span>
-<span class="fc" id="L166">            }</span>
-<span class="fc" id="L167">            isH2 = isH2Connection(connectionString);</span>
-<span class="fc" id="L168">            boolean shouldCreateSchema = false;</span>
+<span class="nc" id="L165">            } catch (IOException ex) {</span>
+<span class="nc" id="L166">                LOGGER.debug(&quot;Unable to retrieve the database connection string&quot;, ex);</span>
+<span class="nc" id="L167">                throw new DatabaseException(&quot;Unable to retrieve the database connection string&quot;, ex);</span>
+<span class="fc" id="L168">            }</span>
+<span class="fc" id="L169">            isH2 = isH2Connection(connectionString);</span>
+<span class="fc" id="L170">            boolean shouldCreateSchema = false;</span>
             try {
-<span class="pc bpc" id="L170" title="1 of 4 branches missed.">                if (autoUpdate &amp;&amp; isH2) {</span>
-<span class="fc bfc" id="L171" title="All 2 branches covered.">                    shouldCreateSchema = !h2DataFileExists();</span>
-<span class="fc" id="L172">                    LOGGER.debug(&quot;Need to create DB Structure: {}&quot;, shouldCreateSchema);</span>
+<span class="pc bpc" id="L172" title="1 of 4 branches missed.">                if (autoUpdate &amp;&amp; isH2) {</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">                    shouldCreateSchema = !h2DataFileExists();</span>
+<span class="fc" id="L174">                    LOGGER.debug(&quot;Need to create DB Structure: {}&quot;, shouldCreateSchema);</span>
                 }
-<span class="nc" id="L174">            } catch (IOException ioex) {</span>
-<span class="nc" id="L175">                LOGGER.debug(&quot;Unable to verify database exists&quot;, ioex);</span>
-<span class="nc" id="L176">                throw new DatabaseException(&quot;Unable to verify database exists&quot;, ioex);</span>
-<span class="fc" id="L177">            }</span>
-<span class="fc" id="L178">            LOGGER.debug(&quot;Loading database connection&quot;);</span>
-<span class="fc" id="L179">            LOGGER.debug(&quot;Connection String: {}&quot;, connectionString);</span>
-<span class="fc" id="L180">            LOGGER.debug(&quot;Database User: {}&quot;, userName);</span>
+<span class="nc" id="L176">            } catch (IOException ioex) {</span>
+<span class="nc" id="L177">                LOGGER.debug(&quot;Unable to verify database exists&quot;, ioex);</span>
+<span class="nc" id="L178">                throw new DatabaseException(&quot;Unable to verify database exists&quot;, ioex);</span>
+<span class="fc" id="L179">            }</span>
+<span class="fc" id="L180">            LOGGER.debug(&quot;Loading database connection&quot;);</span>
+<span class="fc" id="L181">            LOGGER.debug(&quot;Connection String: {}&quot;, connectionString);</span>
+<span class="fc" id="L182">            LOGGER.debug(&quot;Database User: {}&quot;, userName);</span>
 
             try {
-<span class="pc bpc" id="L183" title="1 of 2 branches missed.">                if (connectionString.toLowerCase().contains(&quot;integrated security=true&quot;)</span>
-<span class="pc bpc" id="L184" title="1 of 2 branches missed.">                        || connectionString.toLowerCase().contains(&quot;trusted_connection=true&quot;)) {</span>
-<span class="nc" id="L185">                    conn = DriverManager.getConnection(connectionString);</span>
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">                if (connectionString.toLowerCase().contains(&quot;integrated security=true&quot;)</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">                        || connectionString.toLowerCase().contains(&quot;trusted_connection=true&quot;)) {</span>
+<span class="nc" id="L187">                    conn = DriverManager.getConnection(connectionString);</span>
                 } else {
-<span class="fc" id="L187">                    conn = DriverManager.getConnection(connectionString, userName, password);</span>
+<span class="fc" id="L189">                    conn = DriverManager.getConnection(connectionString, userName, password);</span>
                 }
-<span class="nc" id="L189">            } catch (SQLException ex) {</span>
-<span class="nc bnc" id="L190" title="All 4 branches missed.">                if (ex.getMessage().contains(&quot;java.net.UnknownHostException&quot;) &amp;&amp; connectionString.contains(&quot;AUTO_SERVER=TRUE;&quot;)) {</span>
-<span class="nc" id="L191">                    connectionString = connectionString.replace(&quot;AUTO_SERVER=TRUE;&quot;, &quot;&quot;);</span>
+<span class="nc" id="L191">            } catch (SQLException ex) {</span>
+<span class="nc bnc" id="L192" title="All 4 branches missed.">                if (ex.getMessage().contains(&quot;java.net.UnknownHostException&quot;) &amp;&amp; connectionString.contains(&quot;AUTO_SERVER=TRUE;&quot;)) {</span>
+<span class="nc" id="L193">                    connectionString = connectionString.replace(&quot;AUTO_SERVER=TRUE;&quot;, &quot;&quot;);</span>
                     try {
-<span class="nc" id="L193">                        conn = DriverManager.getConnection(connectionString, userName, password);</span>
-<span class="nc" id="L194">                        settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
-<span class="nc" id="L195">                        LOGGER.debug(&quot;Unable to start the database in server mode; reverting to single user mode&quot;);</span>
-<span class="nc" id="L196">                    } catch (SQLException sqlex) {</span>
-<span class="nc" id="L197">                        LOGGER.debug(&quot;Unable to connect to the database&quot;, ex);</span>
-<span class="nc" id="L198">                        throw new DatabaseException(&quot;Unable to connect to the database&quot;, ex);</span>
-<span class="nc" id="L199">                    }</span>
-<span class="nc bnc" id="L200" title="All 4 branches missed.">                } else if (isH2 &amp;&amp; ex.getMessage().contains(&quot;file version or invalid file header&quot;)) {</span>
-<span class="nc" id="L201">                    LOGGER.error(&quot;Incompatible or corrupt database found. To resolve this issue please remove the existing database by running purge&quot;);</span>
-<span class="nc" id="L202">                    throw new DatabaseException(&quot;Incompatible or corrupt database found; run the purge command to resolve the issue&quot;);</span>
+<span class="nc" id="L195">                        conn = DriverManager.getConnection(connectionString, userName, password);</span>
+<span class="nc" id="L196">                        settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
+<span class="nc" id="L197">                        LOGGER.debug(&quot;Unable to start the database in server mode; reverting to single user mode&quot;);</span>
+<span class="nc" id="L198">                    } catch (SQLException sqlex) {</span>
+<span class="nc" id="L199">                        LOGGER.debug(&quot;Unable to connect to the database&quot;, ex);</span>
+<span class="nc" id="L200">                        throw new DatabaseException(&quot;Unable to connect to the database&quot;, ex);</span>
+<span class="nc" id="L201">                    }</span>
+<span class="nc bnc" id="L202" title="All 4 branches missed.">                } else if (isH2 &amp;&amp; ex.getMessage().contains(&quot;file version or invalid file header&quot;)) {</span>
+<span class="nc" id="L203">                    LOGGER.error(&quot;Incompatible or corrupt database found. To resolve this issue please remove the existing &quot;</span>
+                            + &quot;database by running purge&quot;);
+<span class="nc" id="L205">                    throw new DatabaseException(&quot;Incompatible or corrupt database found; run the purge command to resolve the issue&quot;);</span>
                 } else {
-<span class="nc" id="L204">                    LOGGER.debug(&quot;Unable to connect to the database&quot;, ex);</span>
-<span class="nc" id="L205">                    throw new DatabaseException(&quot;Unable to connect to the database&quot;, ex);</span>
+<span class="nc" id="L207">                    LOGGER.debug(&quot;Unable to connect to the database&quot;, ex);</span>
+<span class="nc" id="L208">                    throw new DatabaseException(&quot;Unable to connect to the database&quot;, ex);</span>
                 }
-<span class="fc" id="L207">            }</span>
-<span class="fc" id="L208">            databaseProductName = determineDatabaseProductName(conn);</span>
-<span class="fc" id="L209">            isOracle = &quot;oracle&quot;.equals(databaseProductName);</span>
-<span class="fc bfc" id="L210" title="All 2 branches covered.">            if (shouldCreateSchema) {</span>
+<span class="fc" id="L210">            }</span>
+<span class="fc" id="L211">            databaseProductName = determineDatabaseProductName(conn);</span>
+<span class="fc" id="L212">            isOracle = &quot;oracle&quot;.equals(databaseProductName);</span>
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">            if (shouldCreateSchema) {</span>
                 try {
-<span class="fc" id="L212">                    createTables(conn);</span>
-<span class="nc" id="L213">                } catch (DatabaseException dex) {</span>
-<span class="nc" id="L214">                    LOGGER.debug(&quot;&quot;, dex);</span>
-<span class="nc" id="L215">                    throw new DatabaseException(&quot;Unable to create the database structure&quot;, dex);</span>
-<span class="fc" id="L216">                }</span>
+<span class="nc" id="L215">                    createTables(conn);</span>
+<span class="nc" id="L216">                } catch (DatabaseException dex) {</span>
+<span class="nc" id="L217">                    LOGGER.debug(&quot;&quot;, dex);</span>
+<span class="nc" id="L218">                    throw new DatabaseException(&quot;Unable to create the database structure&quot;, dex);</span>
+<span class="nc" id="L219">                }</span>
             }
             try {
-<span class="fc" id="L219">                ensureSchemaVersion(conn);</span>
-<span class="nc" id="L220">            } catch (DatabaseException dex) {</span>
-<span class="nc" id="L221">                LOGGER.debug(&quot;&quot;, dex);</span>
-<span class="nc" id="L222">                throw new DatabaseException(&quot;Database schema does not match this version of dependency-check&quot;, dex);</span>
-<span class="fc" id="L223">            }</span>
+<span class="fc" id="L222">                ensureSchemaVersion(conn);</span>
+<span class="nc" id="L223">            } catch (DatabaseException dex) {</span>
+<span class="nc" id="L224">                LOGGER.debug(&quot;&quot;, dex);</span>
+<span class="nc" id="L225">                throw new DatabaseException(&quot;Database schema does not match this version of dependency-check&quot;, dex);</span>
+<span class="fc" id="L226">            }</span>
         } finally {
-<span class="pc bpc" id="L225" title="1 of 2 branches missed.">            if (conn != null) {</span>
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">            if (conn != null) {</span>
                 try {
-<span class="fc" id="L227">                    conn.close();</span>
-<span class="nc" id="L228">                } catch (SQLException ex) {</span>
-<span class="nc" id="L229">                    LOGGER.debug(&quot;An error occurred closing the connection&quot;, ex);</span>
-<span class="fc" id="L230">                }</span>
+<span class="fc" id="L230">                    conn.close();</span>
+<span class="nc" id="L231">                } catch (SQLException ex) {</span>
+<span class="nc" id="L232">                    LOGGER.debug(&quot;An error occurred closing the connection&quot;, ex);</span>
+<span class="fc" id="L233">                }</span>
             }
         }
-<span class="fc" id="L233">    }</span>
+<span class="fc" id="L236">    }</span>
 
     /**
      * Tries to determine the product name of the database.
@@ -240,12 +243,12 @@ public final class DatabaseManager {
      */
     private String determineDatabaseProductName(Connection conn) {
         try {
-<span class="fc" id="L243">            final String databaseProductName = conn.getMetaData().getDatabaseProductName().toLowerCase();</span>
-<span class="fc" id="L244">            LOGGER.debug(&quot;Database product: {}&quot;, databaseProductName);</span>
-<span class="fc" id="L245">            return databaseProductName;</span>
-<span class="nc" id="L246">        } catch (SQLException se) {</span>
-<span class="nc" id="L247">            LOGGER.warn(&quot;Problem determining database product!&quot;, se);</span>
-<span class="nc" id="L248">            return null;</span>
+<span class="fc" id="L246">            final String databaseProductName = conn.getMetaData().getDatabaseProductName().toLowerCase();</span>
+<span class="fc" id="L247">            LOGGER.debug(&quot;Database product: {}&quot;, databaseProductName);</span>
+<span class="fc" id="L248">            return databaseProductName;</span>
+<span class="nc" id="L249">        } catch (SQLException se) {</span>
+<span class="nc" id="L250">            LOGGER.warn(&quot;Problem determining database product!&quot;, se);</span>
+<span class="nc" id="L251">            return null;</span>
         }
     }
 
@@ -256,14 +259,14 @@ public final class DatabaseManager {
      * load the driver may be unloaded prior to the driver being de-registered.
      */
     public void cleanup() {
-<span class="pc bpc" id="L259" title="1 of 2 branches missed.">        if (driver != null) {</span>
-<span class="nc" id="L260">            DriverLoader.cleanup(driver);</span>
-<span class="nc" id="L261">            driver = null;</span>
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">        if (driver != null) {</span>
+<span class="nc" id="L263">            DriverLoader.cleanup(driver);</span>
+<span class="nc" id="L264">            driver = null;</span>
         }
-<span class="fc" id="L263">        connectionString = null;</span>
-<span class="fc" id="L264">        userName = null;</span>
-<span class="fc" id="L265">        password = null;</span>
-<span class="fc" id="L266">    }</span>
+<span class="fc" id="L266">        connectionString = null;</span>
+<span class="fc" id="L267">        userName = null;</span>
+<span class="fc" id="L268">        password = null;</span>
+<span class="fc" id="L269">    }</span>
 
     /**
      * Determines if the H2 database file exists. If it does not exist then the
@@ -274,7 +277,7 @@ public final class DatabaseManager {
      * cannot be created
      */
     public boolean h2DataFileExists() throws IOException {
-<span class="fc" id="L277">        return h2DataFileExists(settings);</span>
+<span class="fc" id="L280">        return h2DataFileExists(settings);</span>
     }
 
     /**
@@ -287,8 +290,8 @@ public final class DatabaseManager {
      * cannot be created
      */
     public static boolean h2DataFileExists(Settings configuration) throws IOException {
-<span class="fc" id="L290">        final File file = getH2DataFile(configuration);</span>
-<span class="fc" id="L291">        return file.exists();</span>
+<span class="fc" id="L293">        final File file = getH2DataFile(configuration);</span>
+<span class="fc" id="L294">        return file.exists();</span>
     }
 
     /**
@@ -299,9 +302,9 @@ public final class DatabaseManager {
      * @throws IOException thrown if there is an error
      */
     public static File getH2DataFile(Settings configuration) throws IOException {
-<span class="fc" id="L302">        final File dir = configuration.getH2DataDirectory();</span>
-<span class="fc" id="L303">        final String fileName = configuration.getString(Settings.KEYS.DB_FILE_NAME);</span>
-<span class="fc" id="L304">        return new File(dir, fileName);</span>
+<span class="fc" id="L305">        final File dir = configuration.getH2DataDirectory();</span>
+<span class="fc" id="L306">        final String fileName = configuration.getString(Settings.KEYS.DB_FILE_NAME);</span>
+<span class="fc" id="L307">        return new File(dir, fileName);</span>
     }
 
     /**
@@ -310,7 +313,7 @@ public final class DatabaseManager {
      * @return the database product name
      */
     public String getDatabaseProductName() {
-<span class="fc" id="L313">        return databaseProductName;</span>
+<span class="fc" id="L316">        return databaseProductName;</span>
     }
 
     /**
@@ -319,7 +322,7 @@ public final class DatabaseManager {
      * @return true if the connection string is for an H2 database
      */
     public boolean isH2Connection() {
-<span class="fc" id="L322">        return isH2;</span>
+<span class="fc" id="L325">        return isH2;</span>
     }
 
     /**
@@ -328,7 +331,7 @@ public final class DatabaseManager {
      * @return true if the connection string is for an Oracle database
      */
     public boolean isOracle() {
-<span class="fc" id="L331">        return isOracle;</span>
+<span class="fc" id="L334">        return isOracle;</span>
     }
 
     /**
@@ -340,14 +343,14 @@ public final class DatabaseManager {
     public static boolean isH2Connection(Settings configuration) {
         final String connStr;
         try {
-<span class="fc" id="L343">            connStr = configuration.getConnectionString(</span>
+<span class="fc" id="L346">            connStr = configuration.getConnectionString(</span>
                     Settings.KEYS.DB_CONNECTION_STRING,
                     Settings.KEYS.DB_FILE_NAME);
-<span class="nc" id="L346">        } catch (IOException ex) {</span>
-<span class="nc" id="L347">            LOGGER.debug(&quot;Unable to get connectionn string&quot;, ex);</span>
-<span class="nc" id="L348">            return false;</span>
-<span class="fc" id="L349">        }</span>
-<span class="fc" id="L350">        return isH2Connection(connStr);</span>
+<span class="nc" id="L349">        } catch (IOException ex) {</span>
+<span class="nc" id="L350">            LOGGER.debug(&quot;Unable to get connectionn string&quot;, ex);</span>
+<span class="nc" id="L351">            return false;</span>
+<span class="fc" id="L352">        }</span>
+<span class="fc" id="L353">        return isH2Connection(connStr);</span>
     }
 
     /**
@@ -357,7 +360,7 @@ public final class DatabaseManager {
      * @return true if the connection string is for an H2 database
      */
     public static boolean isH2Connection(String connectionString) {
-<span class="fc" id="L360">        return connectionString.startsWith(&quot;jdbc:h2:file:&quot;);</span>
+<span class="fc" id="L363">        return connectionString.startsWith(&quot;jdbc:h2:file:&quot;);</span>
     }
 
     /**
@@ -368,40 +371,40 @@ public final class DatabaseManager {
      * @throws DatabaseException thrown if there is a Database Exception
      */
     private void createTables(Connection conn) throws DatabaseException {
-<span class="fc" id="L371">        LOGGER.debug(&quot;Creating database structure&quot;);</span>
+<span class="nc" id="L374">        LOGGER.debug(&quot;Creating database structure&quot;);</span>
         final String dbStructure;
         try {
-<span class="fc" id="L374">            dbStructure = getResource(DB_STRUCTURE_RESOURCE);</span>
+<span class="nc" id="L377">            dbStructure = getResource(DB_STRUCTURE_RESOURCE);</span>
 
-<span class="fc" id="L376">            Statement statement = null;</span>
+<span class="nc" id="L379">            Statement statement = null;</span>
             try {
-<span class="fc" id="L378">                statement = conn.createStatement();</span>
-<span class="fc" id="L379">                statement.execute(dbStructure);</span>
-<span class="nc" id="L380">            } catch (SQLException ex) {</span>
-<span class="nc" id="L381">                LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L382">                throw new DatabaseException(&quot;Unable to create database statement&quot;, ex);</span>
+<span class="nc" id="L381">                statement = conn.createStatement();</span>
+<span class="nc" id="L382">                statement.execute(dbStructure);</span>
+<span class="nc" id="L383">            } catch (SQLException ex) {</span>
+<span class="nc" id="L384">                LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L385">                throw new DatabaseException(&quot;Unable to create database statement&quot;, ex);</span>
             } finally {
-<span class="fc" id="L384">                DBUtils.closeStatement(statement);</span>
+<span class="nc" id="L387">                DBUtils.closeStatement(statement);</span>
             }
-<span class="nc" id="L386">        } catch (IOException ex) {</span>
-<span class="nc" id="L387">            throw new DatabaseException(&quot;Unable to create database schema&quot;, ex);</span>
-<span class="nc" id="L388">        } catch (LinkageError ex) {</span>
-<span class="nc" id="L389">            LOGGER.debug(new DefaultQuery(ex).call().toString());</span>
-<span class="fc" id="L390">        }</span>
-<span class="fc" id="L391">    }</span>
+<span class="nc" id="L389">        } catch (IOException ex) {</span>
+<span class="nc" id="L390">            throw new DatabaseException(&quot;Unable to create database schema&quot;, ex);</span>
+<span class="nc" id="L391">        } catch (LinkageError ex) {</span>
+<span class="nc" id="L392">            LOGGER.debug(new DefaultQuery(ex).call().toString());</span>
+<span class="nc" id="L393">        }</span>
+<span class="nc" id="L394">    }</span>
 
     private String getResource(String resource) throws IOException {
         String dbStructure;
         try {
-<span class="fc" id="L396">            final URL url = Resources.getResource(resource);</span>
-<span class="fc" id="L397">            dbStructure = Resources.toString(url, StandardCharsets.UTF_8);</span>
-<span class="nc" id="L398">        } catch (IllegalArgumentException ex) {</span>
-<span class="nc" id="L399">            LOGGER.debug(&quot;Resources.getResource(String) failed to find the DB Structure Resource&quot;, ex);</span>
-<span class="nc" id="L400">            try (InputStream is = FileUtils.getResourceAsStream(resource)) {</span>
-<span class="nc" id="L401">                dbStructure = IOUtils.toString(is, StandardCharsets.UTF_8);</span>
+<span class="nc" id="L399">            final URL url = Resources.getResource(resource);</span>
+<span class="nc" id="L400">            dbStructure = Resources.toString(url, StandardCharsets.UTF_8);</span>
+<span class="nc" id="L401">        } catch (IllegalArgumentException ex) {</span>
+<span class="nc" id="L402">            LOGGER.debug(&quot;Resources.getResource(String) failed to find the DB Structure Resource&quot;, ex);</span>
+<span class="nc" id="L403">            try (InputStream is = FileUtils.getResourceAsStream(resource)) {</span>
+<span class="nc" id="L404">                dbStructure = IOUtils.toString(is, StandardCharsets.UTF_8);</span>
             }
-<span class="fc" id="L403">        }</span>
-<span class="fc" id="L404">        return dbStructure;</span>
+<span class="nc" id="L406">        }</span>
+<span class="nc" id="L407">        return dbStructure;</span>
     }
 
     /**
@@ -420,48 +423,48 @@ public final class DatabaseManager {
     private void updateSchema(Connection conn, DependencyVersion appExpectedVersion, DependencyVersion currentDbVersion)
             throws DatabaseException {
 
-<span class="pc bpc" id="L423" title="1 of 2 branches missed.">        if (connectionString.startsWith(&quot;jdbc:h2:file:&quot;)) {</span>
-<span class="fc" id="L424">            LOGGER.debug(&quot;Updating database structure&quot;);</span>
-<span class="fc" id="L425">            final String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());</span>
-<span class="pc bpc" id="L426" title="1 of 4 branches missed.">            if (&quot;data/upgrade_4.2.sql&quot;.equals(updateFile) &amp;&amp; !FileUtils.getResourceAsFile(updateFile).exists()) {</span>
-<span class="nc" id="L427">                throw new DatabaseException(&quot;unable to upgrade the database schema - please run the dependency-check &quot;</span>
+<span class="nc bnc" id="L426" title="All 2 branches missed.">        if (connectionString.startsWith(&quot;jdbc:h2:file:&quot;)) {</span>
+<span class="nc" id="L427">            LOGGER.debug(&quot;Updating database structure&quot;);</span>
+<span class="nc" id="L428">            final String updateFile = String.format(DB_STRUCTURE_UPDATE_RESOURCE, currentDbVersion.toString());</span>
+<span class="nc bnc" id="L429" title="All 4 branches missed.">            if (&quot;data/upgrade_4.2.sql&quot;.equals(updateFile) &amp;&amp; !FileUtils.getResourceAsFile(updateFile).exists()) {</span>
+<span class="nc" id="L430">                throw new DatabaseException(&quot;unable to upgrade the database schema - please run the dependency-check &quot;</span>
                         + &quot;purge command to remove the existing database&quot;);
             }
             try {
-<span class="fc" id="L431">                final String dbStructureUpdate = getResource(updateFile);</span>
-<span class="fc" id="L432">                Statement statement = null;</span>
+<span class="nc" id="L434">                final String dbStructureUpdate = getResource(updateFile);</span>
+<span class="nc" id="L435">                Statement statement = null;</span>
                 try {
-<span class="fc" id="L434">                    statement = conn.createStatement();</span>
-<span class="fc" id="L435">                    statement.execute(dbStructureUpdate);</span>
-<span class="nc" id="L436">                } catch (SQLException ex) {</span>
-<span class="nc" id="L437">                    throw new DatabaseException(String.format(&quot;Unable to upgrade the database schema from %s to %s&quot;,</span>
-<span class="nc" id="L438">                            currentDbVersion, appExpectedVersion.toString()), ex);</span>
+<span class="nc" id="L437">                    statement = conn.createStatement();</span>
+<span class="nc" id="L438">                    statement.execute(dbStructureUpdate);</span>
+<span class="nc" id="L439">                } catch (SQLException ex) {</span>
+<span class="nc" id="L440">                    throw new DatabaseException(String.format(&quot;Unable to upgrade the database schema from %s to %s&quot;,</span>
+<span class="nc" id="L441">                            currentDbVersion, appExpectedVersion.toString()), ex);</span>
                 } finally {
-<span class="fc" id="L440">                    DBUtils.closeStatement(statement);</span>
+<span class="nc" id="L443">                    DBUtils.closeStatement(statement);</span>
                 }
-<span class="nc" id="L442">            } catch (IllegalArgumentException | IOException ex) {</span>
-<span class="nc" id="L443">                final String msg = String.format(&quot;Upgrade SQL file does not exist: %s&quot;, updateFile);</span>
-<span class="nc" id="L444">                throw new DatabaseException(msg, ex);</span>
-<span class="fc" id="L445">            }</span>
-<span class="fc" id="L446">        } else {</span>
-<span class="nc" id="L447">            final int e0 = Integer.parseInt(appExpectedVersion.getVersionParts().get(0));</span>
-<span class="nc" id="L448">            final int c0 = Integer.parseInt(currentDbVersion.getVersionParts().get(0));</span>
-<span class="nc" id="L449">            final int e1 = Integer.parseInt(appExpectedVersion.getVersionParts().get(1));</span>
-<span class="nc" id="L450">            final int c1 = Integer.parseInt(currentDbVersion.getVersionParts().get(1));</span>
+<span class="nc" id="L445">            } catch (IllegalArgumentException | IOException ex) {</span>
+<span class="nc" id="L446">                final String msg = String.format(&quot;Upgrade SQL file does not exist: %s&quot;, updateFile);</span>
+<span class="nc" id="L447">                throw new DatabaseException(msg, ex);</span>
+<span class="nc" id="L448">            }</span>
+<span class="nc" id="L449">        } else {</span>
+<span class="nc" id="L450">            final int e0 = Integer.parseInt(appExpectedVersion.getVersionParts().get(0));</span>
+<span class="nc" id="L451">            final int c0 = Integer.parseInt(currentDbVersion.getVersionParts().get(0));</span>
+<span class="nc" id="L452">            final int e1 = Integer.parseInt(appExpectedVersion.getVersionParts().get(1));</span>
+<span class="nc" id="L453">            final int c1 = Integer.parseInt(currentDbVersion.getVersionParts().get(1));</span>
             //CSOFF: EmptyBlock
-<span class="nc bnc" id="L452" title="All 4 branches missed.">            if (e0 == c0 &amp;&amp; e1 &lt; c1) {</span>
-<span class="nc" id="L453">                LOGGER.warn(&quot;A new version of dependency-check is available; consider upgrading&quot;);</span>
-<span class="nc" id="L454">                settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);</span>
-<span class="nc bnc" id="L455" title="All 4 branches missed.">            } else if (e0 == c0 &amp;&amp; e1 == c1) {</span>
+<span class="nc bnc" id="L455" title="All 4 branches missed.">            if (e0 == c0 &amp;&amp; e1 &lt; c1) {</span>
+<span class="nc" id="L456">                LOGGER.warn(&quot;A new version of dependency-check is available; consider upgrading&quot;);</span>
+<span class="nc" id="L457">                settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);</span>
+<span class="nc bnc" id="L458" title="All 4 branches missed.">            } else if (e0 == c0 &amp;&amp; e1 == c1) {</span>
                 //do nothing - not sure how we got here, but just in case...
             } else {
-<span class="nc" id="L458">                LOGGER.error(&quot;The database schema must be upgraded to use this version of dependency-check. Please see {} for more information.&quot;,</span>
+<span class="nc" id="L461">                LOGGER.error(&quot;The database schema must be upgraded to use this version of dependency-check. Please see {} for more information.&quot;,</span>
                         UPGRADE_HELP_URL);
-<span class="nc" id="L460">                throw new DatabaseException(&quot;Database schema is out of date&quot;);</span>
+<span class="nc" id="L463">                throw new DatabaseException(&quot;Database schema is out of date&quot;);</span>
             }
             //CSON: EmptyBlock
         }
-<span class="fc" id="L464">    }</span>
+<span class="nc" id="L467">    }</span>
 
     /**
      * Returns a resource bundle containing the SQL Statements needed for the
@@ -470,10 +473,10 @@ public final class DatabaseManager {
      * @return a resource bundle containing the SQL Statements
      */
     public ResourceBundle getSqlStatements() {
-<span class="pc bpc" id="L473" title="1 of 2 branches missed.">        final ResourceBundle statementBundle = getDatabaseProductName() != null</span>
-<span class="pc" id="L474">                ? ResourceBundle.getBundle(&quot;data/dbStatements&quot;, new Locale(getDatabaseProductName()))</span>
-<span class="pc" id="L475">                : ResourceBundle.getBundle(&quot;data/dbStatements&quot;);</span>
-<span class="fc" id="L476">        return statementBundle;</span>
+<span class="pc bpc" id="L476" title="1 of 2 branches missed.">        final ResourceBundle statementBundle = getDatabaseProductName() != null</span>
+<span class="fc" id="L477">                ? ResourceBundle.getBundle(&quot;data/dbStatements&quot;, new Locale(getDatabaseProductName()))</span>
+<span class="pc" id="L478">                : ResourceBundle.getBundle(&quot;data/dbStatements&quot;);</span>
+<span class="fc" id="L479">        return statementBundle;</span>
     }
 
     /**
@@ -485,73 +488,73 @@ public final class DatabaseManager {
      * with this version of dependency-check
      */
     private void ensureSchemaVersion(Connection conn) throws DatabaseException {
-<span class="fc" id="L488">        ResultSet rs = null;</span>
-<span class="fc" id="L489">        PreparedStatement ps = null;</span>
-<span class="fc" id="L490">        final ResourceBundle statementBundle = getSqlStatements();</span>
-<span class="fc" id="L491">        final String sql = statementBundle.getString(&quot;SELECT_SCHEMA_VERSION&quot;);</span>
+<span class="fc" id="L491">        ResultSet rs = null;</span>
+<span class="fc" id="L492">        PreparedStatement ps = null;</span>
+<span class="fc" id="L493">        final ResourceBundle statementBundle = getSqlStatements();</span>
+<span class="fc" id="L494">        final String sql = statementBundle.getString(&quot;SELECT_SCHEMA_VERSION&quot;);</span>
         try {
-<span class="fc" id="L493">            ps = conn.prepareStatement(sql);</span>
-<span class="fc" id="L494">            rs = ps.executeQuery();</span>
-<span class="pc bpc" id="L495" title="1 of 2 branches missed.">            if (rs.next()) {</span>
-<span class="fc" id="L496">                final String dbSchemaVersion = settings.getString(Settings.KEYS.DB_VERSION);</span>
-<span class="fc" id="L497">                final DependencyVersion appDbVersion = DependencyVersionUtil.parseVersion(dbSchemaVersion);</span>
-<span class="pc bpc" id="L498" title="1 of 2 branches missed.">                if (appDbVersion == null) {</span>
-<span class="nc" id="L499">                    throw new DatabaseException(&quot;Invalid application database schema&quot;);</span>
+<span class="fc" id="L496">            ps = conn.prepareStatement(sql);</span>
+<span class="fc" id="L497">            rs = ps.executeQuery();</span>
+<span class="pc bpc" id="L498" title="1 of 2 branches missed.">            if (rs.next()) {</span>
+<span class="fc" id="L499">                final String dbSchemaVersion = settings.getString(Settings.KEYS.DB_VERSION);</span>
+<span class="fc" id="L500">                final DependencyVersion appDbVersion = DependencyVersionUtil.parseVersion(dbSchemaVersion);</span>
+<span class="pc bpc" id="L501" title="1 of 2 branches missed.">                if (appDbVersion == null) {</span>
+<span class="nc" id="L502">                    throw new DatabaseException(&quot;Invalid application database schema&quot;);</span>
                 }
-<span class="fc" id="L501">                final DependencyVersion db = DependencyVersionUtil.parseVersion(rs.getString(1));</span>
-<span class="pc bpc" id="L502" title="1 of 2 branches missed.">                if (db == null) {</span>
-<span class="nc" id="L503">                    throw new DatabaseException(&quot;Invalid database schema&quot;);</span>
+<span class="fc" id="L504">                final DependencyVersion db = DependencyVersionUtil.parseVersion(rs.getString(1));</span>
+<span class="pc bpc" id="L505" title="1 of 2 branches missed.">                if (db == null) {</span>
+<span class="nc" id="L506">                    throw new DatabaseException(&quot;Invalid database schema&quot;);</span>
                 }
-<span class="fc" id="L505">                LOGGER.debug(&quot;DC Schema: {}&quot;, appDbVersion);</span>
-<span class="fc" id="L506">                LOGGER.debug(&quot;DB Schema: {}&quot;, db);</span>
-<span class="fc bfc" id="L507" title="All 2 branches covered.">                if (appDbVersion.compareTo(db) &gt; 0) {</span>
-<span class="fc" id="L508">                    final boolean autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
-<span class="pc bpc" id="L509" title="1 of 2 branches missed.">                    if (autoUpdate) {</span>
-<span class="fc" id="L510">                        updateSchema(conn, appDbVersion, db);</span>
-<span class="pc bpc" id="L511" title="1 of 2 branches missed.">                        if (++callDepth &lt; 10) {</span>
-<span class="fc" id="L512">                            ensureSchemaVersion(conn);</span>
+<span class="fc" id="L508">                LOGGER.debug(&quot;DC Schema: {}&quot;, appDbVersion);</span>
+<span class="fc" id="L509">                LOGGER.debug(&quot;DB Schema: {}&quot;, db);</span>
+<span class="pc bpc" id="L510" title="1 of 2 branches missed.">                if (appDbVersion.compareTo(db) &gt; 0) {</span>
+<span class="nc" id="L511">                    final boolean autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
+<span class="nc bnc" id="L512" title="All 2 branches missed.">                    if (autoUpdate) {</span>
+<span class="nc" id="L513">                        updateSchema(conn, appDbVersion, db);</span>
+<span class="nc bnc" id="L514" title="All 2 branches missed.">                        if (++callDepth &lt; 10) {</span>
+<span class="nc" id="L515">                            ensureSchemaVersion(conn);</span>
                         }
                     } else {
-<span class="nc" id="L515">                        throw new DatabaseException(&quot;Old database schema identified - please execute &quot;</span>
+<span class="nc" id="L518">                        throw new DatabaseException(&quot;Old database schema identified - please execute &quot;</span>
                                 + &quot;dependency-check without the no-update configuration to continue&quot;);
                     }
                 }
-<span class="fc" id="L519">            } else {</span>
-<span class="nc" id="L520">                throw new DatabaseException(&quot;Database schema is missing&quot;);</span>
+<span class="fc" id="L522">            } else {</span>
+<span class="nc" id="L523">                throw new DatabaseException(&quot;Database schema is missing&quot;);</span>
             }
-<span class="nc" id="L522">        } catch (SQLException ex) {</span>
-<span class="nc" id="L523">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="nc" id="L524">            throw new DatabaseException(&quot;Unable to check the database schema version&quot;, ex);</span>
+<span class="nc" id="L525">        } catch (SQLException ex) {</span>
+<span class="nc" id="L526">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L527">            throw new DatabaseException(&quot;Unable to check the database schema version&quot;, ex);</span>
         } finally {
-<span class="fc" id="L526">            DBUtils.closeResultSet(rs);</span>
-<span class="fc" id="L527">            DBUtils.closeStatement(ps);</span>
+<span class="fc" id="L529">            DBUtils.closeResultSet(rs);</span>
+<span class="fc" id="L530">            DBUtils.closeStatement(ps);</span>
         }
-<span class="fc" id="L529">    }</span>
+<span class="fc" id="L532">    }</span>
 
     /**
      * Opens the database connection pool.
      */
     public void open() {
-<span class="fc" id="L535">        connectionPool = new BasicDataSource();</span>
-<span class="pc bpc" id="L536" title="1 of 2 branches missed.">        if (driver != null) {</span>
-<span class="nc" id="L537">            connectionPool.setDriver(driver);</span>
+<span class="fc" id="L538">        connectionPool = new BasicDataSource();</span>
+<span class="pc bpc" id="L539" title="1 of 2 branches missed.">        if (driver != null) {</span>
+<span class="nc" id="L540">            connectionPool.setDriver(driver);</span>
         }
-<span class="fc" id="L539">        connectionPool.setUrl(connectionString);</span>
-<span class="fc" id="L540">        connectionPool.setUsername(userName);</span>
-<span class="fc" id="L541">        connectionPool.setPassword(password);</span>
-<span class="fc" id="L542">    }</span>
+<span class="fc" id="L542">        connectionPool.setUrl(connectionString);</span>
+<span class="fc" id="L543">        connectionPool.setUsername(userName);</span>
+<span class="fc" id="L544">        connectionPool.setPassword(password);</span>
+<span class="fc" id="L545">    }</span>
 
     /**
      * Closes the database connection pool.
      */
     public void close() {
         try {
-<span class="fc" id="L549">            connectionPool.close();</span>
-<span class="nc" id="L550">        } catch (SQLException ex) {</span>
-<span class="nc" id="L551">            LOGGER.debug(&quot;Error closing the connection pool&quot;, ex);</span>
-<span class="fc" id="L552">        }</span>
-<span class="fc" id="L553">        connectionPool = null;</span>
-<span class="fc" id="L554">    }</span>
+<span class="fc" id="L552">            connectionPool.close();</span>
+<span class="nc" id="L553">        } catch (SQLException ex) {</span>
+<span class="nc" id="L554">            LOGGER.debug(&quot;Error closing the connection pool&quot;, ex);</span>
+<span class="fc" id="L555">        }</span>
+<span class="fc" id="L556">        connectionPool = null;</span>
+<span class="fc" id="L557">    }</span>
 
     /**
      * Returns if the connection pool is open.
@@ -559,7 +562,7 @@ public final class DatabaseManager {
      * @return if the connection pool is open
      */
     public boolean isOpen() {
-<span class="fc bfc" id="L562" title="All 2 branches covered.">        return connectionPool != null;</span>
+<span class="fc bfc" id="L565" title="All 2 branches covered.">        return connectionPool != null;</span>
     }
 
     /**
@@ -572,9 +575,9 @@ public final class DatabaseManager {
      */
     public Connection getConnection() throws DatabaseException {
         try {
-<span class="fc" id="L575">            return connectionPool.getConnection();</span>
-<span class="nc" id="L576">        } catch (SQLException ex) {</span>
-<span class="nc" id="L577">            throw new DatabaseException(&quot;Error connecting to the database&quot;, ex);</span>
+<span class="fc" id="L578">            return connectionPool.getConnection();</span>
+<span class="nc" id="L579">        } catch (SQLException ex) {</span>
+<span class="nc" id="L580">            throw new DatabaseException(&quot;Error connecting to the database&quot;, ex);</span>
         }
     }
 }
