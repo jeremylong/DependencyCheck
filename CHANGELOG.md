@@ -1,5 +1,33 @@
 # Change Log
 
+## [Version 11.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v11.0.0) (2024-10-21)
+
+- **breaking change**: Switch from JMockit to Mockito & build target to Java 11 (#6922)
+  - dependency-check now requires a minimum of Java 11.0 to run
+- **breaking change**: bump com.h2database:h2 from 2.1.214 to 2.3.232 (#6132)
+  - H2 databases generated with an older version of ODC will not work with ODC 11.0.0; a new H2 db must be generated
+- feat: Replace old Downloader by an Apache HTTPClient based downloader
+- feat: Use Apache HTTPClient for downloads of public resources (#6949)
+- feat: Also make NodeAuditSearch usr our HTTPClient based connections
+- feat: Also make OSSIndexAnalyzer use our HTTPClient based connections
+- feat: Migrate CentralSearch to use Apache HTTP-client via Downloader
+- feat: Extend apache HTTP-client usage to EngineVersionCheck
+- feat: Remove the need to specify dbDriver for external databases using JDBCv4 ServiceLoader supporting JDBC drivers (#6938)
+- fix: use latest generated suppressions (#7064)
+- fix: Fixup parameter sequence for Dowloader credentials (#7033)
+- fix: Fixup the missing addition of NVD API Datafeed credentials (if configured)
+- fix: Fixup broken proxy authentication in first attempt; extend to include KEV downloads
+- fix: store timestamps locally for local resources (#6936)
+- build: Remove the animal-sniffer, propagate java version to plugin-archetype (#6950)
+- build: Update Checkstyle configuration and Suppression DTD references (#6951)
+- chore: Update test db schema (#7036)
+- chore: remove old, unneeded database upgrade script
+- docs: reformat javadoc (#7009)
+- docs: Fixup javadoc warnings (#6995)
+- chore: Replace use of several deprecated methods/classes by their successors (#6933)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/87?closed=1). 
+
 ## [Version 10.0.4](https://github.com/jeremylong/DependencyCheck/releases/tag/v10.0.4) (2024-09-01)
 
  - build(deps): exclude unused dependency (#6916)
