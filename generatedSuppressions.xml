@@ -1940,3 +1940,4 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:nuget/IronPython@.*$</packageUrl>
    <cpe>cpe:/a:python:python</cpe>
 </suppress>
+<!-- suppressions above this entry were included in the 11.0.0 release -->
