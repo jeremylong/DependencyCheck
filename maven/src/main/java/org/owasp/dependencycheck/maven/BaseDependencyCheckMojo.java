@@ -2212,45 +2212,18 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 if (mavenProxy.getUsername() != null && !mavenProxy.getUsername().isEmpty()) {
                     System.setProperty("https.proxyUser", mavenProxy.getUsername());
                 }
-                if (mavenProxy.getPassword() != null && !mavenProxy.getPassword().isEmpty()) {
-                    System.setProperty("https.proxyPassword", mavenProxy.getPassword());
+                String password = mavenProxy.getPassword();
+                if (password != null && !password.isEmpty()) {
+                    try {
+                        password = decryptPasswordFromSettings(password);
+                    } catch (SecDispatcherException ex) {
+                        password = handleSecDispatcherException("proxy", mavenProxy.getId(), password, ex);
+                    }
+                    System.setProperty("https.proxyPassword", password);
                 }
                 if (mavenProxy.getNonProxyHosts() != null && !mavenProxy.getNonProxyHosts().isEmpty()) {
                     System.setProperty("http.nonProxyHosts", mavenProxy.getNonProxyHosts());
                 }
-            }
-
-            settings.setString(Settings.KEYS.PROXY_SERVER, mavenProxy.getHost());
-            settings.setString(Settings.KEYS.PROXY_PORT, Integer.toString(mavenProxy.getPort()));
-            final String userName = mavenProxy.getUsername();
-            String password = mavenProxy.getPassword();
-            if (password != null && !password.isEmpty()) {
-                if (settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {
-                    System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
-                }
-                try {
-                    password = decryptPasswordFromSettings(password);
-                } catch (SecDispatcherException ex) {
-                    password = handleSecDispatcherException("proxy", mavenProxy.getId(), password, ex);
-                }
-            }
-            settings.setStringIfNotNull(Settings.KEYS.PROXY_USERNAME, userName);
-            settings.setStringIfNotNull(Settings.KEYS.PROXY_PASSWORD, password);
-            settings.setStringIfNotNull(Settings.KEYS.PROXY_NON_PROXY_HOSTS, mavenProxy.getNonProxyHosts());
-        } else if (System.getProperty("http.proxyHost") != null) {
-            //else use standard Java system properties
-            settings.setString(Settings.KEYS.PROXY_SERVER, System.getProperty("http.proxyHost", ""));
-            if (System.getProperty("http.proxyPort") != null) {
-                settings.setString(Settings.KEYS.PROXY_PORT, System.getProperty("http.proxyPort"));
-            }
-            if (System.getProperty("http.proxyUser") != null) {
-                settings.setString(Settings.KEYS.PROXY_USERNAME, System.getProperty("http.proxyUser"));
-            }
-            if (System.getProperty("http.proxyPassword") != null) {
-                settings.setString(Settings.KEYS.PROXY_PASSWORD, System.getProperty("http.proxyPassword"));
-            }
-            if (System.getProperty("http.nonProxyHosts") != null) {
-                settings.setString(Settings.KEYS.PROXY_NON_PROXY_HOSTS, System.getProperty("http.nonProxyHosts"));
             }
         } else if (this.proxy != null && this.proxy.getHost() != null) {
             // or use configured <proxy>
