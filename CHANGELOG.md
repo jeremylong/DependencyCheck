@@ -6,6 +6,8 @@
   - dependency-check now requires a minimum of Java 11.0 to run
 - **breaking change**: bump com.h2database:h2 from 2.1.214 to 2.3.232 (#6132)
   - H2 databases generated with an older version of ODC will not work with ODC 11.0.0; a new H2 db must be generated
+- **breaking change**: Maven plugin updated to Doxia 2.x reporting stack
+  - Users of the Maven plugin that configure it as a reporting plugin will need to use maven-site-plugin 3.20.0 or later (#6959)
 - feat: Replace old Downloader by an Apache HTTPClient based downloader
 - feat: Use Apache HTTPClient for downloads of public resources (#6949)
 - feat: Also make NodeAuditSearch usr our HTTPClient based connections
