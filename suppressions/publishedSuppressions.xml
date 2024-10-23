@@ -1957,4 +1957,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/org\.agrona/agrona@.*$</packageUrl>
    <cpe>cpe:/a:protonmail:protonmail</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7047
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.mortbay\.jasper/apache-el@.*$</packageUrl>
+   <cpe>cpe:/a:eclipse:jetty</cpe>
+</suppress>
 </suppressions>
