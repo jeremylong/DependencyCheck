@@ -1,5 +1,17 @@
 # Change Log
 
+## [Version 11.1.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v11.1.0) (2024-10-30)
+
+- feat: PHP Composer Analyzer now scans packages-dev by default (#7114)
+  - Users can configure if packages-dev should be skipped
+- fix(regression): re-add h2 database driver name (#7115) 
+- fix(regression): Make the Downloader honour the proxy.nonproxyhosts ODC Setting (#7077)
+- fix: do not set legacy proxy from maven or env (#7072) (#7074)
+- docs: add missing documentation for the MS Build Analyzer (#7113)
+- docs: Document the breaking change for Maven plugin as reporting plugin (#7079)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/89?closed=1). 
+
 ## [Version 11.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v11.0.0) (2024-10-21)
 
 - **breaking change**: Switch from JMockit to Mockito & build target to Java 11 (#6922)
