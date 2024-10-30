@@ -139,21 +139,21 @@ public final class DatabaseManager {
             //load the driver if necessary
 <span class="fc" id="L140">            final String driverName = settings.getString(Settings.KEYS.DB_DRIVER_NAME, &quot;&quot;);</span>
 <span class="pc bpc" id="L141" title="1 of 2 branches missed.">            if (!driverName.isEmpty()) {</span>
-<span class="nc" id="L142">                final String driverPath = settings.getString(Settings.KEYS.DB_DRIVER_PATH, &quot;&quot;);</span>
-<span class="nc" id="L143">                LOGGER.debug(&quot;Loading driver '{}'&quot;, driverName);</span>
+<span class="fc" id="L142">                final String driverPath = settings.getString(Settings.KEYS.DB_DRIVER_PATH, &quot;&quot;);</span>
+<span class="fc" id="L143">                LOGGER.debug(&quot;Loading driver '{}'&quot;, driverName);</span>
                 try {
-<span class="nc bnc" id="L145" title="All 2 branches missed.">                    if (!driverPath.isEmpty()) {</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">                    if (!driverPath.isEmpty()) {</span>
 <span class="nc" id="L146">                        LOGGER.debug(&quot;Loading driver from: {}&quot;, driverPath);</span>
 <span class="nc" id="L147">                        driver = DriverLoader.load(driverName, driverPath);</span>
                     } else {
-<span class="nc" id="L149">                        driver = DriverLoader.load(driverName);</span>
-<span class="nc" id="L150">                        LOGGER.warn(&quot;Explicitly loaded driver {} from classpath; if JDBCv4 service loading is supported &quot;</span>
+<span class="fc" id="L149">                        driver = DriverLoader.load(driverName);</span>
+<span class="fc" id="L150">                        LOGGER.warn(&quot;Explicitly loaded driver {} from classpath; if JDBCv4 service loading is supported &quot;</span>
                                 + &quot;by the driver you should remove the dbDriver configuration&quot;, driverName);
                     }
 <span class="nc" id="L153">                } catch (DriverLoadException ex) {</span>
 <span class="nc" id="L154">                    LOGGER.debug(&quot;Unable to load database driver&quot;, ex);</span>
 <span class="nc" id="L155">                    throw new DatabaseException(&quot;Unable to load database driver&quot;, ex);</span>
-<span class="nc" id="L156">                }</span>
+<span class="fc" id="L156">                }</span>
             }
 <span class="fc" id="L158">            userName = settings.getString(Settings.KEYS.DB_USER, &quot;dcuser&quot;);</span>
             //yes, yes - hard-coded password - only if there isn't one in the properties file.
@@ -260,8 +260,8 @@ public final class DatabaseManager {
      */
     public void cleanup() {
 <span class="pc bpc" id="L262" title="1 of 2 branches missed.">        if (driver != null) {</span>
-<span class="nc" id="L263">            DriverLoader.cleanup(driver);</span>
-<span class="nc" id="L264">            driver = null;</span>
+<span class="fc" id="L263">            DriverLoader.cleanup(driver);</span>
+<span class="fc" id="L264">            driver = null;</span>
         }
 <span class="fc" id="L266">        connectionString = null;</span>
 <span class="fc" id="L267">        userName = null;</span>
@@ -537,7 +537,7 @@ public final class DatabaseManager {
     public void open() {
 <span class="fc" id="L538">        connectionPool = new BasicDataSource();</span>
 <span class="pc bpc" id="L539" title="1 of 2 branches missed.">        if (driver != null) {</span>
-<span class="nc" id="L540">            connectionPool.setDriver(driver);</span>
+<span class="fc" id="L540">            connectionPool.setDriver(driver);</span>
         }
 <span class="fc" id="L542">        connectionPool.setUrl(connectionString);</span>
 <span class="fc" id="L543">        connectionPool.setUsername(userName);</span>

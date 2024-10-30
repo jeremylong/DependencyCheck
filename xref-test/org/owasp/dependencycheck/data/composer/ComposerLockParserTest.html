@@ -51,33 +51,45 @@
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>      @Test
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testValidComposerLock() {
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>          ComposerLockParser clp = <strong class="jxr_keyword">new</strong> ComposerLockParser(inputStream);
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>          ComposerLockParser clp = <strong class="jxr_keyword">new</strong> ComposerLockParser(inputStream, false);
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>          clp.process();
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          assertEquals(30, clp.getDependencies().size());
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          assertTrue(clp.getDependencies().contains(<strong class="jxr_keyword">new</strong> ComposerDependency(<span class="jxr_string">"symfony"</span>, <span class="jxr_string">"translation"</span>, <span class="jxr_string">"2.7.3"</span>)));
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      }
-<a class="jxr_linenumber" name="L51" href="#L51">51</a>  
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Test(expected = ComposerException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNotJSON() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>          String input = <span class="jxr_string">"NOT VALID JSON"</span>;
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>          ComposerLockParser clp = <strong class="jxr_keyword">new</strong> ComposerLockParser(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(input.getBytes(Charset.defaultCharset())));
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>          clp.process();
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      }
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>      @Test(expected = ComposerException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNotComposer() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>          String input = <span class="jxr_string">"[\&quot;ham\&quot;,\&quot;eggs\&quot;]"</span>;
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>          ComposerLockParser clp = <strong class="jxr_keyword">new</strong> ComposerLockParser(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(input.getBytes(Charset.defaultCharset())));
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          clp.process();
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      }
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      @Test(expected = ComposerException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNotPackagesArray() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>          String input = <span class="jxr_string">"{\&quot;packages\&quot;:\&quot;eleventy\&quot;}"</span>;
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          ComposerLockParser clp = <strong class="jxr_keyword">new</strong> ComposerLockParser(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(input.getBytes(Charset.defaultCharset())));
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>          clp.process();
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>      }
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>  }
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          assertTrue(clp.getDependencies().contains(<strong class="jxr_keyword">new</strong> ComposerDependency(<span class="jxr_string">"vlucas"</span>, <span class="jxr_string">"phpdotenv"</span>, <span class="jxr_string">"1.1.1"</span>)));
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      }
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      @Test
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testComposerLockSkipDev() {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>          ComposerLockParser clp = <strong class="jxr_keyword">new</strong> ComposerLockParser(inputStream, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>          clp.process();
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>          assertEquals(29, clp.getDependencies().size());
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>          assertTrue(clp.getDependencies().contains(<strong class="jxr_keyword">new</strong> ComposerDependency(<span class="jxr_string">"symfony"</span>, <span class="jxr_string">"translation"</span>, <span class="jxr_string">"2.7.3"</span>)));
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <em class="jxr_comment">//vlucas/phpdotenv is in packages-dev</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>          assertFalse(clp.getDependencies().contains(<strong class="jxr_keyword">new</strong> ComposerDependency(<span class="jxr_string">"vlucas"</span>, <span class="jxr_string">"phpdotenv"</span>, <span class="jxr_string">"1.1.1"</span>)));
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      }
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      @Test(expected = ComposerException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNotJSON() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          String input = <span class="jxr_string">"NOT VALID JSON"</span>;
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          ComposerLockParser clp = <strong class="jxr_keyword">new</strong> ComposerLockParser(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(input.getBytes(Charset.defaultCharset())), false);
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          clp.process();
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      }
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      @Test(expected = ComposerException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNotComposer() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          String input = <span class="jxr_string">"[\&quot;ham\&quot;,\&quot;eggs\&quot;]"</span>;
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          ComposerLockParser clp = <strong class="jxr_keyword">new</strong> ComposerLockParser(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(input.getBytes(Charset.defaultCharset())), false);
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          clp.process();
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      }
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      @Test(expected = ComposerException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNotPackagesArray() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          String input = <span class="jxr_string">"{\&quot;packages\&quot;:\&quot;eleventy\&quot;}"</span>;
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          ComposerLockParser clp = <strong class="jxr_keyword">new</strong> ComposerLockParser(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(input.getBytes(Charset.defaultCharset())), false);
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          clp.process();
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>      }
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2012&#x2013;2024 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>

@@ -1,11 +1,11 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Check,674,870,36,34,255,185,178,35,153,25
+Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Check,681,876,36,34,258,186,180,35,155,25
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Update,266,151,10,2,96,30,55,2,49,2
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Check.ReportFormat,0,14,0,0,0,4,0,3,0,3
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,RetirejsFilter,0,10,0,0,0,4,0,3,0,3
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,SuppressionFile,0,10,0,0,0,4,0,3,0,3
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Purge,73,124,3,3,24,31,9,6,7,5
 Dependency-Check Ant Task,org.owasp.dependencycheck.taskdefs,Check.ReportFormats,0,35,0,2,0,7,0,3,0,2
-Dependency-Check Ant Task,org.owasp.dependencycheck.ant.logging,AntLoggerAdapter,167,163,33,17,50,50,38,19,17,15
+Dependency-Check Ant Task,org.owasp.dependencycheck.ant.logging,AntLoggerAdapter,167,163,32,18,50,50,37,20,17,15
 Dependency-Check Ant Task,org.owasp.dependencycheck.ant.logging,AntLoggerFactory,0,12,0,0,0,4,0,2,0,2
 Dependency-Check Ant Task,org.slf4j.impl,StaticLoggerBinder,2,38,0,0,1,12,1,5,1,5

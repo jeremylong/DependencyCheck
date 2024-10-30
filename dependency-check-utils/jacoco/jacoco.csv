@@ -1,8 +1,9 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 Dependency-Check Utils,org.owasp.dependencycheck.utils.search,FileContentSearch,0,72,0,6,0,11,0,6,0,3
+Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader.SelectiveProxySelector,84,0,10,0,18,0,8,0,3,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFactory.new Authenticator() {...},52,0,6,0,7,0,5,0,2,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFailureException,16,0,0,0,8,0,4,0,4,0
-Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader,902,192,65,13,146,54,48,13,8,13
+Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader,933,192,69,13,152,54,50,13,8,13
 Dependency-Check Utils,org.owasp.dependencycheck.utils,ResourceNotFoundException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,ExtractionException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,DownloadFailedException,16,0,0,0,8,0,4,0,4,0

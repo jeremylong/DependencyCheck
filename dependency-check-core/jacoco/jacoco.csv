@@ -26,7 +26,7 @@ Dependency-Check Core,org.owasp.dependencycheck.dependency,Dependency,139,900,21
 Dependency-Check Core,org.owasp.dependencycheck.dependency,Reference,43,72,6,0,11,26,5,10,2,10
 Dependency-Check Core,org.owasp.dependencycheck.data.composer,ComposerException,7,5,0,0,4,2,2,1,2,1
 Dependency-Check Core,org.owasp.dependencycheck.data.composer,ComposerDependency,20,53,3,3,7,16,4,5,1,5
-Dependency-Check Core,org.owasp.dependencycheck.data.composer,ComposerLockParser,22,148,5,9,6,32,5,6,0,4
+Dependency-Check Core,org.owasp.dependencycheck.data.composer,ComposerLockParser,22,185,6,14,6,41,6,9,0,5
 Dependency-Check Core,org.owasp.dependencycheck.xml.pom,PomParseException,12,4,0,0,6,2,3,1,3,1
 Dependency-Check Core,org.owasp.dependencycheck.xml.pom,Model,1,206,3,7,1,61,3,31,0,29
 Dependency-Check Core,org.owasp.dependencycheck.xml.pom,PomHandler,0,296,10,47,0,72,10,32,0,5
@@ -82,13 +82,13 @@ Dependency-Check Core,org.owasp.dependencycheck.data.lucene,AbstractTokenizingFi
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,SearchFieldAnalyzer,0,119,1,1,0,19,1,5,0,5
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveDB,3617,1277,344,76,902,272,257,46,69,24
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DatabaseException,13,0,0,0,6,0,3,0,3,0
-Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DriverShim,91,19,8,0,25,6,12,4,8,4
+Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DriverShim,85,25,8,0,24,7,11,5,7,5
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveDB.PreparedStatementCveDb,0,274,0,0,0,28,0,1,0,1
-Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DriverLoader,71,147,1,9,17,29,2,9,1,5
+Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DriverLoader,61,157,1,9,12,34,1,10,0,6
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveItemOperator,368,53,162,6,59,13,92,7,5,5
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DatabaseProperties,113,83,12,8,26,21,15,9,7,7
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,H2Functions,729,0,36,0,194,0,24,0,6,0
-Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DatabaseManager,484,328,42,18,120,96,31,21,3,19
+Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DatabaseManager,451,361,41,19,111,105,31,21,3,19
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CorruptDatabaseException,9,0,0,0,4,0,2,0,2,0
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DriverLoadException,8,5,0,0,4,2,2,1,2,1
 Dependency-Check Core,org.owasp.dependencycheck.data.update.exception,InvalidDataException,9,0,0,0,4,0,2,0,2,0
@@ -114,7 +114,7 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,PinnedMavenInstallAnaly
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,OpenSSLAnalyzer,25,205,4,10,7,37,4,13,0,10
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PipAnalyzer,22,225,5,9,6,50,5,12,0,10
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,NpmCPEAnalyzer,31,52,0,2,9,18,0,8,0,7
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,ComposerLockAnalyzer,32,189,0,0,8,38,0,10,0,10
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,ComposerLockAnalyzer,32,196,0,0,8,39,0,10,0,10
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PinnedMavenInstallAnalyzer.Artifactv2,0,3,0,0,0,1,0,1,0,1
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractFileTypeAnalyzer,6,65,2,8,1,21,2,10,0,7
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,SwiftPackageManagerAnalyzer,72,174,14,10,13,47,12,11,0,11
