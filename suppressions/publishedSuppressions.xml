@@ -1979,4 +1979,26 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/com\.azure/azure-core-amqp@.*$</packageUrl>
    <cpe>cpe:/a:microsoft:azure_cli</cpe>
 </suppress>
+<suppress>
+   <notes><![CDATA[
+   FP per issue #7123
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.etcd/jetcd-[a-z]*@.*$</packageUrl>
+   <cpe>cpe:/a:redhat:etcd</cpe>
+   <cpe>cpe:/a:etcd:etcd</cpe>
+</suppress>
+<suppress>
+   <notes><![CDATA[
+   FP per issue #7123
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/io\.etcd/jetcd-grpc@.*$</packageUrl>
+   <cpe>cpe:/a:grpc:grpc</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7110
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.azure/azure-core-management@.*$</packageUrl>
+   <cpe>cpe:/a:microsoft:azure_cli</cpe>
+</suppress>
 </suppressions>
