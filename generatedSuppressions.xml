@@ -1993,3 +1993,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/com\.azure/azure-core-management@.*$</packageUrl>
    <cpe>cpe:/a:microsoft:azure_cli</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7132
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws-java-sdk-opensearch@.*$</packageUrl>
+   <cpe>cpe:/a:amazon:opensearch</cpe>
+</suppress>
