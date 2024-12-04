@@ -3,7 +3,7 @@ Dependency-Check Utils,org.owasp.dependencycheck.utils.search,FileContentSearch,
 Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader.SelectiveProxySelector,84,0,10,0,18,0,8,0,3,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFactory.new Authenticator() {...},52,0,6,0,7,0,5,0,2,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,URLConnectionFailureException,16,0,0,0,8,0,4,0,4,0
-Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader,933,192,69,13,152,54,50,13,8,13
+Dependency-Check Utils,org.owasp.dependencycheck.utils,Downloader,949,210,71,15,154,60,52,15,8,15
 Dependency-Check Utils,org.owasp.dependencycheck.utils,ResourceNotFoundException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,ExtractionException,16,0,0,0,8,0,4,0,4,0
 Dependency-Check Utils,org.owasp.dependencycheck.utils,DownloadFailedException,16,0,0,0,8,0,4,0,4,0

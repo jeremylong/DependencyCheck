@@ -73,7 +73,7 @@ Dependency-Check Core,org.owasp.dependencycheck.data.update,NvdApiDataSource.Url
 Dependency-Check Core,org.owasp.dependencycheck.data.update,HostedSuppressionsDataSource,178,122,19,9,42,25,15,6,3,4
 Dependency-Check Core,org.owasp.dependencycheck.data.update,KnownExploitedDataSource.new AbstractHttpClientResponseHandler() {...},28,0,0,0,7,0,2,0,2,0
 Dependency-Check Core,org.owasp.dependencycheck.data.update,NvdApiDataSource,1373,85,157,7,312,24,91,7,11,5
-Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,15,72,1,9,4,17,1,7,0,3
+Dependency-Check Core,org.owasp.dependencycheck.data.lucene,UrlTokenizingFilter,11,76,0,10,3,18,0,8,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,LuceneUtils,0,61,1,11,0,17,1,8,0,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,TokenPairConcatenatingFilter,59,99,6,10,17,28,5,8,2,3
 Dependency-Check Core,org.owasp.dependencycheck.data.lucene,AlphaNumericFilter,51,114,6,14,15,28,5,11,2,4
@@ -85,10 +85,10 @@ Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DatabaseException,13
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DriverShim,85,25,8,0,24,7,11,5,7,5
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveDB.PreparedStatementCveDb,0,274,0,0,0,28,0,1,0,1
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DriverLoader,61,157,1,9,12,34,1,10,0,6
-Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveItemOperator,368,53,162,6,59,13,92,7,5,5
+Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CveItemOperator,368,47,162,4,59,13,92,5,5,4
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DatabaseProperties,113,83,12,8,26,21,15,9,7,7
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,H2Functions,729,0,36,0,194,0,24,0,6,0
-Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DatabaseManager,451,361,41,19,111,105,31,21,3,19
+Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DatabaseManager,451,357,41,19,111,104,31,21,3,19
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,CorruptDatabaseException,9,0,0,0,4,0,2,0,2,0
 Dependency-Check Core,org.owasp.dependencycheck.data.nvdcve,DriverLoadException,8,5,0,0,4,2,2,1,2,1
 Dependency-Check Core,org.owasp.dependencycheck.data.update.exception,InvalidDataException,9,0,0,0,4,0,2,0,2,0
@@ -136,7 +136,7 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,UnusedSuppressionRuleAn
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractAnalyzer,0,64,0,6,0,24,0,15,0,12
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,NexusAnalyzer,252,66,30,4,71,20,20,10,4,9
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,JarAnalyzer.ClassNameInformation,4,74,0,8,2,18,1,7,1,3
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractNpmAnalyzer,337,809,54,80,67,177,43,43,6,13
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,AbstractNpmAnalyzer,339,799,55,77,66,174,44,43,6,15
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AssemblyAnalyzer,301,751,71,93,79,165,59,38,0,15
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PoetryAnalyzer,22,236,5,9,7,52,5,12,0,10
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,KnownExploitedVulnerabilityAnalyzer,14,49,1,3,4,16,1,8,0,7
@@ -153,7 +153,7 @@ Dependency-Check Core,org.owasp.dependencycheck.analyzer,YarnAuditAnalyzer,148,3
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CarthageAnalyzer,55,245,10,14,16,63,9,13,1,9
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,CPEAnalyzer,489,1967,65,247,99,427,58,150,5,47
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,ArchiveAnalyzer,566,965,69,107,116,214,63,54,5,24
-Dependency-Check Core,org.owasp.dependencycheck.analyzer,DependencyBundlingAnalyzer,288,923,104,202,71,192,88,90,1,24
+Dependency-Check Core,org.owasp.dependencycheck.analyzer,DependencyBundlingAnalyzer,297,914,106,200,74,189,89,89,1,24
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,PipfilelockAnalyzer,43,237,3,7,11,52,4,10,1,8
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,DartAnalyzer,30,457,8,29,11,106,8,27,0,16
 Dependency-Check Core,org.owasp.dependencycheck.analyzer,AnalyzerService,1,84,1,11,1,22,1,10,0,5

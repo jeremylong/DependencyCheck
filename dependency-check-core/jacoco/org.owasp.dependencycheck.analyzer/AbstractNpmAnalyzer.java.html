@@ -505,20 +505,17 @@ import us.springett.parsers.cpe.values.Part;
      * @param vuln the vulnerability to add
      */
     protected void replaceOrAddVulnerability(Dependency dependency, Vulnerability vuln) {
-<span class="fc" id="L508">        boolean found = false;</span>
-<span class="fc bfc" id="L509" title="All 2 branches covered.">        for (Vulnerability existing : dependency.getVulnerabilities()) {</span>
-<span class="fc bfc" id="L510" title="All 2 branches covered.">            for (Reference ref : existing.getReferences()) {</span>
-<span class="pc bpc" id="L511" title="1 of 2 branches missed.">                if (ref.getName() != null</span>
-<span class="pc bpc" id="L512" title="1 of 2 branches missed.">                        &amp;&amp; vuln.getSource().toString().equals(&quot;NPM&quot;)</span>
-<span class="pc bpc" id="L513" title="1 of 2 branches missed.">                        &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + vuln.getName())) {</span>
-<span class="nc" id="L514">                    found = true;</span>
-                }
-<span class="fc" id="L516">            }</span>
-<span class="fc" id="L517">        }</span>
-<span class="pc bpc" id="L518" title="1 of 2 branches missed.">        if (!found) {</span>
-<span class="fc" id="L519">            dependency.addVulnerability(vuln);</span>
+<span class="pc bpc" id="L508" title="1 of 2 branches missed.">        boolean found = vuln.getSource() == Vulnerability.Source.NPM &amp;&amp; </span>
+<span class="pc bpc" id="L509" title="1 of 2 branches missed.">                dependency.getVulnerabilities().stream().anyMatch(existing -&gt; {</span>
+<span class="fc" id="L510">            return existing.getReferences().stream().anyMatch(ref -&gt;{</span>
+<span class="pc bpc" id="L511" title="1 of 2 branches missed.">                    return ref.getName() != null</span>
+<span class="pc bpc" id="L512" title="1 of 2 branches missed.">                            &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + vuln.getName());</span>
+            });
+        });
+<span class="pc bpc" id="L515" title="1 of 2 branches missed.">        if (!found) {</span>
+<span class="fc" id="L516">            dependency.addVulnerability(vuln);</span>
         }
-<span class="fc" id="L521">    }</span>
+<span class="fc" id="L518">    }</span>
 
     /**
      * Returns the node audit search utility.
@@ -526,7 +523,7 @@ import us.springett.parsers.cpe.values.Part;
      * @return the node audit search utility
      */
     protected NodeAuditSearch getSearcher() {
-<span class="fc" id="L529">        return searcher;</span>
+<span class="fc" id="L526">        return searcher;</span>
     }
 
     /**
@@ -539,20 +536,20 @@ import us.springett.parsers.cpe.values.Part;
      * @return the selected range from the versionRange
      */
     public static String determineVersionFromMap(String versionRange, Collection&lt;String&gt; availableVersions) {
-<span class="fc bfc" id="L542" title="All 2 branches covered.">        if (availableVersions.size() == 1) {</span>
-<span class="fc" id="L543">            return availableVersions.iterator().next();</span>
+<span class="fc bfc" id="L539" title="All 2 branches covered.">        if (availableVersions.size() == 1) {</span>
+<span class="fc" id="L540">            return availableVersions.iterator().next();</span>
         }
-<span class="fc bfc" id="L545" title="All 2 branches covered.">        for (String v : availableVersions) {</span>
+<span class="fc bfc" id="L542" title="All 2 branches covered.">        for (String v : availableVersions) {</span>
             try {
-<span class="fc" id="L547">                final Semver version = new Semver(v);</span>
-<span class="fc bfc" id="L548" title="All 2 branches covered.">                if (version.satisfies(versionRange)) {</span>
-<span class="fc" id="L549">                    return v;</span>
+<span class="fc" id="L544">                final Semver version = new Semver(v);</span>
+<span class="fc bfc" id="L545" title="All 2 branches covered.">                if (version.satisfies(versionRange)) {</span>
+<span class="fc" id="L546">                    return v;</span>
                 }
-<span class="nc" id="L551">            } catch (SemverException ex) {</span>
-<span class="nc" id="L552">                LOGGER.debug(&quot;invalid semver: &quot; + v);</span>
-<span class="fc" id="L553">            }</span>
-<span class="fc" id="L554">        }</span>
-<span class="fc" id="L555">        return availableVersions.iterator().next();</span>
+<span class="nc" id="L548">            } catch (SemverException ex) {</span>
+<span class="nc" id="L549">                LOGGER.debug(&quot;invalid semver: &quot; + v);</span>
+<span class="fc" id="L550">            }</span>
+<span class="fc" id="L551">        }</span>
+<span class="fc" id="L552">        return availableVersions.iterator().next();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
