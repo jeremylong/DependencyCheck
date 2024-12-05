@@ -2035,3 +2035,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/com\.amazonaws/aws-java-sdk-marketplacedeployment@.*$</packageUrl>
    <cpe>cpe:/a:amazon:aws_deployment_framework</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7229
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/cd\.go\.plugin\.base/gocd-plugin-base@.*$</packageUrl>
+   <cpe>cpe:/a:thoughtworks:gocd</cpe>
+</suppress>
