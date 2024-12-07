@@ -1011,8 +1011,12 @@ public class DependencyCheckScanAgent {
                         || (failBuildOnCVSS <= 0.0f)) {
                     if (addName) {
                         addName = false;
-                        ids.append(NEW_LINE).append(d.getFileName()).append(": ");
-                        ids.append(v.getName());
+                        ids.append(NEW_LINE).append(d.getFileName()).append(" (")
+                           .append(Stream.concat(d.getSoftwareIdentifiers().stream(), d.getVulnerableSoftwareIdentifiers().stream())
+                                         .map(Identifier::getValue)
+                                         .collect(Collectors.joining(", ")))
+                           .append("): ")
+                           .append(v.getName());
                     } else {
                         ids.append(", ").append(v.getName());
                     }
