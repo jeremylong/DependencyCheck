@@ -2042,3 +2042,12 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/cd\.go\.plugin\.base/gocd-plugin-base@.*$</packageUrl>
    <cpe>cpe:/a:thoughtworks:gocd</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+      FP per issue #7226
+      NPM node-windows sudowin sudo.exe binary is not Linux sudo project, but https://github.com/akutz/sudowin
+      ]]></notes>
+   <filePath regex="true">.*/node-windows/bin/sudowin/sudo.exe</filePath>
+   <cpe>cpe:/a:sudo:sudo</cpe>
+   <cpe>cpe:/a:sudo_project:sudo</cpe>
+</suppress>
