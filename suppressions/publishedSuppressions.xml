@@ -2060,4 +2060,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/com\.datomic/memcache-asg-java-client@.*$</packageUrl>
    <cpe>cpe:/a:memcached:memcached</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7188
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/fish\.payara\.security\.connectors/security-connectors-api@.*$</packageUrl>
+   <cpe>cpe:/a:payara:payara</cpe>
+</suppress>
 </suppressions>
