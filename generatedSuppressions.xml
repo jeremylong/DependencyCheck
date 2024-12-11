@@ -2073,3 +2073,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/com\.microsoft\.azure/msal4j-persistence-extension@.*$</packageUrl>
    <cpe>cpe:/a:microsoft:authentication_library</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6679
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.google\.cloud\.tools/jib-build-plan@.*$</packageUrl>
+   <cpe>cpe:/a:jib_project:jib</cpe>
+</suppress>
