@@ -5,10 +5,10 @@ and, if required, will likely need to be **configured twice**.
 
 ## Java Properties
 
-The go-forward proxy configuration is done using standard Java proxy configuration
-settings which can be set using an environment variable `JAVA_TOOL_OPTIONS`. 
-See https://docs.oracle.com/javase/8/docs/technotes/guides/net/proxies.html for
-more information. The properties that can be configured are:
+The go-forward proxy configuration is done using Apache HTTPClient system property proxy configuration
+which can be set using an environment variable `JAVA_TOOL_OPTIONS`.
+See https://hc.apache.org/httpcomponents-client-5.4.x/current/httpclient5/apidocs/org/apache/hc/client5/http/impl/classic/HttpClientBuilder.html for
+more information. The recommended properties that can be configured are:
 
 - https.proxyHost
 - https.proxyPort
@@ -16,10 +16,24 @@ more information. The properties that can be configured are:
 - https.proxyPassword
 - http.nonProxyHosts
 
+And in case of legacy URLs that are not (yet) exposing on https:
+- http.proxyHost
+- http.proxyPort
+- http.proxyUser
+- http.proxyPassword
+
+
 As example configuration would be:
 
 ```bash
 export JAVA_TOOL_OPTIONS="-Dhttps.proxyHost=my-proxy.internal -Dhttps.proxyPort=8083"
+```
+
+If you have some custom internal URLs that are on plain http, but do require use of the proxy you should also add
+the `http.*` properties for the proxy.
+
+```bash
+export JAVA_TOOL_OPTIONS="-Dhttps.proxyHost=my-proxy.internal -Dhttps.proxyPort=8083 -Dhttp.proxyHost=my-proxy.internal -Dhttp.proxyPort=8083"
 ```
 
 ## Legacy configuration
