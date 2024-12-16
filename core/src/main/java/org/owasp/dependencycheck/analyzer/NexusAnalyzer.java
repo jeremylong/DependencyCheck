@@ -321,8 +321,7 @@ public class NexusAnalyzer extends AbstractFileTypeAnalyzer {
      */
     public boolean useProxy() {
         try {
-            return getSettings().getString(Settings.KEYS.PROXY_SERVER) != null
-                    && getSettings().getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY);
+            return getSettings().getBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY);
         } catch (InvalidSettingException ise) {
             LOGGER.warn("Failed to parse proxy settings.", ise);
             return false;

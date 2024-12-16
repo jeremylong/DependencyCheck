@@ -18,7 +18,6 @@
 package org.owasp.dependencycheck.data.central;
 
 import org.apache.hc.client5.http.impl.classic.AbstractHttpClientResponseHandler;
-import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.message.BasicHeader;
 import org.owasp.dependencycheck.utils.DownloadFailedException;
 import org.owasp.dependencycheck.utils.Downloader;
@@ -26,15 +25,12 @@ import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -44,12 +40,11 @@ import org.owasp.dependencycheck.data.cache.DataCache;
 import org.owasp.dependencycheck.data.cache.DataCacheFactory;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.XmlUtils;
+import org.owasp.dependencycheck.utils.ToXMLDocumentResponseHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Class of methods to search Maven Central via Central.
@@ -162,19 +157,7 @@ public class CentralSearch {
         // JSON would be more elegant, but there's not currently a dependency
         // on JSON, so don't want to add one just for this
         final BasicHeader acceptHeader = new BasicHeader("Accept", "application/xml");
-        final AbstractHttpClientResponseHandler<Document> handler = new AbstractHttpClientResponseHandler<>() {
-            @Override
-            public Document handleEntity(HttpEntity entity) throws IOException {
-                try (InputStream in = entity.getContent()) {
-                    final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();
-                    return builder.parse(in);
-                } catch (ParserConfigurationException | SAXException | IOException e) {
-                    // Anything else is jacked up XML stuff that we really can't recover from well
-                    final String errorMessage = "Failed to parse MavenCentral XML Response: " + e.getMessage();
-                    throw new IOException(errorMessage, e);
-                }
-            }
-        };
+        final AbstractHttpClientResponseHandler<Document> handler = new ToXMLDocumentResponseHandler();
         try {
             final Document doc = Downloader.getInstance().fetchAndHandle(url, handler, List.of(acceptHeader), useProxy);
             final boolean missing = addMavenArtifacts(doc, result);
@@ -193,6 +176,9 @@ public class CentralSearch {
             throw new TooManyRequestsException(errorMessage, e);
         } catch (ResourceNotFoundException | DownloadFailedException e) {
             final String errorMessage = "Could not connect to MavenCentral " + e.getMessage();
+            throw new IOException(errorMessage, e);
+        } catch (URISyntaxException e) {
+            final String errorMessage = "Could not convert central search URL to a URI " + e.getMessage();
             throw new IOException(errorMessage, e);
         }
         if (cache != null) {
@@ -267,4 +253,5 @@ public class CentralSearch {
         }
         return false;
     }
+
 }
