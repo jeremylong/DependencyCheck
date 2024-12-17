@@ -2088,4 +2088,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/com\.azure/azure-identity-extensions@.*$</packageUrl>
    <cpe>cpe:/a:microsoft:azure_cli</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7247
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.google\.cloud\.opentelemetry/detector-resources-support@.*$</packageUrl>
+   <cpe>cpe:/a:opentelemetry:opentelemetry</cpe>
+</suppress>
 </suppressions>
