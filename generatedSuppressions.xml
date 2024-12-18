@@ -268,13 +268,6 @@
 </suppress>
 <suppress base="true">
    <notes><![CDATA[
-   FP per issue #4949
-   ]]></notes>
-   <packageUrl regex="true">^pkg:maven/org\.curioswitch\.curiostack/protobuf-jackson@.*$</packageUrl>
-   <cpe>cpe:/a:grpc:grpc</cpe>
-</suppress>
-<suppress base="true">
-   <notes><![CDATA[
    FP per issue #5014
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/org\.ejbca\.cvc/cert-cvc@.*$</packageUrl>
@@ -286,13 +279,6 @@
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/org\.apache\.twill/twill-zookeeper@.*$</packageUrl>
    <cpe>cpe:/a:apache:zookeeper</cpe>
-</suppress>
-<suppress base="true">
-   <notes><![CDATA[
-   FP per issue #4948
-   ]]></notes>
-   <packageUrl regex="true">^pkg:maven/io\.opentracing\.contrib/opentracing-grpc@.*$</packageUrl>
-   <cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
 <suppress base="true">
    <notes><![CDATA[
@@ -363,13 +349,6 @@
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/org\.junit\.jupiter/junit-jupiter-engine@.*$</packageUrl>
    <cpe>cpe:/a:fan_platform_project:fan_platform</cpe>
-</suppress>
-<suppress base="true">
-   <notes><![CDATA[
-   FP per issue #5017
-   ]]></notes>
-   <packageUrl regex="true">^pkg:maven/com\.google\.api\.grpc/grpc-google-iam-v1@.*$</packageUrl>
-   <cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
 <suppress base="true">
    <notes><![CDATA[
@@ -674,13 +653,6 @@
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/com\.googlecode\.javaewah/JavaEWAH@.*$</packageUrl>
    <cpe>cpe:/a:google:google_search</cpe>
-</suppress>
-<suppress base="true">
-   <notes><![CDATA[
-   FP per issue #5497
-   ]]></notes>
-   <packageUrl regex="true">^pkg:maven/com\.google\.cloud/grpc-gcp@.*$</packageUrl>
-   <cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
 <suppress base="true">
    <notes><![CDATA[
@@ -1127,12 +1099,11 @@
 <suppress base="true">
 <notes><![CDATA[
    FP per issue #5854
-   akka-grpc libraries are neither part of the akka actor system nor gRPC
+   akka-grpc libraries are not part of the akka actor system
    ]]></notes>
 <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka\.grpc/.*$</packageUrl>
 <cpe>cpe:/a:akka:akka</cpe>
 <cpe>cpe:/a:lightbend:akka</cpe>
-<cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
 <suppress base="true">
 <notes><![CDATA[
@@ -1149,13 +1120,6 @@
 <packageUrl regex="true">^pkg:maven/com\.lightbend\.akka/akka-projection-.*$</packageUrl>
 <cpe>cpe:/a:akka:akka</cpe>
 <cpe>cpe:/a:lightbend:akka</cpe>
-</suppress>
-<suppress base="true">
-<notes><![CDATA[
-   FP per issue #5857; akka-projection-grpc is not grpc itself
-   ]]></notes>
-<packageUrl regex="true">^pkg:maven/com\.lightbend\.akka/akka-projection-grpc.*$</packageUrl>
-<cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
 <suppress base="true">
 <notes><![CDATA[
@@ -1587,7 +1551,6 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
 <packageUrl regex="true">^pkg:(?!maven/org\.clojure/clojure@).*$</packageUrl>
 <cpe>cpe:/a:clojure:clojure</cpe>
 </suppress>
-
 <suppress base="true">
    <notes><![CDATA[
    FP per issue #6415
@@ -1981,13 +1944,6 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
 </suppress>
 <suppress base="true">
    <notes><![CDATA[
-   FP per issue #7123
-   ]]></notes>
-   <packageUrl regex="true">^pkg:maven/io\.etcd/jetcd-grpc@.*$</packageUrl>
-   <cpe>cpe:/a:grpc:grpc</cpe>
-</suppress>
-<suppress base="true">
-   <notes><![CDATA[
    FP per issue #7110
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/com\.azure/azure-core-management@.*$</packageUrl>
@@ -2093,4 +2049,12 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/com\.google\.cloud\.opentelemetry/detector-resources-support@.*$</packageUrl>
    <cpe>cpe:/a:opentelemetry:opentelemetry</cpe>
+</suppress>
+<suppress base="true">
+   <notes><![CDATA[
+      Optimized suppression for FP per issue #4948, #4949, #5017, #5497, #5854, #5857, #7123
+      as suggested in #7250. If it's not in the io.grpc groupId it's not gRPC itself
+      ]]></notes>
+   <packageUrl regex="true">^pkg:maven/(?!io\.grpc/).*$</packageUrl>
+   <cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
