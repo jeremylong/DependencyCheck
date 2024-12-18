@@ -2067,3 +2067,10 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
 <packageUrl regex="true">^pkg:maven\/.*$</packageUrl>
 <cpe>cpe:/a:sms:sms</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #6416
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.sap\.cloud\.db\.jdbc/ngdbc@.*$</packageUrl>
+   <cpe>cpe:/a:sap:hana</cpe>
+</suppress>
