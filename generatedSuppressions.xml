@@ -2058,3 +2058,12 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/(?!io\.grpc/).*$</packageUrl>
    <cpe>cpe:/a:grpc:grpc</cpe>
 </suppress>
+<suppress base="true">
+<notes><![CDATA[
+        FPs original report for private libs: #2995
+        Additional public libs affected by the same reported in #7251
+        The sms:sms (Linux SMS package) is not a Java library so it will never appear on the Maven repository
+        ]]></notes>
+<packageUrl regex="true">^pkg:maven\/.*$</packageUrl>
+<cpe>cpe:/a:sms:sms</cpe>
+</suppress>
