@@ -2082,4 +2082,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/com\.google\.cloud\.opentelemetry/shared-resourcemapping@.*$</packageUrl>
    <cpe>cpe:/a:opentelemetry:opentelemetry</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7264
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/com\.google\.cloud\.opentelemetry/exporter-metrics@.*$</packageUrl>
+   <cpe>cpe:/a:opentelemetry:opentelemetry</cpe>
+</suppress>
 </suppressions>
