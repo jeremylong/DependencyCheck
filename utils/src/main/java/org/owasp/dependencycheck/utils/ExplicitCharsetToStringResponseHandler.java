@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck.utils;
 
 import org.apache.hc.client5.http.impl.classic.AbstractHttpClientResponseHandler;
+import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 
@@ -29,7 +30,7 @@ import java.nio.charset.Charset;
  *
  * @author Hans Aikema
  */
-public class ExplicitEncodingToStringResponseHandler extends AbstractHttpClientResponseHandler<String> {
+public class ExplicitCharsetToStringResponseHandler extends AbstractHttpClientResponseHandler<String> {
 
     /**
      * The explicit Charset used for interpreting the bytes of the HTTP response entity.
@@ -41,12 +42,21 @@ public class ExplicitEncodingToStringResponseHandler extends AbstractHttpClientR
      *
      * @param charset The Charset to be used to transform a downloaded file into a String.
      */
-    public ExplicitEncodingToStringResponseHandler(Charset charset) {
+    public ExplicitCharsetToStringResponseHandler(Charset charset) {
         this.charset = charset;
     }
 
     @Override
     public String handleEntity(HttpEntity entity) throws IOException {
+        final ContentType contentType;
+        contentType = ContentType.parseLenient(entity.getContentType());
+        if (contentType != null) {
+            final Charset entityCharset = contentType.getCharset();
+            if (entityCharset != null && !entityCharset.equals(charset)) {
+                throw new DownloadFailedException(
+                        String.format("Requested decoding charset %s incompatible with the explicit response charset %s.", charset, entityCharset));
+            }
+        }
         return new String(EntityUtils.toByteArray(entity), charset);
     }
 }

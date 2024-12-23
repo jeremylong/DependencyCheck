@@ -17,8 +17,19 @@
  */
 package org.owasp.dependencycheck.data.nexus;
 
+import org.apache.hc.client5.http.HttpResponseException;
+import org.apache.hc.client5.http.impl.classic.AbstractHttpClientResponseHandler;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.jetbrains.annotations.Nullable;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,19 +38,20 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Class of methods to search Nexus v3 repositories.
@@ -100,10 +112,11 @@ public class NexusV3Search implements NexusSearch {
         }
 
         final List<MavenArtifact> collectedMatchingArtifacts = new ArrayList<>(1);
-
-        String continuationToken = retrievePageAndAddMatchingArtifact(collectedMatchingArtifacts, sha1, null);
-        while (continuationToken != null && collectedMatchingArtifacts.isEmpty()) {
-            continuationToken = retrievePageAndAddMatchingArtifact(collectedMatchingArtifacts, sha1, continuationToken);
+        try (CloseableHttpClient client = Downloader.getInstance().getHttpClient(useProxy)) {
+            String continuationToken = retrievePageAndAddMatchingArtifact(client, collectedMatchingArtifacts, sha1, null);
+            while (continuationToken != null && collectedMatchingArtifacts.isEmpty()) {
+                continuationToken = retrievePageAndAddMatchingArtifact(client, collectedMatchingArtifacts, sha1, continuationToken);
+            }
         }
         if (collectedMatchingArtifacts.isEmpty()) {
             throw new FileNotFoundException("Artifact not found in Nexus");
@@ -112,8 +125,8 @@ public class NexusV3Search implements NexusSearch {
         }
     }
 
-    private String retrievePageAndAddMatchingArtifact(List<MavenArtifact> collectedMatchingArtifacts, String sha1, String continuationToken)
-            throws IOException {
+    private String retrievePageAndAddMatchingArtifact(CloseableHttpClient client, List<MavenArtifact> collectedMatchingArtifacts, String sha1,
+                                                      @Nullable String continuationToken) throws IOException {
         final URL url;
         LOGGER.debug("Search with continuation token {}", continuationToken);
         if (continuationToken == null) {
@@ -129,131 +142,145 @@ public class NexusV3Search implements NexusSearch {
         // 1) If the proxy is set, AND the setting is set to true, use the proxy
         // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
         // or proxy is specifically set to false
-        final HttpURLConnection conn;
-        final URLConnectionFactory factory = new URLConnectionFactory(settings);
-        conn = factory.createHttpURLConnection(url, useProxy);
-        conn.setDoOutput(true);
-        final String authHeader = buildHttpAuthHeaderValue();
-        if (!authHeader.isEmpty()) {
-            conn.addRequestProperty("Authorization", authHeader);
+        final NexusV3SearchResponseHandler handler = new NexusV3SearchResponseHandler(collectedMatchingArtifacts, sha1, acceptedClassifiers);
+        try {
+            return Downloader.getInstance().fetchAndHandle(client, url, handler, List.of(new BasicHeader(HttpHeaders.ACCEPT,
+                            ContentType.APPLICATION_JSON)));
+        } catch (TooManyRequestsException | ResourceNotFoundException | DownloadFailedException e) {
+            if (LOGGER.isDebugEnabled()) {
+                int responseCode = -1;
+                String responseMessage = "";
+                if (e.getCause() instanceof HttpResponseException) {
+                    final HttpResponseException cause = (HttpResponseException) e.getCause();
+                    responseCode = cause.getStatusCode();
+                    responseMessage = cause.getReasonPhrase();
+                }
+                LOGGER.debug("Could not connect to Nexus received response code: {} {}",
+                        responseCode, responseMessage);
+            }
+            throw new IOException("Could not connect to Nexus", e);
         }
-
-        conn.addRequestProperty("Accept", "application/json");
-        conn.connect();
-        final String nextContinuationToken;
-        if (conn.getResponseCode() == 200) {
-            nextContinuationToken = parseResponse(conn, sha1, collectedMatchingArtifacts);
-        } else {
-            LOGGER.debug("Could not connect to Nexus received response code: {} {}",
-                    conn.getResponseCode(), conn.getResponseMessage());
-            throw new IOException(String.format("Could not connect to Nexus, HTTP response code %d", conn.getResponseCode()));
-        }
-        return nextContinuationToken;
     }
 
-    private String parseResponse(HttpURLConnection conn, String sha1, List<MavenArtifact> matchingArtifacts) throws IOException {
-        try (InputStream in = new BufferedInputStream(conn.getInputStream());
-             JsonReader jsonReader = Json.createReader(in)) {
-            final JsonObject jsonResponse = jsonReader.readObject();
-            final String continuationToken = jsonResponse.getString("continuationToken", null);
-            final JsonArray components = jsonResponse.getJsonArray("items");
-            boolean found = false;
-            for (int i = 0; i < components.size() && !found; i++) {
-                boolean jarFound = false;
-                boolean pomFound = false;
-                String downloadUrl = null;
-                String groupId = null;
-                String artifactId = null;
-                String version = null;
-                String pomUrl = null;
+    private static final class NexusV3SearchResponseHandler extends AbstractHttpClientResponseHandler<String> {
 
-                final JsonObject component = components.getJsonObject(i);
+        /**
+         * The list to which matching artifacts are to be added
+         */
+        private final List<MavenArtifact> matchingArtifacts;
+        /**
+         * The sha1 for which the search results are being handled
+         */
+        private final String sha1;
+        /**
+         * The classifiers to be accepted
+         */
+        private final Set<String> acceptedClassifiers;
 
-                final String format = components.getJsonObject(0).getString("format", "unknown");
-                if ("maven2".equals(format)) {
-                    final JsonArray assets = component.getJsonArray("assets");
-                    for (int j = 0; !found && j < assets.size(); j++) {
-                        final JsonObject asset = assets.getJsonObject(j);
-                        final JsonObject checksums = asset.getJsonObject("checksum");
-                        final JsonObject maven2 = asset.getJsonObject("maven2");
-                        if (maven2 != null
-                                && "jar".equals(maven2.getString("extension", null))
-                                && acceptedClassifiers.contains(maven2.getString("classifier", null))
-                                && checksums != null && sha1.equals(checksums.getString("sha1", null))
-                        ) {
-                            downloadUrl = asset.getString("downloadUrl");
-                            groupId = maven2.getString("groupId");
-                            artifactId = maven2.getString("artifactId");
-                            version = maven2.getString("version");
+        private NexusV3SearchResponseHandler(List<MavenArtifact> matchingArtifacts, String sha1, Set<String> acceptedClassifiers) {
+            this.matchingArtifacts = matchingArtifacts;
+            this.sha1 = sha1;
+            this.acceptedClassifiers = acceptedClassifiers;
+        }
 
-                            jarFound = true;
-                        } else if (maven2 != null && "pom".equals(maven2.getString("extension"))) {
-                            pomFound = true;
-                            pomUrl = asset.getString("downloadUrl");
+        @Override
+        public @Nullable String handleEntity(HttpEntity entity) throws IOException {
+            try (InputStream in = entity.getContent();
+                 InputStreamReader isReader = new InputStreamReader(in, StandardCharsets.UTF_8);
+                 BufferedReader reader = new BufferedReader(isReader);
+            ) {
+                final String jsonString = reader.lines().collect(Collectors.joining("\n"));
+                LOGGER.debug("JSON String was >>>{}<<<", jsonString);
+                final JsonObject jsonResponse;
+                try (
+                        StringReader stringReader = new StringReader(jsonString);
+                        JsonReader jsonReader = Json.createReader(stringReader)
+                ) {
+                    jsonResponse = jsonReader.readObject();
+                }
+                LOGGER.debug("Response: {}", jsonResponse);
+                final JsonArray components = jsonResponse.getJsonArray("items");
+                LOGGER.debug("Items: {}", components);
+                final String continuationToken = jsonResponse.getString("continuationToken", null);
+                boolean found = false;
+                for (int i = 0; i < components.size() && !found; i++) {
+                    boolean jarFound = false;
+                    boolean pomFound = false;
+                    String downloadUrl = null;
+                    String groupId = null;
+                    String artifactId = null;
+                    String version = null;
+                    String pomUrl = null;
+
+                    final JsonObject component = components.getJsonObject(i);
+
+                    final String format = component.getString("format", "unknown");
+                    if ("maven2".equals(format)) {
+                        LOGGER.debug("Checking Maven2 artifact for {}", component);
+                        final JsonArray assets = component.getJsonArray("assets");
+                        for (int j = 0; !found && j < assets.size(); j++) {
+                            final JsonObject asset = assets.getJsonObject(j);
+                            LOGGER.debug("Checking {}", asset);
+                            final JsonObject checksums = asset.getJsonObject("checksum");
+                            final JsonObject maven2 = asset.getJsonObject("maven2");
+                            if (maven2 != null) {
+                                // logical names for the jar acceptance routine
+                                final boolean shaMatch = checksums != null && sha1.equals(checksums.getString("sha1", null));
+                                final boolean hasAcceptedClassifier = acceptedClassifiers.contains(maven2.getString("classifier", null));
+                                final boolean isAJar = "jar".equals(maven2.getString("extension", null));
+                                LOGGER.debug("shaMatch {}", shaMatch);
+                                LOGGER.debug("hasAcceptedClassifier {}", hasAcceptedClassifier);
+                                LOGGER.debug("isAJar {}", isAJar);
+                                if (
+                                        isAJar
+                                        && hasAcceptedClassifier
+                                        && shaMatch
+                                ) {
+                                    downloadUrl = asset.getString("downloadUrl");
+                                    groupId = maven2.getString("groupId");
+                                    artifactId = maven2.getString("artifactId");
+                                    version = maven2.getString("version");
+
+                                    jarFound = true;
+                                } else if ("pom".equals(maven2.getString("extension"))) {
+                                    LOGGER.debug("pom found {}", asset);
+                                    pomFound = true;
+                                    pomUrl = asset.getString("downloadUrl");
+                                }
+                            }
+                            if (pomFound && jarFound) {
+                                found = true;
+                            }
                         }
-                        if (pomFound && jarFound) {
+                        if (found) {
+                            matchingArtifacts.add(new MavenArtifact(groupId, artifactId, version, downloadUrl, pomUrl));
+                        } else if (jarFound) {
+                            final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version, downloadUrl);
+                            ma.setPomUrl(MavenArtifact.derivePomUrl(artifactId, version, downloadUrl));
+                            matchingArtifacts.add(ma);
                             found = true;
                         }
                     }
-                    if (found) {
-                        matchingArtifacts.add(new MavenArtifact(groupId, artifactId, version, downloadUrl, pomUrl));
-                    } else if (jarFound) {
-                        final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version, downloadUrl);
-                        ma.setPomUrl(MavenArtifact.derivePomUrl(artifactId, version, downloadUrl));
-                        matchingArtifacts.add(ma);
-                        found = true;
-                    }
                 }
+                return continuationToken;
             }
-            return continuationToken;
         }
     }
 
     @Override
     public boolean preflightRequest() {
-        final HttpURLConnection conn;
         try {
             final URL url = new URL(rootURL, "v1/status");
-            final URLConnectionFactory factory = new URLConnectionFactory(settings);
-            conn = factory.createHttpURLConnection(url, useProxy);
-            conn.addRequestProperty("Accept", "application/json");
-            final String authHeader = buildHttpAuthHeaderValue();
-            if (!authHeader.isEmpty()) {
-                conn.addRequestProperty("Authorization", authHeader);
-            }
-            conn.connect();
-            if (conn.getResponseCode() != 200) {
-                LOGGER.warn("Expected 200 result from Nexus, got {}", conn.getResponseCode());
+            final String response = Downloader.getInstance().fetchContent(url, useProxy, StandardCharsets.UTF_8);
+            if (response == null || !response.isEmpty()) {
+                LOGGER.warn("Expected empty OK response (content-length 0), got {}", response == null ? "null" : response.length());
                 return false;
             }
-            if (conn.getContentLength() != 0) {
-                LOGGER.warn("Expected empty OK response (content-length 0), got content-length {}", conn.getContentLength());
-                return false;
-            }
-        } catch (IOException e) {
+        } catch (IOException | TooManyRequestsException | ResourceNotFoundException e) {
             LOGGER.warn("Pre-flight request to Nexus failed: ", e);
             return false;
         }
         return true;
-    }
-
-    /**
-     * Constructs the base64 encoded basic authentication header value.
-     *
-     * @return the base64 encoded basic authentication header value
-     */
-    private String buildHttpAuthHeaderValue() {
-        final String user = settings.getString(Settings.KEYS.ANALYZER_NEXUS_USER, "");
-        final String pass = settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, "");
-        String result = "";
-        if (user.isEmpty() || pass.isEmpty()) {
-            LOGGER.debug("Skip authentication as user and/or password for nexus is empty");
-        } else {
-            final String auth = user + ':' + pass;
-            final String base64Auth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
-            result = "Basic " + base64Auth;
-        }
-        return result;
     }
 
 }
