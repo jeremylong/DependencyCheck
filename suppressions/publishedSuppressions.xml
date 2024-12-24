@@ -2096,4 +2096,11 @@ only pkg:maven/org.clojure:clojure@.* is the CPE cpe:/a:clojure:clojure
    <packageUrl regex="true">^pkg:maven/dev\.zio/zio-akka-cluster_2\.13@.*$</packageUrl>
    <cpe>cpe:/a:akka:akka</cpe>
 </suppress>
+<suppress base="true">
+   <notes><![CDATA[
+   FP per issue #7271
+   ]]></notes>
+   <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring-boot-starter-data-rest@.*$</packageUrl>
+   <cpe>cpe:/a:vmware:spring_data_rest</cpe>
+</suppress>
 </suppressions>
