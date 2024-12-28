@@ -24,7 +24,6 @@ import org.apache.hc.client5.http.auth.Credentials;
 import org.apache.hc.client5.http.auth.CredentialsStore;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.impl.auth.BasicAuthCache;
-import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.auth.BasicScheme;
 import org.apache.hc.client5.http.impl.auth.SystemDefaultCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
@@ -115,6 +114,22 @@ public final class Downloader {
      * The singleton instance of the downloader
      */
     private static final Downloader INSTANCE = new Downloader();
+    /**
+     * The Credentials for the proxy when proxy authentication is configured in the Settings.
+     */
+    private Credentials proxyCreds = null;
+    /**
+     * A BasicScheme initialized with the proxy-credentials when proxy authentication is configured in the Settings.
+     */
+    private BasicScheme proxyPreEmptAuth = null;
+    /**
+     * The AuthScope for the proxy when proxy authentication is configured in the Settings.
+     */
+    private AuthScope proxyAuthScope = null;
+    /**
+     * The HttpHost for the proxy when proxy authentication is configured in the Settings.
+     */
+    private HttpHost proxyHttpHost = null;
 
     private Downloader() {
         // Singleton class
@@ -179,12 +194,12 @@ public final class Downloader {
             if (settings.getString(Settings.KEYS.PROXY_USERNAME) != null) {
                 final String proxyuser = settings.getString(Settings.KEYS.PROXY_USERNAME);
                 final char[] proxypass = settings.getString(Settings.KEYS.PROXY_PASSWORD).toCharArray();
-                final HttpHost theProxy = new HttpHost(null, proxyHost, proxyPort);
-                final Credentials creds = new UsernamePasswordCredentials(proxyuser, proxypass);
-                credentialsProvider.setCredentials(
-                        new AuthScope(theProxy),
-                        creds
-                );
+                this.proxyHttpHost = new HttpHost(null, proxyHost, proxyPort);
+                this.proxyCreds = new UsernamePasswordCredentials(proxyuser, proxypass);
+                this.proxyAuthScope = new AuthScope(proxyHttpHost);
+                this.proxyPreEmptAuth = new BasicScheme();
+                this.proxyPreEmptAuth.initPreemptive(proxyCreds);
+                tryConfigureProxyCredentials(credentialsProvider, authCache);
             }
         }
         tryAddRetireJSCredentials(settings, credentialsProvider, authCache);
@@ -422,17 +437,21 @@ public final class Downloader {
             throw new DownloadFailedException("Unsupported protocol in the URL; only file, http and https are supported");
         }
         try {
-            final HttpClientContext context = HttpClientContext.create();
-            final BasicCredentialsProvider localCredentials = new BasicCredentialsProvider();
+            final HttpClientContext dedicatedAuthContext = HttpClientContext.create();
+            final CredentialsStore dedicatedCredentialStore = new SystemDefaultCredentialsProvider();
             final HttpHost scopeHost = new HttpHost(url.getProtocol(), url.getHost(), url.getPort());
-            final AuthCache dedicated = new BasicAuthCache();
-            addCredentials(localCredentials, scopeHost, url.toString(), settings.getString(userKey), settings.getString(passwordKey).toCharArray(), dedicated);
-            context.setCredentialsProvider(localCredentials);
-            context.setAuthCache(dedicated);
+            final AuthCache dedicatedAuthCache = new BasicAuthCache();
+            addCredentials(dedicatedCredentialStore, scopeHost, url.toString(), settings.getString(userKey),
+                    settings.getString(passwordKey).toCharArray(), dedicatedAuthCache);
+            if (useProxy && proxyAuthScope != null) {
+                tryConfigureProxyCredentials(dedicatedCredentialStore, dedicatedAuthCache);
+            }
+            dedicatedAuthContext.setCredentialsProvider(dedicatedCredentialStore);
+            dedicatedAuthContext.setAuthCache(dedicatedAuthCache);
             try (CloseableHttpClient hc = useProxy ? httpClientBuilder.build() : httpClientBuilderExplicitNoproxy.build()) {
                 final BasicClassicHttpRequest req = new BasicClassicHttpRequest(Method.GET, url.toURI());
                 final SaveToFileResponseHandler responseHandler = new SaveToFileResponseHandler(outputPath);
-                hc.execute(req, context, responseHandler);
+                hc.execute(req, dedicatedAuthContext, responseHandler);
             }
         } catch (HttpResponseException hre) {
             wrapAndThrowHttpResponseException(url.toString(), hre);
@@ -447,6 +466,18 @@ public final class Downloader {
         } catch (RuntimeException | URISyntaxException | IOException ex) {
             final String msg = format("Download failed, unable to copy '%s' to '%s'; %s", url, outputPath.getAbsolutePath(), ex.getMessage());
             throw new DownloadFailedException(msg, ex);
+        }
+    }
+
+    /**
+     * Add the proxy credentials to the CredentialsProvider and AuthCache instances when proxy-authentication is configured in the settings.
+     * @param credentialsProvider The credentialStore to configure the credentials in
+     * @param authCache The AuthCache to cache the pre-empted credentials in
+     */
+    private void tryConfigureProxyCredentials(@NotNull CredentialsStore credentialsProvider, @NotNull AuthCache authCache) {
+        if (proxyPreEmptAuth != null) {
+            credentialsProvider.setCredentials(proxyAuthScope, proxyCreds);
+            authCache.put(proxyHttpHost, proxyPreEmptAuth);
         }
     }
 
