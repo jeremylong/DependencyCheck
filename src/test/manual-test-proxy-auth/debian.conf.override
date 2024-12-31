@@ -4,6 +4,8 @@
 
 # Logs are managed by logrotate on Debian
 logfile_rotate 0
+# Increase log-level for Hypertext Transfer Protocol (HTTP) to see more detail on auth
+debug_options ALL,1 11,2
 
 # For extra security Debian packages only allow
 # localhost to use the proxy on new installs

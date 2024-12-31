@@ -131,6 +131,8 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * Pattern to include all files in a FileSet.
      */
     private static final String INCLUDE_ALL = "**/*";
+    public static final String PROTOCOL_HTTPS = "https";
+    public static final String PROTOCOL_HTTP = "http";
     /**
      * A flag indicating whether or not the Maven site is being generated.
      */
@@ -2213,30 +2215,35 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_YARN_PATH, pathToYarn);
         settings.setStringIfNotNull(Settings.KEYS.ANALYZER_PNPM_PATH, pathToPnpm);
 
-        // use global maven proxy if provided
-        final Proxy mavenProxy = getMavenProxy();
-        if (mavenProxy != null) {
-            final String existing = System.getProperty("https.proxyHost");
-            if (existing == null && mavenProxy.getHost() != null && !mavenProxy.getHost().isEmpty()) {
-                System.setProperty("https.proxyHost", mavenProxy.getHost());
-                if (mavenProxy.getPort() > 0) {
-                    System.setProperty("https.proxyPort", String.valueOf(mavenProxy.getPort()));
-                }
-                if (mavenProxy.getUsername() != null && !mavenProxy.getUsername().isEmpty()) {
-                    System.setProperty("https.proxyUser", mavenProxy.getUsername());
-                }
-                String password = mavenProxy.getPassword();
-                if (password != null && !password.isEmpty()) {
-                    try {
-                        password = decryptPasswordFromSettings(password);
-                    } catch (SecDispatcherException ex) {
-                        password = handleSecDispatcherException("proxy", mavenProxy.getId(), password, ex);
+        // use global maven proxy if provided and system properties are not set
+        final Proxy mavenProxyHttp = getMavenProxy(PROTOCOL_HTTP);
+        final Proxy mavenProxyHttps = getMavenProxy(PROTOCOL_HTTPS);
+        String httpsNonProxyHosts = null;
+        String httpNonProxyHosts = null;
+        boolean proxySetFromMavenSettings = false;
+        if (mavenProxyHttps != null || mavenProxyHttp != null) {
+            final String existingHttps = System.getProperty("https.proxyHost");
+            if (existingHttps == null) {
+                proxySetFromMavenSettings = true;
+                if (mavenProxyHttps != null) {
+                    setProxyServerSysPropsFromMavenProxy(mavenProxyHttps, PROTOCOL_HTTPS);
+                    if (mavenProxyHttps.getNonProxyHosts() != null && !mavenProxyHttps.getNonProxyHosts().isEmpty()) {
+                        httpsNonProxyHosts = mavenProxyHttps.getNonProxyHosts();
                     }
-                    System.setProperty("https.proxyPassword", password);
+                } else {
+                    setProxyServerSysPropsFromMavenProxy(mavenProxyHttp, PROTOCOL_HTTPS);
+                    httpsNonProxyHosts = mavenProxyHttp.getNonProxyHosts();
                 }
-                if (mavenProxy.getNonProxyHosts() != null && !mavenProxy.getNonProxyHosts().isEmpty()) {
-                    System.setProperty("http.nonProxyHosts", mavenProxy.getNonProxyHosts());
-                }
+            }
+            final String existingHttp = System.getProperty("http.proxyHost");
+            if (mavenProxyHttp != null && existingHttp == null) {
+                proxySetFromMavenSettings = true;
+                setProxyServerSysPropsFromMavenProxy(mavenProxyHttp, PROTOCOL_HTTP);
+                httpNonProxyHosts = mavenProxyHttp.getNonProxyHosts();
+            }
+            if (proxySetFromMavenSettings) {
+                final String existingNonProxyHosts = System.getProperty("http.nonProxyHosts");
+                System.setProperty("http.nonProxyHosts", mergeNonProxyHosts(existingNonProxyHosts, httpNonProxyHosts, httpsNonProxyHosts));
             }
         } else if (this.proxy != null && this.proxy.getHost() != null) {
             // or use configured <proxy>
@@ -2383,6 +2390,33 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         settings.setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);
     }
     //CSON: MethodLength
+
+    private String mergeNonProxyHosts(String existingNonProxyHosts, String httpNonProxyHosts, String httpsNonProxyHosts) {
+        final HashSet<String> mergedNonProxyHosts = new HashSet<>();
+        mergedNonProxyHosts.addAll(Arrays.asList(existingNonProxyHosts.split("\\|")));
+        mergedNonProxyHosts.addAll(Arrays.asList(httpNonProxyHosts.split("\\|")));
+        mergedNonProxyHosts.addAll(Arrays.asList(httpsNonProxyHosts.split("\\|")));
+        return String.join("|", mergedNonProxyHosts);
+    }
+
+    private void setProxyServerSysPropsFromMavenProxy(Proxy mavenProxy, String protocol) {
+        System.setProperty(protocol + ".proxyHost", mavenProxy.getHost());
+        if (mavenProxy.getPort() > 0) {
+            System.setProperty(protocol + ".proxyPort", String.valueOf(mavenProxy.getPort()));
+        }
+        if (mavenProxy.getUsername() != null && !mavenProxy.getUsername().isEmpty()) {
+            System.setProperty(protocol + ".proxyUser", mavenProxy.getUsername());
+        }
+        String password = mavenProxy.getPassword();
+        if (password != null && !password.isEmpty()) {
+            try {
+                password = decryptPasswordFromSettings(password);
+            } catch (SecDispatcherException ex) {
+                password = handleSecDispatcherException("proxy", mavenProxy.getId(), password, ex);
+            }
+            System.setProperty(protocol + ".proxyPassword", password);
+        }
+    }
 
     /**
      * Retrieves the server credentials from the settings.xml, decrypts the
@@ -2537,7 +2571,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      *
      * @return the maven proxy
      */
-    private Proxy getMavenProxy() {
+    private Proxy getMavenProxy(String protocol) {
         if (mavenSettings != null) {
             final List<Proxy> proxies = mavenSettings.getProxies();
             if (proxies != null && !proxies.isEmpty()) {
@@ -2549,7 +2583,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     }
                 } else {
                     for (Proxy aProxy : proxies) {
-                        if (aProxy.isActive()) {
+                        if (aProxy.isActive() && aProxy.getProtocol().equals(protocol)) {
                             return aProxy;
                         }
                     }

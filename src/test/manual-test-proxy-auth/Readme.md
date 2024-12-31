@@ -29,7 +29,7 @@ shell (or make sure in a new shell that the same `JAVA_TOOL_OPTIONS` environment
 
 * Stop the docker container running squid-proxy (due to start with --rm the container will be deleted upon termination)
     ```shell
-    ./start-docker-squid-proxy-with-auth
+    ./stop-docker-squid-proxy-with-auth
     ```
 * Unset JAVA_TOOL_OPTIONS or set it back to your regular value
     ```shell
