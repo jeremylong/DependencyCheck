@@ -202,136 +202,145 @@ public final class Downloader {
                 tryConfigureProxyCredentials(credentialsProvider, authCache);
             }
         }
-        tryAddRetireJSCredentials(settings, credentialsProvider, authCache);
-        tryAddHostedSuppressionCredentials(settings, credentialsProvider, authCache);
-        tryAddKEVCredentials(settings, credentialsProvider, authCache);
-        tryAddNexusAnalyzerCredentials(settings, credentialsProvider, authCache);
-        tryAddCentralAnalyzerCredentials(settings, credentialsProvider, authCache);
-        tryAddCentralContentCredentials(settings, credentialsProvider, authCache);
-        tryAddNVDApiDatafeed(settings, credentialsProvider, authCache);
+        tryAddRetireJSCredentials();
+        tryAddHostedSuppressionCredentials();
+        tryAddKEVCredentials();
+        tryAddNexusAnalyzerCredentials();
+        tryAddCentralAnalyzerCredentials();
+        tryAddCentralContentCredentials();
+        tryAddNVDApiDatafeed();
         httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
         httpClientBuilderExplicitNoproxy.setDefaultCredentialsProvider(credentialsProvider);
     }
 
-    private void tryAddRetireJSCredentials(Settings settings, CredentialsStore credentialsStore, AuthCache authCache) throws InvalidSettingException {
-        if (settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD) != null) {
-            addUserPasswordCreds(settings, credentialsStore,
-                    authCache, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER,
-                    Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL,
-                    Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD,
-                    "RetireJS repo.js");
+    private void tryAddRetireJSCredentials() throws InvalidSettingException {
+        if (!settings.getString(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, "").isBlank()) {
+            configureCredentials(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, "RetireJS repo.js",
+                    Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD,
+                    Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_BEARER_TOKEN
+                    );
         }
     }
 
-    private void tryAddHostedSuppressionCredentials(Settings settings, CredentialsStore credentialsStore, AuthCache authCache) throws InvalidSettingException {
-        if (settings.getString(Settings.KEYS.HOSTED_SUPPRESSIONS_PASSWORD) != null) {
-            addUserPasswordCreds(settings, credentialsStore,
-                    authCache, Settings.KEYS.HOSTED_SUPPRESSIONS_USER,
-                    Settings.KEYS.HOSTED_SUPPRESSIONS_URL,
-                    Settings.KEYS.HOSTED_SUPPRESSIONS_PASSWORD,
-                    "Hosted suppressions");
+    private void tryAddHostedSuppressionCredentials() throws InvalidSettingException {
+        if (!settings.getString(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, "").isBlank()) {
+            configureCredentials(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, "Hosted suppressions",
+                    Settings.KEYS.HOSTED_SUPPRESSIONS_USER, Settings.KEYS.HOSTED_SUPPRESSIONS_PASSWORD,
+                    Settings.KEYS.HOSTED_SUPPRESSIONS_BEARER_TOKEN
+            );
         }
     }
 
-    private void tryAddKEVCredentials(Settings settings, CredentialsStore credentialsStore, AuthCache authCache) throws InvalidSettingException {
-        if (settings.getString(Settings.KEYS.KEV_PASSWORD) != null) {
-            addUserPasswordCreds(settings, credentialsStore,
-                    authCache, Settings.KEYS.KEV_USER,
-                    Settings.KEYS.KEV_URL,
-                    Settings.KEYS.KEV_PASSWORD,
-                    "Known Exploited Vulnerabilities");
+    private void tryAddKEVCredentials() throws InvalidSettingException {
+        if (!settings.getString(Settings.KEYS.KEV_URL, "").isBlank()) {
+            configureCredentials(Settings.KEYS.KEV_URL, "Known Exploited Vulnerabilities",
+                    Settings.KEYS.KEV_USER, Settings.KEYS.KEV_PASSWORD,
+                    Settings.KEYS.KEV_BEARER_TOKEN
+            );
         }
     }
 
-    private void tryAddNexusAnalyzerCredentials(Settings settings, CredentialsStore credentialsStore, AuthCache authCache) throws InvalidSettingException {
-        if (settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD) != null) {
-            addUserPasswordCreds(settings, credentialsStore,
-                    authCache, Settings.KEYS.ANALYZER_NEXUS_USER,
-                    Settings.KEYS.ANALYZER_NEXUS_URL,
-                    Settings.KEYS.ANALYZER_NEXUS_PASSWORD,
-                    "Nexus Analyzer");
+    private void tryAddNexusAnalyzerCredentials() throws InvalidSettingException {
+        if (!settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL, "").isBlank()) {
+            configureCredentials(Settings.KEYS.ANALYZER_NEXUS_URL, "Nexus Analyzer",
+                    Settings.KEYS.ANALYZER_NEXUS_USER, Settings.KEYS.ANALYZER_NEXUS_PASSWORD,
+                    null
+            );
         }
     }
 
-    private void tryAddCentralAnalyzerCredentials(Settings settings, CredentialsStore credentialsStore, AuthCache authCache) throws InvalidSettingException {
-        if (settings.getString(Settings.KEYS.ANALYZER_CENTRAL_PASSWORD) != null) {
-            addUserPasswordCreds(settings, credentialsStore,
-                    authCache, Settings.KEYS.ANALYZER_CENTRAL_USER,
-                    Settings.KEYS.ANALYZER_CENTRAL_URL,
-                    Settings.KEYS.ANALYZER_CENTRAL_PASSWORD,
-                    "Central Analyzer");
+    private void tryAddCentralAnalyzerCredentials() throws InvalidSettingException {
+        if (!settings.getString(Settings.KEYS.ANALYZER_CENTRAL_URL, "").isBlank()) {
+            configureCredentials(Settings.KEYS.ANALYZER_CENTRAL_URL, "Central Analyzer",
+                    Settings.KEYS.ANALYZER_CENTRAL_USER, Settings.KEYS.ANALYZER_CENTRAL_PASSWORD,
+                    Settings.KEYS.ANALYZER_CENTRAL_BEARER_TOKEN
+            );
         }
     }
 
-    private void tryAddCentralContentCredentials(Settings settings, CredentialsStore credentialsStore, AuthCache authCache) throws InvalidSettingException {
-        if (settings.getString(Settings.KEYS.CENTRAL_CONTENT_PASSWORD) != null) {
-            addUserPasswordCreds(settings, credentialsStore,
-                    authCache, Settings.KEYS.CENTRAL_CONTENT_USER,
-                    Settings.KEYS.CENTRAL_CONTENT_URL,
-                    Settings.KEYS.CENTRAL_CONTENT_PASSWORD,
-                    "Central Content");
+    private void tryAddCentralContentCredentials() throws InvalidSettingException {
+        if (!settings.getString(Settings.KEYS.CENTRAL_CONTENT_URL, "").isBlank()) {
+            configureCredentials(Settings.KEYS.CENTRAL_CONTENT_URL, "Central Content",
+                    Settings.KEYS.CENTRAL_CONTENT_USER, Settings.KEYS.CENTRAL_CONTENT_PASSWORD,
+                    Settings.KEYS.CENTRAL_CONTENT_BEARER_TOKEN
+
+            );
         }
     }
 
-    private void tryAddNVDApiDatafeed(Settings settings, CredentialsStore credentialsStore, AuthCache authCache) throws InvalidSettingException {
-        if (settings.getString(Settings.KEYS.NVD_API_DATAFEED_PASSWORD) != null) {
-            addUserPasswordCreds(settings, credentialsStore, authCache,
-                    Settings.KEYS.NVD_API_DATAFEED_USER,
-                    Settings.KEYS.NVD_API_DATAFEED_URL,
-                    Settings.KEYS.NVD_API_DATAFEED_PASSWORD,
-                    "NVD API Datafeed");
+    private void tryAddNVDApiDatafeed() throws InvalidSettingException {
+        if (!settings.getString(Settings.KEYS.NVD_API_DATAFEED_URL, "").isBlank()) {
+            configureCredentials(Settings.KEYS.NVD_API_DATAFEED_URL, "NVD API Datafeed",
+                    Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD,
+                    Settings.KEYS.NVD_API_DATAFEED_BEARER_TOKEN
+            );
         }
     }
 
     /**
-     * Add user/password credentials for the host/port of the URL, all configured in the settings, to the credential-store.
+     * Configure pre-emptive credentials for the host/port of the URL when configured in settings for the default credential-store and
+     * authentication-cache.
      *
-     * @param settings    The settings to retrieve the values from
-     * @param store       The credentialStore
-     * @param authCache   The authCache to register the authentication for the host of the url
-     * @param userKey     The key for a configured username credential part
-     * @param urlKey      The key for a configured url for which the credentials hold
-     * @param passwordKey The key for a configured password credential part
-     * @param desc        A descriptive text for use in error messages for this credential
+     * @param urlKey           The settings property key for a configured url for which the credentials should hold
+     * @param scopeDescription A descriptive text for use in error messages for this credential
+     * @param userKey          The settings property key for a potentially configured configured Basic-auth username
+     * @param passwordKey      The settings property key for a potentially configured configured Basic-auth password
+     * @param tokenKey         The settings property key for a potentially configured Bearer-auth token
      * @throws InvalidSettingException When the password is empty or one of the other keys are not found in the settings.
      */
-    private void addUserPasswordCreds(Settings settings, CredentialsStore store, AuthCache authCache, String userKey, String urlKey, String passwordKey, String desc)
+    private void configureCredentials(String urlKey, String scopeDescription, String userKey, String passwordKey, String tokenKey)
             throws InvalidSettingException {
-        final String theUser = settings.getString(userKey);
-        final String theURL = settings.getString(urlKey);
-        final char[] thePass = settings.getString(passwordKey, "").toCharArray();
-        if (theUser == null || theURL == null || thePass.length == 0) {
-            throw new InvalidSettingException(desc + " URL and username are required when setting " + desc + " password");
-        }
+        final URL theURL;
         try {
-            final URL parsedURL = new URL(theURL);
-            final HttpHost scopeHost = new HttpHost(parsedURL.getProtocol(), parsedURL.getHost(), parsedURL.getPort());
-            addCredentials(store, scopeHost, desc, theUser, thePass, authCache);
+            theURL = new URL(settings.getString(urlKey, ""));
         } catch (MalformedURLException e) {
-            throw new InvalidSettingException(desc + " URL must be a valid URL", e);
+            throw new InvalidSettingException(scopeDescription + " URL must be a valid URL (was: " + settings.getString(urlKey, "") + ")", e);
         }
+        configureCredentials(theURL, scopeDescription, userKey, passwordKey, tokenKey, credentialsProvider, authCache);
     }
 
-    private static void addCredentials(CredentialsStore credentialsStore, HttpHost scopeHost, String messageScope, String theUser, char[] thePass,
-                                                              AuthCache authCache)
+    /**
+     * Configure pre-emptive credentials for the host/port of the URL when configured in settings for a specific credential-store and
+     * authentication-cache.
+     *
+     * @param theURL      The url for which the credentials should hold
+     * @param scopeDescription        A descriptive text for use in error messages for this credential
+     * @param userKey     The settings property key for a potentially configured configured Basic-auth username
+     * @param passwordKey The settings property key for a potentially configured configured Basic-auth password
+     * @param tokenKey The settings property key for a potentially configured Bearer-auth token
+     * @param theCredentialsStore The credential store that will be set in the HTTP clients context
+     * @param theAuthCache        The authentication cache that will be set in the HTTP clients context
+     * @throws InvalidSettingException When the password is empty or one of the other keys are not found in the settings.
+     */
+    private void configureCredentials(URL theURL, String scopeDescription, String userKey, String passwordKey, String tokenKey,
+                                      CredentialsStore theCredentialsStore, AuthCache theAuthCache)
             throws InvalidSettingException {
-        final String schemeName = scopeHost.getSchemeName();
-        if ("file".equals(schemeName)) {
-            LOGGER.warn("Credentials are not supported for file-protocol, double-check your configuration options for {}.", messageScope);
+        final String theUser = settings.getString(userKey);
+        final String thePass = settings.getString(passwordKey);
+        final String theToken = tokenKey != null ? settings.getString(tokenKey) : null;
+        if (theUser == null && thePass == null && theToken == null) {
+            // no credentials configured
             return;
-        } else if ("http".equals(schemeName)) {
+        }
+        final String theProtocol = theURL.getProtocol();
+        if ("file".equals(theProtocol)) {
+            // no credentials support for file protocol
+            return;
+        } else if ("http".equals(theProtocol) && (theUser != null && thePass != null)) {
             LOGGER.warn("Insecure configuration: Basic Credentials are configured to be used over a plain http connection for {}. "
-                    + "Consider migrating to https to guard the credentials.", messageScope);
-        } else if (!"https".equals(schemeName)) {
-            throw new InvalidSettingException("Unsupported protocol in the " + messageScope
+                    + "Consider migrating to https to guard the credentials.", scopeDescription);
+        } else if ("http".equals(theProtocol) && (theToken != null)) {
+            LOGGER.warn("Insecure configuration: Bearer Credentials are configured to be used over a plain http connection for {}. "
+                    + "Consider migrating to https to guard the credentials.", scopeDescription);
+        } else if (!"https".equals(theProtocol)) {
+            throw new InvalidSettingException("Unsupported protocol in the " + scopeDescription
                     + " URL; only file, http and https are supported");
         }
-        final UsernamePasswordCredentials creds = new UsernamePasswordCredentials(theUser, thePass);
-        final AuthScope scope = new AuthScope(scopeHost, null, null);
-        credentialsStore.setCredentials(scope, creds);
-        final BasicScheme basicAuth = new BasicScheme();
-        basicAuth.initPreemptive(creds);
-        authCache.put(scopeHost, basicAuth);
+        if (theToken != null) {
+            HC5CredentialHelper.configurePreEmptiveBearerAuth(theURL, theToken, theCredentialsStore, theAuthCache);
+        } else if (theUser != null && thePass != null) {
+            HC5CredentialHelper.configurePreEmptiveBasicAuth(theURL, theUser, thePass, theCredentialsStore, theAuthCache);
+        }
     }
 
     /**
@@ -410,10 +419,10 @@ public final class Downloader {
      *
      * @param url         the URL of the file to download
      * @param outputPath  the path to the save the file to
-     * @param useProxy    whether to use the configured proxy when downloading
-     *                    files
-     * @param userKey     the settings key for the username to be used
-     * @param passwordKey the settings key for the password to be used
+     * @param useProxy    whether to use the configured proxy when downloading files
+     * @param userKey     The settings property key for a potentially configured configured Basic-auth username
+     * @param passwordKey The settings property key for a potentially configured configured Basic-auth password
+     * @param tokenKey    The settings property key for a potentially configured Bearer-auth token
      * @throws DownloadFailedException       is thrown if there is an error downloading the file
      * @throws URLConnectionFailureException is thrown when certificate-chain trust errors occur downloading the file
      * @throws TooManyRequestsException      thrown when a 429 is received
@@ -422,12 +431,12 @@ public final class Downloader {
      * Credentials needs to be constructed for the target URL when the user/password keys point to configured credentials. The method delegates to
      * {@link #fetchFile(URL, File, boolean)} when credentials are not configured for the given keys or the resource points to a file.
      */
-    public void fetchFile(URL url, File outputPath, boolean useProxy, String userKey, String passwordKey) throws DownloadFailedException,
-            TooManyRequestsException, ResourceNotFoundException, URLConnectionFailureException {
-        if ("file".equals(url.getProtocol())
-                || userKey == null || settings.getString(userKey) == null
-                || passwordKey == null || settings.getString(passwordKey) == null
-        ) {
+    public void fetchFile(URL url, File outputPath, boolean useProxy, String userKey, String passwordKey, String tokenKey)
+            throws DownloadFailedException, TooManyRequestsException, ResourceNotFoundException, URLConnectionFailureException {
+        final boolean basicConfigured = userKey != null && settings.getString(userKey) != null
+                && passwordKey != null && settings.getString(passwordKey) != null;
+        final boolean tokenConfigured = tokenKey != null && settings.getString(tokenKey) != null;
+        if ("file".equals(url.getProtocol()) || (!basicConfigured && !tokenConfigured)) {
             // no credentials configured, so use the default fetchFile
             fetchFile(url, outputPath, useProxy);
             return;
@@ -439,10 +448,8 @@ public final class Downloader {
         try {
             final HttpClientContext dedicatedAuthContext = HttpClientContext.create();
             final CredentialsStore dedicatedCredentialStore = new SystemDefaultCredentialsProvider();
-            final HttpHost scopeHost = new HttpHost(url.getProtocol(), url.getHost(), url.getPort());
             final AuthCache dedicatedAuthCache = new BasicAuthCache();
-            addCredentials(dedicatedCredentialStore, scopeHost, url.toString(), settings.getString(userKey),
-                    settings.getString(passwordKey).toCharArray(), dedicatedAuthCache);
+            configureCredentials(url, url.toString(), userKey, passwordKey, tokenKey, dedicatedCredentialStore, dedicatedAuthCache);
             if (useProxy && proxyAuthScope != null) {
                 tryConfigureProxyCredentials(dedicatedCredentialStore, dedicatedAuthCache);
             }
@@ -683,8 +690,8 @@ public final class Downloader {
      * @throws TooManyRequestsException  When HTTP status 429 is encountered
      * @throws ResourceNotFoundException When HTTP status 404 is encountered
      */
-    public <T> T fetchAndHandle(@NotNull CloseableHttpClient client, @NotNull URL url, @NotNull HttpClientResponseHandler<T> handler, @NotNull List<Header> hdr)
-            throws IOException, TooManyRequestsException, ResourceNotFoundException {
+    public <T> T fetchAndHandle(@NotNull CloseableHttpClient client, @NotNull URL url, @NotNull HttpClientResponseHandler<T> handler,
+                                @NotNull List<Header> hdr) throws IOException, TooManyRequestsException, ResourceNotFoundException {
         try {
             final String theProtocol = url.getProtocol();
             if (!("http".equals(theProtocol) || "https".equals(theProtocol))) {

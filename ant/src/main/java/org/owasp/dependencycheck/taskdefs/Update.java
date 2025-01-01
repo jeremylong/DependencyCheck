@@ -40,6 +40,51 @@ import org.slf4j.impl.StaticLoggerBinder;
 public class Update extends Purge {
 
     /**
+     * The URL to (a mirror of) the RetireJS JSON data.
+     */
+    private String retireJsUrl;
+    /**
+     * The user to download the RetireJS JSON data from an HTTP Basic auth protected location.
+     */
+    private String retireJsUrlUser;
+    /**
+     * The password to download the RetireJS JSON data from an HTTP Basic auth protected location.
+     */
+    private String retireJsUrlPassword;
+    /**
+     * The token to download the RetireJS JSON data from an HTTP Bearer auth protected location.
+     */
+    private String retireJsUrlBearerToken;
+    /**
+     * Whether or not the RetireJS JSON repository will be updated regardless of the
+     * `autoupdate` settings. Defaults to false.
+     */
+    private Boolean retireJsForceUpdate;
+    /**
+     * Whether or not the Known Exploited Vulnerability Analyzer is enabled.
+     */
+    private Boolean knownExploitedEnabled;
+    /**
+     * The URL to the known exploited vulnerabilities JSON datafeed.
+     */
+    private String knownExploitedUrl;
+    /**
+     * The number of hours before checking for updates for the known exploited vulnerabilities JSON datafeed.
+     */
+    private Integer knownExploitedValidForHours;
+    /**
+     * The user to download the known exploited vulnerabilities JSON datafeed from an HTTP Basic auth protected location.
+     */
+    private String knownExploitedUser;
+    /**
+     * The password to download the known exploited vulnerabilities JSON datafeed from an HTTP Basic auth protected location.
+     */
+    private String knownExploitedPassword;
+    /**
+     * The token to download the known exploited vulnerabilities JSON datafeed from an HTTP Bearer auth protected location.
+     */
+    private String knownExploitedBearerToken;
+    /**
      * The NVD API endpoint.
      */
     private String nvdApiEndpoint;
@@ -60,17 +105,21 @@ public class Update extends Purge {
      */
     private String nvdDatafeedUrl;
     /**
-     * The username for basic auth to the NVD Data Feed.
+     * The username to download the NVD Data feed from an HTTP Basic auth protected location.
      */
     private String nvdUser;
     /**
-     * The password for basic auth to the NVD Data Feed.
+     * The password to download the NVD Data feed from an HTTP Basic auth protected location.
      */
     private String nvdPassword;
     /**
+     * The token to download the NVD Data feed from an HTTP Bearer auth protected location.
+     */
+    private String nvdBearerToken;
+    /**
      * The time in milliseconds to wait between downloading NVD API data.
      */
-    private int nvdApiDelay = 0;
+    private Integer nvdApiDelay;
 
     /**
      * The number of records per page of NVD API data.
@@ -131,6 +180,24 @@ public class Update extends Purge {
      */
     private Integer hostedSuppressionsValidForHours;
     /**
+     * The userid for the hostedSuppressions file.
+     * <br/>
+     * Only needs configuration if you customized the hostedSuppressionsUrl to a custom server that requires Basic Auth
+     */
+    private String hostedSuppressionsUser;
+    /**
+     * The password for the hostedSuppressions file.
+     * <br/>
+     * Only needs configuration if you customized the hostedSuppressionsUrl to a custom server that requires Basic Auth
+     */
+    private String hostedSuppressionsPassword;
+    /**
+     * The (Bearer authentication) API Token for the hostedSuppressions file.
+     * <br/>
+     * Only needs configuration if you customized the hostedSuppressionsUrl to a custom server that requires Bearer Auth
+     */
+    private String hostedSuppressionsBearerToken;
+    /**
      * Whether the hosted suppressions file will be updated regardless of the
      * `autoupdate` settings. Defaults to false.
      */
@@ -139,6 +206,14 @@ public class Update extends Purge {
      * Whether the hosted suppressions file will be used. Defaults to true.
      */
     private Boolean hostedSuppressionsEnabled;
+    /**
+     * The URL to hosted suppressions file with base FP suppressions.
+     */
+    private String hostedSuppressionsUrl = null;
+    /**
+     * Whether or not the RetireJS Analyzer is enabled.
+     */
+    private Boolean retireJsAnalyzerEnabled;
 
     /**
      * Construct a new UpdateTask.
@@ -151,30 +226,12 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of nvdApiEndpoint.
-     *
-     * @return the value of nvdApiEndpoint
-     */
-    public String getNvdApiEndpoint() {
-        return nvdApiEndpoint;
-    }
-
-    /**
      * Set the value of nvdApiEndpoint.
      *
      * @param nvdApiEndpoint new value of nvdApiEndpoint
      */
     public void setNvdApiEndpoint(String nvdApiEndpoint) {
         this.nvdApiEndpoint = nvdApiEndpoint;
-    }
-
-    /**
-     * Get the value of nvdApiKey.
-     *
-     * @return the value of nvdApiKey
-     */
-    public String getNvdApiKey() {
-        return nvdApiKey;
     }
 
     /**
@@ -187,30 +244,16 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of nvdMaxRetryCount.
-     *
-     * @return the value of nvdMaxRetryCount
-     */
-    public int getNvdMaxRetryCounts() {
-        return nvdMaxRetryCount;
-    }
-
-    /**
      * Set the value of nvdMaxRetryCount.
      *
      * @param nvdMaxRetryCount new value of nvdMaxRetryCount
      */
-    public void setNvdMaxRetryCount(int nvdMaxRetryCount) {
-        this.nvdMaxRetryCount = nvdMaxRetryCount;
-    }
-
-    /**
-     * Get the value of nvdValidForHours.
-     *
-     * @return the value of nvdValidForHours
-     */
-    public int getNvdValidForHours() {
-        return nvdValidForHours;
+    public void setNvdMaxRetryCount(Integer nvdMaxRetryCount) {
+        if (nvdMaxRetryCount > 0) {
+            this.nvdMaxRetryCount = nvdMaxRetryCount;
+        } else {
+            throw new BuildException("Invalid setting: `nvdMaxRetryCount` must be greater than zero");
+        }
     }
 
     /**
@@ -219,16 +262,11 @@ public class Update extends Purge {
      * @param nvdValidForHours new value of nvdValidForHours
      */
     public void setNvdValidForHours(int nvdValidForHours) {
-        this.nvdValidForHours = nvdValidForHours;
-    }
-
-    /**
-     * Get the value of nvdDatafeedUrl.
-     *
-     * @return the value of nvdDatafeedUrl
-     */
-    public String getNvdDatafeedUrl() {
-        return nvdDatafeedUrl;
+        if (nvdValidForHours >= 0) {
+            this.nvdValidForHours = nvdValidForHours;
+        } else {
+            throw new BuildException("Invalid setting: `nvdValidForHours` must be 0 or greater");
+        }
     }
 
     /**
@@ -241,30 +279,12 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of nvdUser.
-     *
-     * @return the value of nvdUser
-     */
-    public String getNvdUser() {
-        return nvdUser;
-    }
-
-    /**
      * Set the value of nvdUser.
      *
      * @param nvdUser new value of nvdUser
      */
     public void setNvdUser(String nvdUser) {
         this.nvdUser = nvdUser;
-    }
-
-    /**
-     * Get the value of nvdPassword.
-     *
-     * @return the value of nvdPassword
-     */
-    public String getNvdPassword() {
-        return nvdPassword;
     }
 
     /**
@@ -277,12 +297,11 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of nvdApiDelay.
-     *
-     * @return the value of nvdApiDelay
+     * Sets the token to download the NVD Data feed from an HTTP Bearer auth protected location.
+     * @param nvdBearerToken The bearer token
      */
-    public int getNvdApiDelay() {
-        return nvdApiDelay;
+    public void setNvdBearerToken(String nvdBearerToken) {
+        this.nvdBearerToken = nvdBearerToken;
     }
 
     /**
@@ -290,17 +309,8 @@ public class Update extends Purge {
      *
      * @param nvdApiDelay new value of nvdApiDelay
      */
-    public void setNvdApiDelay(int nvdApiDelay) {
+    public void setNvdApiDelay(Integer nvdApiDelay) {
         this.nvdApiDelay = nvdApiDelay;
-    }
-
-    /**
-     * Get the value of nvdApiResultsPerPage.
-     *
-     * @return the value of nvdApiResultsPerPage
-     */
-    public int getNvdApiResultsPerPage() {
-        return nvdApiResultsPerPage;
     }
 
     /**
@@ -308,17 +318,8 @@ public class Update extends Purge {
      *
      * @param nvdApiResultsPerPage new value of nvdApiResultsPerPage
      */
-    public void setApiResultsPerPage(int nvdApiResultsPerPage) {
+    public void setNvdApiResultsPerPage(Integer nvdApiResultsPerPage) {
         this.nvdApiResultsPerPage = nvdApiResultsPerPage;
-    }
-
-    /**
-     * Get the value of proxyServer.
-     *
-     * @return the value of proxyServer
-     */
-    public String getProxyServer() {
-        return proxyServer;
     }
 
     /**
@@ -331,30 +332,12 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of proxyPort.
-     *
-     * @return the value of proxyPort
-     */
-    public String getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
      * Set the value of proxyPort.
      *
      * @param proxyPort new value of proxyPort
      */
     public void setProxyPort(String proxyPort) {
         this.proxyPort = proxyPort;
-    }
-
-    /**
-     * Get the value of proxyUsername.
-     *
-     * @return the value of proxyUsername
-     */
-    public String getProxyUsername() {
-        return proxyUsername;
     }
 
     /**
@@ -367,30 +350,12 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of proxyPassword.
-     *
-     * @return the value of proxyPassword
-     */
-    public String getProxyPassword() {
-        return proxyPassword;
-    }
-
-    /**
      * Set the value of proxyPassword.
      *
      * @param proxyPassword new value of proxyPassword
      */
     public void setProxyPassword(String proxyPassword) {
         this.proxyPassword = proxyPassword;
-    }
-
-    /**
-     * Get the value of nonProxyHosts.
-     *
-     * @return the value of nonProxyHosts
-     */
-    public String getNonProxyHosts() {
-        return nonProxyHosts;
     }
 
     /**
@@ -403,30 +368,12 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of connectionTimeout.
-     *
-     * @return the value of connectionTimeout
-     */
-    public String getConnectionTimeout() {
-        return connectionTimeout;
-    }
-
-    /**
      * Set the value of connectionTimeout.
      *
      * @param connectionTimeout new value of connectionTimeout
      */
     public void setConnectionTimeout(String connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
-    }
-
-    /**
-     * Get the value of readTimeout.
-     *
-     * @return the value of readTimeout
-     */
-    public String getReadTimeout() {
-        return readTimeout;
     }
 
     /**
@@ -439,30 +386,12 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of databaseDriverName.
-     *
-     * @return the value of databaseDriverName
-     */
-    public String getDatabaseDriverName() {
-        return databaseDriverName;
-    }
-
-    /**
      * Set the value of databaseDriverName.
      *
      * @param databaseDriverName new value of databaseDriverName
      */
     public void setDatabaseDriverName(String databaseDriverName) {
         this.databaseDriverName = databaseDriverName;
-    }
-
-    /**
-     * Get the value of databaseDriverPath.
-     *
-     * @return the value of databaseDriverPath
-     */
-    public String getDatabaseDriverPath() {
-        return databaseDriverPath;
     }
 
     /**
@@ -475,30 +404,12 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of connectionString.
-     *
-     * @return the value of connectionString
-     */
-    public String getConnectionString() {
-        return connectionString;
-    }
-
-    /**
      * Set the value of connectionString.
      *
      * @param connectionString new value of connectionString
      */
     public void setConnectionString(String connectionString) {
         this.connectionString = connectionString;
-    }
-
-    /**
-     * Get the value of databaseUser.
-     *
-     * @return the value of databaseUser
-     */
-    public String getDatabaseUser() {
-        return databaseUser;
     }
 
     /**
@@ -511,30 +422,12 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of databasePassword.
-     *
-     * @return the value of databasePassword
-     */
-    public String getDatabasePassword() {
-        return databasePassword;
-    }
-
-    /**
      * Set the value of databasePassword.
      *
      * @param databasePassword new value of databasePassword
      */
     public void setDatabasePassword(String databasePassword) {
         this.databasePassword = databasePassword;
-    }
-
-    /**
-     * Get the value of hostedSuppressionsValidForHours.
-     *
-     * @return the value of hostedSuppressionsValidForHours
-     */
-    public Integer getHostedSuppressionsValidForHours() {
-        return hostedSuppressionsValidForHours;
     }
 
     /**
@@ -547,13 +440,16 @@ public class Update extends Purge {
         this.hostedSuppressionsValidForHours = hostedSuppressionsValidForHours;
     }
 
-    /**
-     * Get the value of hostedSuppressionsForceUpdate.
-     *
-     * @return the value of hostedSuppressionsForceUpdate
-     */
-    public Boolean isHostedSuppressionsForceUpdate() {
-        return hostedSuppressionsForceUpdate;
+    public void setHostedSuppressionsUser(String hostedSuppressionsUser) {
+        this.hostedSuppressionsUser = hostedSuppressionsUser;
+    }
+
+    public void setHostedSuppressionsPassword(String hostedSuppressionsPassword) {
+        this.hostedSuppressionsPassword = hostedSuppressionsPassword;
+    }
+
+    public void setHostedSuppressionsBearerToken(String hostedSuppressionsBearerToken) {
+        this.hostedSuppressionsBearerToken = hostedSuppressionsBearerToken;
     }
 
     /**
@@ -567,21 +463,125 @@ public class Update extends Purge {
     }
 
     /**
-     * Get the value of hostedSuppressionsEnabled.
-     *
-     * @return the value of hostedSuppressionsEnabled
-     */
-    public Boolean isHostedSuppressionsEnabled() {
-        return hostedSuppressionsEnabled;
-    }
-
-    /**
      * Set the value of hostedSuppressionsEnabled.
      *
      * @param hostedSuppressionsEnabled new value of hostedSuppressionsEnabled
      */
     public void setHostedSuppressionsEnabled(Boolean hostedSuppressionsEnabled) {
         this.hostedSuppressionsEnabled = hostedSuppressionsEnabled;
+    }
+
+    /**
+     * Set the value of hostedSuppressionsUrl.
+     *
+     * @param hostedSuppressionsUrl new value of hostedSuppressionsUrl
+     */
+    public void setHostedSuppressionsUrl(final String hostedSuppressionsUrl) {
+        this.hostedSuppressionsUrl = hostedSuppressionsUrl;
+    }
+
+    /**
+     * Sets the the knownExploitedUrl.
+     *
+     * @param knownExploitedUrl the URL
+     */
+    public void setKnownExploitedUrl(String knownExploitedUrl) {
+        this.knownExploitedUrl = knownExploitedUrl;
+    }
+
+    public void setKnownExploitedValidForHours(Integer knownExploitedValidForHours) {
+        this.knownExploitedValidForHours = knownExploitedValidForHours;
+    }
+
+    /**
+     * Sets the user for downloading the knownExploitedUrl from a HTTP Basic auth protected location.
+     *
+     * @param knownExploitedUser the user
+     */
+    public void setKnownExploitedUser(String knownExploitedUser) {
+        this.knownExploitedUser = knownExploitedUser;
+    }
+
+    /**
+     * Sets the password for downloading the knownExploitedUrl from a HTTP Basic auth protected location..
+     *
+     * @param knownExploitedPassword the password
+     */
+    public void setKnownExploitedPassword(String knownExploitedPassword) {
+        this.knownExploitedPassword = knownExploitedPassword;
+    }
+
+    /**
+     * Sets the token for downloading the knownExploitedUrl from an HTTP Bearer auth protected location..
+     *
+     * @param knownExploitedBearerToken the token
+     */
+    public void setKnownExploitedBearerToken(String knownExploitedBearerToken) {
+        this.knownExploitedBearerToken = knownExploitedBearerToken;
+    }
+
+    /**
+     * Sets whether the analyzer is enabled.
+     *
+     * @param knownExploitedEnabled the value of the new setting
+     */
+    public void setKnownExploitedEnabled(Boolean knownExploitedEnabled) {
+        this.knownExploitedEnabled = knownExploitedEnabled;
+    }
+
+    /**
+     * Set the value of the Retire JS repository URL.
+     *
+     * @param retireJsUrl new value of retireJsUrl
+     */
+    public void setRetireJsUrl(String retireJsUrl) {
+        this.retireJsUrl = retireJsUrl;
+    }
+
+    /**
+     * Sets the user to download the RetireJS JSON data from an HTTP Basic auth protected location.
+     *
+     * @param retireJsUrlUser new value of retireJsUrlUser
+     */
+    public void setRetireJsUrlUser(String retireJsUrlUser) {
+        this.retireJsUrlUser = retireJsUrlUser;
+    }
+
+    /**
+     * Sets the password to download the RetireJS JSON data from an HTTP Basic auth protected location.
+     *
+     * @param retireJsUrlPassword new value of retireJsUrlPassword
+     */
+    public void setRetireJsUrlPassword(String retireJsUrlPassword) {
+        this.retireJsUrlPassword = retireJsUrlPassword;
+    }
+
+    /**
+     * Sets the token to download the RetireJS JSON data from an HTTP Bearer auth protected location.
+     *
+     * @param retireJsUrlBearerToken new value of retireJsUrlBearerToken
+     */
+    public void setRetireJsUrlBearerToken(String retireJsUrlBearerToken) {
+        this.retireJsUrlBearerToken = retireJsUrlBearerToken;
+    }
+
+    /**
+     * Set the value of retireJsForceUpdate.
+     *
+     * @param retireJsForceUpdate new value of
+     * retireJsForceUpdate
+     */
+    public void setRetireJsForceUpdate(Boolean retireJsForceUpdate) {
+        this.retireJsForceUpdate = retireJsForceUpdate;
+    }
+
+    /**
+     * Set the value of retireJsAnalyzerEnabled.
+     *
+     * @param retireJsAnalyzerEnabled new value of retireJsAnalyzerEnabled
+     */
+    public void setRetireJsAnalyzerEnabled(Boolean retireJsAnalyzerEnabled) {
+        this.retireJsAnalyzerEnabled = retireJsAnalyzerEnabled;
     }
 
     /**
@@ -643,7 +643,26 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);
         getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);
+
+        getSettings().setStringIfNotEmpty(Settings.KEYS.KEV_URL, knownExploitedUrl);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.KEV_USER, knownExploitedUser);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.KEV_PASSWORD, knownExploitedPassword);
+        getSettings().setStringIfNotEmpty(Settings.KEYS.KEV_BEARER_TOKEN, knownExploitedBearerToken);
+        getSettings().setIntIfNotNull(Settings.KEYS.KEV_CHECK_VALID_FOR_HOURS, knownExploitedValidForHours);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_KNOWN_EXPLOITED_ENABLED, knownExploitedEnabled);
+
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, retireJsUrlUser);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD, retireJsUrlPassword);
+        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_BEARER_TOKEN, retireJsUrlBearerToken);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsForceUpdate);
+        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);
+
+        getSettings().setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);
         getSettings().setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);
+        getSettings().setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_USER, hostedSuppressionsUser);
+        getSettings().setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_PASSWORD, hostedSuppressionsPassword);
+        getSettings().setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_BEARER_TOKEN, hostedSuppressionsBearerToken);
         getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);
         getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);
 
@@ -654,19 +673,8 @@ public class Update extends Purge {
         getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);
         getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, nvdUser);
         getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_PASSWORD, nvdPassword);
-        if (nvdMaxRetryCount != null) {
-            if (nvdMaxRetryCount > 0) {
-                getSettings().setInt(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, nvdMaxRetryCount);
-            } else {
-                throw new BuildException("Invalid setting: `nvdMaxRetryCount` must be greater than zero");
-            }
-        }
-        if (nvdValidForHours != null) {
-            if (nvdValidForHours >= 0) {
-                getSettings().setInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);
-            } else {
-                throw new BuildException("Invalid setting: `nvdValidForHours` must be 0 or greater");
-            }
-        }
+        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_BEARER_TOKEN, nvdBearerToken);
+        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, nvdMaxRetryCount);
+        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);
     }
 }
