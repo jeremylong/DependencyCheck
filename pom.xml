@@ -1030,7 +1030,7 @@ Copyright (c) 2012 - Jeremy Long
             <dependency><!--upgrade transitive dependency due to reported vulns-->
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
+                <version>1.10.0</version>
             </dependency>
             <dependency><!--upgrade transitive dependency due to reported vulns-->
                 <groupId>org.codehaus.plexus</groupId>
