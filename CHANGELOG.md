@@ -1,5 +1,21 @@
 # Change Log
 
+## [Version 12.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v12.0.0) (2025-01-11)
+
+- feat: report on CVSS v4 (#7204)
+- feat: show from which dependency the CVE comes in failure report (#7224)
+- feat: Use Maven settings decryption API for decrypting secrets from settings.xml (#7284)
+- feat: Extend authentication to support Bearer token for many resources (#7277)
+- feat: Add a flag to fail when one or more suppression rules are not used (#7244)
+- fix: add product evidence as vendor to reduce FN (#7295)
+- fix: Make the HTTP-Client use pre-emptive authentication (#7255)
+- fix: Add the missing proxy credentials for suppressionFileUser/Password authentication scenario
+- fix: increase max retry count (#7252)
+- fix: Make the HTTP-Client use pre-emptive authentication for configured server credentials and extend HTTPClient usage to Nexus search
+- fix: Tranform into UTC the last modified date from database (#7222)
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/91?closed=1). 
+
 ## [Version 11.1.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v11.1.1) (2024-12-04)
 
 - fix: re-enable issue locking (#7220)
