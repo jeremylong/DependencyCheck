@@ -355,13 +355,13 @@
 <a class="jxr_linenumber" name="L347" href="#L347">347</a>                 <strong class="jxr_keyword">final</strong> URL url = <strong class="jxr_keyword">new</strong> URL(suppressionFilePath);
 <a class="jxr_linenumber" name="L348" href="#L348">348</a>                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L349" href="#L349">349</a>                     Downloader.getInstance().fetchFile(url, file, false, Settings.KEYS.SUPPRESSION_FILE_USER,
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>                             Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
+<a class="jxr_linenumber" name="L350" href="#L350">350</a>                             Settings.KEYS.SUPPRESSION_FILE_PASSWORD, Settings.KEYS.SUPPRESSION_FILE_BEARER_TOKEN);
 <a class="jxr_linenumber" name="L351" href="#L351">351</a>                 } <strong class="jxr_keyword">catch</strong> (DownloadFailedException ex) {
 <a class="jxr_linenumber" name="L352" href="#L352">352</a>                     LOGGER.trace(<span class="jxr_string">"Failed download suppression file - first attempt"</span>, ex);
 <a class="jxr_linenumber" name="L353" href="#L353">353</a>                     <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L354" href="#L354">354</a>                         Thread.sleep(500);
 <a class="jxr_linenumber" name="L355" href="#L355">355</a>                         Downloader.getInstance().fetchFile(url, file, <strong class="jxr_keyword">true</strong>, Settings.KEYS.SUPPRESSION_FILE_USER,
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>                                 Settings.KEYS.SUPPRESSION_FILE_PASSWORD);
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>                                 Settings.KEYS.SUPPRESSION_FILE_PASSWORD, Settings.KEYS.SUPPRESSION_FILE_BEARER_TOKEN);
 <a class="jxr_linenumber" name="L357" href="#L357">357</a>                     } <strong class="jxr_keyword">catch</strong> (TooManyRequestsException ex1) {
 <a class="jxr_linenumber" name="L358" href="#L358">358</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/xml/suppression/SuppressionParseException.html">SuppressionParseException</a>(<span class="jxr_string">"Unable to download supression file `"</span> + file
 <a class="jxr_linenumber" name="L359" href="#L359">359</a>                                 + <span class="jxr_string">"`; received 429 - too many requests"</span>, ex1);
@@ -455,6 +455,6 @@
 <a class="jxr_linenumber" name="L447" href="#L447">447</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2024 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2025 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

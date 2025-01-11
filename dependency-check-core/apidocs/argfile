@@ -268,7 +268,6 @@
 '/home/runner/work/DependencyCheck/DependencyCheck/core/src/main/java/org/owasp/dependencycheck/utils/FileFilterBuilder.java'
 '/home/runner/work/DependencyCheck/DependencyCheck/core/src/main/java/org/owasp/dependencycheck/utils/WriteLockShutdownHook.java'
 '/home/runner/work/DependencyCheck/DependencyCheck/core/src/main/java/org/owasp/dependencycheck/utils/DBUtils.java'
-'/home/runner/work/DependencyCheck/DependencyCheck/core/src/main/java/org/owasp/dependencycheck/utils/Utils.java'
 '/home/runner/work/DependencyCheck/DependencyCheck/core/src/main/java/org/owasp/dependencycheck/utils/Filter.java'
 '/home/runner/work/DependencyCheck/DependencyCheck/core/src/main/java/org/owasp/dependencycheck/utils/CvssUtil.java'
 '/home/runner/work/DependencyCheck/DependencyCheck/core/src/main/java/org/owasp/dependencycheck/utils/ExtractionUtil.java'

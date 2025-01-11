@@ -327,19 +327,20 @@
 <a class="jxr_linenumber" name="L319" href="#L319">319</a>         dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));
 <a class="jxr_linenumber" name="L320" href="#L320">320</a>         dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);
 <a class="jxr_linenumber" name="L321" href="#L321">321</a>         dependency.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"bundler-audit"</span>, <span class="jxr_string">"Name"</span>, gem, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <em class="jxr_comment">//TODO add package URL - note, this may require parsing the gemfile.lock and getting the version for each entry</em>
-<a class="jxr_linenumber" name="L323" href="#L323">323</a> 
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>         dependency.setDisplayFileName(displayFileName);
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>         dependency.setFileName(fileName);
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>         dependency.setFilePath(filePath);
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>         <em class="jxr_comment">//sha1sum is used for anchor links in the HtML report</em>
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>         dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>         engine.addDependency(dependency);
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>         <strong class="jxr_keyword">return</strong> dependency;
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>     }
-<a class="jxr_linenumber" name="L332" href="#L332">332</a> }
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>         dependency.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"bundler-audit"</span>, <span class="jxr_string">"Name"</span>, gem, Confidence.HIGH);
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>         <em class="jxr_comment">//TODO add package URL - note, this may require parsing the gemfile.lock and getting the version for each entry</em>
+<a class="jxr_linenumber" name="L324" href="#L324">324</a> 
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>         dependency.setDisplayFileName(displayFileName);
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>         dependency.setFileName(fileName);
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>         dependency.setFilePath(filePath);
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>         <em class="jxr_comment">//sha1sum is used for anchor links in the HtML report</em>
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>         dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>         engine.addDependency(dependency);
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>         <strong class="jxr_keyword">return</strong> dependency;
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>     }
+<a class="jxr_linenumber" name="L333" href="#L333">333</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2024 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2025 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

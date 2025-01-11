@@ -88,16 +88,17 @@
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          }
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">if</strong> (name != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>              dependency.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"dependency-track"</span>, <span class="jxr_string">"name"</span>, name, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>              dependency.addProductWeighting(name);
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>          }
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>          <strong class="jxr_keyword">if</strong> (version != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>              dependency.addEvidence(EvidenceType.VERSION, <span class="jxr_string">"dependency-track"</span>, <span class="jxr_string">"version"</span>, version, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>          }
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">return</strong> dependency;
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      }
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>  }
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>              dependency.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"dependency-track"</span>, <span class="jxr_string">"name"</span>, name, Confidence.HIGH);
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>              dependency.addProductWeighting(name);
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>          }
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">if</strong> (version != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>              dependency.addEvidence(EvidenceType.VERSION, <span class="jxr_string">"dependency-track"</span>, <span class="jxr_string">"version"</span>, version, Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>          }
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">return</strong> dependency;
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      }
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2024 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2025 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

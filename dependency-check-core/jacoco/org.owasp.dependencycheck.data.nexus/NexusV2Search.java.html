@@ -19,25 +19,29 @@ package org.owasp.dependencycheck.data.nexus;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import org.apache.hc.client5.http.HttpResponseException;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.owasp.dependencycheck.utils.DownloadFailedException;
+import org.owasp.dependencycheck.utils.Downloader;
+import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.Settings;
 
-import org.owasp.dependencycheck.utils.URLConnectionFactory;
-import org.owasp.dependencycheck.utils.XmlUtils;
+import org.owasp.dependencycheck.utils.ToXMLDocumentResponseHandler;
+import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /**
  * Class of methods to search Nexus repositories.
@@ -63,7 +67,7 @@ public class NexusV2Search implements NexusSearch {
     /**
      * Used for logging.
      */
-<span class="nc" id="L66">    private static final Logger LOGGER = LoggerFactory.getLogger(NexusV2Search.class);</span>
+<span class="nc" id="L70">    private static final Logger LOGGER = LoggerFactory.getLogger(NexusV2Search.class);</span>
 
     /**
      * Creates a NexusSearch for the given repository URL.
@@ -73,140 +77,98 @@ public class NexusV2Search implements NexusSearch {
      * @throws java.net.MalformedURLException thrown if the configured URL is
      * invalid
      */
-<span class="nc" id="L76">    public NexusV2Search(Settings settings, boolean useProxy) throws MalformedURLException {</span>
-<span class="nc" id="L77">        this.settings = settings;</span>
-<span class="nc" id="L78">        this.useProxy = useProxy;</span>
+<span class="nc" id="L80">    public NexusV2Search(Settings settings, boolean useProxy) throws MalformedURLException {</span>
+<span class="nc" id="L81">        this.settings = settings;</span>
+<span class="nc" id="L82">        this.useProxy = useProxy;</span>
 
-<span class="nc" id="L80">        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);</span>
-<span class="nc" id="L81">        LOGGER.debug(&quot;Nexus Search URL: {}&quot;, searchUrl);</span>
-<span class="nc" id="L82">        this.rootURL = new URL(searchUrl);</span>
+<span class="nc" id="L84">        final String searchUrl = settings.getString(Settings.KEYS.ANALYZER_NEXUS_URL);</span>
+<span class="nc" id="L85">        LOGGER.debug(&quot;Nexus Search URL: {}&quot;, searchUrl);</span>
+<span class="nc" id="L86">        this.rootURL = new URL(searchUrl);</span>
 
-<span class="nc" id="L84">    }</span>
+<span class="nc" id="L88">    }</span>
 
     @Override
     public MavenArtifact searchSha1(String sha1) throws IOException {
-<span class="nc bnc" id="L88" title="All 4 branches missed.">        if (null == sha1 || !sha1.matches(&quot;^[0-9A-Fa-f]{40}$&quot;)) {</span>
-<span class="nc" id="L89">            throw new IllegalArgumentException(&quot;Invalid SHA1 format&quot;);</span>
+<span class="nc bnc" id="L92" title="All 4 branches missed.">        if (null == sha1 || !sha1.matches(&quot;^[0-9A-Fa-f]{40}$&quot;)) {</span>
+<span class="nc" id="L93">            throw new IllegalArgumentException(&quot;Invalid SHA1 format&quot;);</span>
         }
 
-<span class="nc" id="L92">        final URL url = new URL(rootURL, String.format(&quot;identify/sha1/%s&quot;,</span>
-<span class="nc" id="L93">                sha1.toLowerCase()));</span>
+<span class="nc" id="L96">        final URL url = new URL(rootURL, String.format(&quot;identify/sha1/%s&quot;,</span>
+<span class="nc" id="L97">                sha1.toLowerCase()));</span>
 
-<span class="nc" id="L95">        LOGGER.debug(&quot;Searching Nexus url {}&quot;, url);</span>
+<span class="nc" id="L99">        LOGGER.debug(&quot;Searching Nexus url {}&quot;, url);</span>
 
-        // Determine if we need to use a proxy. The rules:
-        // 1) If the proxy is set, AND the setting is set to true, use the proxy
-        // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
-        // or proxy is specifically set to false
-        final HttpURLConnection conn;
-<span class="nc" id="L102">        final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
-<span class="nc" id="L103">        conn = factory.createHttpURLConnection(url, useProxy);</span>
-<span class="nc" id="L104">        conn.setDoOutput(true);</span>
-<span class="nc" id="L105">        final String authHeader = buildHttpAuthHeaderValue();</span>
-<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (!authHeader.isEmpty()) {</span>
-<span class="nc" id="L107">            conn.addRequestProperty(&quot;Authorization&quot;, authHeader);</span>
-        }
-
-        // JSON would be more elegant, but there's not currently a dependency
-        // on JSON, so don't want to add one just for this
-<span class="nc" id="L112">        conn.addRequestProperty(&quot;Accept&quot;, &quot;application/xml&quot;);</span>
-<span class="nc" id="L113">        conn.connect();</span>
-
-<span class="nc bnc" id="L115" title="All 3 branches missed.">        switch (conn.getResponseCode()) {</span>
-            case 200:
-                try {
-<span class="nc" id="L118">                    final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();</span>
-<span class="nc" id="L119">                    final Document doc = builder.parse(conn.getInputStream());</span>
-<span class="nc" id="L120">                    final XPath xpath = XPathFactory.newInstance().newXPath();</span>
-<span class="nc" id="L121">                    final String groupId = xpath</span>
-<span class="nc" id="L122">                            .evaluate(</span>
-                                    &quot;/org.sonatype.nexus.rest.model.NexusArtifact/groupId&quot;,
-                                    doc);
-<span class="nc" id="L125">                    final String artifactId = xpath.evaluate(</span>
-                            &quot;/org.sonatype.nexus.rest.model.NexusArtifact/artifactId&quot;,
+        try {
+            // JSON would be more elegant, but there's not currently a dependency
+            // on JSON, so don't want to add one just for this
+<span class="nc" id="L104">            final ToXMLDocumentResponseHandler handler = new ToXMLDocumentResponseHandler();</span>
+<span class="nc" id="L105">            final Document doc = Downloader.getInstance().fetchAndHandle(url, handler, List.of(new BasicHeader(HttpHeaders.ACCEPT,</span>
+                    ContentType.APPLICATION_XML)));
+<span class="nc" id="L107">            final XPath xpath = XPathFactory.newInstance().newXPath();</span>
+<span class="nc" id="L108">            final String groupId = xpath</span>
+<span class="nc" id="L109">                    .evaluate(</span>
+                            &quot;/org.sonatype.nexus.rest.model.NexusArtifact/groupId&quot;,
                             doc);
-<span class="nc" id="L128">                    final String version = xpath</span>
-<span class="nc" id="L129">                            .evaluate(</span>
-                                    &quot;/org.sonatype.nexus.rest.model.NexusArtifact/version&quot;,
-                                    doc);
-<span class="nc" id="L132">                    final String link = xpath</span>
-<span class="nc" id="L133">                            .evaluate(</span>
-                                    &quot;/org.sonatype.nexus.rest.model.NexusArtifact/artifactLink&quot;,
-                                    doc);
-<span class="nc" id="L136">                    final String pomLink = xpath</span>
-<span class="nc" id="L137">                            .evaluate(</span>
-                                    &quot;/org.sonatype.nexus.rest.model.NexusArtifact/pomLink&quot;,
-                                    doc);
-<span class="nc" id="L140">                    final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);</span>
-<span class="nc bnc" id="L141" title="All 4 branches missed.">                    if (link != null &amp;&amp; !link.isEmpty()) {</span>
-<span class="nc" id="L142">                        ma.setArtifactUrl(link);</span>
+<span class="nc" id="L112">            final String artifactId = xpath.evaluate(</span>
+                    &quot;/org.sonatype.nexus.rest.model.NexusArtifact/artifactId&quot;,
+                    doc);
+<span class="nc" id="L115">            final String version = xpath</span>
+<span class="nc" id="L116">                    .evaluate(</span>
+                            &quot;/org.sonatype.nexus.rest.model.NexusArtifact/version&quot;,
+                            doc);
+<span class="nc" id="L119">            final String link = xpath</span>
+<span class="nc" id="L120">                    .evaluate(</span>
+                            &quot;/org.sonatype.nexus.rest.model.NexusArtifact/artifactLink&quot;,
+                            doc);
+<span class="nc" id="L123">            final String pomLink = xpath</span>
+<span class="nc" id="L124">                    .evaluate(</span>
+                            &quot;/org.sonatype.nexus.rest.model.NexusArtifact/pomLink&quot;,
+                            doc);
+<span class="nc" id="L127">            final MavenArtifact ma = new MavenArtifact(groupId, artifactId, version);</span>
+<span class="nc bnc" id="L128" title="All 4 branches missed.">            if (link != null &amp;&amp; !link.isEmpty()) {</span>
+<span class="nc" id="L129">                ma.setArtifactUrl(link);</span>
+            }
+<span class="nc bnc" id="L131" title="All 4 branches missed.">            if (pomLink != null &amp;&amp; !pomLink.isEmpty()) {</span>
+<span class="nc" id="L132">                ma.setPomUrl(pomLink);</span>
+            }
+<span class="nc" id="L134">            return ma;</span>
+<span class="nc" id="L135">        } catch (DownloadFailedException | TooManyRequestsException e) {</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L137">                    int responseCode = -1;</span>
+<span class="nc" id="L138">                    String responseMessage = &quot;&quot;;</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">                    if (e.getCause() instanceof HttpResponseException) {</span>
+<span class="nc" id="L140">                        final HttpResponseException cause = (HttpResponseException) e.getCause();</span>
+<span class="nc" id="L141">                        responseCode = cause.getStatusCode();</span>
+<span class="nc" id="L142">                        responseMessage = cause.getReasonPhrase();</span>
                     }
-<span class="nc bnc" id="L144" title="All 4 branches missed.">                    if (pomLink != null &amp;&amp; !pomLink.isEmpty()) {</span>
-<span class="nc" id="L145">                        ma.setPomUrl(pomLink);</span>
-                    }
-<span class="nc" id="L147">                    return ma;</span>
-<span class="nc" id="L148">                } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {</span>
-                    // Anything else is jacked-up XML stuff that we really can't recover
-                    // from well
-<span class="nc" id="L151">                    throw new IOException(e.getMessage(), e);</span>
+<span class="nc" id="L144">                    LOGGER.debug(&quot;Could not connect to Nexus received response code: {} {}&quot;,</span>
+<span class="nc" id="L145">                            responseCode, responseMessage);</span>
                 }
-            case 404:
-<span class="nc" id="L154">                throw new FileNotFoundException(&quot;Artifact not found in Nexus&quot;);</span>
-            default:
-<span class="nc" id="L156">                LOGGER.debug(&quot;Could not connect to Nexus received response code: {} {}&quot;,</span>
-<span class="nc" id="L157">                        conn.getResponseCode(), conn.getResponseMessage());</span>
-<span class="nc" id="L158">                throw new IOException(&quot;Could not connect to Nexus&quot;);</span>
+<span class="nc" id="L147">                throw new IOException(&quot;Could not connect to Nexus&quot;);</span>
+<span class="nc" id="L148">        } catch (ResourceNotFoundException e) {</span>
+<span class="nc" id="L149">            throw new FileNotFoundException(&quot;Artifact not found in Nexus&quot;);</span>
+<span class="nc" id="L150">        } catch (XPathExpressionException | URISyntaxException e) {</span>
+<span class="nc" id="L151">            throw new IOException(e.getMessage(), e);</span>
         }
     }
 
     @Override
     public boolean preflightRequest() {
-        final HttpURLConnection conn;
         try {
-<span class="nc" id="L166">            final URL url = new URL(rootURL, &quot;status&quot;);</span>
-<span class="nc" id="L167">            final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
-<span class="nc" id="L168">            conn = factory.createHttpURLConnection(url, useProxy);</span>
-<span class="nc" id="L169">            conn.addRequestProperty(&quot;Accept&quot;, &quot;application/xml&quot;);</span>
-<span class="nc" id="L170">            final String authHeader = buildHttpAuthHeaderValue();</span>
-<span class="nc bnc" id="L171" title="All 2 branches missed.">            if (!authHeader.isEmpty()) {</span>
-<span class="nc" id="L172">                conn.addRequestProperty(&quot;Authorization&quot;, authHeader);</span>
+<span class="nc" id="L158">            final URL url = new URL(rootURL, &quot;status&quot;);</span>
+<span class="nc" id="L159">            final ToXMLDocumentResponseHandler handler = new ToXMLDocumentResponseHandler();</span>
+<span class="nc" id="L160">            final Document doc = Downloader.getInstance().fetchAndHandle(url, handler, List.of(new BasicHeader(HttpHeaders.ACCEPT,</span>
+                    ContentType.APPLICATION_XML)));
+<span class="nc bnc" id="L162" title="All 2 branches missed.">            if (!&quot;status&quot;.equals(doc.getDocumentElement().getNodeName())) {</span>
+<span class="nc" id="L163">                LOGGER.warn(&quot;Pre-flight request to Nexus failed; expected root node name of status, got {}&quot;, doc.getDocumentElement().getNodeName());</span>
+<span class="nc" id="L164">                return false;</span>
             }
-<span class="nc" id="L174">            conn.connect();</span>
-<span class="nc bnc" id="L175" title="All 2 branches missed.">            if (conn.getResponseCode() != 200) {</span>
-<span class="nc" id="L176">                LOGGER.warn(&quot;Expected 200 result from Nexus, got {}&quot;, conn.getResponseCode());</span>
-<span class="nc" id="L177">                return false;</span>
-            }
-<span class="nc" id="L179">            final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();</span>
-
-<span class="nc" id="L181">            final Document doc = builder.parse(conn.getInputStream());</span>
-<span class="nc bnc" id="L182" title="All 2 branches missed.">            if (!&quot;status&quot;.equals(doc.getDocumentElement().getNodeName())) {</span>
-<span class="nc" id="L183">                LOGGER.warn(&quot;Expected root node name of status, got {}&quot;, doc.getDocumentElement().getNodeName());</span>
-<span class="nc" id="L184">                return false;</span>
-            }
-<span class="nc" id="L186">        } catch (IOException | ParserConfigurationException | SAXException e) {</span>
-<span class="nc" id="L187">            LOGGER.warn(&quot;Pre-flight request to Nexus failed: &quot;, e);</span>
-<span class="nc" id="L188">            return false;</span>
-<span class="nc" id="L189">        }</span>
-<span class="nc" id="L190">        return true;</span>
+<span class="nc" id="L166">        } catch (IOException | TooManyRequestsException | ResourceNotFoundException | URISyntaxException e) {</span>
+<span class="nc" id="L167">            LOGGER.warn(&quot;Pre-flight request to Nexus failed: &quot;, e);</span>
+<span class="nc" id="L168">            return false;</span>
+<span class="nc" id="L169">        }</span>
+<span class="nc" id="L170">        return true;</span>
     }
 
-    /**
-     * Constructs the base64 encoded basic authentication header value.
-     *
-     * @return the base64 encoded basic authentication header value
-     */
-    private String buildHttpAuthHeaderValue() {
-<span class="nc" id="L199">        final String user = settings.getString(Settings.KEYS.ANALYZER_NEXUS_USER, &quot;&quot;);</span>
-<span class="nc" id="L200">        final String pass = settings.getString(Settings.KEYS.ANALYZER_NEXUS_PASSWORD, &quot;&quot;);</span>
-<span class="nc" id="L201">        String result = &quot;&quot;;</span>
-<span class="nc bnc" id="L202" title="All 4 branches missed.">        if (user.isEmpty() || pass.isEmpty()) {</span>
-<span class="nc" id="L203">            LOGGER.debug(&quot;Skip authentication as user and/or password for nexus is empty&quot;);</span>
-        } else {
-<span class="nc" id="L205">            final String auth = user + ':' + pass;</span>
-<span class="nc" id="L206">            final String base64Auth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));</span>
-<span class="nc" id="L207">            result = &quot;Basic &quot; + base64Auth;</span>
-        }
-<span class="nc" id="L209">        return result;</span>
-    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -33,61 +33,110 @@ import org.slf4j.LoggerFactory;
  * @author Jeremy Long
  */
 <span class="fc" id="L35">public class UnusedSuppressionRuleAnalyzer extends AbstractAnalyzer {</span>
-
+	protected static final String EXCEPTION_MSG = &quot;There are %d unused suppression rule(s): check logs.&quot;;
+	
     /**
      * The Logger for use throughout the class.
      */
-<span class="fc" id="L40">    private static final Logger LOGGER = LoggerFactory.getLogger(UnusedSuppressionRuleAnalyzer.class);</span>
+<span class="fc" id="L41">    private static final Logger LOGGER = LoggerFactory.getLogger(UnusedSuppressionRuleAnalyzer.class);</span>
     /**
      * A flag indicating whether or not the unused vulnerabilities have already
      * been reported.
      */
-<span class="fc" id="L45">    private boolean reported = false;</span>
+<span class="fc" id="L46">    private boolean reported = false;</span>
+    /**
+     * A flag indicating whether build should fail on unused suppression rule
+     */
+<span class="fc" id="L50">    private boolean shouldFailForUnusedSuppressionRule = false;</span>
+    /**
+     * unused suppression rule count
+     */
+<span class="fc" id="L54">    private int unusedSuppressionRuleCount = 0;</span>
+
+    @Override
+    public synchronized void initialize(Settings settings) {
+<span class="fc" id="L58">        super.initialize(settings);</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">		if (settings.getBoolean(Settings.KEYS.FAIL_ON_UNUSED_SUPPRESSION_RULE, false)) {</span>
+<span class="fc" id="L60">			this.shouldFailForUnusedSuppressionRule = true;</span>
+		}
+<span class="fc" id="L62">	}</span>
 
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (!reported) {</span>
-<span class="fc" id="L50">            logUnusedRules(engine);</span>
-<span class="fc" id="L51">            reported = true;</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (!reported) {</span>
+<span class="fc" id="L67">			checkUnusedRules(engine);</span>
+<span class="fc" id="L68">			reported = true;</span>
+<span class="fc bfc" id="L69" title="All 4 branches covered.">			if(unusedSuppressionRuleCount &gt; 0 &amp;&amp; failsForUnusedSuppressionRule()) {</span>
+<span class="fc" id="L70">				final String message = String.format(EXCEPTION_MSG, unusedSuppressionRuleCount);</span>
+<span class="fc" id="L71">				LOGGER.error(message);</span>
+<span class="fc" id="L72">				throw new AnalysisException(message);</span>
+			}
         }
-<span class="fc" id="L53">    }</span>
+<span class="fc" id="L75">    }</span>
 
     /**
-     * Logs unused suppression RULES.
+     * check unused suppression RULES.
      *
      * @param engine a reference to the ODC engine
      */
-    private void logUnusedRules(Engine engine) {
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (engine.hasObject(SUPPRESSION_OBJECT_KEY)) {</span>
+    protected void checkUnusedRules(Engine engine) {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        if (engine.hasObject(SUPPRESSION_OBJECT_KEY)) {</span>
             @SuppressWarnings(&quot;unchecked&quot;)
-<span class="fc" id="L63">            final List&lt;SuppressionRule&gt; rules = (List&lt;SuppressionRule&gt;) engine.getObject(SUPPRESSION_OBJECT_KEY);</span>
-<span class="fc" id="L64">            rules.forEach((rule) -&gt; {</span>
-<span class="pc bpc" id="L65" title="1 of 4 branches missed.">                if (!rule.isMatched() &amp;&amp; !rule.isBase()) {</span>
-<span class="fc" id="L66">                    LOGGER.info(&quot;Suppression Rule had zero matches: {}&quot;, rule.toString());</span>
+<span class="fc" id="L85">            final List&lt;SuppressionRule&gt; rules = (List&lt;SuppressionRule&gt;) engine.getObject(SUPPRESSION_OBJECT_KEY);</span>
+<span class="fc" id="L86">            rules.forEach((rule) -&gt; {</span>
+<span class="fc bfc" id="L87" title="All 4 branches covered.">                if (!rule.isMatched() &amp;&amp; !rule.isBase()) {</span>
+<span class="fc" id="L88">					final String message = String.format(&quot;Suppression Rule had zero matches: %s&quot;, rule);</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">                    if(failsForUnusedSuppressionRule()) {</span>
+<span class="fc" id="L90">						LOGGER.error(message);</span>
+					} else {
+<span class="fc" id="L92">						LOGGER.info(message);</span>
+					}
+<span class="fc" id="L94">					increaseUnusedSuppressionRuleCount();</span>
                 }
-<span class="fc" id="L68">            });</span>
+<span class="fc" id="L96">            });</span>
         }
-<span class="fc" id="L70">    }</span>
+<span class="fc" id="L98">    }</span>
 
     @Override
     protected String getAnalyzerEnabledSettingKey() {
         //technically incorrect - but we will reuse the enabled key for this analyzer
-<span class="fc" id="L75">        return Settings.KEYS.ANALYZER_VULNERABILITY_SUPPRESSION_ENABLED;</span>
+<span class="fc" id="L103">        return Settings.KEYS.ANALYZER_VULNERABILITY_SUPPRESSION_ENABLED;</span>
     }
 
     @Override
     public String getName() {
-<span class="fc" id="L80">        return &quot;Unused Suppression Rule Analyzer&quot;;</span>
+<span class="fc" id="L108">        return &quot;Unused Suppression Rule Analyzer&quot;;</span>
     }
 
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L85">        return AnalysisPhase.FINAL;</span>
+<span class="fc" id="L113">        return AnalysisPhase.FINAL;</span>
     }
 
     @Override
     public boolean supportsParallelProcessing() {
-<span class="fc" id="L90">        return false;</span>
+<span class="fc" id="L118">        return false;</span>
     }
+	
+	/**
+	* increases the count of unused suppression rules
+	*/
+	public void increaseUnusedSuppressionRuleCount() {
+<span class="fc" id="L125">		unusedSuppressionRuleCount++;</span>
+<span class="fc" id="L126">	}</span>
+	
+	/**
+	* @return the count of unused suppression rules
+	*/
+	public int getUnusedSuppressionRuleCount() {
+<span class="fc" id="L132">		return unusedSuppressionRuleCount;</span>
+	}
+	
+	/**
+	* @return whether the analyzer will fail for a unused suppression rule
+	*/
+	public boolean failsForUnusedSuppressionRule() {
+<span class="fc" id="L139">		return shouldFailForUnusedSuppressionRule;</span>
+	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

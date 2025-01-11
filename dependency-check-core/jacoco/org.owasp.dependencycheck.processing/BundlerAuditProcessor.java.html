@@ -319,15 +319,16 @@ public class BundlerAuditProcessor extends Processor&lt;InputStream&gt; {
 <span class="nc" id="L319">        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));</span>
 <span class="nc" id="L320">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
 <span class="nc" id="L321">        dependency.addEvidence(EvidenceType.PRODUCT, &quot;bundler-audit&quot;, &quot;Name&quot;, gem, Confidence.HIGHEST);</span>
+<span class="nc" id="L322">        dependency.addEvidence(EvidenceType.VENDOR, &quot;bundler-audit&quot;, &quot;Name&quot;, gem, Confidence.HIGH);</span>
         //TODO add package URL - note, this may require parsing the gemfile.lock and getting the version for each entry
 
-<span class="nc" id="L324">        dependency.setDisplayFileName(displayFileName);</span>
-<span class="nc" id="L325">        dependency.setFileName(fileName);</span>
-<span class="nc" id="L326">        dependency.setFilePath(filePath);</span>
+<span class="nc" id="L325">        dependency.setDisplayFileName(displayFileName);</span>
+<span class="nc" id="L326">        dependency.setFileName(fileName);</span>
+<span class="nc" id="L327">        dependency.setFilePath(filePath);</span>
         //sha1sum is used for anchor links in the HtML report
-<span class="nc" id="L328">        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));</span>
-<span class="nc" id="L329">        engine.addDependency(dependency);</span>
-<span class="nc" id="L330">        return dependency;</span>
+<span class="nc" id="L329">        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));</span>
+<span class="nc" id="L330">        engine.addDependency(dependency);</span>
+<span class="nc" id="L331">        return dependency;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -260,44 +260,46 @@ import java.util.regex.Pattern;
 <span class="fc" id="L260">            final String summary = determineEvidence(contents, blockVariable, &quot;summary&quot;);</span>
 <span class="fc bfc" id="L261" title="All 2 branches covered.">            if (!summary.isEmpty()) {</span>
 <span class="fc" id="L262">                dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, &quot;summary&quot;, summary, Confidence.HIGHEST);</span>
+<span class="fc" id="L263">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;summary&quot;, summary, Confidence.MEDIUM);</span>
             }
 
-<span class="fc" id="L265">            final String author = determineEvidence(contents, blockVariable, &quot;authors?&quot;);</span>
-<span class="pc bpc" id="L266" title="1 of 2 branches missed.">            if (!author.isEmpty()) {</span>
-<span class="fc" id="L267">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;author&quot;, author, Confidence.HIGHEST);</span>
+<span class="fc" id="L266">            final String author = determineEvidence(contents, blockVariable, &quot;authors?&quot;);</span>
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">            if (!author.isEmpty()) {</span>
+<span class="fc" id="L268">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;author&quot;, author, Confidence.HIGHEST);</span>
             }
-<span class="fc" id="L269">            final String homepage = determineEvidence(contents, blockVariable, &quot;homepage&quot;);</span>
-<span class="pc bpc" id="L270" title="1 of 2 branches missed.">            if (!homepage.isEmpty()) {</span>
-<span class="fc" id="L271">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;homepage&quot;, homepage, Confidence.HIGHEST);</span>
+<span class="fc" id="L270">            final String homepage = determineEvidence(contents, blockVariable, &quot;homepage&quot;);</span>
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">            if (!homepage.isEmpty()) {</span>
+<span class="fc" id="L272">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;homepage&quot;, homepage, Confidence.HIGHEST);</span>
+<span class="fc" id="L273">                dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, &quot;homepage&quot;, homepage, Confidence.LOW);</span>
             }
-<span class="fc" id="L273">            final String license = determineEvidence(contents, blockVariable, &quot;licen[cs]es?&quot;);</span>
-<span class="pc bpc" id="L274" title="1 of 2 branches missed.">            if (!license.isEmpty()) {</span>
-<span class="fc" id="L275">                dependency.setLicense(license);</span>
+<span class="fc" id="L275">            final String license = determineEvidence(contents, blockVariable, &quot;licen[cs]es?&quot;);</span>
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">            if (!license.isEmpty()) {</span>
+<span class="fc" id="L277">                dependency.setLicense(license);</span>
             }
 
-<span class="pc bpc" id="L278" title="1 of 2 branches missed.">            if (builder != null) {</span>
+<span class="pc bpc" id="L280" title="1 of 2 branches missed.">            if (builder != null) {</span>
                 try {
-<span class="fc" id="L280">                    final PurlIdentifier purl = new PurlIdentifier(builder.build(), homepage, Confidence.HIGHEST);</span>
-<span class="fc" id="L281">                    dependency.addSoftwareIdentifier(purl);</span>
-<span class="nc" id="L282">                } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L283">                    LOGGER.debug(&quot;Unable to generate purl for cocoapod&quot;, ex);</span>
-<span class="nc" id="L284">                    final StringBuilder sb = new StringBuilder(&quot;pkg:cocoapods/&quot;);</span>
-<span class="nc" id="L285">                    sb.append(name);</span>
-<span class="nc bnc" id="L286" title="All 2 branches missed.">                    if (!version.isEmpty()) {</span>
-<span class="nc" id="L287">                        sb.append(&quot;@&quot;).append(version);</span>
+<span class="fc" id="L282">                    final PurlIdentifier purl = new PurlIdentifier(builder.build(), homepage, Confidence.HIGHEST);</span>
+<span class="fc" id="L283">                    dependency.addSoftwareIdentifier(purl);</span>
+<span class="nc" id="L284">                } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L285">                    LOGGER.debug(&quot;Unable to generate purl for cocoapod&quot;, ex);</span>
+<span class="nc" id="L286">                    final StringBuilder sb = new StringBuilder(&quot;pkg:cocoapods/&quot;);</span>
+<span class="nc" id="L287">                    sb.append(name);</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">                    if (!version.isEmpty()) {</span>
+<span class="nc" id="L289">                        sb.append(&quot;@&quot;).append(version);</span>
                     }
-<span class="nc" id="L289">                    final GenericIdentifier id = new GenericIdentifier(sb.toString(), Confidence.HIGHEST);</span>
-<span class="nc" id="L290">                    dependency.addSoftwareIdentifier(id);</span>
-<span class="fc" id="L291">                }</span>
+<span class="nc" id="L291">                    final GenericIdentifier id = new GenericIdentifier(sb.toString(), Confidence.HIGHEST);</span>
+<span class="nc" id="L292">                    dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L293">                }</span>
             }
         }
-<span class="pc bpc" id="L294" title="2 of 4 branches missed.">        if (dependency.getVersion() != null &amp;&amp; !dependency.getVersion().isEmpty()) {</span>
-<span class="fc" id="L295">            dependency.setDisplayFileName(String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion()));</span>
+<span class="pc bpc" id="L296" title="2 of 4 branches missed.">        if (dependency.getVersion() != null &amp;&amp; !dependency.getVersion().isEmpty()) {</span>
+<span class="fc" id="L297">            dependency.setDisplayFileName(String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion()));</span>
         } else {
-<span class="nc" id="L297">            dependency.setDisplayFileName(dependency.getName());</span>
+<span class="nc" id="L299">            dependency.setDisplayFileName(dependency.getName());</span>
         }
-<span class="fc" id="L299">        setPackagePath(dependency);</span>
-<span class="fc" id="L300">    }</span>
+<span class="fc" id="L301">        setPackagePath(dependency);</span>
+<span class="fc" id="L302">    }</span>
 
     /**
      * Extracts evidence from the contents and adds it to the given evidence
@@ -309,23 +311,23 @@ import java.util.regex.Pattern;
      * @return the evidence
      */
     private String determineEvidence(String contents, String blockVariable, String fieldPattern) {
-<span class="fc" id="L312">        String value = &quot;&quot;;</span>
+<span class="fc" id="L314">        String value = &quot;&quot;;</span>
 
         //capture array value between [ ]
-<span class="fc" id="L315">        final Matcher arrayMatcher = Pattern.compile(</span>
-<span class="fc" id="L316">                String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?\\{\\s*?(.*?)\\s*?\\}&quot;, blockVariable, fieldPattern),</span>
-<span class="fc" id="L317">                Pattern.CASE_INSENSITIVE).matcher(contents);</span>
-<span class="fc bfc" id="L318" title="All 2 branches covered.">        if (arrayMatcher.find()) {</span>
-<span class="fc" id="L319">            value = arrayMatcher.group(1);</span>
+<span class="fc" id="L317">        final Matcher arrayMatcher = Pattern.compile(</span>
+<span class="fc" id="L318">                String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?\\{\\s*?(.*?)\\s*?\\}&quot;, blockVariable, fieldPattern),</span>
+<span class="fc" id="L319">                Pattern.CASE_INSENSITIVE).matcher(contents);</span>
+<span class="fc bfc" id="L320" title="All 2 branches covered.">        if (arrayMatcher.find()) {</span>
+<span class="fc" id="L321">            value = arrayMatcher.group(1);</span>
         } else { //capture single value between quotes
-<span class="fc" id="L321">            final Matcher matcher = Pattern.compile(</span>
-<span class="fc" id="L322">                    String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?(['\&quot;])(.*?)\\1&quot;, blockVariable, fieldPattern),</span>
-<span class="fc" id="L323">                    Pattern.CASE_INSENSITIVE).matcher(contents);</span>
-<span class="fc bfc" id="L324" title="All 2 branches covered.">            if (matcher.find()) {</span>
-<span class="fc" id="L325">                value = matcher.group(2);</span>
+<span class="fc" id="L323">            final Matcher matcher = Pattern.compile(</span>
+<span class="fc" id="L324">                    String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?(['\&quot;])(.*?)\\1&quot;, blockVariable, fieldPattern),</span>
+<span class="fc" id="L325">                    Pattern.CASE_INSENSITIVE).matcher(contents);</span>
+<span class="fc bfc" id="L326" title="All 2 branches covered.">            if (matcher.find()) {</span>
+<span class="fc" id="L327">                value = matcher.group(2);</span>
             }
         }
-<span class="fc" id="L328">        return value;</span>
+<span class="fc" id="L330">        return value;</span>
     }
 
     /**
@@ -334,11 +336,11 @@ import java.util.regex.Pattern;
      * @param dep the dependency to update
      */
     private void setPackagePath(Dependency dep) {
-<span class="fc" id="L337">        final File file = new File(dep.getFilePath());</span>
-<span class="fc" id="L338">        final String parent = file.getParent();</span>
-<span class="pc bpc" id="L339" title="1 of 2 branches missed.">        if (parent != null) {</span>
-<span class="fc" id="L340">            dep.setPackagePath(parent);</span>
+<span class="fc" id="L339">        final File file = new File(dep.getFilePath());</span>
+<span class="fc" id="L340">        final String parent = file.getParent();</span>
+<span class="pc bpc" id="L341" title="1 of 2 branches missed.">        if (parent != null) {</span>
+<span class="fc" id="L342">            dep.setPackagePath(parent);</span>
         }
-<span class="fc" id="L342">    }</span>
+<span class="fc" id="L344">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

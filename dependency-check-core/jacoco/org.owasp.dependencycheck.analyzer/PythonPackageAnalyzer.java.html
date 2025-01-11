@@ -211,18 +211,19 @@ import java.util.regex.Pattern;
             //&quot;The __init__.py files are required to make Python treat the directories as containing packages&quot;
             //see section &quot;6.4 Packages&quot; from https://docs.python.org/2/tutorial/modules.html;
 <span class="fc" id="L213">            dependency.addEvidence(EvidenceType.PRODUCT, file.getName(), &quot;PackageName&quot;, parentName, Confidence.HIGHEST);</span>
-<span class="fc" id="L214">            dependency.setName(parentName);</span>
+<span class="fc" id="L214">            dependency.addEvidence(EvidenceType.VENDOR, file.getName(), &quot;PackageName&quot;, parentName, Confidence.MEDIUM);</span>
+<span class="fc" id="L215">            dependency.setName(parentName);</span>
 
-<span class="fc" id="L216">            final File[] fileList = parent.listFiles(PY_FILTER);</span>
-<span class="pc bpc" id="L217" title="1 of 2 branches missed.">            if (fileList != null) {</span>
-<span class="fc bfc" id="L218" title="All 2 branches covered.">                for (final File sourceFile : fileList) {</span>
-<span class="fc" id="L219">                    analyzeFileContents(dependency, sourceFile);</span>
+<span class="fc" id="L217">            final File[] fileList = parent.listFiles(PY_FILTER);</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">            if (fileList != null) {</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">                for (final File sourceFile : fileList) {</span>
+<span class="fc" id="L220">                    analyzeFileContents(dependency, sourceFile);</span>
                 }
             }
-<span class="fc" id="L222">        } else {</span>
-<span class="fc" id="L223">            engine.removeDependency(dependency);</span>
+<span class="fc" id="L223">        } else {</span>
+<span class="fc" id="L224">            engine.removeDependency(dependency);</span>
         }
-<span class="fc" id="L225">    }</span>
+<span class="fc" id="L226">    }</span>
 
     /**
      * This should gather information from leading docstrings, file comments,
@@ -237,49 +238,49 @@ import java.util.regex.Pattern;
             throws AnalysisException {
         final String contents;
         try {
-<span class="fc" id="L240">            contents = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8).trim();</span>
-<span class="nc" id="L241">        } catch (IOException e) {</span>
-<span class="nc" id="L242">            throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
-<span class="fc" id="L243">        }</span>
-<span class="pc bpc" id="L244" title="1 of 2 branches missed.">        if (!contents.isEmpty()) {</span>
-<span class="fc" id="L245">            final String source = file.getName();</span>
-<span class="fc" id="L246">            gatherEvidence(dependency, EvidenceType.VERSION, VERSION_PATTERN, contents,</span>
+<span class="fc" id="L241">            contents = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8).trim();</span>
+<span class="nc" id="L242">        } catch (IOException e) {</span>
+<span class="nc" id="L243">            throw new AnalysisException(&quot;Problem occurred while reading dependency file.&quot;, e);</span>
+<span class="fc" id="L244">        }</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if (!contents.isEmpty()) {</span>
+<span class="fc" id="L246">            final String source = file.getName();</span>
+<span class="fc" id="L247">            gatherEvidence(dependency, EvidenceType.VERSION, VERSION_PATTERN, contents,</span>
                     source, &quot;SourceVersion&quot;, Confidence.MEDIUM);
-<span class="fc" id="L248">            addSummaryInfo(dependency, SUMMARY_PATTERN, 4, contents,</span>
+<span class="fc" id="L249">            addSummaryInfo(dependency, SUMMARY_PATTERN, 4, contents,</span>
                     source, &quot;summary&quot;);
-<span class="fc bfc" id="L250" title="All 2 branches covered.">            if (INIT_PY_FILTER.accept(file)) {</span>
-<span class="fc" id="L251">                addSummaryInfo(dependency, MODULE_DOCSTRING, 2,</span>
+<span class="fc bfc" id="L251" title="All 2 branches covered.">            if (INIT_PY_FILTER.accept(file)) {</span>
+<span class="fc" id="L252">                addSummaryInfo(dependency, MODULE_DOCSTRING, 2,</span>
                         contents, source, &quot;docstring&quot;);
             }
-<span class="fc" id="L254">            gatherEvidence(dependency, EvidenceType.PRODUCT, TITLE_PATTERN, contents,</span>
+<span class="fc" id="L255">            gatherEvidence(dependency, EvidenceType.PRODUCT, TITLE_PATTERN, contents,</span>
                     source, &quot;SourceTitle&quot;, Confidence.LOW);
 
-<span class="fc" id="L257">            gatherEvidence(dependency, EvidenceType.VENDOR, AUTHOR_PATTERN, contents,</span>
+<span class="fc" id="L258">            gatherEvidence(dependency, EvidenceType.VENDOR, AUTHOR_PATTERN, contents,</span>
                     source, &quot;SourceAuthor&quot;, Confidence.MEDIUM);
-<span class="fc" id="L259">            gatherHomePageEvidence(dependency, EvidenceType.VENDOR, URI_PATTERN,</span>
+<span class="fc" id="L260">            gatherHomePageEvidence(dependency, EvidenceType.VENDOR, URI_PATTERN,</span>
                     source, &quot;URL&quot;, contents);
-<span class="fc" id="L261">            gatherHomePageEvidence(dependency, EvidenceType.VENDOR, HOMEPAGE_PATTERN,</span>
+<span class="fc" id="L262">            gatherHomePageEvidence(dependency, EvidenceType.VENDOR, HOMEPAGE_PATTERN,</span>
                     source, &quot;HomePage&quot;, contents);
 
             try {
-<span class="fc" id="L265">                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;pypi&quot;).withName(dependency.getName());</span>
-<span class="fc bfc" id="L266" title="All 2 branches covered.">                if (dependency.getVersion() != null) {</span>
-<span class="fc" id="L267">                    builder.withVersion(dependency.getVersion());</span>
+<span class="fc" id="L266">                final PackageURLBuilder builder = PackageURLBuilder.aPackageURL().withType(&quot;pypi&quot;).withName(dependency.getName());</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">                if (dependency.getVersion() != null) {</span>
+<span class="fc" id="L268">                    builder.withVersion(dependency.getVersion());</span>
                 }
-<span class="fc" id="L269">                final PackageURL purl = builder.build();</span>
-<span class="fc" id="L270">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
-<span class="nc" id="L271">            } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L272">                LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
+<span class="fc" id="L270">                final PackageURL purl = builder.build();</span>
+<span class="fc" id="L271">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L272">            } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L273">                LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
                 final GenericIdentifier id;
-<span class="nc bnc" id="L274" title="All 2 branches missed.">                if (dependency.getVersion() != null) {</span>
-<span class="nc" id="L275">                    id = new GenericIdentifier(&quot;generic:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
+<span class="nc bnc" id="L275" title="All 2 branches missed.">                if (dependency.getVersion() != null) {</span>
+<span class="nc" id="L276">                    id = new GenericIdentifier(&quot;generic:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(), Confidence.HIGHEST);</span>
                 } else {
-<span class="nc" id="L277">                    id = new GenericIdentifier(&quot;generic:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
+<span class="nc" id="L278">                    id = new GenericIdentifier(&quot;generic:&quot; + dependency.getName(), Confidence.HIGHEST);</span>
                 }
-<span class="nc" id="L279">                dependency.addSoftwareIdentifier(id);</span>
-<span class="fc" id="L280">            }</span>
+<span class="nc" id="L280">                dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L281">            }</span>
         }
-<span class="fc" id="L282">    }</span>
+<span class="fc" id="L283">    }</span>
 
     /**
      * Adds summary information to the dependency
@@ -293,13 +294,13 @@ import java.util.regex.Pattern;
      */
     private void addSummaryInfo(Dependency dependency, Pattern pattern,
                                 int group, String contents, String source, String key) {
-<span class="fc" id="L296">        final Matcher matcher = pattern.matcher(contents);</span>
-<span class="fc" id="L297">        final boolean found = matcher.find();</span>
-<span class="fc bfc" id="L298" title="All 2 branches covered.">        if (found) {</span>
-<span class="fc" id="L299">            JarAnalyzer.addDescription(dependency, matcher.group(group),</span>
+<span class="fc" id="L297">        final Matcher matcher = pattern.matcher(contents);</span>
+<span class="fc" id="L298">        final boolean found = matcher.find();</span>
+<span class="fc bfc" id="L299" title="All 2 branches covered.">        if (found) {</span>
+<span class="fc" id="L300">            JarAnalyzer.addDescription(dependency, matcher.group(group),</span>
                     source, key);
         }
-<span class="fc" id="L302">    }</span>
+<span class="fc" id="L303">    }</span>
 
     /**
      * Collects evidence from the home page URL.
@@ -313,14 +314,14 @@ import java.util.regex.Pattern;
      */
     private void gatherHomePageEvidence(Dependency dependency, EvidenceType type, Pattern pattern,
                                         String source, String name, String contents) {
-<span class="fc" id="L316">        final Matcher matcher = pattern.matcher(contents);</span>
-<span class="fc bfc" id="L317" title="All 2 branches covered.">        if (matcher.find()) {</span>
-<span class="fc" id="L318">            final String url = matcher.group(4);</span>
-<span class="pc bpc" id="L319" title="1 of 2 branches missed.">            if (UrlStringUtils.isUrl(url)) {</span>
-<span class="fc" id="L320">                dependency.addEvidence(type, source, name, url, Confidence.MEDIUM);</span>
+<span class="fc" id="L317">        final Matcher matcher = pattern.matcher(contents);</span>
+<span class="fc bfc" id="L318" title="All 2 branches covered.">        if (matcher.find()) {</span>
+<span class="fc" id="L319">            final String url = matcher.group(4);</span>
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">            if (UrlStringUtils.isUrl(url)) {</span>
+<span class="fc" id="L321">                dependency.addEvidence(type, source, name, url, Confidence.MEDIUM);</span>
             }
         }
-<span class="fc" id="L323">    }</span>
+<span class="fc" id="L324">    }</span>
 
     /**
      * Gather evidence from a Python source file using the given string
@@ -336,17 +337,17 @@ import java.util.regex.Pattern;
      */
     private void gatherEvidence(Dependency dependency, EvidenceType type, Pattern pattern, String contents,
                                 String source, String name, Confidence confidence) {
-<span class="fc" id="L339">        final Matcher matcher = pattern.matcher(contents);</span>
-<span class="fc" id="L340">        final boolean found = matcher.find();</span>
-<span class="fc bfc" id="L341" title="All 2 branches covered.">        if (found) {</span>
-<span class="fc" id="L342">            dependency.addEvidence(type, source, name, matcher.group(4), confidence);</span>
-<span class="fc bfc" id="L343" title="All 2 branches covered.">            if (type == EvidenceType.VERSION) {</span>
+<span class="fc" id="L340">        final Matcher matcher = pattern.matcher(contents);</span>
+<span class="fc" id="L341">        final boolean found = matcher.find();</span>
+<span class="fc bfc" id="L342" title="All 2 branches covered.">        if (found) {</span>
+<span class="fc" id="L343">            dependency.addEvidence(type, source, name, matcher.group(4), confidence);</span>
+<span class="fc bfc" id="L344" title="All 2 branches covered.">            if (type == EvidenceType.VERSION) {</span>
                 //TODO - this seems broken as we are cycling over py files and could be grabbing versions from multiple?
-<span class="fc" id="L345">                dependency.setVersion(matcher.group(4));</span>
-<span class="fc" id="L346">                final String dispName = String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion());</span>
-<span class="fc" id="L347">                dependency.setDisplayFileName(dispName);</span>
+<span class="fc" id="L346">                dependency.setVersion(matcher.group(4));</span>
+<span class="fc" id="L347">                final String dispName = String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion());</span>
+<span class="fc" id="L348">                dependency.setDisplayFileName(dispName);</span>
             }
         }
-<span class="fc" id="L350">    }</span>
+<span class="fc" id="L351">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

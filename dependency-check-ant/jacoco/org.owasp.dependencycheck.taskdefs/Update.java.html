@@ -40,6 +40,51 @@ import org.slf4j.impl.StaticLoggerBinder;
 public class Update extends Purge {
 
     /**
+     * The URL to (a mirror of) the RetireJS JSON data.
+     */
+    private String retireJsUrl;
+    /**
+     * The user to download the RetireJS JSON data from an HTTP Basic auth protected location.
+     */
+    private String retireJsUrlUser;
+    /**
+     * The password to download the RetireJS JSON data from an HTTP Basic auth protected location.
+     */
+    private String retireJsUrlPassword;
+    /**
+     * The token to download the RetireJS JSON data from an HTTP Bearer auth protected location.
+     */
+    private String retireJsUrlBearerToken;
+    /**
+     * Whether or not the RetireJS JSON repository will be updated regardless of the
+     * `autoupdate` settings. Defaults to false.
+     */
+    private Boolean retireJsForceUpdate;
+    /**
+     * Whether or not the Known Exploited Vulnerability Analyzer is enabled.
+     */
+    private Boolean knownExploitedEnabled;
+    /**
+     * The URL to the known exploited vulnerabilities JSON datafeed.
+     */
+    private String knownExploitedUrl;
+    /**
+     * The number of hours before checking for updates for the known exploited vulnerabilities JSON datafeed.
+     */
+    private Integer knownExploitedValidForHours;
+    /**
+     * The user to download the known exploited vulnerabilities JSON datafeed from an HTTP Basic auth protected location.
+     */
+    private String knownExploitedUser;
+    /**
+     * The password to download the known exploited vulnerabilities JSON datafeed from an HTTP Basic auth protected location.
+     */
+    private String knownExploitedPassword;
+    /**
+     * The token to download the known exploited vulnerabilities JSON datafeed from an HTTP Bearer auth protected location.
+     */
+    private String knownExploitedBearerToken;
+    /**
      * The NVD API endpoint.
      */
     private String nvdApiEndpoint;
@@ -60,17 +105,21 @@ public class Update extends Purge {
      */
     private String nvdDatafeedUrl;
     /**
-     * The username for basic auth to the NVD Data Feed.
+     * The username to download the NVD Data feed from an HTTP Basic auth protected location.
      */
     private String nvdUser;
     /**
-     * The password for basic auth to the NVD Data Feed.
+     * The password to download the NVD Data feed from an HTTP Basic auth protected location.
      */
     private String nvdPassword;
     /**
+     * The token to download the NVD Data feed from an HTTP Bearer auth protected location.
+     */
+    private String nvdBearerToken;
+    /**
      * The time in milliseconds to wait between downloading NVD API data.
      */
-<span class="fc" id="L73">    private int nvdApiDelay = 0;</span>
+    private Integer nvdApiDelay;
 
     /**
      * The number of records per page of NVD API data.
@@ -131,6 +180,24 @@ public class Update extends Purge {
      */
     private Integer hostedSuppressionsValidForHours;
     /**
+     * The userid for the hostedSuppressions file.
+     * &lt;br/&gt;
+     * Only needs configuration if you customized the hostedSuppressionsUrl to a custom server that requires Basic Auth
+     */
+    private String hostedSuppressionsUser;
+    /**
+     * The password for the hostedSuppressions file.
+     * &lt;br/&gt;
+     * Only needs configuration if you customized the hostedSuppressionsUrl to a custom server that requires Basic Auth
+     */
+    private String hostedSuppressionsPassword;
+    /**
+     * The (Bearer authentication) API Token for the hostedSuppressions file.
+     * &lt;br/&gt;
+     * Only needs configuration if you customized the hostedSuppressionsUrl to a custom server that requires Bearer Auth
+     */
+    private String hostedSuppressionsBearerToken;
+    /**
      * Whether the hosted suppressions file will be updated regardless of the
      * `autoupdate` settings. Defaults to false.
      */
@@ -139,25 +206,24 @@ public class Update extends Purge {
      * Whether the hosted suppressions file will be used. Defaults to true.
      */
     private Boolean hostedSuppressionsEnabled;
+    /**
+     * The URL to hosted suppressions file with base FP suppressions.
+     */
+<span class="fc" id="L212">    private String hostedSuppressionsUrl = null;</span>
+    /**
+     * Whether or not the RetireJS Analyzer is enabled.
+     */
+    private Boolean retireJsAnalyzerEnabled;
 
     /**
      * Construct a new UpdateTask.
      */
     public Update() {
-<span class="fc" id="L147">        super();</span>
+<span class="fc" id="L222">        super();</span>
         // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
         // core end up coming through this tasks logger
-<span class="fc" id="L150">        StaticLoggerBinder.getSingleton().setTask(this);</span>
-<span class="fc" id="L151">    }</span>
-
-    /**
-     * Get the value of nvdApiEndpoint.
-     *
-     * @return the value of nvdApiEndpoint
-     */
-    public String getNvdApiEndpoint() {
-<span class="nc" id="L159">        return nvdApiEndpoint;</span>
-    }
+<span class="fc" id="L225">        StaticLoggerBinder.getSingleton().setTask(this);</span>
+<span class="fc" id="L226">    }</span>
 
     /**
      * Set the value of nvdApiEndpoint.
@@ -165,17 +231,8 @@ public class Update extends Purge {
      * @param nvdApiEndpoint new value of nvdApiEndpoint
      */
     public void setNvdApiEndpoint(String nvdApiEndpoint) {
-<span class="nc" id="L168">        this.nvdApiEndpoint = nvdApiEndpoint;</span>
-<span class="nc" id="L169">    }</span>
-
-    /**
-     * Get the value of nvdApiKey.
-     *
-     * @return the value of nvdApiKey
-     */
-    public String getNvdApiKey() {
-<span class="nc" id="L177">        return nvdApiKey;</span>
-    }
+<span class="nc" id="L234">        this.nvdApiEndpoint = nvdApiEndpoint;</span>
+<span class="nc" id="L235">    }</span>
 
     /**
      * Set the value of nvdApiKey.
@@ -183,35 +240,21 @@ public class Update extends Purge {
      * @param nvdApiKey new value of nvdApiKey
      */
     public void setNvdApiKey(String nvdApiKey) {
-<span class="nc" id="L186">        this.nvdApiKey = nvdApiKey;</span>
-<span class="nc" id="L187">    }</span>
-
-    /**
-     * Get the value of nvdMaxRetryCount.
-     *
-     * @return the value of nvdMaxRetryCount
-     */
-    public int getNvdMaxRetryCounts() {
-<span class="nc" id="L195">        return nvdMaxRetryCount;</span>
-    }
+<span class="nc" id="L243">        this.nvdApiKey = nvdApiKey;</span>
+<span class="nc" id="L244">    }</span>
 
     /**
      * Set the value of nvdMaxRetryCount.
      *
      * @param nvdMaxRetryCount new value of nvdMaxRetryCount
      */
-    public void setNvdMaxRetryCount(int nvdMaxRetryCount) {
-<span class="nc" id="L204">        this.nvdMaxRetryCount = nvdMaxRetryCount;</span>
-<span class="nc" id="L205">    }</span>
-
-    /**
-     * Get the value of nvdValidForHours.
-     *
-     * @return the value of nvdValidForHours
-     */
-    public int getNvdValidForHours() {
-<span class="nc" id="L213">        return nvdValidForHours;</span>
-    }
+    public void setNvdMaxRetryCount(Integer nvdMaxRetryCount) {
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        if (nvdMaxRetryCount &gt; 0) {</span>
+<span class="nc" id="L253">            this.nvdMaxRetryCount = nvdMaxRetryCount;</span>
+        } else {
+<span class="nc" id="L255">            throw new BuildException(&quot;Invalid setting: `nvdMaxRetryCount` must be greater than zero&quot;);</span>
+        }
+<span class="nc" id="L257">    }</span>
 
     /**
      * Set the value of nvdValidForHours.
@@ -219,17 +262,12 @@ public class Update extends Purge {
      * @param nvdValidForHours new value of nvdValidForHours
      */
     public void setNvdValidForHours(int nvdValidForHours) {
-<span class="nc" id="L222">        this.nvdValidForHours = nvdValidForHours;</span>
-<span class="nc" id="L223">    }</span>
-
-    /**
-     * Get the value of nvdDatafeedUrl.
-     *
-     * @return the value of nvdDatafeedUrl
-     */
-    public String getNvdDatafeedUrl() {
-<span class="nc" id="L231">        return nvdDatafeedUrl;</span>
-    }
+<span class="nc bnc" id="L265" title="All 2 branches missed.">        if (nvdValidForHours &gt;= 0) {</span>
+<span class="nc" id="L266">            this.nvdValidForHours = nvdValidForHours;</span>
+        } else {
+<span class="nc" id="L268">            throw new BuildException(&quot;Invalid setting: `nvdValidForHours` must be 0 or greater&quot;);</span>
+        }
+<span class="nc" id="L270">    }</span>
 
     /**
      * Set the value of nvdDatafeedUrl.
@@ -237,17 +275,8 @@ public class Update extends Purge {
      * @param nvdDatafeedUrl new value of nvdDatafeedUrl
      */
     public void setNvdDatafeedUrl(String nvdDatafeedUrl) {
-<span class="nc" id="L240">        this.nvdDatafeedUrl = nvdDatafeedUrl;</span>
-<span class="nc" id="L241">    }</span>
-
-    /**
-     * Get the value of nvdUser.
-     *
-     * @return the value of nvdUser
-     */
-    public String getNvdUser() {
-<span class="nc" id="L249">        return nvdUser;</span>
-    }
+<span class="nc" id="L278">        this.nvdDatafeedUrl = nvdDatafeedUrl;</span>
+<span class="nc" id="L279">    }</span>
 
     /**
      * Set the value of nvdUser.
@@ -255,17 +284,8 @@ public class Update extends Purge {
      * @param nvdUser new value of nvdUser
      */
     public void setNvdUser(String nvdUser) {
-<span class="nc" id="L258">        this.nvdUser = nvdUser;</span>
-<span class="nc" id="L259">    }</span>
-
-    /**
-     * Get the value of nvdPassword.
-     *
-     * @return the value of nvdPassword
-     */
-    public String getNvdPassword() {
-<span class="nc" id="L267">        return nvdPassword;</span>
-    }
+<span class="nc" id="L287">        this.nvdUser = nvdUser;</span>
+<span class="nc" id="L288">    }</span>
 
     /**
      * Set the value of nvdPassword.
@@ -273,53 +293,34 @@ public class Update extends Purge {
      * @param nvdPassword new value of nvdPassword
      */
     public void setNvdPassword(String nvdPassword) {
-<span class="nc" id="L276">        this.nvdPassword = nvdPassword;</span>
-<span class="nc" id="L277">    }</span>
+<span class="nc" id="L296">        this.nvdPassword = nvdPassword;</span>
+<span class="nc" id="L297">    }</span>
 
     /**
-     * Get the value of nvdApiDelay.
-     *
-     * @return the value of nvdApiDelay
+     * Sets the token to download the NVD Data feed from an HTTP Bearer auth protected location.
+     * @param nvdBearerToken The bearer token
      */
-    public int getNvdApiDelay() {
-<span class="nc" id="L285">        return nvdApiDelay;</span>
-    }
+    public void setNvdBearerToken(String nvdBearerToken) {
+<span class="nc" id="L304">        this.nvdBearerToken = nvdBearerToken;</span>
+<span class="nc" id="L305">    }</span>
 
     /**
      * Set the value of nvdApiDelay.
      *
      * @param nvdApiDelay new value of nvdApiDelay
      */
-    public void setNvdApiDelay(int nvdApiDelay) {
-<span class="nc" id="L294">        this.nvdApiDelay = nvdApiDelay;</span>
-<span class="nc" id="L295">    }</span>
-
-    /**
-     * Get the value of nvdApiResultsPerPage.
-     *
-     * @return the value of nvdApiResultsPerPage
-     */
-    public int getNvdApiResultsPerPage() {
-<span class="nc" id="L303">        return nvdApiResultsPerPage;</span>
-    }
+    public void setNvdApiDelay(Integer nvdApiDelay) {
+<span class="nc" id="L313">        this.nvdApiDelay = nvdApiDelay;</span>
+<span class="nc" id="L314">    }</span>
 
     /**
      * Set the value of nvdApiResultsPerPage.
      *
      * @param nvdApiResultsPerPage new value of nvdApiResultsPerPage
      */
-    public void setApiResultsPerPage(int nvdApiResultsPerPage) {
-<span class="nc" id="L312">        this.nvdApiResultsPerPage = nvdApiResultsPerPage;</span>
-<span class="nc" id="L313">    }</span>
-
-    /**
-     * Get the value of proxyServer.
-     *
-     * @return the value of proxyServer
-     */
-    public String getProxyServer() {
-<span class="nc" id="L321">        return proxyServer;</span>
-    }
+    public void setNvdApiResultsPerPage(Integer nvdApiResultsPerPage) {
+<span class="nc" id="L322">        this.nvdApiResultsPerPage = nvdApiResultsPerPage;</span>
+<span class="nc" id="L323">    }</span>
 
     /**
      * Set the value of proxyServer.
@@ -327,17 +328,8 @@ public class Update extends Purge {
      * @param server new value of proxyServer
      */
     public void setProxyServer(String server) {
-<span class="nc" id="L330">        this.proxyServer = server;</span>
-<span class="nc" id="L331">    }</span>
-
-    /**
-     * Get the value of proxyPort.
-     *
-     * @return the value of proxyPort
-     */
-    public String getProxyPort() {
-<span class="nc" id="L339">        return proxyPort;</span>
-    }
+<span class="nc" id="L331">        this.proxyServer = server;</span>
+<span class="nc" id="L332">    }</span>
 
     /**
      * Set the value of proxyPort.
@@ -345,17 +337,8 @@ public class Update extends Purge {
      * @param proxyPort new value of proxyPort
      */
     public void setProxyPort(String proxyPort) {
-<span class="nc" id="L348">        this.proxyPort = proxyPort;</span>
-<span class="nc" id="L349">    }</span>
-
-    /**
-     * Get the value of proxyUsername.
-     *
-     * @return the value of proxyUsername
-     */
-    public String getProxyUsername() {
-<span class="nc" id="L357">        return proxyUsername;</span>
-    }
+<span class="nc" id="L340">        this.proxyPort = proxyPort;</span>
+<span class="nc" id="L341">    }</span>
 
     /**
      * Set the value of proxyUsername.
@@ -363,17 +346,8 @@ public class Update extends Purge {
      * @param proxyUsername new value of proxyUsername
      */
     public void setProxyUsername(String proxyUsername) {
-<span class="nc" id="L366">        this.proxyUsername = proxyUsername;</span>
-<span class="nc" id="L367">    }</span>
-
-    /**
-     * Get the value of proxyPassword.
-     *
-     * @return the value of proxyPassword
-     */
-    public String getProxyPassword() {
-<span class="nc" id="L375">        return proxyPassword;</span>
-    }
+<span class="nc" id="L349">        this.proxyUsername = proxyUsername;</span>
+<span class="nc" id="L350">    }</span>
 
     /**
      * Set the value of proxyPassword.
@@ -381,17 +355,8 @@ public class Update extends Purge {
      * @param proxyPassword new value of proxyPassword
      */
     public void setProxyPassword(String proxyPassword) {
-<span class="nc" id="L384">        this.proxyPassword = proxyPassword;</span>
-<span class="nc" id="L385">    }</span>
-
-    /**
-     * Get the value of nonProxyHosts.
-     *
-     * @return the value of nonProxyHosts
-     */
-    public String getNonProxyHosts() {
-<span class="nc" id="L393">        return nonProxyHosts;</span>
-    }
+<span class="nc" id="L358">        this.proxyPassword = proxyPassword;</span>
+<span class="nc" id="L359">    }</span>
 
     /**
      * Set the value of nonProxyHosts.
@@ -399,17 +364,8 @@ public class Update extends Purge {
      * @param nonProxyHosts new value of nonProxyHosts
      */
     public void setNonProxyHosts(String nonProxyHosts) {
-<span class="nc" id="L402">        this.nonProxyHosts = nonProxyHosts;</span>
-<span class="nc" id="L403">    }</span>
-
-    /**
-     * Get the value of connectionTimeout.
-     *
-     * @return the value of connectionTimeout
-     */
-    public String getConnectionTimeout() {
-<span class="nc" id="L411">        return connectionTimeout;</span>
-    }
+<span class="nc" id="L367">        this.nonProxyHosts = nonProxyHosts;</span>
+<span class="nc" id="L368">    }</span>
 
     /**
      * Set the value of connectionTimeout.
@@ -417,17 +373,8 @@ public class Update extends Purge {
      * @param connectionTimeout new value of connectionTimeout
      */
     public void setConnectionTimeout(String connectionTimeout) {
-<span class="nc" id="L420">        this.connectionTimeout = connectionTimeout;</span>
-<span class="nc" id="L421">    }</span>
-
-    /**
-     * Get the value of readTimeout.
-     *
-     * @return the value of readTimeout
-     */
-    public String getReadTimeout() {
-<span class="nc" id="L429">        return readTimeout;</span>
-    }
+<span class="nc" id="L376">        this.connectionTimeout = connectionTimeout;</span>
+<span class="nc" id="L377">    }</span>
 
     /**
      * Set the value of readTimeout.
@@ -435,17 +382,8 @@ public class Update extends Purge {
      * @param readTimeout new value of readTimeout
      */
     public void setReadTimeout(String readTimeout) {
-<span class="nc" id="L438">        this.readTimeout = readTimeout;</span>
-<span class="nc" id="L439">    }</span>
-
-    /**
-     * Get the value of databaseDriverName.
-     *
-     * @return the value of databaseDriverName
-     */
-    public String getDatabaseDriverName() {
-<span class="nc" id="L447">        return databaseDriverName;</span>
-    }
+<span class="nc" id="L385">        this.readTimeout = readTimeout;</span>
+<span class="nc" id="L386">    }</span>
 
     /**
      * Set the value of databaseDriverName.
@@ -453,17 +391,8 @@ public class Update extends Purge {
      * @param databaseDriverName new value of databaseDriverName
      */
     public void setDatabaseDriverName(String databaseDriverName) {
-<span class="nc" id="L456">        this.databaseDriverName = databaseDriverName;</span>
-<span class="nc" id="L457">    }</span>
-
-    /**
-     * Get the value of databaseDriverPath.
-     *
-     * @return the value of databaseDriverPath
-     */
-    public String getDatabaseDriverPath() {
-<span class="nc" id="L465">        return databaseDriverPath;</span>
-    }
+<span class="nc" id="L394">        this.databaseDriverName = databaseDriverName;</span>
+<span class="nc" id="L395">    }</span>
 
     /**
      * Set the value of databaseDriverPath.
@@ -471,17 +400,8 @@ public class Update extends Purge {
      * @param databaseDriverPath new value of databaseDriverPath
      */
     public void setDatabaseDriverPath(String databaseDriverPath) {
-<span class="nc" id="L474">        this.databaseDriverPath = databaseDriverPath;</span>
-<span class="nc" id="L475">    }</span>
-
-    /**
-     * Get the value of connectionString.
-     *
-     * @return the value of connectionString
-     */
-    public String getConnectionString() {
-<span class="nc" id="L483">        return connectionString;</span>
-    }
+<span class="nc" id="L403">        this.databaseDriverPath = databaseDriverPath;</span>
+<span class="nc" id="L404">    }</span>
 
     /**
      * Set the value of connectionString.
@@ -489,17 +409,8 @@ public class Update extends Purge {
      * @param connectionString new value of connectionString
      */
     public void setConnectionString(String connectionString) {
-<span class="nc" id="L492">        this.connectionString = connectionString;</span>
-<span class="nc" id="L493">    }</span>
-
-    /**
-     * Get the value of databaseUser.
-     *
-     * @return the value of databaseUser
-     */
-    public String getDatabaseUser() {
-<span class="nc" id="L501">        return databaseUser;</span>
-    }
+<span class="nc" id="L412">        this.connectionString = connectionString;</span>
+<span class="nc" id="L413">    }</span>
 
     /**
      * Set the value of databaseUser.
@@ -507,17 +418,8 @@ public class Update extends Purge {
      * @param databaseUser new value of databaseUser
      */
     public void setDatabaseUser(String databaseUser) {
-<span class="nc" id="L510">        this.databaseUser = databaseUser;</span>
-<span class="nc" id="L511">    }</span>
-
-    /**
-     * Get the value of databasePassword.
-     *
-     * @return the value of databasePassword
-     */
-    public String getDatabasePassword() {
-<span class="nc" id="L519">        return databasePassword;</span>
-    }
+<span class="nc" id="L421">        this.databaseUser = databaseUser;</span>
+<span class="nc" id="L422">    }</span>
 
     /**
      * Set the value of databasePassword.
@@ -525,17 +427,8 @@ public class Update extends Purge {
      * @param databasePassword new value of databasePassword
      */
     public void setDatabasePassword(String databasePassword) {
-<span class="nc" id="L528">        this.databasePassword = databasePassword;</span>
-<span class="nc" id="L529">    }</span>
-
-    /**
-     * Get the value of hostedSuppressionsValidForHours.
-     *
-     * @return the value of hostedSuppressionsValidForHours
-     */
-    public Integer getHostedSuppressionsValidForHours() {
-<span class="nc" id="L537">        return hostedSuppressionsValidForHours;</span>
-    }
+<span class="nc" id="L430">        this.databasePassword = databasePassword;</span>
+<span class="nc" id="L431">    }</span>
 
     /**
      * Set the value of hostedSuppressionsValidForHours.
@@ -544,17 +437,20 @@ public class Update extends Purge {
      * hostedSuppressionsValidForHours
      */
     public void setHostedSuppressionsValidForHours(final Integer hostedSuppressionsValidForHours) {
-<span class="nc" id="L547">        this.hostedSuppressionsValidForHours = hostedSuppressionsValidForHours;</span>
-<span class="nc" id="L548">    }</span>
+<span class="nc" id="L440">        this.hostedSuppressionsValidForHours = hostedSuppressionsValidForHours;</span>
+<span class="nc" id="L441">    }</span>
 
-    /**
-     * Get the value of hostedSuppressionsForceUpdate.
-     *
-     * @return the value of hostedSuppressionsForceUpdate
-     */
-    public Boolean isHostedSuppressionsForceUpdate() {
-<span class="nc" id="L556">        return hostedSuppressionsForceUpdate;</span>
-    }
+    public void setHostedSuppressionsUser(String hostedSuppressionsUser) {
+<span class="nc" id="L444">        this.hostedSuppressionsUser = hostedSuppressionsUser;</span>
+<span class="nc" id="L445">    }</span>
+
+    public void setHostedSuppressionsPassword(String hostedSuppressionsPassword) {
+<span class="nc" id="L448">        this.hostedSuppressionsPassword = hostedSuppressionsPassword;</span>
+<span class="nc" id="L449">    }</span>
+
+    public void setHostedSuppressionsBearerToken(String hostedSuppressionsBearerToken) {
+<span class="nc" id="L452">        this.hostedSuppressionsBearerToken = hostedSuppressionsBearerToken;</span>
+<span class="nc" id="L453">    }</span>
 
     /**
      * Set the value of hostedSuppressionsForceUpdate.
@@ -563,17 +459,8 @@ public class Update extends Purge {
      * hostedSuppressionsForceUpdate
      */
     public void setHostedSuppressionsForceUpdate(final Boolean hostedSuppressionsForceUpdate) {
-<span class="nc" id="L566">        this.hostedSuppressionsForceUpdate = hostedSuppressionsForceUpdate;</span>
-<span class="nc" id="L567">    }</span>
-
-    /**
-     * Get the value of hostedSuppressionsEnabled.
-     *
-     * @return the value of hostedSuppressionsEnabled
-     */
-    public Boolean isHostedSuppressionsEnabled() {
-<span class="nc" id="L575">        return hostedSuppressionsEnabled;</span>
-    }
+<span class="nc" id="L462">        this.hostedSuppressionsForceUpdate = hostedSuppressionsForceUpdate;</span>
+<span class="nc" id="L463">    }</span>
 
     /**
      * Set the value of hostedSuppressionsEnabled.
@@ -581,7 +468,120 @@ public class Update extends Purge {
      * @param hostedSuppressionsEnabled new value of hostedSuppressionsEnabled
      */
     public void setHostedSuppressionsEnabled(Boolean hostedSuppressionsEnabled) {
-<span class="nc" id="L584">        this.hostedSuppressionsEnabled = hostedSuppressionsEnabled;</span>
+<span class="nc" id="L471">        this.hostedSuppressionsEnabled = hostedSuppressionsEnabled;</span>
+<span class="nc" id="L472">    }</span>
+
+    /**
+     * Set the value of hostedSuppressionsUrl.
+     *
+     * @param hostedSuppressionsUrl new value of hostedSuppressionsUrl
+     */
+    public void setHostedSuppressionsUrl(final String hostedSuppressionsUrl) {
+<span class="nc" id="L480">        this.hostedSuppressionsUrl = hostedSuppressionsUrl;</span>
+<span class="nc" id="L481">    }</span>
+
+    /**
+     * Sets the the knownExploitedUrl.
+     *
+     * @param knownExploitedUrl the URL
+     */
+    public void setKnownExploitedUrl(String knownExploitedUrl) {
+<span class="nc" id="L489">        this.knownExploitedUrl = knownExploitedUrl;</span>
+<span class="nc" id="L490">    }</span>
+
+    public void setKnownExploitedValidForHours(Integer knownExploitedValidForHours) {
+<span class="nc" id="L493">        this.knownExploitedValidForHours = knownExploitedValidForHours;</span>
+<span class="nc" id="L494">    }</span>
+
+    /**
+     * Sets the user for downloading the knownExploitedUrl from a HTTP Basic auth protected location.
+     *
+     * @param knownExploitedUser the user
+     */
+    public void setKnownExploitedUser(String knownExploitedUser) {
+<span class="nc" id="L502">        this.knownExploitedUser = knownExploitedUser;</span>
+<span class="nc" id="L503">    }</span>
+
+    /**
+     * Sets the password for downloading the knownExploitedUrl from a HTTP Basic auth protected location..
+     *
+     * @param knownExploitedPassword the password
+     */
+    public void setKnownExploitedPassword(String knownExploitedPassword) {
+<span class="nc" id="L511">        this.knownExploitedPassword = knownExploitedPassword;</span>
+<span class="nc" id="L512">    }</span>
+
+    /**
+     * Sets the token for downloading the knownExploitedUrl from an HTTP Bearer auth protected location..
+     *
+     * @param knownExploitedBearerToken the token
+     */
+    public void setKnownExploitedBearerToken(String knownExploitedBearerToken) {
+<span class="nc" id="L520">        this.knownExploitedBearerToken = knownExploitedBearerToken;</span>
+<span class="nc" id="L521">    }</span>
+
+    /**
+     * Sets whether the analyzer is enabled.
+     *
+     * @param knownExploitedEnabled the value of the new setting
+     */
+    public void setKnownExploitedEnabled(Boolean knownExploitedEnabled) {
+<span class="nc" id="L529">        this.knownExploitedEnabled = knownExploitedEnabled;</span>
+<span class="nc" id="L530">    }</span>
+
+    /**
+     * Set the value of the Retire JS repository URL.
+     *
+     * @param retireJsUrl new value of retireJsUrl
+     */
+    public void setRetireJsUrl(String retireJsUrl) {
+<span class="nc" id="L538">        this.retireJsUrl = retireJsUrl;</span>
+<span class="nc" id="L539">    }</span>
+
+    /**
+     * Sets the user to download the RetireJS JSON data from an HTTP Basic auth protected location.
+     *
+     * @param retireJsUrlUser new value of retireJsUrlUser
+     */
+    public void setRetireJsUrlUser(String retireJsUrlUser) {
+<span class="nc" id="L547">        this.retireJsUrlUser = retireJsUrlUser;</span>
+<span class="nc" id="L548">    }</span>
+
+    /**
+     * Sets the password to download the RetireJS JSON data from an HTTP Basic auth protected location.
+     *
+     * @param retireJsUrlPassword new value of retireJsUrlPassword
+     */
+    public void setRetireJsUrlPassword(String retireJsUrlPassword) {
+<span class="nc" id="L556">        this.retireJsUrlPassword = retireJsUrlPassword;</span>
+<span class="nc" id="L557">    }</span>
+
+    /**
+     * Sets the token to download the RetireJS JSON data from an HTTP Bearer auth protected location.
+     *
+     * @param retireJsUrlBearerToken new value of retireJsUrlBearerToken
+     */
+    public void setRetireJsUrlBearerToken(String retireJsUrlBearerToken) {
+<span class="nc" id="L565">        this.retireJsUrlBearerToken = retireJsUrlBearerToken;</span>
+<span class="nc" id="L566">    }</span>
+
+    /**
+     * Set the value of retireJsForceUpdate.
+     *
+     * @param retireJsForceUpdate new value of
+     * retireJsForceUpdate
+     */
+    public void setRetireJsForceUpdate(Boolean retireJsForceUpdate) {
+<span class="nc" id="L575">        this.retireJsForceUpdate = retireJsForceUpdate;</span>
+<span class="nc" id="L576">    }</span>
+
+    /**
+     * Set the value of retireJsAnalyzerEnabled.
+     *
+     * @param retireJsAnalyzerEnabled new value of retireJsAnalyzerEnabled
+     */
+    public void setRetireJsAnalyzerEnabled(Boolean retireJsAnalyzerEnabled) {
+<span class="nc" id="L584">        this.retireJsAnalyzerEnabled = retireJsAnalyzerEnabled;</span>
 <span class="nc" id="L585">    }</span>
 
     /**
@@ -643,31 +643,39 @@ public class Update extends Purge {
 <span class="fc" id="L643">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
 <span class="fc" id="L644">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
 <span class="fc" id="L645">        getSettings().setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
-<span class="fc" id="L646">        getSettings().setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);</span>
-<span class="fc" id="L647">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);</span>
-<span class="fc" id="L648">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);</span>
 
-<span class="fc" id="L650">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);</span>
-<span class="fc" id="L651">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_ENDPOINT, nvdApiEndpoint);</span>
-<span class="fc" id="L652">        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, nvdApiDelay);</span>
-<span class="fc" id="L653">        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_RESULTS_PER_PAGE, nvdApiResultsPerPage);</span>
-<span class="fc" id="L654">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);</span>
-<span class="fc" id="L655">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, nvdUser);</span>
-<span class="fc" id="L656">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_PASSWORD, nvdPassword);</span>
-<span class="pc bpc" id="L657" title="1 of 2 branches missed.">        if (nvdMaxRetryCount != null) {</span>
-<span class="nc bnc" id="L658" title="All 2 branches missed.">            if (nvdMaxRetryCount &gt; 0) {</span>
-<span class="nc" id="L659">                getSettings().setInt(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, nvdMaxRetryCount);</span>
-            } else {
-<span class="nc" id="L661">                throw new BuildException(&quot;Invalid setting: `nvdMaxRetryCount` must be greater than zero&quot;);</span>
-            }
-        }
-<span class="pc bpc" id="L664" title="1 of 2 branches missed.">        if (nvdValidForHours != null) {</span>
-<span class="nc bnc" id="L665" title="All 2 branches missed.">            if (nvdValidForHours &gt;= 0) {</span>
-<span class="nc" id="L666">                getSettings().setInt(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);</span>
-            } else {
-<span class="nc" id="L668">                throw new BuildException(&quot;Invalid setting: `nvdValidForHours` must be 0 or greater&quot;);</span>
-            }
-        }
-<span class="fc" id="L671">    }</span>
+<span class="fc" id="L647">        getSettings().setStringIfNotEmpty(Settings.KEYS.KEV_URL, knownExploitedUrl);</span>
+<span class="fc" id="L648">        getSettings().setStringIfNotEmpty(Settings.KEYS.KEV_USER, knownExploitedUser);</span>
+<span class="fc" id="L649">        getSettings().setStringIfNotEmpty(Settings.KEYS.KEV_PASSWORD, knownExploitedPassword);</span>
+<span class="fc" id="L650">        getSettings().setStringIfNotEmpty(Settings.KEYS.KEV_BEARER_TOKEN, knownExploitedBearerToken);</span>
+<span class="fc" id="L651">        getSettings().setIntIfNotNull(Settings.KEYS.KEV_CHECK_VALID_FOR_HOURS, knownExploitedValidForHours);</span>
+<span class="fc" id="L652">        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_KNOWN_EXPLOITED_ENABLED, knownExploitedEnabled);</span>
+
+<span class="fc" id="L654">        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_URL, retireJsUrl);</span>
+<span class="fc" id="L655">        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_USER, retireJsUrlUser);</span>
+<span class="fc" id="L656">        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_PASSWORD, retireJsUrlPassword);</span>
+<span class="fc" id="L657">        getSettings().setStringIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_REPO_JS_BEARER_TOKEN, retireJsUrlBearerToken);</span>
+<span class="fc" id="L658">        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_FORCEUPDATE, retireJsForceUpdate);</span>
+<span class="fc" id="L659">        getSettings().setBooleanIfNotNull(Settings.KEYS.ANALYZER_RETIREJS_ENABLED, retireJsAnalyzerEnabled);</span>
+
+<span class="fc" id="L661">        getSettings().setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);</span>
+<span class="fc" id="L662">        getSettings().setIntIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_VALID_FOR_HOURS, hostedSuppressionsValidForHours);</span>
+<span class="fc" id="L663">        getSettings().setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_USER, hostedSuppressionsUser);</span>
+<span class="fc" id="L664">        getSettings().setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_PASSWORD, hostedSuppressionsPassword);</span>
+<span class="fc" id="L665">        getSettings().setStringIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_BEARER_TOKEN, hostedSuppressionsBearerToken);</span>
+<span class="fc" id="L666">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_FORCEUPDATE, hostedSuppressionsForceUpdate);</span>
+<span class="fc" id="L667">        getSettings().setBooleanIfNotNull(Settings.KEYS.HOSTED_SUPPRESSIONS_ENABLED, hostedSuppressionsEnabled);</span>
+
+<span class="fc" id="L669">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);</span>
+<span class="fc" id="L670">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_ENDPOINT, nvdApiEndpoint);</span>
+<span class="fc" id="L671">        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_DELAY, nvdApiDelay);</span>
+<span class="fc" id="L672">        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_RESULTS_PER_PAGE, nvdApiResultsPerPage);</span>
+<span class="fc" id="L673">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_URL, nvdDatafeedUrl);</span>
+<span class="fc" id="L674">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_USER, nvdUser);</span>
+<span class="fc" id="L675">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_PASSWORD, nvdPassword);</span>
+<span class="fc" id="L676">        getSettings().setStringIfNotEmpty(Settings.KEYS.NVD_API_DATAFEED_BEARER_TOKEN, nvdBearerToken);</span>
+<span class="fc" id="L677">        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_MAX_RETRY_COUNT, nvdMaxRetryCount);</span>
+<span class="fc" id="L678">        getSettings().setIntIfNotNull(Settings.KEYS.NVD_API_VALID_FOR_HOURS, nvdValidForHours);</span>
+<span class="fc" id="L679">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

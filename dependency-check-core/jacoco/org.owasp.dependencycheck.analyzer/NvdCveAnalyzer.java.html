@@ -128,7 +128,7 @@ import org.owasp.dependencycheck.utils.Settings;
      * @param vulns the vulnerability to add
      */
     private void replaceOrAddVulnerability(Dependency dependency, List&lt;Vulnerability&gt; vulns) {
-<span class="pc" id="L131">        vulns.forEach(v -&gt; v.getReferences().forEach(ref -&gt; dependency.getVulnerabilities().forEach(existing -&gt; {</span>
+<span class="fc" id="L131">        vulns.forEach(v -&gt; v.getReferences().forEach(ref -&gt; dependency.getVulnerabilities().forEach(existing -&gt; {</span>
 <span class="nc bnc" id="L132" title="All 2 branches missed.">                if (existing.getSource() == Source.NPM</span>
 <span class="nc bnc" id="L133" title="All 2 branches missed.">                        &amp;&amp; ref.getName() != null</span>
 <span class="nc bnc" id="L134" title="All 2 branches missed.">                        &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + existing.getName())) {</span>

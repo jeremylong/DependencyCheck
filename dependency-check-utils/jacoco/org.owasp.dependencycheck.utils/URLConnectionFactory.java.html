@@ -28,11 +28,7 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import javax.net.ssl.HttpsURLConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -49,7 +45,7 @@ public final class URLConnectionFactory {
     /**
      * The logger.
      */
-<span class="fc" id="L52">    private static final Logger LOGGER = LoggerFactory.getLogger(URLConnectionFactory.class);</span>
+<span class="fc" id="L48">    private static final Logger LOGGER = LoggerFactory.getLogger(URLConnectionFactory.class);</span>
     /**
      * The configured settings.
      */
@@ -60,9 +56,9 @@ public final class URLConnectionFactory {
      *
      * @param settings reference to the configured settings
      */
-<span class="fc" id="L63">    public URLConnectionFactory(Settings settings) {</span>
-<span class="fc" id="L64">        this.settings = settings;</span>
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L59">    public URLConnectionFactory(Settings settings) {</span>
+<span class="fc" id="L60">        this.settings = settings;</span>
+<span class="fc" id="L61">    }</span>
 
     /**
      * Utility method to create an HttpURLConnection. If the application is
@@ -78,61 +74,58 @@ public final class URLConnectionFactory {
     @SuppressFBWarnings(justification = &quot;yes, there is a redundant null check in the catch - to suppress warnings we are leaving the null check&quot;,
             value = {&quot;RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE&quot;})
     public HttpURLConnection createHttpURLConnection(URL url) throws URLConnectionFailureException {
-<span class="fc" id="L81">        HttpURLConnection conn = null;</span>
-<span class="fc" id="L82">        final String proxyHost = settings.getString(Settings.KEYS.PROXY_SERVER);</span>
+<span class="fc" id="L77">        HttpURLConnection conn = null;</span>
+<span class="fc" id="L78">        final String proxyHost = settings.getString(Settings.KEYS.PROXY_SERVER);</span>
 
         try {
-<span class="pc bpc" id="L85" title="3 of 4 branches missed.">            if (proxyHost != null &amp;&amp; !matchNonProxy(url)) {</span>
-<span class="nc" id="L86">                final int proxyPort = settings.getInt(Settings.KEYS.PROXY_PORT);</span>
-<span class="nc" id="L87">                final SocketAddress address = new InetSocketAddress(proxyHost, proxyPort);</span>
+<span class="pc bpc" id="L81" title="3 of 4 branches missed.">            if (proxyHost != null &amp;&amp; !matchNonProxy(url)) {</span>
+<span class="nc" id="L82">                final int proxyPort = settings.getInt(Settings.KEYS.PROXY_PORT);</span>
+<span class="nc" id="L83">                final SocketAddress address = new InetSocketAddress(proxyHost, proxyPort);</span>
 
-<span class="nc" id="L89">                final String username = settings.getString(Settings.KEYS.PROXY_USERNAME);</span>
-<span class="nc" id="L90">                final String password = settings.getString(Settings.KEYS.PROXY_PASSWORD);</span>
+<span class="nc" id="L85">                final String username = settings.getString(Settings.KEYS.PROXY_USERNAME);</span>
+<span class="nc" id="L86">                final String password = settings.getString(Settings.KEYS.PROXY_PASSWORD);</span>
 
-<span class="nc bnc" id="L92" title="All 4 branches missed.">                if (username != null &amp;&amp; password != null) {</span>
-<span class="nc" id="L93">                    final Authenticator auth = new Authenticator() {</span>
+<span class="nc bnc" id="L88" title="All 4 branches missed.">                if (username != null &amp;&amp; password != null) {</span>
+<span class="nc" id="L89">                    final Authenticator auth = new Authenticator() {</span>
                         @Override
                         public PasswordAuthentication getPasswordAuthentication() {
-<span class="nc bnc" id="L96" title="All 4 branches missed.">                            if (proxyHost.equals(getRequestingHost()) || getRequestorType().equals(Authenticator.RequestorType.PROXY)) {</span>
-<span class="nc" id="L97">                                LOGGER.debug(&quot;Using the configured proxy username and password&quot;);</span>
-<span class="nc bnc" id="L98" title="All 2 branches missed.">                                if (settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {</span>
-<span class="nc" id="L99">                                    System.setProperty(&quot;jdk.http.auth.tunneling.disabledSchemes&quot;, &quot;&quot;);</span>
+<span class="nc bnc" id="L92" title="All 4 branches missed.">                            if (proxyHost.equals(getRequestingHost()) || getRequestorType().equals(Authenticator.RequestorType.PROXY)) {</span>
+<span class="nc" id="L93">                                LOGGER.debug(&quot;Using the configured proxy username and password&quot;);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                                if (settings.getBoolean(Settings.KEYS.PROXY_DISABLE_SCHEMAS, true)) {</span>
+<span class="nc" id="L95">                                    System.setProperty(&quot;jdk.http.auth.tunneling.disabledSchemes&quot;, &quot;&quot;);</span>
                                 }
-<span class="nc" id="L101">                                return new PasswordAuthentication(username, password.toCharArray());</span>
+<span class="nc" id="L97">                                return new PasswordAuthentication(username, password.toCharArray());</span>
                             }
-<span class="nc" id="L103">                            return super.getPasswordAuthentication();</span>
+<span class="nc" id="L99">                            return super.getPasswordAuthentication();</span>
                         }
                     };
-<span class="nc" id="L106">                    Authenticator.setDefault(auth);</span>
+<span class="nc" id="L102">                    Authenticator.setDefault(auth);</span>
                 }
 
-<span class="nc" id="L109">                final Proxy proxy = new Proxy(Proxy.Type.HTTP, address);</span>
-<span class="nc" id="L110">                conn = (HttpURLConnection) url.openConnection(proxy);</span>
-<span class="nc" id="L111">            } else {</span>
-<span class="fc" id="L112">                conn = (HttpURLConnection) url.openConnection();</span>
+<span class="nc" id="L105">                final Proxy proxy = new Proxy(Proxy.Type.HTTP, address);</span>
+<span class="nc" id="L106">                conn = (HttpURLConnection) url.openConnection(proxy);</span>
+<span class="nc" id="L107">            } else {</span>
+<span class="fc" id="L108">                conn = (HttpURLConnection) url.openConnection();</span>
             }
-<span class="fc" id="L114">            final int connectionTimeout = settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 10000);</span>
+<span class="fc" id="L110">            final int connectionTimeout = settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 10000);</span>
             // set a conservative long default timeout to compensate for MITM-proxies that return the (final) bytes only
             // after all security checks passed
-<span class="fc" id="L117">            final int readTimeout = settings.getInt(Settings.KEYS.CONNECTION_READ_TIMEOUT, 60_000);</span>
-<span class="fc" id="L118">            conn.setConnectTimeout(connectionTimeout);</span>
-<span class="fc" id="L119">            conn.setReadTimeout(readTimeout);</span>
-<span class="fc" id="L120">            conn.setInstanceFollowRedirects(true);</span>
-<span class="nc" id="L121">        } catch (IOException ex) {</span>
-<span class="nc bnc" id="L122" title="All 2 branches missed.">            if (conn != null) {</span>
+<span class="fc" id="L113">            final int readTimeout = settings.getInt(Settings.KEYS.CONNECTION_READ_TIMEOUT, 60_000);</span>
+<span class="fc" id="L114">            conn.setConnectTimeout(connectionTimeout);</span>
+<span class="fc" id="L115">            conn.setReadTimeout(readTimeout);</span>
+<span class="fc" id="L116">            conn.setInstanceFollowRedirects(true);</span>
+<span class="nc" id="L117">        } catch (IOException ex) {</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">            if (conn != null) {</span>
                 try {
-<span class="nc" id="L124">                    conn.disconnect();</span>
+<span class="nc" id="L120">                    conn.disconnect();</span>
                 } finally {
-<span class="nc" id="L126">                    conn = null;</span>
+<span class="nc" id="L122">                    conn = null;</span>
                 }
             }
-<span class="nc" id="L129">            throw new URLConnectionFailureException(&quot;Error getting connection.&quot;, ex);</span>
-<span class="fc" id="L130">        }</span>
-        //conn.setRequestProperty(&quot;user-agent&quot;,
-        //  &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36&quot;);
-<span class="fc" id="L133">        configureTLS(url, conn);</span>
-<span class="fc" id="L134">        addAuthenticationIfPresent(conn);</span>
-<span class="fc" id="L135">        return conn;</span>
+<span class="nc" id="L125">            throw new URLConnectionFailureException(&quot;Error getting connection.&quot;, ex);</span>
+<span class="fc" id="L126">        }</span>
+<span class="fc" id="L127">        addAuthenticationIfPresent(conn);</span>
+<span class="fc" id="L128">        return conn;</span>
     }
 
     /**
@@ -144,15 +137,15 @@ public final class URLConnectionFactory {
      * @param conn the connection
      */
     private void addAuthenticationIfPresent(HttpURLConnection conn) {
-<span class="fc" id="L147">        final String userInfo = conn.getURL().getUserInfo();</span>
-<span class="fc bfc" id="L148" title="All 2 branches covered.">        if (userInfo != null) {</span>
-<span class="fc" id="L149">            final String basicAuth = &quot;Basic &quot; + Base64.getEncoder().encodeToString(userInfo.getBytes(UTF_8));</span>
-<span class="pc bpc" id="L150" title="1 of 2 branches missed.">            if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L151">                LOGGER.debug(&quot;Adding user info as basic authorization&quot;);</span>
+<span class="fc" id="L140">        final String userInfo = conn.getURL().getUserInfo();</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        if (userInfo != null) {</span>
+<span class="fc" id="L142">            final String basicAuth = &quot;Basic &quot; + Base64.getEncoder().encodeToString(userInfo.getBytes(UTF_8));</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">            if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L144">                LOGGER.debug(&quot;Adding user info as basic authorization&quot;);</span>
             }
-<span class="fc" id="L153">            conn.addRequestProperty(&quot;Authorization&quot;, basicAuth);</span>
+<span class="fc" id="L146">            conn.addRequestProperty(&quot;Authorization&quot;, basicAuth);</span>
         }
-<span class="fc" id="L155">    }</span>
+<span class="fc" id="L148">    }</span>
 
     /**
      * Adds a basic authentication header if the values in the settings are not
@@ -163,25 +156,25 @@ public final class URLConnectionFactory {
      * @param passwordKey the settings key for the password
      */
     public void addBasicAuthentication(HttpURLConnection conn, String userKey, String passwordKey) {
-<span class="nc bnc" id="L166" title="All 2 branches missed.">        if (StringUtils.isNotEmpty(settings.getString(userKey))</span>
-<span class="nc bnc" id="L167" title="All 2 branches missed.">                &amp;&amp; StringUtils.isNotEmpty(settings.getString(passwordKey))) {</span>
-<span class="nc" id="L168">            final String user = settings.getString(userKey);</span>
-<span class="nc" id="L169">            final String password = settings.getString(passwordKey);</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (StringUtils.isNotEmpty(settings.getString(userKey))</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">                &amp;&amp; StringUtils.isNotEmpty(settings.getString(passwordKey))) {</span>
+<span class="nc" id="L161">            final String user = settings.getString(userKey);</span>
+<span class="nc" id="L162">            final String password = settings.getString(passwordKey);</span>
 
-<span class="nc bnc" id="L171" title="All 4 branches missed.">            if (user.isEmpty() || password.isEmpty()) {</span>
-<span class="nc bnc" id="L172" title="All 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L173">                    LOGGER.debug(&quot;Skip authentication as user and/or password is empty&quot;);</span>
+<span class="nc bnc" id="L164" title="All 4 branches missed.">            if (user.isEmpty() || password.isEmpty()) {</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L166">                    LOGGER.debug(&quot;Skip authentication as user and/or password is empty&quot;);</span>
                 }
             } else {
-<span class="nc" id="L176">                final String userColonPassword = user + &quot;:&quot; + password;</span>
-<span class="nc" id="L177">                final String basicAuth = &quot;Basic &quot; + Base64.getEncoder().encodeToString(userColonPassword.getBytes(UTF_8));</span>
-<span class="nc bnc" id="L178" title="All 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L179">                    LOGGER.debug(&quot;Adding user/password from settings.xml as basic authorization&quot;);</span>
+<span class="nc" id="L169">                final String userColonPassword = user + &quot;:&quot; + password;</span>
+<span class="nc" id="L170">                final String basicAuth = &quot;Basic &quot; + Base64.getEncoder().encodeToString(userColonPassword.getBytes(UTF_8));</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L172">                    LOGGER.debug(&quot;Adding user/password from settings.xml as basic authorization&quot;);</span>
                 }
-<span class="nc" id="L181">                conn.addRequestProperty(&quot;Authorization&quot;, basicAuth);</span>
+<span class="nc" id="L174">                conn.addRequestProperty(&quot;Authorization&quot;, basicAuth);</span>
             }
         }
-<span class="nc" id="L184">    }</span>
+<span class="nc" id="L177">    }</span>
 
     /**
      * Check if host name matches nonProxy settings
@@ -191,38 +184,38 @@ public final class URLConnectionFactory {
      */
     @SuppressWarnings(&quot;StringSplitter&quot;)
     private boolean matchNonProxy(final URL url) {
-<span class="nc" id="L194">        final String host = url.getHost();</span>
+<span class="nc" id="L187">        final String host = url.getHost();</span>
 
         // code partially from org.apache.maven.plugins.site.AbstractDeployMojo#getProxyInfo
-<span class="nc" id="L197">        final String nonProxyHosts = settings.getString(Settings.KEYS.PROXY_NON_PROXY_HOSTS);</span>
-<span class="nc bnc" id="L198" title="All 2 branches missed.">        if (null != nonProxyHosts) {</span>
-<span class="nc" id="L199">            final String[] nonProxies = nonProxyHosts.split(&quot;(,)|(;)|(\\|)&quot;);</span>
-<span class="nc bnc" id="L200" title="All 2 branches missed.">            for (final String nonProxyHost : nonProxies) {</span>
+<span class="nc" id="L190">        final String nonProxyHosts = settings.getString(Settings.KEYS.PROXY_NON_PROXY_HOSTS);</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        if (null != nonProxyHosts) {</span>
+<span class="nc" id="L192">            final String[] nonProxies = nonProxyHosts.split(&quot;(,)|(;)|(\\|)&quot;);</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">            for (final String nonProxyHost : nonProxies) {</span>
                 //if ( StringUtils.contains( nonProxyHost, &quot;*&quot; ) )
-<span class="nc bnc" id="L202" title="All 4 branches missed.">                if (null != nonProxyHost &amp;&amp; nonProxyHost.contains(&quot;*&quot;)) {</span>
+<span class="nc bnc" id="L195" title="All 4 branches missed.">                if (null != nonProxyHost &amp;&amp; nonProxyHost.contains(&quot;*&quot;)) {</span>
                     // Handle wildcard at the end, beginning or middle of the nonProxyHost
-<span class="nc" id="L204">                    final int pos = nonProxyHost.indexOf('*');</span>
-<span class="nc" id="L205">                    final String nonProxyHostPrefix = nonProxyHost.substring(0, pos);</span>
-<span class="nc" id="L206">                    final String nonProxyHostSuffix = nonProxyHost.substring(pos + 1);</span>
+<span class="nc" id="L197">                    final int pos = nonProxyHost.indexOf('*');</span>
+<span class="nc" id="L198">                    final String nonProxyHostPrefix = nonProxyHost.substring(0, pos);</span>
+<span class="nc" id="L199">                    final String nonProxyHostSuffix = nonProxyHost.substring(pos + 1);</span>
                     // prefix*
-<span class="nc bnc" id="L208" title="All 6 branches missed.">                    if (!StringUtils.isBlank(nonProxyHostPrefix) &amp;&amp; host.startsWith(nonProxyHostPrefix) &amp;&amp; StringUtils.isBlank(nonProxyHostSuffix)) {</span>
-<span class="nc" id="L209">                        return true;</span>
+<span class="nc bnc" id="L201" title="All 6 branches missed.">                    if (!StringUtils.isBlank(nonProxyHostPrefix) &amp;&amp; host.startsWith(nonProxyHostPrefix) &amp;&amp; StringUtils.isBlank(nonProxyHostSuffix)) {</span>
+<span class="nc" id="L202">                        return true;</span>
                     }
                     // *suffix
-<span class="nc bnc" id="L212" title="All 6 branches missed.">                    if (StringUtils.isBlank(nonProxyHostPrefix) &amp;&amp; !StringUtils.isBlank(nonProxyHostSuffix) &amp;&amp; host.endsWith(nonProxyHostSuffix)) {</span>
-<span class="nc" id="L213">                        return true;</span>
+<span class="nc bnc" id="L205" title="All 6 branches missed.">                    if (StringUtils.isBlank(nonProxyHostPrefix) &amp;&amp; !StringUtils.isBlank(nonProxyHostSuffix) &amp;&amp; host.endsWith(nonProxyHostSuffix)) {</span>
+<span class="nc" id="L206">                        return true;</span>
                     }
                     // prefix*suffix
-<span class="nc bnc" id="L216" title="All 6 branches missed.">                    if (!StringUtils.isBlank(nonProxyHostPrefix) &amp;&amp; host.startsWith(nonProxyHostPrefix) &amp;&amp; !StringUtils.isBlank(nonProxyHostSuffix)</span>
-<span class="nc bnc" id="L217" title="All 2 branches missed.">                            &amp;&amp; host.endsWith(nonProxyHostSuffix)) {</span>
-<span class="nc" id="L218">                        return true;</span>
+<span class="nc bnc" id="L209" title="All 6 branches missed.">                    if (!StringUtils.isBlank(nonProxyHostPrefix) &amp;&amp; host.startsWith(nonProxyHostPrefix) &amp;&amp; !StringUtils.isBlank(nonProxyHostSuffix)</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">                            &amp;&amp; host.endsWith(nonProxyHostSuffix)) {</span>
+<span class="nc" id="L211">                        return true;</span>
                     }
-<span class="nc bnc" id="L220" title="All 2 branches missed.">                } else if (host.equals(nonProxyHost)) {</span>
-<span class="nc" id="L221">                    return true;</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">                } else if (host.equals(nonProxyHost)) {</span>
+<span class="nc" id="L214">                    return true;</span>
                 }
             }
         }
-<span class="nc" id="L225">        return false;</span>
+<span class="nc" id="L218">        return false;</span>
     }
 
     /**
@@ -238,43 +231,21 @@ public final class URLConnectionFactory {
      * thrown if there is an exception
      */
     public HttpURLConnection createHttpURLConnection(URL url, boolean proxy) throws URLConnectionFailureException {
-<span class="nc bnc" id="L241" title="All 2 branches missed.">        if (proxy) {</span>
-<span class="nc" id="L242">            return createHttpURLConnection(url);</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">        if (proxy) {</span>
+<span class="nc" id="L235">            return createHttpURLConnection(url);</span>
         }
         final HttpURLConnection conn;
         try {
-<span class="nc" id="L246">            conn = (HttpURLConnection) url.openConnection();</span>
-<span class="nc" id="L247">            final int timeout = settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 10000);</span>
-<span class="nc" id="L248">            conn.setConnectTimeout(timeout);</span>
-<span class="nc" id="L249">            conn.setInstanceFollowRedirects(true);</span>
-<span class="nc" id="L250">        } catch (IOException ioe) {</span>
-<span class="nc" id="L251">            throw new URLConnectionFailureException(&quot;Error getting connection.&quot;, ioe);</span>
-<span class="nc" id="L252">        }</span>
-<span class="nc" id="L253">        configureTLS(url, conn);</span>
-<span class="nc" id="L254">        addAuthenticationIfPresent(conn);</span>
-<span class="nc" id="L255">        return conn;</span>
+<span class="nc" id="L239">            conn = (HttpURLConnection) url.openConnection();</span>
+<span class="nc" id="L240">            final int timeout = settings.getInt(Settings.KEYS.CONNECTION_TIMEOUT, 10000);</span>
+<span class="nc" id="L241">            conn.setConnectTimeout(timeout);</span>
+<span class="nc" id="L242">            conn.setInstanceFollowRedirects(true);</span>
+<span class="nc" id="L243">        } catch (IOException ioe) {</span>
+<span class="nc" id="L244">            throw new URLConnectionFailureException(&quot;Error getting connection.&quot;, ioe);</span>
+<span class="nc" id="L245">        }</span>
+<span class="nc" id="L246">        addAuthenticationIfPresent(conn);</span>
+<span class="nc" id="L247">        return conn;</span>
     }
 
-    /**
-     * If the protocol is HTTPS, this will configure the cipher suites so that
-     * connections can be made to the NVD, and others, using older versions of
-     * Java.
-     *
-     * @param url the URL
-     * @param conn the connection
-     */
-    private void configureTLS(URL url, URLConnection conn) {
-<span class="pc bpc" id="L267" title="1 of 2 branches missed.">        if (&quot;https&quot;.equals(url.getProtocol())) {</span>
-            try {
-<span class="nc" id="L269">                final HttpsURLConnection secCon = (HttpsURLConnection) conn;</span>
-<span class="nc" id="L270">                final SSLSocketFactoryEx factory = new SSLSocketFactoryEx(settings);</span>
-<span class="nc" id="L271">                secCon.setSSLSocketFactory(factory);</span>
-<span class="nc" id="L272">            } catch (NoSuchAlgorithmException ex) {</span>
-<span class="nc" id="L273">                LOGGER.debug(&quot;Unsupported algorithm in SSLSocketFactoryEx&quot;, ex);</span>
-<span class="nc" id="L274">            } catch (KeyManagementException ex) {</span>
-<span class="nc" id="L275">                LOGGER.debug(&quot;Key management exception in SSLSocketFactoryEx&quot;, ex);</span>
-<span class="nc" id="L276">            }</span>
-        }
-<span class="fc" id="L278">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

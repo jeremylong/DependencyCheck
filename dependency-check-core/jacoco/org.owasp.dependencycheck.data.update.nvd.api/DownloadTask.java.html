@@ -85,18 +85,19 @@ public class DownloadTask implements Callable&lt;Future&lt;NvdApiProcessor&gt;&g
 <span class="nc" id="L85">            LOGGER.info(&quot;Download Started for NVD Cache - {}&quot;, url);</span>
 <span class="nc" id="L86">            final long startDownload = System.currentTimeMillis();</span>
 <span class="nc" id="L87">            final File outputFile = settings.getTempFile(&quot;nvd-datafeed-&quot;, &quot;json.gz&quot;);</span>
-<span class="nc" id="L88">            Downloader.getInstance().fetchFile(u, outputFile, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD);</span>
-<span class="nc bnc" id="L89" title="All 2 branches missed.">            if (this.processorService == null) {</span>
-<span class="nc" id="L90">                return null;</span>
+<span class="nc" id="L88">            Downloader.getInstance().fetchFile(u, outputFile, true, Settings.KEYS.NVD_API_DATAFEED_USER, Settings.KEYS.NVD_API_DATAFEED_PASSWORD,</span>
+                    Settings.KEYS.NVD_API_DATAFEED_BEARER_TOKEN);
+<span class="nc bnc" id="L90" title="All 2 branches missed.">            if (this.processorService == null) {</span>
+<span class="nc" id="L91">                return null;</span>
             }
-<span class="nc" id="L92">            final NvdApiProcessor task = new NvdApiProcessor(cveDB, outputFile, startDownload);</span>
-<span class="nc" id="L93">            final Future&lt;NvdApiProcessor&gt; val = this.processorService.submit(task);</span>
-<span class="nc" id="L94">            return val;</span>
-<span class="nc" id="L95">        } catch (Throwable ex) {</span>
-<span class="nc" id="L96">            LOGGER.error(&quot;Error downloading NVD CVE - {} Reason: {}&quot;, url, ex.getMessage());</span>
-<span class="nc" id="L97">            throw ex;</span>
+<span class="nc" id="L93">            final NvdApiProcessor task = new NvdApiProcessor(cveDB, outputFile, startDownload);</span>
+<span class="nc" id="L94">            final Future&lt;NvdApiProcessor&gt; val = this.processorService.submit(task);</span>
+<span class="nc" id="L95">            return val;</span>
+<span class="nc" id="L96">        } catch (Throwable ex) {</span>
+<span class="nc" id="L97">            LOGGER.error(&quot;Error downloading NVD CVE - {} Reason: {}&quot;, url, ex.getMessage());</span>
+<span class="nc" id="L98">            throw ex;</span>
         } finally {
-<span class="nc" id="L99">            settings.cleanup(false);</span>
+<span class="nc" id="L100">            settings.cleanup(false);</span>
         }
     }
 
@@ -108,7 +109,7 @@ public class DownloadTask implements Callable&lt;Future&lt;NvdApiProcessor&gt;&g
      * otherwise &lt;code&gt;false&lt;/code&gt;
      */
     public boolean isModified() {
-<span class="nc" id="L111">        return StringUtils.containsIgnoreCase(url, &quot;modified&quot;);</span>
+<span class="nc" id="L112">        return StringUtils.containsIgnoreCase(url, &quot;modified&quot;);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

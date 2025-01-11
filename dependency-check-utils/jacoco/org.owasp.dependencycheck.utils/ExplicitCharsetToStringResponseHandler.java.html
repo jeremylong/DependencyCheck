@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExplicitCharsetToStringResponseHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">ExplicitCharsetToStringResponseHandler.java</span></div><h1>ExplicitCharsetToStringResponseHandler.java</h1><pre class="source lang-java linenums">/*
+ * This file is part of dependency-check-utils.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Copyright (c) 2024 Hans Aikema. All Rights Reserved.
+ */
+package org.owasp.dependencycheck.utils;
+
+import org.apache.hc.client5.http.impl.classic.AbstractHttpClientResponseHandler;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+
+/**
+ * A responseHandler that uses an explicit client-defined characterset to interpret the response payload as a string.
+ *
+ * @author Hans Aikema
+ */
+public class ExplicitCharsetToStringResponseHandler extends AbstractHttpClientResponseHandler&lt;String&gt; {
+
+    /**
+     * The explicit Charset used for interpreting the bytes of the HTTP response entity.
+     */
+    private final Charset charset;
+
+    /**
+     * Constructs a repsonse handler to transfor the binary contents received using the given Charset.
+     *
+     * @param charset The Charset to be used to transform a downloaded file into a String.
+     */
+<span class="nc" id="L45">    public ExplicitCharsetToStringResponseHandler(Charset charset) {</span>
+<span class="nc" id="L46">        this.charset = charset;</span>
+<span class="nc" id="L47">    }</span>
+
+    @Override
+    public String handleEntity(HttpEntity entity) throws IOException {
+        final ContentType contentType;
+<span class="nc" id="L52">        contentType = ContentType.parseLenient(entity.getContentType());</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (contentType != null) {</span>
+<span class="nc" id="L54">            final Charset entityCharset = contentType.getCharset();</span>
+<span class="nc bnc" id="L55" title="All 4 branches missed.">            if (entityCharset != null &amp;&amp; !entityCharset.equals(charset)) {</span>
+<span class="nc" id="L56">                throw new DownloadFailedException(</span>
+<span class="nc" id="L57">                        String.format(&quot;Requested decoding charset %s incompatible with the explicit response charset %s.&quot;, charset, entityCharset));</span>
+            }
+        }
+<span class="nc" id="L60">        return new String(EntityUtils.toByteArray(entity), charset);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

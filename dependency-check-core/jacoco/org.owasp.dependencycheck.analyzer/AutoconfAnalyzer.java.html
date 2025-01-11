@@ -195,16 +195,19 @@ import java.util.regex.Pattern;
 <span class="fc bfc" id="L195" title="All 2 branches covered.">            if (!value.isEmpty()) {</span>
 <span class="fc bfc" id="L196" title="All 2 branches covered.">                if (variable.endsWith(&quot;NAME&quot;)) {</span>
 <span class="fc" id="L197">                    dependency.addEvidence(EvidenceType.PRODUCT, name, variable, value, Confidence.HIGHEST);</span>
-<span class="fc bfc" id="L198" title="All 2 branches covered.">                } else if (&quot;VERSION&quot;.equals(variable)) {</span>
-<span class="fc" id="L199">                    dependency.addEvidence(EvidenceType.VERSION, name, variable, value, Confidence.HIGHEST);</span>
-<span class="fc bfc" id="L200" title="All 2 branches covered.">                } else if (&quot;BUGREPORT&quot;.equals(variable)) {</span>
-<span class="fc" id="L201">                    dependency.addEvidence(EvidenceType.VENDOR, name, variable, value, Confidence.HIGH);</span>
-<span class="fc bfc" id="L202" title="All 2 branches covered.">                } else if (&quot;URL&quot;.equals(variable)) {</span>
-<span class="fc" id="L203">                    dependency.addEvidence(EvidenceType.VENDOR, name, variable, value, Confidence.HIGH);</span>
+<span class="fc" id="L198">                    dependency.addEvidence(EvidenceType.VENDOR, name, variable, value, Confidence.MEDIUM);</span>
+<span class="fc bfc" id="L199" title="All 2 branches covered.">                } else if (&quot;VERSION&quot;.equals(variable)) {</span>
+<span class="fc" id="L200">                    dependency.addEvidence(EvidenceType.VERSION, name, variable, value, Confidence.HIGHEST);</span>
+<span class="fc bfc" id="L201" title="All 2 branches covered.">                } else if (&quot;BUGREPORT&quot;.equals(variable)) {</span>
+<span class="fc" id="L202">                    dependency.addEvidence(EvidenceType.VENDOR, name, variable, value, Confidence.HIGH);</span>
+<span class="fc" id="L203">                    dependency.addEvidence(EvidenceType.PRODUCT, name, variable, value, Confidence.MEDIUM);</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">                } else if (&quot;URL&quot;.equals(variable)) {</span>
+<span class="fc" id="L205">                    dependency.addEvidence(EvidenceType.VENDOR, name, variable, value, Confidence.HIGH);</span>
+<span class="fc" id="L206">                    dependency.addEvidence(EvidenceType.PRODUCT, name, variable, value, Confidence.MEDIUM);</span>
                 }
             }
-<span class="fc" id="L206">        }</span>
-<span class="fc" id="L207">    }</span>
+<span class="fc" id="L209">        }</span>
+<span class="fc" id="L210">    }</span>
 
     /**
      * Retrieves the contents of a given file.
@@ -216,9 +219,9 @@ import java.util.regex.Pattern;
     private String getFileContents(final File actualFile)
             throws AnalysisException {
         try {
-<span class="fc" id="L219">            return new String(Files.readAllBytes(actualFile.toPath()), StandardCharsets.UTF_8).trim();</span>
-<span class="nc" id="L220">        } catch (IOException e) {</span>
-<span class="nc" id="L221">            throw new AnalysisException(</span>
+<span class="fc" id="L222">            return new String(Files.readAllBytes(actualFile.toPath()), StandardCharsets.UTF_8).trim();</span>
+<span class="nc" id="L223">        } catch (IOException e) {</span>
+<span class="nc" id="L224">            throw new AnalysisException(</span>
                     &quot;Problem occurred while reading dependency file.&quot;, e);
         }
     }
@@ -232,25 +235,25 @@ import java.util.regex.Pattern;
      */
     private void gatherEvidence(Dependency dependency, final String name,
                                 String contents) {
-<span class="fc" id="L235">        final Matcher matcher = AC_INIT_PATTERN.matcher(contents);</span>
-<span class="pc bpc" id="L236" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
-<span class="fc" id="L237">            dependency.addEvidence(EvidenceType.PRODUCT, name, &quot;Package&quot;, matcher.group(1), Confidence.HIGHEST);</span>
-<span class="fc" id="L238">            dependency.addEvidence(EvidenceType.VERSION, name, &quot;Package Version&quot;, matcher.group(2), Confidence.HIGHEST);</span>
+<span class="fc" id="L238">        final Matcher matcher = AC_INIT_PATTERN.matcher(contents);</span>
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">        if (matcher.find()) {</span>
+<span class="fc" id="L240">            dependency.addEvidence(EvidenceType.PRODUCT, name, &quot;Package&quot;, matcher.group(1), Confidence.HIGHEST);</span>
+<span class="fc" id="L241">            dependency.addEvidence(EvidenceType.VERSION, name, &quot;Package Version&quot;, matcher.group(2), Confidence.HIGHEST);</span>
 
-<span class="fc bfc" id="L240" title="All 2 branches covered.">            if (null != matcher.group(3)) {</span>
-<span class="fc" id="L241">                dependency.addEvidence(EvidenceType.VENDOR, name, &quot;Bug report address&quot;, matcher.group(4), Confidence.HIGH);</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">            if (null != matcher.group(3)) {</span>
+<span class="fc" id="L244">                dependency.addEvidence(EvidenceType.VENDOR, name, &quot;Bug report address&quot;, matcher.group(4), Confidence.HIGH);</span>
             }
-<span class="fc bfc" id="L243" title="All 2 branches covered.">            if (null != matcher.group(5)) {</span>
-<span class="fc" id="L244">                dependency.addEvidence(EvidenceType.PRODUCT, name, &quot;Tarname&quot;, matcher.group(6), Confidence.HIGH);</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">            if (null != matcher.group(5)) {</span>
+<span class="fc" id="L247">                dependency.addEvidence(EvidenceType.PRODUCT, name, &quot;Tarname&quot;, matcher.group(6), Confidence.HIGH);</span>
             }
-<span class="fc bfc" id="L246" title="All 2 branches covered.">            if (null != matcher.group(7)) {</span>
-<span class="fc" id="L247">                final String url = matcher.group(8);</span>
-<span class="pc bpc" id="L248" title="1 of 2 branches missed.">                if (UrlStringUtils.isUrl(url)) {</span>
-<span class="fc" id="L249">                    dependency.addEvidence(EvidenceType.VENDOR, name, &quot;URL&quot;, url, Confidence.HIGH);</span>
+<span class="fc bfc" id="L249" title="All 2 branches covered.">            if (null != matcher.group(7)) {</span>
+<span class="fc" id="L250">                final String url = matcher.group(8);</span>
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">                if (UrlStringUtils.isUrl(url)) {</span>
+<span class="fc" id="L252">                    dependency.addEvidence(EvidenceType.VENDOR, name, &quot;URL&quot;, url, Confidence.HIGH);</span>
                 }
             }
         }
-<span class="fc" id="L253">    }</span>
+<span class="fc" id="L256">    }</span>
 
     /**
      * Initializes the file type analyzer.
@@ -262,6 +265,6 @@ import java.util.regex.Pattern;
     @Override
     protected void prepareFileTypeAnalyzer(Engine engine) throws InitializationException {
         // No initialization needed.
-<span class="fc" id="L265">    }</span>
+<span class="fc" id="L268">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

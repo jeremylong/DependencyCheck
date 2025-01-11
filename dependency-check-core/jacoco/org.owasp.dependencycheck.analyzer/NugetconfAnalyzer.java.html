@@ -182,29 +182,32 @@ import org.owasp.dependencycheck.exception.InitializationException;
 <span class="fc" id="L182">                child.setMd5sum(Checksum.getMD5Checksum(String.format(&quot;%s:%s&quot;, id, version)));</span>
 <span class="fc" id="L183">                child.addEvidence(EvidenceType.VERSION, &quot;packages.config&quot;, &quot;version&quot;, np.getVersion(), Confidence.HIGHEST);</span>
 <span class="fc" id="L184">                child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, np.getId(), Confidence.HIGHEST);</span>
+<span class="fc" id="L185">                child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, np.getId(), Confidence.MEDIUM);</span>
 
                 // handle package names the same way as the MSBuild analyzer
-<span class="fc bfc" id="L187" title="All 2 branches covered.">                if (id.indexOf('.') &gt; 0) {</span>
-<span class="fc" id="L188">                    final String[] parts = id.split(&quot;\\.&quot;);</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">                if (id.indexOf('.') &gt; 0) {</span>
+<span class="fc" id="L189">                    final String[] parts = id.split(&quot;\\.&quot;);</span>
 
                     // example: Microsoft.EntityFrameworkCore
-<span class="fc" id="L191">                    child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, parts[0], Confidence.MEDIUM);</span>
-<span class="fc" id="L192">                    child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, parts[1], Confidence.MEDIUM);</span>
+<span class="fc" id="L192">                    child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, parts[0], Confidence.MEDIUM);</span>
+<span class="fc" id="L193">                    child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, parts[1], Confidence.MEDIUM);</span>
+<span class="fc" id="L194">                    child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, parts[1], Confidence.LOW);</span>
 
-<span class="fc bfc" id="L194" title="All 2 branches covered.">                    if (parts.length &gt; 2) {</span>
-<span class="fc" id="L195">                        final String rest = id.substring(id.indexOf('.') + 1);</span>
-<span class="fc" id="L196">                        child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, rest, Confidence.MEDIUM);</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">                    if (parts.length &gt; 2) {</span>
+<span class="fc" id="L197">                        final String rest = id.substring(id.indexOf('.') + 1);</span>
+<span class="fc" id="L198">                        child.addEvidence(EvidenceType.PRODUCT, &quot;packages.config&quot;, &quot;id&quot;, rest, Confidence.MEDIUM);</span>
+<span class="fc" id="L199">                        child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, rest, Confidence.LOW);</span>
                     }
-<span class="fc" id="L198">                } else {</span>
+<span class="fc" id="L201">                } else {</span>
                     // example: jQuery
-<span class="fc" id="L200">                    child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, id, Confidence.LOW);</span>
+<span class="fc" id="L203">                    child.addEvidence(EvidenceType.VENDOR, &quot;packages.config&quot;, &quot;id&quot;, id, Confidence.LOW);</span>
                 }
 
-<span class="fc" id="L203">                engine.addDependency(child);</span>
-<span class="fc" id="L204">            }</span>
-<span class="nc" id="L205">        } catch (Throwable e) {</span>
-<span class="nc" id="L206">            throw new AnalysisException(e);</span>
-<span class="fc" id="L207">        }</span>
-<span class="fc" id="L208">    }</span>
+<span class="fc" id="L206">                engine.addDependency(child);</span>
+<span class="fc" id="L207">            }</span>
+<span class="nc" id="L208">        } catch (Throwable e) {</span>
+<span class="nc" id="L209">            throw new AnalysisException(e);</span>
+<span class="fc" id="L210">        }</span>
+<span class="fc" id="L211">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

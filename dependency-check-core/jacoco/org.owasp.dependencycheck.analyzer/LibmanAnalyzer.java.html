@@ -208,37 +208,39 @@ import java.util.regex.Pattern;
 <span class="fc" id="L208">                child.setName(name);</span>
 <span class="fc" id="L209">                child.setVersion(version);</span>
 
-<span class="fc bfc" id="L211" title="All 2 branches covered.">                child.addEvidence(EvidenceType.VENDOR, FILE_NAME, &quot;vendor&quot;, (vendor != null ? vendor : name),</span>
-                        Confidence.HIGHEST);
-<span class="fc" id="L213">                child.addEvidence(EvidenceType.PRODUCT, FILE_NAME, &quot;name&quot;, name, Confidence.HIGHEST);</span>
-<span class="fc" id="L214">                child.addEvidence(EvidenceType.VERSION, FILE_NAME, &quot;version&quot;, version, Confidence.HIGHEST);</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">                if (vendor != null) {</span>
+<span class="fc" id="L212">                    child.addEvidence(EvidenceType.VENDOR, FILE_NAME, &quot;vendor&quot;, vendor, Confidence.HIGHEST);    </span>
+                }
+<span class="fc" id="L214">                child.addEvidence(EvidenceType.VENDOR, FILE_NAME, &quot;name&quot;, name, Confidence.HIGH);</span>
+<span class="fc" id="L215">                child.addEvidence(EvidenceType.PRODUCT, FILE_NAME, &quot;name&quot;, name, Confidence.HIGHEST);</span>
+<span class="fc" id="L216">                child.addEvidence(EvidenceType.VERSION, FILE_NAME, &quot;version&quot;, version, Confidence.HIGHEST);</span>
 
-<span class="fc" id="L216">                final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
+<span class="fc" id="L218">                final String packagePath = String.format(&quot;%s:%s&quot;, name, version);</span>
 
-<span class="fc" id="L218">                child.setSha1sum(Checksum.getSHA1Checksum(packagePath));</span>
-<span class="fc" id="L219">                child.setSha256sum(Checksum.getSHA256Checksum(packagePath));</span>
-<span class="fc" id="L220">                child.setMd5sum(Checksum.getMD5Checksum(packagePath));</span>
-<span class="fc" id="L221">                child.setPackagePath(packagePath);</span>
+<span class="fc" id="L220">                child.setSha1sum(Checksum.getSHA1Checksum(packagePath));</span>
+<span class="fc" id="L221">                child.setSha256sum(Checksum.getSHA256Checksum(packagePath));</span>
+<span class="fc" id="L222">                child.setMd5sum(Checksum.getMD5Checksum(packagePath));</span>
+<span class="fc" id="L223">                child.setPackagePath(packagePath);</span>
 
                 try {
-<span class="fc" id="L224">                    final PackageURL purl = PackageURLBuilder.aPackageURL()</span>
-<span class="fc" id="L225">                            .withType(&quot;libman&quot;)</span>
-<span class="fc" id="L226">                            .withName(name)</span>
-<span class="fc" id="L227">                            .withVersion(version)</span>
-<span class="fc" id="L228">                            .build();</span>
-<span class="fc" id="L229">                    final PurlIdentifier id = new PurlIdentifier(purl, Confidence.HIGHEST);</span>
-<span class="fc" id="L230">                    child.addSoftwareIdentifier(id);</span>
-<span class="nc" id="L231">                } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L232">                    LOGGER.warn(&quot;Unable to build package url for {}&quot;, ex.toString());</span>
-<span class="fc" id="L233">                }</span>
+<span class="fc" id="L226">                    final PackageURL purl = PackageURLBuilder.aPackageURL()</span>
+<span class="fc" id="L227">                            .withType(&quot;libman&quot;)</span>
+<span class="fc" id="L228">                            .withName(name)</span>
+<span class="fc" id="L229">                            .withVersion(version)</span>
+<span class="fc" id="L230">                            .build();</span>
+<span class="fc" id="L231">                    final PurlIdentifier id = new PurlIdentifier(purl, Confidence.HIGHEST);</span>
+<span class="fc" id="L232">                    child.addSoftwareIdentifier(id);</span>
+<span class="nc" id="L233">                } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L234">                    LOGGER.warn(&quot;Unable to build package url for {}&quot;, ex.toString());</span>
+<span class="fc" id="L235">                }</span>
 
-<span class="fc" id="L235">                engine.addDependency(child);</span>
-<span class="fc" id="L236">            });</span>
-<span class="nc bnc" id="L237" title="All 2 branches missed.">        } catch (JsonException e) {</span>
-<span class="nc" id="L238">            LOGGER.warn(String.format(&quot;Failed to parse %s file&quot;, FILE_NAME), e);</span>
-<span class="nc" id="L239">        } catch (IOException e) {</span>
-<span class="nc" id="L240">            throw new AnalysisException(&quot;Problem occurred while reading dependency file&quot;, e);</span>
-<span class="pc" id="L241">        }</span>
-<span class="fc" id="L242">    }</span>
+<span class="fc" id="L237">                engine.addDependency(child);</span>
+<span class="fc" id="L238">            });</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        } catch (JsonException e) {</span>
+<span class="nc" id="L240">            LOGGER.warn(String.format(&quot;Failed to parse %s file&quot;, FILE_NAME), e);</span>
+<span class="nc" id="L241">        } catch (IOException e) {</span>
+<span class="nc" id="L242">            throw new AnalysisException(&quot;Problem occurred while reading dependency file&quot;, e);</span>
+<span class="pc" id="L243">        }</span>
+<span class="fc" id="L244">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
