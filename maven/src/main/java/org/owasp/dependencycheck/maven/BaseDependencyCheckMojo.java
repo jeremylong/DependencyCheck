@@ -23,6 +23,8 @@ import com.github.packageurl.PackageURL;
 import io.github.jeremylong.jcs3.slf4j.Slf4jAdapter;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
@@ -2299,7 +2301,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
         String httpNonProxyHosts = null;
         boolean proxySetFromMavenSettings = false;
         if (mavenProxyHttps != null || mavenProxyHttp != null) {
-            final String existingHttps = System.getProperty("https.proxyHost");
+            final String existingHttps = StringUtils.trimToNull(System.getProperty("https.proxyHost"));
             if (existingHttps == null) {
                 proxySetFromMavenSettings = true;
                 if (mavenProxyHttps != null) {
@@ -2312,7 +2314,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                     httpsNonProxyHosts = mavenProxyHttp.getNonProxyHosts();
                 }
             }
-            final String existingHttp = System.getProperty("http.proxyHost");
+            final String existingHttp = StringUtils.trimToNull(System.getProperty("http.proxyHost"));
             if (mavenProxyHttp != null && existingHttp == null) {
                 proxySetFromMavenSettings = true;
                 setProxyServerSysPropsFromMavenProxy(mavenProxyHttp, PROTOCOL_HTTP);
@@ -2591,9 +2593,9 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
 
     private String mergeNonProxyHosts(String existingNonProxyHosts, String httpNonProxyHosts, String httpsNonProxyHosts) {
         final HashSet<String> mergedNonProxyHosts = new HashSet<>();
-        mergedNonProxyHosts.addAll(Arrays.asList(existingNonProxyHosts.split("\\|")));
-        mergedNonProxyHosts.addAll(Arrays.asList(httpNonProxyHosts.split("\\|")));
-        mergedNonProxyHosts.addAll(Arrays.asList(httpsNonProxyHosts.split("\\|")));
+        mergedNonProxyHosts.addAll(Arrays.asList(StringUtils.trimToEmpty(existingNonProxyHosts).split("\\|")));
+        mergedNonProxyHosts.addAll(Arrays.asList(StringUtils.trimToEmpty(httpNonProxyHosts).split("\\|")));
+        mergedNonProxyHosts.addAll(Arrays.asList(StringUtils.trimToEmpty(httpsNonProxyHosts).split("\\|")));
         return String.join("|", mergedNonProxyHosts);
     }
 
