@@ -36,11 +36,11 @@ skipTestScope                    | Skip analysis for artifacts with Test Scope. 
 skipDependencyManagement         | Skip analysis for dependencyManagement sections.           | true
 skipArtifactType                 | A regular expression used to filter/skip artifact types.  This filters on the `type` of dependency as defined in the dependency section: jar, pom, test-jar, etc. | &nbsp;
 suppressionFiles                 | The file paths to the XML suppression files \- used to suppress [false positives](../general/suppression.html). The configuration value can be a local file path, a URL to a suppression file, or even a reference to a file on the class path (see https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799) | &nbsp;
+failBuildOnUnusedSuppressionRule | Specifies that if any unused suppression rule is found, the build will fail. | false
 hintsFile                        | The file path to the XML hints file \- used to resolve [false negatives](../general/hints.html).       | &nbsp;
 enableExperimental               | Enable the [experimental analyzers](../analyzers/index.html). If not enabled the experimental analyzers (see below) will not be loaded or used. | false
 enableRetired                    | Enable the [retired analyzers](../analyzers/index.html). If not enabled the retired analyzers (see below) will not be loaded or used. | false
 versionCheckEnabled              | Whether dependency-check should check if a new version of dependency-check-maven exists. | true
-failBuildOnUnusedSuppressionRule | Specifies that if any unused suppression rule is found, the build will fail. | false
 
 Analyzer Configuration
 ====================
