@@ -2579,14 +2579,16 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
                 settings.setStringIfNotEmpty(passwordKey, password);
             } else {
                 throw new InitializationException(
-                        "Basic type serverId encountered in " + serverId + ", but userKey or passwordKey is null");
+                        "Basic type server authentication encountered in serverId " + serverId + ", but only Bearer authentication is supported for "
+                                + "the resource. For Bearer authentication tokens you should leave out the username in the server-entry in settings.xml");
             }
         } else {
             if (tokenKey != null) {
                 settings.setStringIfNotEmpty(tokenKey, password);
             } else {
                 throw new InitializationException(
-                        "Bearer type serverId encountered in " + serverId + ", but tokenKey is null");
+                        "Bearer type server authentication encountered in serverId " + serverId + ", but only Basic authentication is supported for "
+                                + "the  resource. Looks like the username was forgotten to be added in the server-entry in settings.xml");
             }
         }
     }
