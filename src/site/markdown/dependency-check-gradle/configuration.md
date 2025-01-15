@@ -188,18 +188,14 @@ ossIndex     | warnOnlyOnRemoteErrors| Sets whether remote errors from the OSS I
 #### Example
 ```groovy
 dependencyCheck {
-    analyzers {
-        assemblyEnabled=false
-        artifactory {
-            enabled=true
-            url='https://internal.artifactory.url'
-        }
-        retirejs {
-            filters = ['(i)copyright Jeremy Long']
-        }
-        ossIndex {
-            username = 'example@gmail.com'
-            password = '42cc601cd7ff12a531a0b1eada8dcf56d777b336'
-    }
+    analyzers.assemblyEnabled=false
+
+    analyzers.artifactory.enabled=true
+    analyzers.artifactory.url='https://internal.artifactory.url'
+
+    analyzers.retirejs.filters = ['(i)copyright Jeremy Long']
+
+    analyzers.ossIndex.username = 'example@gmail.com'
+    analyzers.ossIndex.password = '42cc601cd7ff12a531a0b1eada8dcf56d777b336'
 }
 ```
