@@ -1,5 +1,22 @@
 # Change Log
 
+## [Version 12.0.1](https://github.com/jeremylong/DependencyCheck/releases/tag/v12.0.1) (2025-01-19)
+
+- docs: Fix OSS Index Maven config documentation (#7322)
+- Fix OSS Index Maven config documentation
+- chore(docs): Document Gradle plugin support for failBuildOnUnusedSuppressionRule (#7307)
+- chore(docs): Correct analyzers config example to use Gradle dot-syntax (#7305)
+- fix: improve error message on improperly configured serverId credentials in settings.xml (#7313)
+- fix: Lower Basic serverId when Bearer was expected to a warning
+- fix: improve error message on improperly configured serverId credentials
+- fix: Correct nonProxyHosts support when no sys properties set (#7306)
+- core(docs): Group failBuildOnUnusedSuppressionRule flag next to suppression file configuration
+- core(docs): Update Gradle plugin documentation for failBuildOnUnusedSuppressionRule support
+- fix: Correct nonProxyHosts support when no sys properties set
+- chore(docs): Correct analyzers config example to use Gradle dot-syntax
+
+See the full listing of [changes](https://github.com/jeremylong/DependencyCheck/milestone/92?closed=1). 
+
 ## [Version 12.0.0](https://github.com/jeremylong/DependencyCheck/releases/tag/v12.0.0) (2025-01-11)
 
 - feat: report on CVSS v4 (#7204)
