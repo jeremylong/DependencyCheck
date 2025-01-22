@@ -50,6 +50,11 @@
             <url>https://plugins.gradle.org/m2/</url>
         </repository>
         <repository>
+            <id>splunk-artifactory</id>
+            <name>Splunk Releases</name>
+            <url>https://splunk.jfrog.io/splunk/ext-releases-local</url>
+        </repository>
+        <repository>
             <id>vaadin-addon</id>
             <name>vaadin addons</name>
             <url>https://vaadin.com/nexus/content/repositories/vaadin-addons/</url>
