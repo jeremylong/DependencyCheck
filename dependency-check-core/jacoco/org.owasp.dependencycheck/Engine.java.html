@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Engine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck</a> &gt; <span class="el_source">Engine.java</span></div><h1>Engine.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Engine.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck</a> &gt; <span class="el_source">Engine.java</span></div><h1>Engine.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -18,6 +18,7 @@
 package org.owasp.dependencycheck;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.jcs3.JCS;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +40,6 @@ import org.owasp.dependencycheck.exception.NoDataException;
 import org.owasp.dependencycheck.exception.ReportException;
 import org.owasp.dependencycheck.exception.WriteLockException;
 import org.owasp.dependencycheck.reporting.ReportGenerator;
-import org.owasp.dependencycheck.utils.FileUtils;
 import org.owasp.dependencycheck.utils.Settings;
 import org.owasp.dependencycheck.utils.WriteLock;
 import org.slf4j.Logger;
@@ -86,6 +86,7 @@ import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_IDENTIFIER_AN
 import static org.owasp.dependencycheck.analyzer.AnalysisPhase.PRE_INFORMATION_COLLECTION;
 import org.owasp.dependencycheck.analyzer.DependencyBundlingAnalyzer;
 import org.owasp.dependencycheck.dependency.naming.Identifier;
+import org.owasp.dependencycheck.utils.Utils;
 
 /**
  * Scans files, directories, etc. for Dependencies. Analyzers are loaded and
@@ -101,19 +102,19 @@ public class Engine implements FileFilter, AutoCloseable {
     /**
      * The Logger for use throughout the class.
      */
-<span class="fc" id="L104">    private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);</span>
+<span class="fc" id="L105">    private static final Logger LOGGER = LoggerFactory.getLogger(Engine.class);</span>
     /**
      * The list of dependencies.
      */
-<span class="fc" id="L108">    private final List&lt;Dependency&gt; dependencies = Collections.synchronizedList(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L109">    private final List&lt;Dependency&gt; dependencies = Collections.synchronizedList(new ArrayList&lt;&gt;());</span>
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-<span class="fc" id="L112">    private final Map&lt;AnalysisPhase, List&lt;Analyzer&gt;&gt; analyzers = new EnumMap&lt;&gt;(AnalysisPhase.class);</span>
+<span class="fc" id="L113">    private final Map&lt;AnalysisPhase, List&lt;Analyzer&gt;&gt; analyzers = new EnumMap&lt;&gt;(AnalysisPhase.class);</span>
     /**
      * A Map of analyzers grouped by Analysis phase.
      */
-<span class="fc" id="L116">    private final Set&lt;FileTypeAnalyzer&gt; fileTypeAnalyzers = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L117">    private final Set&lt;FileTypeAnalyzer&gt; fileTypeAnalyzers = new HashSet&lt;&gt;();</span>
     /**
      * The engine execution mode indicating it will either collect evidence or
      * process evidence or both.
@@ -131,15 +132,15 @@ public class Engine implements FileFilter, AutoCloseable {
     /**
      * A storage location to persist objects throughout the execution of ODC.
      */
-<span class="fc" id="L134">    private final Map&lt;String, Object&gt; objects = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L135">    private final Map&lt;String, Object&gt; objects = new HashMap&lt;&gt;();</span>
     /**
      * The external view of the dependency list.
      */
-<span class="fc" id="L138">    private Dependency[] dependenciesExternalView = null;</span>
+<span class="fc" id="L139">    private Dependency[] dependenciesExternalView = null;</span>
     /**
      * A reference to the database.
      */
-<span class="fc" id="L142">    private CveDB database = null;</span>
+<span class="fc" id="L143">    private CveDB database = null;</span>
     /**
      * Used to store the value of
      * System.getProperty(&quot;javax.xml.accessExternalSchema&quot;) - ODC may change the
@@ -154,8 +155,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param settings reference to the configured settings
      */
     public Engine(@NotNull final Settings settings) {
-<span class="fc" id="L157">        this(Mode.STANDALONE, settings);</span>
-<span class="fc" id="L158">    }</span>
+<span class="fc" id="L158">        this(Mode.STANDALONE, settings);</span>
+<span class="fc" id="L159">    }</span>
 
     /**
      * Creates a new Engine.
@@ -164,8 +165,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param settings reference to the configured settings
      */
     public Engine(@NotNull final Mode mode, @NotNull final Settings settings) {
-<span class="fc" id="L167">        this(Thread.currentThread().getContextClassLoader(), mode, settings);</span>
-<span class="fc" id="L168">    }</span>
+<span class="fc" id="L168">        this(Thread.currentThread().getContextClassLoader(), mode, settings);</span>
+<span class="fc" id="L169">    }</span>
 
     /**
      * Creates a new {@link Mode#STANDALONE} Engine.
@@ -174,8 +175,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param settings reference to the configured settings
      */
     public Engine(@NotNull final ClassLoader serviceClassLoader, @NotNull final Settings settings) {
-<span class="nc" id="L177">        this(serviceClassLoader, Mode.STANDALONE, settings);</span>
-<span class="nc" id="L178">    }</span>
+<span class="nc" id="L178">        this(serviceClassLoader, Mode.STANDALONE, settings);</span>
+<span class="nc" id="L179">    }</span>
 
     /**
      * Creates a new Engine.
@@ -184,14 +185,16 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param mode the mode of the engine
      * @param settings reference to the configured settings
      */
-<span class="fc" id="L187">    public Engine(@NotNull final ClassLoader serviceClassLoader, @NotNull final Mode mode, @NotNull final Settings settings) {</span>
-<span class="fc" id="L188">        this.settings = settings;</span>
-<span class="fc" id="L189">        this.serviceClassLoader = serviceClassLoader;</span>
-<span class="fc" id="L190">        this.mode = mode;</span>
-<span class="fc" id="L191">        this.accessExternalSchema = System.getProperty(&quot;javax.xml.accessExternalSchema&quot;);</span>
+<span class="fc" id="L188">    public Engine(@NotNull final ClassLoader serviceClassLoader, @NotNull final Mode mode, @NotNull final Settings settings) {</span>
+<span class="fc" id="L189">        this.settings = settings;</span>
+<span class="fc" id="L190">        this.serviceClassLoader = serviceClassLoader;</span>
+<span class="fc" id="L191">        this.mode = mode;</span>
+<span class="fc" id="L192">        this.accessExternalSchema = System.getProperty(&quot;javax.xml.accessExternalSchema&quot;);</span>
 
-<span class="fc" id="L193">        initializeEngine();</span>
-<span class="fc" id="L194">    }</span>
+<span class="fc" id="L194">        checkRuntimeVersion();</span>
+
+<span class="fc" id="L196">        initializeEngine();</span>
+<span class="fc" id="L197">    }</span>
 
     /**
      * Creates a new Engine using the specified classloader to dynamically load
@@ -201,47 +204,47 @@ public class Engine implements FileFilter, AutoCloseable {
      * database
      */
     protected final void initializeEngine() {
-<span class="fc" id="L204">        loadAnalyzers();</span>
-<span class="fc" id="L205">    }</span>
+<span class="fc" id="L207">        loadAnalyzers();</span>
+<span class="fc" id="L208">    }</span>
 
     /**
      * Properly cleans up resources allocated during analysis.
      */
     @Override
     public void close() {
-<span class="fc bfc" id="L212" title="All 2 branches covered.">        if (mode.isDatabaseRequired()) {</span>
-<span class="fc bfc" id="L213" title="All 2 branches covered.">            if (database != null) {</span>
-<span class="fc" id="L214">                database.close();</span>
-<span class="fc" id="L215">                database = null;</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">        if (mode.isDatabaseRequired()) {</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">            if (database != null) {</span>
+<span class="fc" id="L217">                database.close();</span>
+<span class="fc" id="L218">                database = null;</span>
             }
         }
-<span class="fc bfc" id="L218" title="All 2 branches covered.">        if (accessExternalSchema != null) {</span>
-<span class="fc" id="L219">            System.setProperty(&quot;javax.xml.accessExternalSchema&quot;, accessExternalSchema);</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">        if (accessExternalSchema != null) {</span>
+<span class="fc" id="L222">            System.setProperty(&quot;javax.xml.accessExternalSchema&quot;, accessExternalSchema);</span>
         } else {
-<span class="fc" id="L221">            System.clearProperty(&quot;javax.xml.accessExternalSchema&quot;);</span>
+<span class="fc" id="L224">            System.clearProperty(&quot;javax.xml.accessExternalSchema&quot;);</span>
         }
-<span class="fc" id="L223">        JCS.shutdown();</span>
-<span class="fc" id="L224">    }</span>
+<span class="fc" id="L226">        JCS.shutdown();</span>
+<span class="fc" id="L227">    }</span>
 
     /**
      * Loads the analyzers specified in the configuration file (or system
      * properties).
      */
     private void loadAnalyzers() {
-<span class="pc bpc" id="L231" title="1 of 2 branches missed.">        if (!analyzers.isEmpty()) {</span>
-<span class="nc" id="L232">            return;</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        if (!analyzers.isEmpty()) {</span>
+<span class="nc" id="L235">            return;</span>
         }
-<span class="fc" id="L234">        mode.getPhases().forEach((phase) -&gt; analyzers.put(phase, new ArrayList&lt;&gt;()));</span>
-<span class="fc" id="L235">        final AnalyzerService service = new AnalyzerService(serviceClassLoader, settings);</span>
-<span class="fc" id="L236">        final List&lt;Analyzer&gt; iterator = service.getAnalyzers(mode.getPhases());</span>
-<span class="fc" id="L237">        iterator.forEach((a) -&gt; {</span>
-<span class="fc" id="L238">            a.initialize(this.settings);</span>
-<span class="fc" id="L239">            analyzers.get(a.getAnalysisPhase()).add(a);</span>
-<span class="fc bfc" id="L240" title="All 2 branches covered.">            if (a instanceof FileTypeAnalyzer) {</span>
-<span class="fc" id="L241">                this.fileTypeAnalyzers.add((FileTypeAnalyzer) a);</span>
+<span class="fc" id="L237">        mode.getPhases().forEach((phase) -&gt; analyzers.put(phase, new ArrayList&lt;&gt;()));</span>
+<span class="fc" id="L238">        final AnalyzerService service = new AnalyzerService(serviceClassLoader, settings);</span>
+<span class="fc" id="L239">        final List&lt;Analyzer&gt; iterator = service.getAnalyzers(mode.getPhases());</span>
+<span class="fc" id="L240">        iterator.forEach((a) -&gt; {</span>
+<span class="fc" id="L241">            a.initialize(this.settings);</span>
+<span class="fc" id="L242">            analyzers.get(a.getAnalysisPhase()).add(a);</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">            if (a instanceof FileTypeAnalyzer) {</span>
+<span class="fc" id="L244">                this.fileTypeAnalyzers.add((FileTypeAnalyzer) a);</span>
             }
-<span class="fc" id="L243">        });</span>
-<span class="fc" id="L244">    }</span>
+<span class="fc" id="L246">        });</span>
+<span class="fc" id="L247">    }</span>
 
     /**
      * Get the List of the analyzers for a specific phase of analysis.
@@ -250,7 +253,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the analyzers loaded
      */
     public List&lt;Analyzer&gt; getAnalyzers(AnalysisPhase phase) {
-<span class="nc" id="L253">        return analyzers.get(phase);</span>
+<span class="nc" id="L256">        return analyzers.get(phase);</span>
     }
 
     /**
@@ -261,22 +264,22 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param dependency the dependency to add
      */
     public synchronized void addDependency(Dependency dependency) {
-<span class="fc bfc" id="L264" title="All 2 branches covered.">        if (dependency.isVirtual()) {</span>
-<span class="fc bfc" id="L265" title="All 2 branches covered.">            for (Dependency existing : dependencies) {</span>
-<span class="fc bfc" id="L266" title="All 2 branches covered.">                if (existing.isVirtual()</span>
-<span class="fc bfc" id="L267" title="All 2 branches covered.">                        &amp;&amp; existing.getSha256sum() != null</span>
-<span class="fc bfc" id="L268" title="All 2 branches covered.">                        &amp;&amp; existing.getSha256sum().equals(dependency.getSha256sum())</span>
-<span class="pc bpc" id="L269" title="1 of 2 branches missed.">                        &amp;&amp; existing.getDisplayFileName() != null</span>
-<span class="fc bfc" id="L270" title="All 2 branches covered.">                        &amp;&amp; existing.getDisplayFileName().equals(dependency.getDisplayFileName())</span>
-<span class="pc bpc" id="L271" title="1 of 2 branches missed.">                        &amp;&amp; identifiersMatch(existing.getSoftwareIdentifiers(), dependency.getSoftwareIdentifiers())) {</span>
-<span class="fc" id="L272">                    DependencyBundlingAnalyzer.mergeDependencies(existing, dependency, null);</span>
-<span class="fc" id="L273">                    return;</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">        if (dependency.isVirtual()) {</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">            for (Dependency existing : dependencies) {</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">                if (existing.isVirtual()</span>
+<span class="fc bfc" id="L270" title="All 2 branches covered.">                        &amp;&amp; existing.getSha256sum() != null</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">                        &amp;&amp; existing.getSha256sum().equals(dependency.getSha256sum())</span>
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">                        &amp;&amp; existing.getDisplayFileName() != null</span>
+<span class="pc bpc" id="L273" title="1 of 2 branches missed.">                        &amp;&amp; existing.getDisplayFileName().equals(dependency.getDisplayFileName())</span>
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">                        &amp;&amp; identifiersMatch(existing.getSoftwareIdentifiers(), dependency.getSoftwareIdentifiers())) {</span>
+<span class="fc" id="L275">                    DependencyBundlingAnalyzer.mergeDependencies(existing, dependency, null);</span>
+<span class="fc" id="L276">                    return;</span>
                 }
-<span class="fc" id="L275">            }</span>
+<span class="fc" id="L278">            }</span>
         }
-<span class="fc" id="L277">        dependencies.add(dependency);</span>
-<span class="fc" id="L278">        dependenciesExternalView = null;</span>
-<span class="fc" id="L279">    }</span>
+<span class="fc" id="L280">        dependencies.add(dependency);</span>
+<span class="fc" id="L281">        dependenciesExternalView = null;</span>
+<span class="fc" id="L282">    }</span>
 
     /**
      * Sorts the dependency list.
@@ -285,7 +288,7 @@ public class Engine implements FileFilter, AutoCloseable {
         //TODO - is this actually necassary????
 //        Collections.sort(dependencies);
 //        dependenciesExternalView = null;
-<span class="fc" id="L288">    }</span>
+<span class="fc" id="L291">    }</span>
 
     /**
      * Removes the dependency.
@@ -293,9 +296,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param dependency the dependency to remove.
      */
     public synchronized void removeDependency(@NotNull final Dependency dependency) {
-<span class="fc" id="L296">        dependencies.remove(dependency);</span>
-<span class="fc" id="L297">        dependenciesExternalView = null;</span>
-<span class="fc" id="L298">    }</span>
+<span class="fc" id="L299">        dependencies.remove(dependency);</span>
+<span class="fc" id="L300">        dependenciesExternalView = null;</span>
+<span class="fc" id="L301">    }</span>
 
     /**
      * Returns a copy of the dependencies as an array.
@@ -304,10 +307,10 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @SuppressFBWarnings(justification = &quot;This is the intended external view of the dependencies&quot;, value = {&quot;EI_EXPOSE_REP&quot;})
     public synchronized Dependency[] getDependencies() {
-<span class="fc bfc" id="L307" title="All 2 branches covered.">        if (dependenciesExternalView == null) {</span>
-<span class="fc" id="L308">            dependenciesExternalView = dependencies.toArray(new Dependency[0]);</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">        if (dependenciesExternalView == null) {</span>
+<span class="fc" id="L311">            dependenciesExternalView = dependencies.toArray(new Dependency[0]);</span>
         }
-<span class="fc" id="L310">        return dependenciesExternalView;</span>
+<span class="fc" id="L313">        return dependenciesExternalView;</span>
     }
 
     /**
@@ -316,10 +319,10 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param dependencies the dependencies
      */
     public synchronized void setDependencies(@NotNull final List&lt;Dependency&gt; dependencies) {
-<span class="fc" id="L319">        this.dependencies.clear();</span>
-<span class="fc" id="L320">        this.dependencies.addAll(dependencies);</span>
-<span class="fc" id="L321">        dependenciesExternalView = null;</span>
-<span class="fc" id="L322">    }</span>
+<span class="fc" id="L322">        this.dependencies.clear();</span>
+<span class="fc" id="L323">        this.dependencies.addAll(dependencies);</span>
+<span class="fc" id="L324">        dependenciesExternalView = null;</span>
+<span class="fc" id="L325">    }</span>
 
     /**
      * Scans an array of files or directories. If a directory is specified, it
@@ -331,7 +334,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @since v0.3.2.5
      */
     public List&lt;Dependency&gt; scan(@NotNull final String[] paths) {
-<span class="nc" id="L334">        return scan(paths, null);</span>
+<span class="nc" id="L337">        return scan(paths, null);</span>
     }
 
     /**
@@ -346,14 +349,14 @@ public class Engine implements FileFilter, AutoCloseable {
      * @since v1.4.4
      */
     public List&lt;Dependency&gt; scan(@NotNull final String[] paths, @Nullable final String projectReference) {
-<span class="nc" id="L349">        final List&lt;Dependency&gt; deps = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L350" title="All 2 branches missed.">        for (String path : paths) {</span>
-<span class="nc" id="L351">            final List&lt;Dependency&gt; d = scan(path, projectReference);</span>
-<span class="nc bnc" id="L352" title="All 2 branches missed.">            if (d != null) {</span>
-<span class="nc" id="L353">                deps.addAll(d);</span>
+<span class="nc" id="L352">        final List&lt;Dependency&gt; deps = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L353" title="All 2 branches missed.">        for (String path : paths) {</span>
+<span class="nc" id="L354">            final List&lt;Dependency&gt; d = scan(path, projectReference);</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">            if (d != null) {</span>
+<span class="nc" id="L356">                deps.addAll(d);</span>
             }
         }
-<span class="nc" id="L356">        return deps;</span>
+<span class="nc" id="L359">        return deps;</span>
     }
 
     /**
@@ -365,7 +368,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the list of dependencies scanned
      */
     public List&lt;Dependency&gt; scan(@NotNull final String path) {
-<span class="fc" id="L368">        return scan(path, null);</span>
+<span class="fc" id="L371">        return scan(path, null);</span>
     }
 
     /**
@@ -380,8 +383,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @since v1.4.4
      */
     public List&lt;Dependency&gt; scan(@NotNull final String path, String projectReference) {
-<span class="fc" id="L383">        final File file = new File(path);</span>
-<span class="fc" id="L384">        return scan(file, projectReference);</span>
+<span class="fc" id="L386">        final File file = new File(path);</span>
+<span class="fc" id="L387">        return scan(file, projectReference);</span>
     }
 
     /**
@@ -394,7 +397,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @since v0.3.2.5
      */
     public List&lt;Dependency&gt; scan(File[] files) {
-<span class="nc" id="L397">        return scan(files, null);</span>
+<span class="nc" id="L400">        return scan(files, null);</span>
     }
 
     /**
@@ -409,14 +412,14 @@ public class Engine implements FileFilter, AutoCloseable {
      * @since v1.4.4
      */
     public List&lt;Dependency&gt; scan(File[] files, String projectReference) {
-<span class="nc" id="L412">        final List&lt;Dependency&gt; deps = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L413" title="All 2 branches missed.">        for (File file : files) {</span>
-<span class="nc" id="L414">            final List&lt;Dependency&gt; d = scan(file, projectReference);</span>
-<span class="nc bnc" id="L415" title="All 2 branches missed.">            if (d != null) {</span>
-<span class="nc" id="L416">                deps.addAll(d);</span>
+<span class="nc" id="L415">        final List&lt;Dependency&gt; deps = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L416" title="All 2 branches missed.">        for (File file : files) {</span>
+<span class="nc" id="L417">            final List&lt;Dependency&gt; d = scan(file, projectReference);</span>
+<span class="nc bnc" id="L418" title="All 2 branches missed.">            if (d != null) {</span>
+<span class="nc" id="L419">                deps.addAll(d);</span>
             }
         }
-<span class="nc" id="L419">        return deps;</span>
+<span class="nc" id="L422">        return deps;</span>
     }
 
     /**
@@ -429,7 +432,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @since v0.3.2.5
      */
     public List&lt;Dependency&gt; scan(Collection&lt;File&gt; files) {
-<span class="nc" id="L432">        return scan(files, null);</span>
+<span class="nc" id="L435">        return scan(files, null);</span>
     }
 
     /**
@@ -444,11 +447,11 @@ public class Engine implements FileFilter, AutoCloseable {
      * @since v1.4.4
      */
     public List&lt;Dependency&gt; scan(Collection&lt;File&gt; files, String projectReference) {
-<span class="nc" id="L447">        final List&lt;Dependency&gt; deps = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L448">        files.stream().map((file) -&gt; scan(file, projectReference))</span>
-<span class="nc" id="L449">                .filter(Objects::nonNull)</span>
-<span class="nc" id="L450">                .forEach(deps::addAll);</span>
-<span class="nc" id="L451">        return deps;</span>
+<span class="nc" id="L450">        final List&lt;Dependency&gt; deps = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L451">        files.stream().map((file) -&gt; scan(file, projectReference))</span>
+<span class="nc" id="L452">                .filter(Objects::nonNull)</span>
+<span class="nc" id="L453">                .forEach(deps::addAll);</span>
+<span class="nc" id="L454">        return deps;</span>
     }
 
     /**
@@ -461,7 +464,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @since v0.3.2.4
      */
     public List&lt;Dependency&gt; scan(File file) {
-<span class="fc" id="L464">        return scan(file, null);</span>
+<span class="fc" id="L467">        return scan(file, null);</span>
     }
 
     /**
@@ -477,19 +480,19 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @Nullable
     public List&lt;Dependency&gt; scan(@NotNull final File file, String projectReference) {
-<span class="pc bpc" id="L480" title="1 of 2 branches missed.">        if (file.exists()) {</span>
-<span class="fc bfc" id="L481" title="All 2 branches covered.">            if (file.isDirectory()) {</span>
-<span class="fc" id="L482">                return scanDirectory(file, projectReference);</span>
+<span class="pc bpc" id="L483" title="1 of 2 branches missed.">        if (file.exists()) {</span>
+<span class="fc bfc" id="L484" title="All 2 branches covered.">            if (file.isDirectory()) {</span>
+<span class="fc" id="L485">                return scanDirectory(file, projectReference);</span>
             } else {
-<span class="fc" id="L484">                final Dependency d = scanFile(file, projectReference);</span>
-<span class="fc bfc" id="L485" title="All 2 branches covered.">                if (d != null) {</span>
-<span class="fc" id="L486">                    final List&lt;Dependency&gt; deps = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L487">                    deps.add(d);</span>
-<span class="fc" id="L488">                    return deps;</span>
+<span class="fc" id="L487">                final Dependency d = scanFile(file, projectReference);</span>
+<span class="fc bfc" id="L488" title="All 2 branches covered.">                if (d != null) {</span>
+<span class="fc" id="L489">                    final List&lt;Dependency&gt; deps = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L490">                    deps.add(d);</span>
+<span class="fc" id="L491">                    return deps;</span>
                 }
             }
         }
-<span class="fc" id="L492">        return null;</span>
+<span class="fc" id="L495">        return null;</span>
     }
 
     /**
@@ -500,7 +503,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the list of Dependency objects scanned
      */
     protected List&lt;Dependency&gt; scanDirectory(File dir) {
-<span class="nc" id="L503">        return scanDirectory(dir, null);</span>
+<span class="nc" id="L506">        return scanDirectory(dir, null);</span>
     }
 
     /**
@@ -514,24 +517,24 @@ public class Engine implements FileFilter, AutoCloseable {
      * @since v1.4.4
      */
     protected List&lt;Dependency&gt; scanDirectory(@NotNull final File dir, @Nullable final String projectReference) {
-<span class="fc" id="L517">        final File[] files = dir.listFiles();</span>
-<span class="fc" id="L518">        final List&lt;Dependency&gt; deps = new ArrayList&lt;&gt;();</span>
-<span class="pc bpc" id="L519" title="1 of 2 branches missed.">        if (files != null) {</span>
-<span class="fc bfc" id="L520" title="All 2 branches covered.">            for (File f : files) {</span>
-<span class="fc bfc" id="L521" title="All 2 branches covered.">                if (f.isDirectory()) {</span>
-<span class="fc" id="L522">                    final List&lt;Dependency&gt; d = scanDirectory(f, projectReference);</span>
-<span class="pc bpc" id="L523" title="1 of 2 branches missed.">                    if (d != null) {</span>
-<span class="fc" id="L524">                        deps.addAll(d);</span>
+<span class="fc" id="L520">        final File[] files = dir.listFiles();</span>
+<span class="fc" id="L521">        final List&lt;Dependency&gt; deps = new ArrayList&lt;&gt;();</span>
+<span class="pc bpc" id="L522" title="1 of 2 branches missed.">        if (files != null) {</span>
+<span class="fc bfc" id="L523" title="All 2 branches covered.">            for (File f : files) {</span>
+<span class="fc bfc" id="L524" title="All 2 branches covered.">                if (f.isDirectory()) {</span>
+<span class="fc" id="L525">                    final List&lt;Dependency&gt; d = scanDirectory(f, projectReference);</span>
+<span class="pc bpc" id="L526" title="1 of 2 branches missed.">                    if (d != null) {</span>
+<span class="fc" id="L527">                        deps.addAll(d);</span>
                     }
-<span class="fc" id="L526">                } else {</span>
-<span class="fc" id="L527">                    final Dependency d = scanFile(f, projectReference);</span>
-<span class="fc bfc" id="L528" title="All 2 branches covered.">                    if (d != null) {</span>
-<span class="fc" id="L529">                        deps.add(d);</span>
+<span class="fc" id="L529">                } else {</span>
+<span class="fc" id="L530">                    final Dependency d = scanFile(f, projectReference);</span>
+<span class="fc bfc" id="L531" title="All 2 branches covered.">                    if (d != null) {</span>
+<span class="fc" id="L532">                        deps.add(d);</span>
                     }
                 }
             }
         }
-<span class="fc" id="L534">        return deps;</span>
+<span class="fc" id="L537">        return deps;</span>
     }
 
     /**
@@ -542,7 +545,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the scanned dependency
      */
     protected Dependency scanFile(@NotNull final File file) {
-<span class="fc" id="L545">        return scanFile(file, null);</span>
+<span class="fc" id="L548">        return scanFile(file, null);</span>
     }
 
     //CSOFF: NestedIfDepth
@@ -557,59 +560,59 @@ public class Engine implements FileFilter, AutoCloseable {
      * @since v1.4.4
      */
     protected synchronized Dependency scanFile(@NotNull final File file, @Nullable final String projectReference) {
-<span class="fc" id="L560">        Dependency dependency = null;</span>
-<span class="pc bpc" id="L561" title="1 of 2 branches missed.">        if (file.isFile()) {</span>
-<span class="fc bfc" id="L562" title="All 2 branches covered.">            if (accept(file)) {</span>
-<span class="fc" id="L563">                dependency = new Dependency(file);</span>
-<span class="pc bpc" id="L564" title="1 of 2 branches missed.">                if (projectReference != null) {</span>
-<span class="nc" id="L565">                    dependency.addProjectReference(projectReference);</span>
+<span class="fc" id="L563">        Dependency dependency = null;</span>
+<span class="pc bpc" id="L564" title="1 of 2 branches missed.">        if (file.isFile()) {</span>
+<span class="fc bfc" id="L565" title="All 2 branches covered.">            if (accept(file)) {</span>
+<span class="fc" id="L566">                dependency = new Dependency(file);</span>
+<span class="pc bpc" id="L567" title="1 of 2 branches missed.">                if (projectReference != null) {</span>
+<span class="nc" id="L568">                    dependency.addProjectReference(projectReference);</span>
                 }
-<span class="fc" id="L567">                final String sha1 = dependency.getSha1sum();</span>
-<span class="fc" id="L568">                boolean found = false;</span>
+<span class="fc" id="L570">                final String sha1 = dependency.getSha1sum();</span>
+<span class="fc" id="L571">                boolean found = false;</span>
 
-<span class="pc bpc" id="L570" title="1 of 2 branches missed.">                if (sha1 != null) {</span>
-<span class="fc bfc" id="L571" title="All 2 branches covered.">                    for (Dependency existing : dependencies) {</span>
-<span class="fc bfc" id="L572" title="All 2 branches covered.">                        if (sha1.equals(existing.getSha1sum())) {</span>
-<span class="fc bfc" id="L573" title="All 2 branches covered.">                            if (existing.getDisplayFileName().contains(&quot;: &quot;)</span>
-<span class="pc bpc" id="L574" title="1 of 2 branches missed.">                                    || dependency.getDisplayFileName().contains(&quot;: &quot;)</span>
-<span class="fc bfc" id="L575" title="All 2 branches covered.">                                    || dependency.getActualFilePath().contains(&quot;dctemp&quot;)) {</span>
-<span class="fc" id="L576">                                continue;</span>
+<span class="pc bpc" id="L573" title="1 of 2 branches missed.">                if (sha1 != null) {</span>
+<span class="fc bfc" id="L574" title="All 2 branches covered.">                    for (Dependency existing : dependencies) {</span>
+<span class="fc bfc" id="L575" title="All 2 branches covered.">                        if (sha1.equals(existing.getSha1sum())) {</span>
+<span class="fc bfc" id="L576" title="All 2 branches covered.">                            if (existing.getDisplayFileName().contains(&quot;: &quot;)</span>
+<span class="pc bpc" id="L577" title="1 of 2 branches missed.">                                    || dependency.getDisplayFileName().contains(&quot;: &quot;)</span>
+<span class="pc bpc" id="L578" title="1 of 2 branches missed.">                                    || dependency.getActualFilePath().contains(&quot;dctemp&quot;)) {</span>
+<span class="nc" id="L579">                                continue;</span>
                             }
-<span class="fc" id="L578">                            found = true;</span>
-<span class="pc bpc" id="L579" title="1 of 2 branches missed.">                            if (projectReference != null) {</span>
-<span class="nc" id="L580">                                existing.addProjectReference(projectReference);</span>
+<span class="fc" id="L581">                            found = true;</span>
+<span class="pc bpc" id="L582" title="1 of 2 branches missed.">                            if (projectReference != null) {</span>
+<span class="nc" id="L583">                                existing.addProjectReference(projectReference);</span>
                             }
-<span class="pc bpc" id="L582" title="2 of 4 branches missed.">                            if (existing.getActualFilePath() != null &amp;&amp; dependency.getActualFilePath() != null</span>
-<span class="fc bfc" id="L583" title="All 2 branches covered.">                                    &amp;&amp; !existing.getActualFilePath().equals(dependency.getActualFilePath())) {</span>
+<span class="pc bpc" id="L585" title="2 of 4 branches missed.">                            if (existing.getActualFilePath() != null &amp;&amp; dependency.getActualFilePath() != null</span>
+<span class="fc bfc" id="L586" title="All 2 branches covered.">                                    &amp;&amp; !existing.getActualFilePath().equals(dependency.getActualFilePath())) {</span>
 
-<span class="fc bfc" id="L585" title="All 2 branches covered.">                                if (DependencyBundlingAnalyzer.firstPathIsShortest(existing.getFilePath(), dependency.getFilePath())) {</span>
-<span class="fc" id="L586">                                    DependencyBundlingAnalyzer.mergeDependencies(existing, dependency, null);</span>
+<span class="fc bfc" id="L588" title="All 2 branches covered.">                                if (DependencyBundlingAnalyzer.firstPathIsShortest(existing.getFilePath(), dependency.getFilePath())) {</span>
+<span class="fc" id="L589">                                    DependencyBundlingAnalyzer.mergeDependencies(existing, dependency, null);</span>
 
                                     //return null;
-<span class="fc" id="L589">                                    return existing;</span>
+<span class="fc" id="L592">                                    return existing;</span>
                                 } else {
                                     //Merging dependency&lt;-existing could be complicated. Instead analyze them seperately
                                     //and possibly merge them at the end.
-<span class="fc" id="L593">                                    found = false;</span>
+<span class="fc" id="L596">                                    found = false;</span>
                                 }
 
                             } else { //somehow we scanned the same file twice?
                                 //return null;
-<span class="fc" id="L598">                                return existing;</span>
+<span class="fc" id="L601">                                return existing;</span>
                             }
                             break;
                         }
-<span class="fc" id="L602">                    }</span>
+<span class="fc" id="L605">                    }</span>
                 }
-<span class="pc bpc" id="L604" title="1 of 2 branches missed.">                if (!found) {</span>
-<span class="fc" id="L605">                    dependencies.add(dependency);</span>
-<span class="fc" id="L606">                    dependenciesExternalView = null;</span>
+<span class="pc bpc" id="L607" title="1 of 2 branches missed.">                if (!found) {</span>
+<span class="fc" id="L608">                    dependencies.add(dependency);</span>
+<span class="fc" id="L609">                    dependenciesExternalView = null;</span>
                 }
-<span class="fc" id="L608">            }</span>
+<span class="fc" id="L611">            }</span>
         } else {
-<span class="nc" id="L610">            LOGGER.debug(&quot;Path passed to scanFile(File) is not a file that can be scanned by dependency-check: {}. Skipping the file.&quot;, file);</span>
+<span class="nc" id="L613">            LOGGER.debug(&quot;Path passed to scanFile(File) is not a file that can be scanned by dependency-check: {}. Skipping the file.&quot;, file);</span>
         }
-<span class="fc" id="L612">        return dependency;</span>
+<span class="fc" id="L615">        return dependency;</span>
     }
     //CSON: NestedIfDepth
 
@@ -629,17 +632,17 @@ public class Engine implements FileFilter, AutoCloseable {
      * during analysis
      */
     public void analyzeDependencies() throws ExceptionCollection {
-<span class="fc" id="L632">        final List&lt;Throwable&gt; exceptions = Collections.synchronizedList(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L635">        final List&lt;Throwable&gt; exceptions = Collections.synchronizedList(new ArrayList&lt;&gt;());</span>
 
-<span class="fc" id="L634">        initializeAndUpdateDatabase(exceptions);</span>
+<span class="fc" id="L637">        initializeAndUpdateDatabase(exceptions);</span>
 
         //need to ensure that data exists
         try {
-<span class="fc" id="L638">            ensureDataExists();</span>
-<span class="nc" id="L639">        } catch (NoDataException ex) {</span>
-<span class="nc" id="L640">            throwFatalExceptionCollection(&quot;Unable to continue dependency-check analysis.&quot;, ex, exceptions);</span>
-<span class="fc" id="L641">        }</span>
-<span class="fc" id="L642">        LOGGER.info(&quot;\n\nDependency-Check is an open source tool performing a best effort analysis of 3rd party dependencies; false positives and &quot;</span>
+<span class="fc" id="L641">            ensureDataExists();</span>
+<span class="nc" id="L642">        } catch (NoDataException ex) {</span>
+<span class="nc" id="L643">            throwFatalExceptionCollection(&quot;Unable to continue dependency-check analysis.&quot;, ex, exceptions);</span>
+<span class="fc" id="L644">        }</span>
+<span class="fc" id="L645">        LOGGER.info(&quot;\n\nDependency-Check is an open source tool performing a best effort analysis of 3rd party dependencies; false positives and &quot;</span>
                 + &quot;false negatives may exist in the analysis performed by the tool. Use of the tool and the reporting provided constitutes &quot;
                 + &quot;acceptance for use in an AS IS condition, and there are NO warranties, implied or otherwise, with regard to the analysis &quot;
                 + &quot;or its use. Any use of the tool and the reporting provided is at the user's risk. In no event shall the copyright holder &quot;
@@ -649,47 +652,47 @@ public class Engine implements FileFilter, AutoCloseable {
                 + &quot;   False Positives: https://jeremylong.github.io/DependencyCheck/general/suppression.html\n&quot;
                 + &quot;\n&quot;
                 + &quot;💖 Sponsor: https://github.com/sponsors/jeremylong\n\n&quot;);
-<span class="fc" id="L652">        LOGGER.debug(&quot;\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------&quot;);</span>
-<span class="fc" id="L653">        LOGGER.info(&quot;Analysis Started&quot;);</span>
-<span class="fc" id="L654">        final long analysisStart = System.currentTimeMillis();</span>
+<span class="fc" id="L655">        LOGGER.debug(&quot;\n----------------------------------------------------\nBEGIN ANALYSIS\n----------------------------------------------------&quot;);</span>
+<span class="fc" id="L656">        LOGGER.info(&quot;Analysis Started&quot;);</span>
+<span class="fc" id="L657">        final long analysisStart = System.currentTimeMillis();</span>
 
         // analysis phases
-<span class="fc bfc" id="L657" title="All 2 branches covered.">        for (AnalysisPhase phase : mode.getPhases()) {</span>
-<span class="fc" id="L658">            final List&lt;Analyzer&gt; analyzerList = analyzers.get(phase);</span>
+<span class="fc bfc" id="L660" title="All 2 branches covered.">        for (AnalysisPhase phase : mode.getPhases()) {</span>
+<span class="fc" id="L661">            final List&lt;Analyzer&gt; analyzerList = analyzers.get(phase);</span>
 
-<span class="fc bfc" id="L660" title="All 2 branches covered.">            for (final Analyzer analyzer : analyzerList) {</span>
-<span class="fc" id="L661">                final long analyzerStart = System.currentTimeMillis();</span>
+<span class="fc bfc" id="L663" title="All 2 branches covered.">            for (final Analyzer analyzer : analyzerList) {</span>
+<span class="fc" id="L664">                final long analyzerStart = System.currentTimeMillis();</span>
                 try {
-<span class="fc" id="L663">                    initializeAnalyzer(analyzer);</span>
-<span class="fc" id="L664">                } catch (InitializationException ex) {</span>
-<span class="fc" id="L665">                    exceptions.add(ex);</span>
-<span class="pc bpc" id="L666" title="1 of 2 branches missed.">                    if (ex.isFatal()) {</span>
-<span class="fc" id="L667">                        continue;</span>
+<span class="fc" id="L666">                    initializeAnalyzer(analyzer);</span>
+<span class="fc" id="L667">                } catch (InitializationException ex) {</span>
+<span class="fc" id="L668">                    exceptions.add(ex);</span>
+<span class="pc bpc" id="L669" title="1 of 2 branches missed.">                    if (ex.isFatal()) {</span>
+<span class="fc" id="L670">                        continue;</span>
                     }
-<span class="fc" id="L669">                }</span>
+<span class="fc" id="L672">                }</span>
 
-<span class="fc bfc" id="L671" title="All 2 branches covered.">                if (analyzer.isEnabled()) {</span>
-<span class="fc" id="L672">                    executeAnalysisTasks(analyzer, exceptions);</span>
+<span class="fc bfc" id="L674" title="All 2 branches covered.">                if (analyzer.isEnabled()) {</span>
+<span class="fc" id="L675">                    executeAnalysisTasks(analyzer, exceptions);</span>
 
-<span class="fc" id="L674">                    final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;</span>
-<span class="fc" id="L675">                    final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);</span>
-<span class="fc" id="L676">                    LOGGER.info(&quot;Finished {} ({} seconds)&quot;, analyzer.getName(), analyzerDurationSeconds);</span>
-<span class="fc" id="L677">                } else {</span>
-<span class="fc" id="L678">                    LOGGER.debug(&quot;Skipping {} (not enabled)&quot;, analyzer.getName());</span>
+<span class="fc" id="L677">                    final long analyzerDurationMillis = System.currentTimeMillis() - analyzerStart;</span>
+<span class="fc" id="L678">                    final long analyzerDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(analyzerDurationMillis);</span>
+<span class="fc" id="L679">                    LOGGER.info(&quot;Finished {} ({} seconds)&quot;, analyzer.getName(), analyzerDurationSeconds);</span>
+<span class="fc" id="L680">                } else {</span>
+<span class="fc" id="L681">                    LOGGER.debug(&quot;Skipping {} (not enabled)&quot;, analyzer.getName());</span>
                 }
-<span class="fc" id="L680">            }</span>
-<span class="fc" id="L681">        }</span>
-<span class="fc" id="L682">        mode.getPhases().stream()</span>
-<span class="fc" id="L683">                .map(analyzers::get)</span>
-<span class="fc" id="L684">                .forEach((analyzerList) -&gt; analyzerList.forEach(this::closeAnalyzer));</span>
+<span class="fc" id="L683">            }</span>
+<span class="fc" id="L684">        }</span>
+<span class="fc" id="L685">        mode.getPhases().stream()</span>
+<span class="fc" id="L686">                .map(analyzers::get)</span>
+<span class="fc" id="L687">                .forEach((analyzerList) -&gt; analyzerList.forEach(this::closeAnalyzer));</span>
 
-<span class="fc" id="L686">        LOGGER.debug(&quot;\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------&quot;);</span>
-<span class="fc" id="L687">        final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);</span>
-<span class="fc" id="L688">        LOGGER.info(&quot;Analysis Complete ({} seconds)&quot;, analysisDurationSeconds);</span>
-<span class="fc bfc" id="L689" title="All 2 branches covered.">        if (exceptions.size() &gt; 0) {</span>
-<span class="fc" id="L690">            throw new ExceptionCollection(exceptions);</span>
+<span class="fc" id="L689">        LOGGER.debug(&quot;\n----------------------------------------------------\nEND ANALYSIS\n----------------------------------------------------&quot;);</span>
+<span class="fc" id="L690">        final long analysisDurationSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - analysisStart);</span>
+<span class="fc" id="L691">        LOGGER.info(&quot;Analysis Complete ({} seconds)&quot;, analysisDurationSeconds);</span>
+<span class="fc bfc" id="L692" title="All 2 branches covered.">        if (exceptions.size() &gt; 0) {</span>
+<span class="fc" id="L693">            throw new ExceptionCollection(exceptions);</span>
         }
-<span class="fc" id="L692">    }</span>
+<span class="fc" id="L695">    }</span>
 
     /**
      * Performs any necessary updates and initializes the database.
@@ -698,36 +701,36 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws ExceptionCollection thrown if fatal exceptions occur
      */
     private void initializeAndUpdateDatabase(@NotNull final List&lt;Throwable&gt; exceptions) throws ExceptionCollection {
-<span class="pc bpc" id="L701" title="1 of 2 branches missed.">        if (!mode.isDatabaseRequired()) {</span>
-<span class="nc" id="L702">            return;</span>
+<span class="pc bpc" id="L704" title="1 of 2 branches missed.">        if (!mode.isDatabaseRequired()) {</span>
+<span class="nc" id="L705">            return;</span>
         }
         final boolean autoUpdate;
-<span class="fc" id="L705">        autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
-<span class="pc bpc" id="L706" title="1 of 2 branches missed.">        if (autoUpdate) {</span>
+<span class="fc" id="L708">        autoUpdate = settings.getBoolean(Settings.KEYS.AUTO_UPDATE, true);</span>
+<span class="pc bpc" id="L709" title="1 of 2 branches missed.">        if (autoUpdate) {</span>
             try {
-<span class="nc" id="L708">                doUpdates(true);</span>
-<span class="nc" id="L709">            } catch (UpdateException ex) {</span>
-<span class="nc" id="L710">                exceptions.add(ex);</span>
-<span class="nc" id="L711">                LOGGER.warn(&quot;Unable to update 1 or more Cached Web DataSource, using local &quot;</span>
+<span class="nc" id="L711">                doUpdates(true);</span>
+<span class="nc" id="L712">            } catch (UpdateException ex) {</span>
+<span class="nc" id="L713">                exceptions.add(ex);</span>
+<span class="nc" id="L714">                LOGGER.warn(&quot;Unable to update 1 or more Cached Web DataSource, using local &quot;</span>
                         + &quot;data instead. Results may not include recent vulnerabilities.&quot;);
-<span class="nc" id="L713">                LOGGER.debug(&quot;Update Error&quot;, ex);</span>
-<span class="nc" id="L714">            } catch (DatabaseException ex) {</span>
-<span class="nc" id="L715">                throwFatalDatabaseException(ex, exceptions);</span>
-<span class="nc" id="L716">            }</span>
+<span class="nc" id="L716">                LOGGER.debug(&quot;Update Error&quot;, ex);</span>
+<span class="nc" id="L717">            } catch (DatabaseException ex) {</span>
+<span class="nc" id="L718">                throwFatalDatabaseException(ex, exceptions);</span>
+<span class="nc" id="L719">            }</span>
         } else {
             try {
-<span class="pc bpc" id="L719" title="2 of 4 branches missed.">                if (DatabaseManager.isH2Connection(settings) &amp;&amp; !DatabaseManager.h2DataFileExists(settings)) {</span>
-<span class="nc" id="L720">                    throw new ExceptionCollection(new NoDataException(&quot;Autoupdate is disabled and the database does not exist&quot;), true);</span>
+<span class="pc bpc" id="L722" title="2 of 4 branches missed.">                if (DatabaseManager.isH2Connection(settings) &amp;&amp; !DatabaseManager.h2DataFileExists(settings)) {</span>
+<span class="nc" id="L723">                    throw new ExceptionCollection(new NoDataException(&quot;Autoupdate is disabled and the database does not exist&quot;), true);</span>
                 } else {
-<span class="fc" id="L722">                    openDatabase(true, true);</span>
+<span class="fc" id="L725">                    openDatabase(true, true);</span>
                 }
-<span class="nc" id="L724">            } catch (IOException ex) {</span>
-<span class="nc" id="L725">                throw new ExceptionCollection(new DatabaseException(&quot;Autoupdate is disabled and unable to connect to the database&quot;), true);</span>
-<span class="nc" id="L726">            } catch (DatabaseException ex) {</span>
-<span class="nc" id="L727">                throwFatalDatabaseException(ex, exceptions);</span>
-<span class="fc" id="L728">            }</span>
+<span class="nc" id="L727">            } catch (IOException ex) {</span>
+<span class="nc" id="L728">                throw new ExceptionCollection(new DatabaseException(&quot;Autoupdate is disabled and unable to connect to the database&quot;), true);</span>
+<span class="nc" id="L729">            } catch (DatabaseException ex) {</span>
+<span class="nc" id="L730">                throwFatalDatabaseException(ex, exceptions);</span>
+<span class="fc" id="L731">            }</span>
         }
-<span class="fc" id="L730">    }</span>
+<span class="fc" id="L733">    }</span>
 
     /**
      * Utility method to throw a fatal database exception.
@@ -739,14 +742,14 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     private void throwFatalDatabaseException(DatabaseException ex, final List&lt;Throwable&gt; exceptions) throws ExceptionCollection {
         final String msg;
-<span class="nc bnc" id="L742" title="All 4 branches missed.">        if (ex.getMessage().contains(&quot;Unable to connect&quot;) &amp;&amp; DatabaseManager.isH2Connection(settings)) {</span>
-<span class="nc" id="L743">            msg = &quot;Unable to connect to the database - if this error persists it may be &quot;</span>
+<span class="nc bnc" id="L745" title="All 4 branches missed.">        if (ex.getMessage().contains(&quot;Unable to connect&quot;) &amp;&amp; DatabaseManager.isH2Connection(settings)) {</span>
+<span class="nc" id="L746">            msg = &quot;Unable to connect to the database - if this error persists it may be &quot;</span>
                     + &quot;due to a corrupt database. Consider running `purge` to delete the existing database&quot;;
         } else {
-<span class="nc" id="L746">            msg = &quot;Unable to connect to the dependency-check database&quot;;</span>
+<span class="nc" id="L749">            msg = &quot;Unable to connect to the dependency-check database&quot;;</span>
         }
-<span class="nc" id="L748">        exceptions.add(new DatabaseException(msg, ex));</span>
-<span class="nc" id="L749">        throw new ExceptionCollection(exceptions, true);</span>
+<span class="nc" id="L751">        exceptions.add(new DatabaseException(msg, ex));</span>
+<span class="nc" id="L752">        throw new ExceptionCollection(exceptions, true);</span>
     }
 
     /**
@@ -758,31 +761,31 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws ExceptionCollection thrown if exceptions occurred during analysis
      */
     protected void executeAnalysisTasks(@NotNull final Analyzer analyzer, List&lt;Throwable&gt; exceptions) throws ExceptionCollection {
-<span class="fc" id="L761">        LOGGER.debug(&quot;Starting {}&quot;, analyzer.getName());</span>
-<span class="fc" id="L762">        final List&lt;AnalysisTask&gt; analysisTasks = getAnalysisTasks(analyzer, exceptions);</span>
-<span class="fc" id="L763">        final ExecutorService executorService = getExecutorService(analyzer);</span>
+<span class="fc" id="L764">        LOGGER.debug(&quot;Starting {}&quot;, analyzer.getName());</span>
+<span class="fc" id="L765">        final List&lt;AnalysisTask&gt; analysisTasks = getAnalysisTasks(analyzer, exceptions);</span>
+<span class="fc" id="L766">        final ExecutorService executorService = getExecutorService(analyzer);</span>
 
         try {
-<span class="fc" id="L766">            final int timeout = settings.getInt(Settings.KEYS.ANALYSIS_TIMEOUT, 180);</span>
-<span class="fc" id="L767">            final List&lt;Future&lt;Void&gt;&gt; results = executorService.invokeAll(analysisTasks, timeout, TimeUnit.MINUTES);</span>
+<span class="fc" id="L769">            final int timeout = settings.getInt(Settings.KEYS.ANALYSIS_TIMEOUT, 180);</span>
+<span class="fc" id="L770">            final List&lt;Future&lt;Void&gt;&gt; results = executorService.invokeAll(analysisTasks, timeout, TimeUnit.MINUTES);</span>
 
             // ensure there was no exception during execution
-<span class="fc bfc" id="L770" title="All 2 branches covered.">            for (Future&lt;Void&gt; result : results) {</span>
+<span class="fc bfc" id="L773" title="All 2 branches covered.">            for (Future&lt;Void&gt; result : results) {</span>
                 try {
-<span class="fc" id="L772">                    result.get();</span>
-<span class="fc" id="L773">                } catch (ExecutionException e) {</span>
-<span class="nc" id="L774">                    throwFatalExceptionCollection(&quot;Analysis task failed with a fatal exception.&quot;, e, exceptions);</span>
-<span class="nc" id="L775">                } catch (CancellationException e) {</span>
-<span class="nc" id="L776">                    throwFatalExceptionCollection(&quot;Analysis task was cancelled.&quot;, e, exceptions);</span>
-<span class="pc" id="L777">                }</span>
-<span class="fc" id="L778">            }</span>
-<span class="nc" id="L779">        } catch (InterruptedException e) {</span>
-<span class="nc" id="L780">            Thread.currentThread().interrupt();</span>
-<span class="nc" id="L781">            throwFatalExceptionCollection(&quot;Analysis has been interrupted.&quot;, e, exceptions);</span>
+<span class="fc" id="L775">                    result.get();</span>
+<span class="fc" id="L776">                } catch (ExecutionException e) {</span>
+<span class="nc" id="L777">                    throwFatalExceptionCollection(&quot;Analysis task failed with a fatal exception.&quot;, e, exceptions);</span>
+<span class="nc" id="L778">                } catch (CancellationException e) {</span>
+<span class="nc" id="L779">                    throwFatalExceptionCollection(&quot;Analysis task was cancelled.&quot;, e, exceptions);</span>
+<span class="pc" id="L780">                }</span>
+<span class="fc" id="L781">            }</span>
+<span class="nc" id="L782">        } catch (InterruptedException e) {</span>
+<span class="nc" id="L783">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L784">            throwFatalExceptionCollection(&quot;Analysis has been interrupted.&quot;, e, exceptions);</span>
         } finally {
-<span class="fc" id="L783">            executorService.shutdown();</span>
+<span class="fc" id="L786">            executorService.shutdown();</span>
         }
-<span class="fc" id="L785">    }</span>
+<span class="fc" id="L788">    }</span>
 
     /**
      * Returns the analysis tasks for the dependencies.
@@ -792,9 +795,9 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return a collection of analysis tasks
      */
     protected synchronized List&lt;AnalysisTask&gt; getAnalysisTasks(Analyzer analyzer, List&lt;Throwable&gt; exceptions) {
-<span class="fc" id="L795">        final List&lt;AnalysisTask&gt; result = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L796">        dependencies.stream().map((dependency) -&gt; new AnalysisTask(analyzer, dependency, this, exceptions)).forEach(result::add);</span>
-<span class="fc" id="L797">        return result;</span>
+<span class="fc" id="L798">        final List&lt;AnalysisTask&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L799">        dependencies.stream().map((dependency) -&gt; new AnalysisTask(analyzer, dependency, this, exceptions)).forEach(result::add);</span>
+<span class="fc" id="L800">        return result;</span>
     }
 
     /**
@@ -804,13 +807,13 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the executor service
      */
     protected ExecutorService getExecutorService(Analyzer analyzer) {
-<span class="fc bfc" id="L807" title="All 2 branches covered.">        if (analyzer.supportsParallelProcessing()) {</span>
-<span class="fc" id="L808">            final int maximumNumberOfThreads = Runtime.getRuntime().availableProcessors();</span>
-<span class="fc" id="L809">            LOGGER.debug(&quot;Parallel processing with up to {} threads: {}.&quot;, maximumNumberOfThreads, analyzer.getName());</span>
-<span class="fc" id="L810">            return Executors.newFixedThreadPool(maximumNumberOfThreads);</span>
+<span class="fc bfc" id="L810" title="All 2 branches covered.">        if (analyzer.supportsParallelProcessing()) {</span>
+<span class="fc" id="L811">            final int maximumNumberOfThreads = Runtime.getRuntime().availableProcessors();</span>
+<span class="fc" id="L812">            LOGGER.debug(&quot;Parallel processing with up to {} threads: {}.&quot;, maximumNumberOfThreads, analyzer.getName());</span>
+<span class="fc" id="L813">            return Executors.newFixedThreadPool(maximumNumberOfThreads);</span>
         } else {
-<span class="fc" id="L812">            LOGGER.debug(&quot;Parallel processing is not supported: {}.&quot;, analyzer.getName());</span>
-<span class="fc" id="L813">            return Executors.newSingleThreadExecutor();</span>
+<span class="fc" id="L815">            LOGGER.debug(&quot;Parallel processing is not supported: {}.&quot;, analyzer.getName());</span>
+<span class="fc" id="L816">            return Executors.newSingleThreadExecutor();</span>
         }
     }
 
@@ -823,30 +826,30 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     protected void initializeAnalyzer(@NotNull final Analyzer analyzer) throws InitializationException {
         try {
-<span class="fc" id="L826">            LOGGER.debug(&quot;Initializing {}&quot;, analyzer.getName());</span>
-<span class="fc" id="L827">            analyzer.prepare(this);</span>
-<span class="fc" id="L828">        } catch (InitializationException ex) {</span>
-<span class="fc" id="L829">            LOGGER.error(&quot;Exception occurred initializing {}.&quot;, analyzer.getName());</span>
-<span class="fc" id="L830">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="pc bpc" id="L831" title="1 of 2 branches missed.">            if (ex.isFatal()) {</span>
+<span class="fc" id="L829">            LOGGER.debug(&quot;Initializing {}&quot;, analyzer.getName());</span>
+<span class="fc" id="L830">            analyzer.prepare(this);</span>
+<span class="fc" id="L831">        } catch (InitializationException ex) {</span>
+<span class="fc" id="L832">            LOGGER.error(&quot;Exception occurred initializing {}.&quot;, analyzer.getName());</span>
+<span class="fc" id="L833">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="pc bpc" id="L834" title="1 of 2 branches missed.">            if (ex.isFatal()) {</span>
                 try {
-<span class="fc" id="L833">                    analyzer.close();</span>
-<span class="nc" id="L834">                } catch (Throwable ex1) {</span>
-<span class="nc" id="L835">                    LOGGER.trace(&quot;&quot;, ex1);</span>
-<span class="fc" id="L836">                }</span>
+<span class="fc" id="L836">                    analyzer.close();</span>
+<span class="nc" id="L837">                } catch (Throwable ex1) {</span>
+<span class="nc" id="L838">                    LOGGER.trace(&quot;&quot;, ex1);</span>
+<span class="fc" id="L839">                }</span>
             }
-<span class="fc" id="L838">            throw ex;</span>
-<span class="nc" id="L839">        } catch (Throwable ex) {</span>
-<span class="nc" id="L840">            LOGGER.error(&quot;Unexpected exception occurred initializing {}.&quot;, analyzer.getName());</span>
-<span class="nc" id="L841">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L841">            throw ex;</span>
+<span class="nc" id="L842">        } catch (Throwable ex) {</span>
+<span class="nc" id="L843">            LOGGER.error(&quot;Unexpected exception occurred initializing {}.&quot;, analyzer.getName());</span>
+<span class="nc" id="L844">            LOGGER.debug(&quot;&quot;, ex);</span>
             try {
-<span class="nc" id="L843">                analyzer.close();</span>
-<span class="nc" id="L844">            } catch (Throwable ex1) {</span>
-<span class="nc" id="L845">                LOGGER.trace(&quot;&quot;, ex1);</span>
-<span class="nc" id="L846">            }</span>
-<span class="nc" id="L847">            throw new InitializationException(&quot;Unexpected Exception&quot;, ex);</span>
-<span class="fc" id="L848">        }</span>
-<span class="fc" id="L849">    }</span>
+<span class="nc" id="L846">                analyzer.close();</span>
+<span class="nc" id="L847">            } catch (Throwable ex1) {</span>
+<span class="nc" id="L848">                LOGGER.trace(&quot;&quot;, ex1);</span>
+<span class="nc" id="L849">            }</span>
+<span class="nc" id="L850">            throw new InitializationException(&quot;Unexpected Exception&quot;, ex);</span>
+<span class="fc" id="L851">        }</span>
+<span class="fc" id="L852">    }</span>
 
     /**
      * Closes the given analyzer.
@@ -854,13 +857,13 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param analyzer the analyzer to close
      */
     protected void closeAnalyzer(@NotNull final Analyzer analyzer) {
-<span class="fc" id="L857">        LOGGER.debug(&quot;Closing Analyzer '{}'&quot;, analyzer.getName());</span>
+<span class="fc" id="L860">        LOGGER.debug(&quot;Closing Analyzer '{}'&quot;, analyzer.getName());</span>
         try {
-<span class="fc" id="L859">            analyzer.close();</span>
-<span class="nc" id="L860">        } catch (Throwable ex) {</span>
-<span class="nc" id="L861">            LOGGER.trace(&quot;&quot;, ex);</span>
-<span class="fc" id="L862">        }</span>
-<span class="fc" id="L863">    }</span>
+<span class="fc" id="L862">            analyzer.close();</span>
+<span class="nc" id="L863">        } catch (Throwable ex) {</span>
+<span class="nc" id="L864">            LOGGER.trace(&quot;&quot;, ex);</span>
+<span class="fc" id="L865">        }</span>
+<span class="fc" id="L866">    }</span>
 
     /**
      * Cycles through the cached web data sources and calls update on all of
@@ -872,7 +875,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return Whether any updates actually happened
      */
     public boolean doUpdates() throws UpdateException, DatabaseException {
-<span class="nc" id="L875">        return doUpdates(false);</span>
+<span class="nc" id="L878">        return doUpdates(false);</span>
     }
 
     /**
@@ -887,46 +890,46 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return Whether any updates actually happened
      */
     public boolean doUpdates(boolean remainOpen) throws UpdateException, DatabaseException {
-<span class="pc bpc" id="L890" title="1 of 2 branches missed.">        if (mode.isDatabaseRequired()) {</span>
-<span class="fc" id="L891">            try (WriteLock dblock = new WriteLock(getSettings(), DatabaseManager.isH2Connection(getSettings()))) {</span>
+<span class="pc bpc" id="L893" title="1 of 2 branches missed.">        if (mode.isDatabaseRequired()) {</span>
+<span class="fc" id="L894">            try (WriteLock dblock = new WriteLock(getSettings(), DatabaseManager.isH2Connection(getSettings()))) {</span>
                 //lock is not needed as we already have the lock held
-<span class="fc" id="L893">                openDatabase(false, false);</span>
-<span class="fc" id="L894">                LOGGER.info(&quot;Checking for updates&quot;);</span>
-<span class="fc" id="L895">                final long updateStart = System.currentTimeMillis();</span>
-<span class="fc" id="L896">                final UpdateService service = new UpdateService(serviceClassLoader);</span>
-<span class="fc" id="L897">                final Iterator&lt;CachedWebDataSource&gt; iterator = service.getDataSources();</span>
-<span class="fc" id="L898">                boolean dbUpdatesMade = false;</span>
-<span class="fc" id="L899">                UpdateException updateException = null;</span>
-<span class="fc bfc" id="L900" title="All 2 branches covered.">                while (iterator.hasNext()) {</span>
+<span class="fc" id="L896">                openDatabase(false, false);</span>
+<span class="fc" id="L897">                LOGGER.info(&quot;Checking for updates&quot;);</span>
+<span class="fc" id="L898">                final long updateStart = System.currentTimeMillis();</span>
+<span class="fc" id="L899">                final UpdateService service = new UpdateService(serviceClassLoader);</span>
+<span class="fc" id="L900">                final Iterator&lt;CachedWebDataSource&gt; iterator = service.getDataSources();</span>
+<span class="fc" id="L901">                boolean dbUpdatesMade = false;</span>
+<span class="fc" id="L902">                UpdateException updateException = null;</span>
+<span class="fc bfc" id="L903" title="All 2 branches covered.">                while (iterator.hasNext()) {</span>
                     try {
-<span class="fc" id="L902">                        final CachedWebDataSource source = iterator.next();</span>
-<span class="fc" id="L903">                        dbUpdatesMade |= source.update(this);</span>
-<span class="nc" id="L904">                    } catch (UpdateException ex) {</span>
-<span class="nc" id="L905">                        updateException = ex;</span>
-<span class="nc" id="L906">                        LOGGER.error(ex.getMessage(), ex);</span>
-<span class="pc" id="L907">                    }</span>
+<span class="fc" id="L905">                        final CachedWebDataSource source = iterator.next();</span>
+<span class="fc" id="L906">                        dbUpdatesMade |= source.update(this);</span>
+<span class="nc" id="L907">                    } catch (UpdateException ex) {</span>
+<span class="nc" id="L908">                        updateException = ex;</span>
+<span class="nc" id="L909">                        LOGGER.error(ex.getMessage(), ex);</span>
+<span class="pc" id="L910">                    }</span>
                 }
-<span class="pc bpc" id="L909" title="1 of 2 branches missed.">                if (dbUpdatesMade) {</span>
-<span class="nc" id="L910">                    database.defrag();</span>
+<span class="pc bpc" id="L912" title="1 of 2 branches missed.">                if (dbUpdatesMade) {</span>
+<span class="nc" id="L913">                    database.defrag();</span>
                 }
-<span class="fc" id="L912">                database.close();</span>
-<span class="fc" id="L913">                database = null;</span>
-<span class="pc bpc" id="L914" title="1 of 2 branches missed.">                if (updateException != null) {</span>
-<span class="nc" id="L915">                    throw updateException;</span>
+<span class="fc" id="L915">                database.close();</span>
+<span class="fc" id="L916">                database = null;</span>
+<span class="pc bpc" id="L917" title="1 of 2 branches missed.">                if (updateException != null) {</span>
+<span class="nc" id="L918">                    throw updateException;</span>
                 }
-<span class="fc" id="L917">                LOGGER.info(&quot;Check for updates complete ({} ms)&quot;, System.currentTimeMillis() - updateStart);</span>
-<span class="pc bpc" id="L918" title="1 of 2 branches missed.">                if (remainOpen) {</span>
+<span class="fc" id="L920">                LOGGER.info(&quot;Check for updates complete ({} ms)&quot;, System.currentTimeMillis() - updateStart);</span>
+<span class="pc bpc" id="L921" title="1 of 2 branches missed.">                if (remainOpen) {</span>
                     //lock is not needed as we already have the lock held
-<span class="fc" id="L920">                    openDatabase(true, false);</span>
+<span class="fc" id="L923">                    openDatabase(true, false);</span>
                 }
 
-<span class="fc" id="L923">                return dbUpdatesMade;</span>
-<span class="nc" id="L924">            } catch (WriteLockException ex) {</span>
-<span class="nc" id="L925">                throw new UpdateException(&quot;Unable to obtain an exclusive lock on the H2 database to perform updates&quot;, ex);</span>
+<span class="fc" id="L926">                return dbUpdatesMade;</span>
+<span class="nc" id="L927">            } catch (WriteLockException ex) {</span>
+<span class="nc" id="L928">                throw new UpdateException(&quot;Unable to obtain an exclusive lock on the H2 database to perform updates&quot;, ex);</span>
             }
         } else {
-<span class="nc" id="L928">            LOGGER.info(&quot;Skipping update check in evidence collection mode.&quot;);</span>
-<span class="nc" id="L929">            return false;</span>
+<span class="nc" id="L931">            LOGGER.info(&quot;Skipping update check in evidence collection mode.&quot;);</span>
+<span class="nc" id="L932">            return false;</span>
         }
     }
 
@@ -937,34 +940,34 @@ public class Engine implements FileFilter, AutoCloseable {
      * &lt;code&gt;false&lt;/code&gt;
      */
     public boolean purge() {
-<span class="nc" id="L940">        boolean result = true;</span>
-<span class="nc" id="L941">        final UpdateService service = new UpdateService(serviceClassLoader);</span>
-<span class="nc" id="L942">        final Iterator&lt;CachedWebDataSource&gt; iterator = service.getDataSources();</span>
-<span class="nc bnc" id="L943" title="All 2 branches missed.">        while (iterator.hasNext()) {</span>
-<span class="nc" id="L944">            result &amp;= iterator.next().purge(this);</span>
+<span class="nc" id="L943">        boolean result = true;</span>
+<span class="nc" id="L944">        final UpdateService service = new UpdateService(serviceClassLoader);</span>
+<span class="nc" id="L945">        final Iterator&lt;CachedWebDataSource&gt; iterator = service.getDataSources();</span>
+<span class="nc bnc" id="L946" title="All 2 branches missed.">        while (iterator.hasNext()) {</span>
+<span class="nc" id="L947">            result &amp;= iterator.next().purge(this);</span>
         }
         try {
-<span class="nc" id="L947">            final File cache = new File(settings.getDataDirectory(), &quot;cache&quot;);</span>
-<span class="nc bnc" id="L948" title="All 2 branches missed.">            if (cache.exists()) {</span>
-<span class="nc bnc" id="L949" title="All 2 branches missed.">                if (FileUtils.delete(cache)) {</span>
-<span class="nc" id="L950">                    LOGGER.info(&quot;Cache directory purged&quot;);</span>
+<span class="nc" id="L950">            final File cache = new File(settings.getDataDirectory(), &quot;cache&quot;);</span>
+<span class="nc bnc" id="L951" title="All 2 branches missed.">            if (cache.exists()) {</span>
+<span class="nc bnc" id="L952" title="All 2 branches missed.">                if (FileUtils.deleteQuietly(cache)) {</span>
+<span class="nc" id="L953">                    LOGGER.info(&quot;Cache directory purged&quot;);</span>
                 }
             }
-<span class="nc" id="L953">        } catch (IOException ex) {</span>
-<span class="nc" id="L954">            throw new RuntimeException(ex);</span>
-<span class="nc" id="L955">        }</span>
+<span class="nc" id="L956">        } catch (IOException ex) {</span>
+<span class="nc" id="L957">            throw new RuntimeException(ex);</span>
+<span class="nc" id="L958">        }</span>
         try {
-<span class="nc" id="L957">            final File cache = new File(settings.getDataDirectory(), &quot;oss_cache&quot;);</span>
-<span class="nc bnc" id="L958" title="All 2 branches missed.">            if (cache.exists()) {</span>
-<span class="nc bnc" id="L959" title="All 2 branches missed.">                if (FileUtils.delete(cache)) {</span>
-<span class="nc" id="L960">                    LOGGER.info(&quot;OSS Cache directory purged&quot;);</span>
+<span class="nc" id="L960">            final File cache = new File(settings.getDataDirectory(), &quot;oss_cache&quot;);</span>
+<span class="nc bnc" id="L961" title="All 2 branches missed.">            if (cache.exists()) {</span>
+<span class="nc bnc" id="L962" title="All 2 branches missed.">                if (FileUtils.deleteQuietly(cache)) {</span>
+<span class="nc" id="L963">                    LOGGER.info(&quot;OSS Cache directory purged&quot;);</span>
                 }
             }
-<span class="nc" id="L963">        } catch (IOException ex) {</span>
-<span class="nc" id="L964">            throw new RuntimeException(ex);</span>
-<span class="nc" id="L965">        }</span>
+<span class="nc" id="L966">        } catch (IOException ex) {</span>
+<span class="nc" id="L967">            throw new RuntimeException(ex);</span>
+<span class="nc" id="L968">        }</span>
 
-<span class="nc" id="L967">        return result;</span>
+<span class="nc" id="L970">        return result;</span>
     }
 
     /**
@@ -978,8 +981,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws DatabaseException if the database connection could not be created
      */
     public void openDatabase() throws DatabaseException {
-<span class="fc" id="L981">        openDatabase(false, true);</span>
-<span class="fc" id="L982">    }</span>
+<span class="fc" id="L984">        openDatabase(false, true);</span>
+<span class="fc" id="L985">    }</span>
 
     /**
      * &lt;p&gt;
@@ -997,38 +1000,38 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @SuppressWarnings(&quot;try&quot;)
     public void openDatabase(boolean readOnly, boolean lockRequired) throws DatabaseException {
-<span class="pc bpc" id="L1000" title="2 of 4 branches missed.">        if (mode.isDatabaseRequired() &amp;&amp; database == null) {</span>
-<span class="pc bpc" id="L1001" title="1 of 4 branches missed.">            try (WriteLock dblock = new WriteLock(getSettings(), lockRequired &amp;&amp; DatabaseManager.isH2Connection(settings))) {</span>
-<span class="fc bfc" id="L1002" title="All 2 branches covered.">                if (readOnly</span>
-<span class="pc bpc" id="L1003" title="1 of 2 branches missed.">                        &amp;&amp; DatabaseManager.isH2Connection(settings)</span>
-<span class="pc bpc" id="L1004" title="1 of 2 branches missed.">                        &amp;&amp; settings.getString(Settings.KEYS.DB_CONNECTION_STRING).contains(&quot;file:%s&quot;)) {</span>
-<span class="fc" id="L1005">                    final File db = DatabaseManager.getH2DataFile(settings);</span>
-<span class="pc bpc" id="L1006" title="1 of 2 branches missed.">                    if (db.isFile()) {</span>
-<span class="fc" id="L1007">                        final File temp = settings.getTempDirectory();</span>
-<span class="fc" id="L1008">                        final File tempDB = new File(temp, db.getName());</span>
-<span class="fc" id="L1009">                        LOGGER.debug(&quot;copying database {} to {}&quot;, db.toPath(), temp.toPath());</span>
-<span class="fc" id="L1010">                        Files.copy(db.toPath(), tempDB.toPath());</span>
-<span class="fc" id="L1011">                        settings.setString(Settings.KEYS.H2_DATA_DIRECTORY, temp.getPath());</span>
-<span class="fc" id="L1012">                        final String connStr = settings.getString(Settings.KEYS.DB_CONNECTION_STRING);</span>
-<span class="pc bpc" id="L1013" title="1 of 2 branches missed.">                        if (!connStr.contains(&quot;ACCESS_MODE_DATA&quot;)) {</span>
-<span class="fc" id="L1014">                            settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connStr + &quot;ACCESS_MODE_DATA=r&quot;);</span>
+<span class="pc bpc" id="L1003" title="2 of 4 branches missed.">        if (mode.isDatabaseRequired() &amp;&amp; database == null) {</span>
+<span class="pc bpc" id="L1004" title="1 of 4 branches missed.">            try (WriteLock dblock = new WriteLock(getSettings(), lockRequired &amp;&amp; DatabaseManager.isH2Connection(settings))) {</span>
+<span class="fc bfc" id="L1005" title="All 2 branches covered.">                if (readOnly</span>
+<span class="pc bpc" id="L1006" title="1 of 2 branches missed.">                        &amp;&amp; DatabaseManager.isH2Connection(settings)</span>
+<span class="pc bpc" id="L1007" title="1 of 2 branches missed.">                        &amp;&amp; settings.getString(Settings.KEYS.DB_CONNECTION_STRING).contains(&quot;file:%s&quot;)) {</span>
+<span class="fc" id="L1008">                    final File db = DatabaseManager.getH2DataFile(settings);</span>
+<span class="pc bpc" id="L1009" title="1 of 2 branches missed.">                    if (db.isFile()) {</span>
+<span class="fc" id="L1010">                        final File temp = settings.getTempDirectory();</span>
+<span class="fc" id="L1011">                        final File tempDB = new File(temp, db.getName());</span>
+<span class="fc" id="L1012">                        LOGGER.debug(&quot;copying database {} to {}&quot;, db.toPath(), temp.toPath());</span>
+<span class="fc" id="L1013">                        Files.copy(db.toPath(), tempDB.toPath());</span>
+<span class="fc" id="L1014">                        settings.setString(Settings.KEYS.H2_DATA_DIRECTORY, temp.getPath());</span>
+<span class="fc" id="L1015">                        final String connStr = settings.getString(Settings.KEYS.DB_CONNECTION_STRING);</span>
+<span class="pc bpc" id="L1016" title="1 of 2 branches missed.">                        if (!connStr.contains(&quot;ACCESS_MODE_DATA&quot;)) {</span>
+<span class="fc" id="L1017">                            settings.setString(Settings.KEYS.DB_CONNECTION_STRING, connStr + &quot;ACCESS_MODE_DATA=r&quot;);</span>
                         }
-<span class="fc" id="L1016">                        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);</span>
-<span class="fc" id="L1017">                        database = new CveDB(settings);</span>
-<span class="fc" id="L1018">                    } else {</span>
-<span class="nc" id="L1019">                        throw new DatabaseException(&quot;Unable to open database - configured database file does not exist: &quot; + db);</span>
+<span class="fc" id="L1019">                        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, false);</span>
+<span class="fc" id="L1020">                        database = new CveDB(settings);</span>
+<span class="fc" id="L1021">                    } else {</span>
+<span class="nc" id="L1022">                        throw new DatabaseException(&quot;Unable to open database - configured database file does not exist: &quot; + db);</span>
                     }
-<span class="fc" id="L1021">                } else {</span>
-<span class="fc" id="L1022">                    database = new CveDB(settings);</span>
+<span class="fc" id="L1024">                } else {</span>
+<span class="fc" id="L1025">                    database = new CveDB(settings);</span>
                 }
-<span class="nc" id="L1024">            } catch (IOException ex) {</span>
-<span class="nc" id="L1025">                throw new DatabaseException(&quot;Unable to open database in read only mode&quot;, ex);</span>
-<span class="nc" id="L1026">            } catch (WriteLockException ex) {</span>
-<span class="nc" id="L1027">                throw new DatabaseException(&quot;Failed to obtain lock - unable to open database&quot;, ex);</span>
-<span class="fc" id="L1028">            }</span>
-<span class="fc" id="L1029">            database.open();</span>
+<span class="nc" id="L1027">            } catch (IOException ex) {</span>
+<span class="nc" id="L1028">                throw new DatabaseException(&quot;Unable to open database in read only mode&quot;, ex);</span>
+<span class="nc" id="L1029">            } catch (WriteLockException ex) {</span>
+<span class="nc" id="L1030">                throw new DatabaseException(&quot;Failed to obtain lock - unable to open database&quot;, ex);</span>
+<span class="fc" id="L1031">            }</span>
+<span class="fc" id="L1032">            database.open();</span>
         }
-<span class="fc" id="L1031">    }</span>
+<span class="fc" id="L1034">    }</span>
 
     /**
      * Returns a reference to the database.
@@ -1036,7 +1039,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return a reference to the database
      */
     public CveDB getDatabase() {
-<span class="fc" id="L1039">        return this.database;</span>
+<span class="fc" id="L1042">        return this.database;</span>
     }
 
     /**
@@ -1047,12 +1050,12 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @NotNull
     public List&lt;Analyzer&gt; getAnalyzers() {
-<span class="fc" id="L1050">        final List&lt;Analyzer&gt; analyzerList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L1053">        final List&lt;Analyzer&gt; analyzerList = new ArrayList&lt;&gt;();</span>
         //insteae of forEach - we can just do a collect
-<span class="fc" id="L1052">        mode.getPhases().stream()</span>
-<span class="fc" id="L1053">                .map(analyzers::get)</span>
-<span class="fc" id="L1054">                .forEachOrdered(analyzerList::addAll);</span>
-<span class="fc" id="L1055">        return analyzerList;</span>
+<span class="fc" id="L1055">        mode.getPhases().stream()</span>
+<span class="fc" id="L1056">                .map(analyzers::get)</span>
+<span class="fc" id="L1057">                .forEachOrdered(analyzerList::addAll);</span>
+<span class="fc" id="L1058">        return analyzerList;</span>
     }
 
     /**
@@ -1064,12 +1067,12 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @Override
     public boolean accept(@Nullable final File file) {
-<span class="pc bpc" id="L1067" title="1 of 2 branches missed.">        if (file == null) {</span>
-<span class="nc" id="L1068">            return false;</span>
+<span class="pc bpc" id="L1070" title="1 of 2 branches missed.">        if (file == null) {</span>
+<span class="nc" id="L1071">            return false;</span>
         }
         /* note, we can't break early on this loop as the analyzers need to know if
         they have files to work on prior to initialization */
-<span class="fc bfc" id="L1072" title="All 4 branches covered.">        return this.fileTypeAnalyzers.stream().map((a) -&gt; a.accept(file)).reduce(false, (accumulator, result) -&gt; accumulator || result);</span>
+<span class="fc bfc" id="L1075" title="All 4 branches covered.">        return this.fileTypeAnalyzers.stream().map((a) -&gt; a.accept(file)).reduce(false, (accumulator, result) -&gt; accumulator || result);</span>
     }
 
     /**
@@ -1078,7 +1081,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the set of file type analyzers
      */
     public Set&lt;FileTypeAnalyzer&gt; getFileTypeAnalyzers() {
-<span class="nc" id="L1081">        return this.fileTypeAnalyzers;</span>
+<span class="nc" id="L1084">        return this.fileTypeAnalyzers;</span>
     }
 
     /**
@@ -1087,7 +1090,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the configured settings
      */
     public Settings getSettings() {
-<span class="fc" id="L1090">        return settings;</span>
+<span class="fc" id="L1093">        return settings;</span>
     }
 
     /**
@@ -1097,7 +1100,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the object
      */
     public Object getObject(String key) {
-<span class="fc" id="L1100">        return objects.get(key);</span>
+<span class="fc" id="L1103">        return objects.get(key);</span>
     }
 
     /**
@@ -1107,8 +1110,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param object the object to store
      */
     public void putObject(String key, Object object) {
-<span class="fc" id="L1110">        objects.put(key, object);</span>
-<span class="fc" id="L1111">    }</span>
+<span class="fc" id="L1113">        objects.put(key, object);</span>
+<span class="fc" id="L1114">    }</span>
 
     /**
      * Verifies if the object exists in the object store.
@@ -1118,7 +1121,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * &lt;code&gt;false&lt;/code&gt;
      */
     public boolean hasObject(String key) {
-<span class="fc" id="L1121">        return objects.containsKey(key);</span>
+<span class="fc" id="L1124">        return objects.containsKey(key);</span>
     }
 
     /**
@@ -1127,8 +1130,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param key the key to the object
      */
     public void removeObject(String key) {
-<span class="nc" id="L1130">        objects.remove(key);</span>
-<span class="nc" id="L1131">    }</span>
+<span class="nc" id="L1133">        objects.remove(key);</span>
+<span class="nc" id="L1134">    }</span>
 
     /**
      * Returns the mode of the engine.
@@ -1136,7 +1139,7 @@ public class Engine implements FileFilter, AutoCloseable {
      * @return the mode of the engine
      */
     public Mode getMode() {
-<span class="fc" id="L1139">        return mode;</span>
+<span class="fc" id="L1142">        return mode;</span>
     }
 
     /**
@@ -1146,8 +1149,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @param fta the file type analyzer to add
      */
     protected void addFileTypeAnalyzer(@NotNull final FileTypeAnalyzer fta) {
-<span class="fc" id="L1149">        this.fileTypeAnalyzers.add(fta);</span>
-<span class="fc" id="L1150">    }</span>
+<span class="fc" id="L1152">        this.fileTypeAnalyzers.add(fta);</span>
+<span class="fc" id="L1153">    }</span>
 
     /**
      * Checks the CPE Index to ensure documents exists. If none exist a
@@ -1156,10 +1159,10 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws NoDataException thrown if no data exists in the CPE Index
      */
     private void ensureDataExists() throws NoDataException {
-<span class="pc bpc" id="L1159" title="3 of 6 branches missed.">        if (mode.isDatabaseRequired() &amp;&amp; (database == null || !database.dataExists())) {</span>
-<span class="nc" id="L1160">            throw new NoDataException(&quot;No documents exist&quot;);</span>
+<span class="pc bpc" id="L1162" title="3 of 6 branches missed.">        if (mode.isDatabaseRequired() &amp;&amp; (database == null || !database.dataExists())) {</span>
+<span class="nc" id="L1163">            throw new NoDataException(&quot;No documents exist&quot;);</span>
         }
-<span class="fc" id="L1162">    }</span>
+<span class="fc" id="L1165">    }</span>
 
     /**
      * Constructs and throws a fatal exception collection.
@@ -1172,10 +1175,10 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     private void throwFatalExceptionCollection(String message, @NotNull final Throwable throwable,
             @NotNull final List&lt;Throwable&gt; exceptions) throws ExceptionCollection {
-<span class="fc" id="L1175">        LOGGER.error(message);</span>
-<span class="fc" id="L1176">        LOGGER.debug(&quot;&quot;, throwable);</span>
-<span class="fc" id="L1177">        exceptions.add(throwable);</span>
-<span class="fc" id="L1178">        throw new ExceptionCollection(exceptions, true);</span>
+<span class="fc" id="L1178">        LOGGER.error(message);</span>
+<span class="fc" id="L1179">        LOGGER.debug(&quot;&quot;, throwable);</span>
+<span class="fc" id="L1180">        exceptions.add(throwable);</span>
+<span class="fc" id="L1181">        throw new ExceptionCollection(exceptions, true);</span>
     }
 
     /**
@@ -1191,8 +1194,8 @@ public class Engine implements FileFilter, AutoCloseable {
      */
     @Deprecated
     public void writeReports(String applicationName, File outputDir, String format) throws ReportException {
-<span class="nc" id="L1194">        writeReports(applicationName, null, null, null, outputDir, format, null);</span>
-<span class="nc" id="L1195">    }</span>
+<span class="nc" id="L1197">        writeReports(applicationName, null, null, null, outputDir, format, null);</span>
+<span class="nc" id="L1198">    }</span>
 
     //CSOFF: LineLength
     /**
@@ -1207,8 +1210,8 @@ public class Engine implements FileFilter, AutoCloseable {
      * @throws ReportException thrown if there is an error generating the report
      */
     public void writeReports(String applicationName, File outputDir, String format, ExceptionCollection exceptions) throws ReportException {
-<span class="fc" id="L1210">        writeReports(applicationName, null, null, null, outputDir, format, exceptions);</span>
-<span class="fc" id="L1211">    }</span>
+<span class="fc" id="L1213">        writeReports(applicationName, null, null, null, outputDir, format, exceptions);</span>
+<span class="fc" id="L1214">    }</span>
     //CSON: LineLength
 
     /**
@@ -1229,8 +1232,8 @@ public class Engine implements FileFilter, AutoCloseable {
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,
             @Nullable final String artifactId, @Nullable final String version,
             @NotNull final File outputDir, String format) throws ReportException {
-<span class="nc" id="L1232">        writeReports(applicationName, groupId, artifactId, version, outputDir, format, null);</span>
-<span class="nc" id="L1233">    }</span>
+<span class="nc" id="L1235">        writeReports(applicationName, groupId, artifactId, version, outputDir, format, null);</span>
+<span class="nc" id="L1236">    }</span>
 
     //CSOFF: LineLength
     /**
@@ -1250,48 +1253,61 @@ public class Engine implements FileFilter, AutoCloseable {
     public synchronized void writeReports(String applicationName, @Nullable final String groupId,
             @Nullable final String artifactId, @Nullable final String version,
             @NotNull final File outputDir, String format, ExceptionCollection exceptions) throws ReportException {
-<span class="pc bpc" id="L1253" title="1 of 2 branches missed.">        if (mode == Mode.EVIDENCE_COLLECTION) {</span>
-<span class="nc" id="L1254">            throw new UnsupportedOperationException(&quot;Cannot generate report in evidence collection mode.&quot;);</span>
+<span class="pc bpc" id="L1256" title="1 of 2 branches missed.">        if (mode == Mode.EVIDENCE_COLLECTION) {</span>
+<span class="nc" id="L1257">            throw new UnsupportedOperationException(&quot;Cannot generate report in evidence collection mode.&quot;);</span>
         }
-<span class="fc" id="L1256">        final DatabaseProperties prop = database.getDatabaseProperties();</span>
+<span class="fc" id="L1259">        final DatabaseProperties prop = database.getDatabaseProperties();</span>
 
-<span class="fc" id="L1258">        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version,</span>
-<span class="fc" id="L1259">                dependencies, getAnalyzers(), prop, settings, exceptions);</span>
+<span class="fc" id="L1261">        final ReportGenerator r = new ReportGenerator(applicationName, groupId, artifactId, version,</span>
+<span class="fc" id="L1262">                dependencies, getAnalyzers(), prop, settings, exceptions);</span>
         try {
-<span class="fc" id="L1261">            r.write(outputDir.getAbsolutePath(), format);</span>
-<span class="nc" id="L1262">        } catch (ReportException ex) {</span>
-<span class="nc" id="L1263">            final String msg = String.format(&quot;Error generating the report for %s&quot;, applicationName);</span>
-<span class="nc" id="L1264">            LOGGER.debug(msg, ex);</span>
-<span class="nc" id="L1265">            throw new ReportException(msg, ex);</span>
-<span class="fc" id="L1266">        }</span>
-<span class="fc" id="L1267">    }</span>
+<span class="fc" id="L1264">            r.write(outputDir.getAbsolutePath(), format);</span>
+<span class="nc" id="L1265">        } catch (ReportException ex) {</span>
+<span class="nc" id="L1266">            final String msg = String.format(&quot;Error generating the report for %s&quot;, applicationName);</span>
+<span class="nc" id="L1267">            LOGGER.debug(msg, ex);</span>
+<span class="nc" id="L1268">            throw new ReportException(msg, ex);</span>
+<span class="fc" id="L1269">        }</span>
+<span class="fc" id="L1270">    }</span>
     //CSON: LineLength
 
     private boolean identifiersMatch(Set&lt;Identifier&gt; left, Set&lt;Identifier&gt; right) {
-<span class="pc bpc" id="L1271" title="4 of 8 branches missed.">        if (left != null &amp;&amp; right != null &amp;&amp; left.size() &gt; 0 &amp;&amp; left.size() == right.size()) {</span>
-<span class="fc" id="L1272">            int count = 0;</span>
-<span class="fc bfc" id="L1273" title="All 2 branches covered.">            for (Identifier l : left) {</span>
-<span class="pc bpc" id="L1274" title="1 of 2 branches missed.">                for (Identifier r : right) {</span>
-<span class="pc bpc" id="L1275" title="1 of 2 branches missed.">                    if (l.getValue().equals(r.getValue())) {</span>
-<span class="fc" id="L1276">                        count += 1;</span>
-<span class="fc" id="L1277">                        break;</span>
+<span class="pc bpc" id="L1274" title="4 of 8 branches missed.">        if (left != null &amp;&amp; right != null &amp;&amp; left.size() &gt; 0 &amp;&amp; left.size() == right.size()) {</span>
+<span class="fc" id="L1275">            int count = 0;</span>
+<span class="fc bfc" id="L1276" title="All 2 branches covered.">            for (Identifier l : left) {</span>
+<span class="pc bpc" id="L1277" title="1 of 2 branches missed.">                for (Identifier r : right) {</span>
+<span class="pc bpc" id="L1278" title="1 of 2 branches missed.">                    if (l.getValue().equals(r.getValue())) {</span>
+<span class="fc" id="L1279">                        count += 1;</span>
+<span class="fc" id="L1280">                        break;</span>
                     }
-<span class="nc" id="L1279">                }</span>
-<span class="fc" id="L1280">            }</span>
-<span class="pc bpc" id="L1281" title="1 of 2 branches missed.">            return count == left.size();</span>
+<span class="nc" id="L1282">                }</span>
+<span class="fc" id="L1283">            }</span>
+<span class="pc bpc" id="L1284" title="1 of 2 branches missed.">            return count == left.size();</span>
         }
-<span class="nc" id="L1283">        return false;</span>
+<span class="nc" id="L1286">        return false;</span>
     }
+
+    /**
+     * Checks that if Java 8 is being used, it is at least update 251. This is
+     * required as a new method was introduced that is used by Apache HTTP
+     * Client. See
+     * https://stackoverflow.com/questions/76226322/exception-in-thread-httpclient-dispatch-1-java-lang-nosuchmethoderror-javax-n#comment134427003_76226322
+     */
+    private void checkRuntimeVersion() {
+<span class="pc bpc" id="L1296" title="2 of 4 branches missed.">        if (Utils.getJavaVersion() == 8 &amp;&amp; Utils.getJavaUpdateVersion() &lt; 251) {</span>
+<span class="nc" id="L1297">            LOGGER.error(&quot;Non-supported Java Runtime: dependency-check requires at least Java 8 update 251 or higher.&quot;);</span>
+<span class="nc" id="L1298">            throw new RuntimeException(&quot;dependency-check requires Java 8 update 251 or higher&quot;);</span>
+        }
+<span class="fc" id="L1300">    }</span>
 
     /**
      * {@link Engine} execution modes.
      */
-<span class="fc" id="L1289">    public enum Mode {</span>
+<span class="fc" id="L1305">    public enum Mode {</span>
         /**
          * In evidence collection mode the {@link Engine} only collects evidence
          * from the scan targets, and doesn't require a database.
          */
-<span class="fc" id="L1294">        EVIDENCE_COLLECTION(</span>
+<span class="fc" id="L1310">        EVIDENCE_COLLECTION(</span>
                 false,
                 INITIAL,
                 PRE_INFORMATION_COLLECTION,
@@ -1307,7 +1323,7 @@ public class Engine implements FileFilter, AutoCloseable {
          * should be injected into the {@link Engine} using
          * {@link Engine#setDependencies(List)}.
          */
-<span class="fc" id="L1310">        EVIDENCE_PROCESSING(</span>
+<span class="fc" id="L1326">        EVIDENCE_PROCESSING(</span>
                 true,
                 PRE_IDENTIFIER_ANALYSIS,
                 IDENTIFIER_ANALYSIS,
@@ -1322,7 +1338,7 @@ public class Engine implements FileFilter, AutoCloseable {
          * In standalone mode the {@link Engine} will collect and process
          * evidence in a single execution.
          */
-<span class="fc" id="L1325">        STANDALONE(true, AnalysisPhase.values());</span>
+<span class="fc" id="L1341">        STANDALONE(true, AnalysisPhase.values());</span>
 
         /**
          * Whether the database is required in this mode.
@@ -1339,10 +1355,10 @@ public class Engine implements FileFilter, AutoCloseable {
          * @param databaseRequired if the database is required for the mode
          * @param phases the analysis phases to include in the mode
          */
-<span class="fc" id="L1342">        Mode(boolean databaseRequired, AnalysisPhase... phases) {</span>
-<span class="fc" id="L1343">            this.databaseRequired = databaseRequired;</span>
-<span class="fc" id="L1344">            this.phases = Collections.unmodifiableList(Arrays.asList(phases));</span>
-<span class="fc" id="L1345">        }</span>
+<span class="fc" id="L1358">        Mode(boolean databaseRequired, AnalysisPhase... phases) {</span>
+<span class="fc" id="L1359">            this.databaseRequired = databaseRequired;</span>
+<span class="fc" id="L1360">            this.phases = Collections.unmodifiableList(Arrays.asList(phases));</span>
+<span class="fc" id="L1361">        }</span>
 
         /**
          * Returns true if the database is required; otherwise false.
@@ -1350,7 +1366,7 @@ public class Engine implements FileFilter, AutoCloseable {
          * @return whether or not the database is required
          */
         private boolean isDatabaseRequired() {
-<span class="fc" id="L1353">            return databaseRequired;</span>
+<span class="fc" id="L1369">            return databaseRequired;</span>
         }
 
         /**
@@ -1359,8 +1375,8 @@ public class Engine implements FileFilter, AutoCloseable {
          * @return the phases for this mode
          */
         public List&lt;AnalysisPhase&gt; getPhases() {
-<span class="fc" id="L1362">            return phases;</span>
+<span class="fc" id="L1378">            return phases;</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

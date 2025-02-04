@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractNpmAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">AbstractNpmAnalyzer.java</span></div><h1>AbstractNpmAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractNpmAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">AbstractNpmAnalyzer.java</span></div><h1>AbstractNpmAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -157,7 +157,7 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L157">        nodeModule.setMd5sum(Checksum.getMD5Checksum(String.format(&quot;%s:%s&quot;, name, version)));</span>
 <span class="fc" id="L158">        nodeModule.addEvidence(EvidenceType.PRODUCT, &quot;package.json&quot;, &quot;name&quot;, name, Confidence.HIGHEST);</span>
 <span class="fc" id="L159">        nodeModule.addEvidence(EvidenceType.VENDOR, &quot;package.json&quot;, &quot;name&quot;, name, Confidence.HIGH);</span>
-<span class="fc bfc" id="L160" title="All 2 branches covered.">        if (!StringUtils.isBlank(version)) {</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        if (!StringUtils.isBlank(version)) {</span>
 <span class="fc" id="L161">            nodeModule.addEvidence(EvidenceType.VERSION, &quot;package.json&quot;, &quot;version&quot;, version, Confidence.HIGHEST);</span>
 <span class="fc" id="L162">            nodeModule.setVersion(version);</span>
         }
@@ -292,7 +292,7 @@ import us.springett.parsers.cpe.values.Part;
      */
     protected Dependency findDependency(Engine engine, String name, String version) {
 <span class="fc bfc" id="L294" title="All 2 branches covered.">        for (Dependency d : engine.getDependencies()) {</span>
-<span class="pc bpc" id="L295" title="1 of 8 branches missed.">            if (NPM_DEPENDENCY_ECOSYSTEM.equals(d.getEcosystem()) &amp;&amp; name.equals(d.getName()) &amp;&amp; version != null &amp;&amp; d.getVersion() != null) {</span>
+<span class="pc bpc" id="L295" title="2 of 8 branches missed.">            if (NPM_DEPENDENCY_ECOSYSTEM.equals(d.getEcosystem()) &amp;&amp; name.equals(d.getName()) &amp;&amp; version != null &amp;&amp; d.getVersion() != null) {</span>
 <span class="fc" id="L296">                final String dependencyVersion = d.getVersion();</span>
 <span class="fc bfc" id="L297" title="All 2 branches covered.">                if (DependencyBundlingAnalyzer.npmVersionsMatch(version, dependencyVersion)) {</span>
 <span class="fc" id="L298">                    return d;</span>
@@ -483,7 +483,7 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L483">            vuln.addVulnerableSoftware(vs);</span>
 
 <span class="fc" id="L485">            String version = advisory.getVersion();</span>
-<span class="fc bfc" id="L486" title="All 4 branches covered.">            if (version == null &amp;&amp; dependencyMap.containsKey(advisory.getModuleName())) {</span>
+<span class="pc bpc" id="L486" title="1 of 4 branches missed.">            if (version == null &amp;&amp; dependencyMap.containsKey(advisory.getModuleName())) {</span>
 <span class="fc" id="L487">                version = determineVersionFromMap(advisory.getVulnerableVersions(), dependencyMap.get(advisory.getModuleName()));</span>
             }
 <span class="fc" id="L489">            final Dependency existing = findDependency(engine, advisory.getModuleName(), version);</span>
@@ -505,17 +505,20 @@ import us.springett.parsers.cpe.values.Part;
      * @param vuln the vulnerability to add
      */
     protected void replaceOrAddVulnerability(Dependency dependency, Vulnerability vuln) {
-<span class="pc bpc" id="L508" title="1 of 2 branches missed.">        boolean found = vuln.getSource() == Vulnerability.Source.NPM &amp;&amp; </span>
-<span class="pc bpc" id="L509" title="1 of 2 branches missed.">                dependency.getVulnerabilities().stream().anyMatch(existing -&gt; {</span>
-<span class="fc" id="L510">            return existing.getReferences().stream().anyMatch(ref -&gt;{</span>
-<span class="pc bpc" id="L511" title="1 of 2 branches missed.">                    return ref.getName() != null</span>
-<span class="pc bpc" id="L512" title="1 of 2 branches missed.">                            &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + vuln.getName());</span>
-            });
-        });
-<span class="pc bpc" id="L515" title="1 of 2 branches missed.">        if (!found) {</span>
-<span class="fc" id="L516">            dependency.addVulnerability(vuln);</span>
+<span class="fc" id="L508">        boolean found = false;</span>
+<span class="fc bfc" id="L509" title="All 2 branches covered.">        for (Vulnerability existing : dependency.getVulnerabilities()) {</span>
+<span class="fc bfc" id="L510" title="All 2 branches covered.">            for (Reference ref : existing.getReferences()) {</span>
+<span class="pc bpc" id="L511" title="1 of 2 branches missed.">                if (ref.getName() != null</span>
+<span class="pc bpc" id="L512" title="1 of 2 branches missed.">                        &amp;&amp; vuln.getSource().toString().equals(&quot;NPM&quot;)</span>
+<span class="pc bpc" id="L513" title="1 of 2 branches missed.">                        &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + vuln.getName())) {</span>
+<span class="nc" id="L514">                    found = true;</span>
+                }
+<span class="fc" id="L516">            }</span>
+<span class="fc" id="L517">        }</span>
+<span class="pc bpc" id="L518" title="1 of 2 branches missed.">        if (!found) {</span>
+<span class="fc" id="L519">            dependency.addVulnerability(vuln);</span>
         }
-<span class="fc" id="L518">    }</span>
+<span class="fc" id="L521">    }</span>
 
     /**
      * Returns the node audit search utility.
@@ -523,7 +526,7 @@ import us.springett.parsers.cpe.values.Part;
      * @return the node audit search utility
      */
     protected NodeAuditSearch getSearcher() {
-<span class="fc" id="L526">        return searcher;</span>
+<span class="fc" id="L529">        return searcher;</span>
     }
 
     /**
@@ -536,20 +539,20 @@ import us.springett.parsers.cpe.values.Part;
      * @return the selected range from the versionRange
      */
     public static String determineVersionFromMap(String versionRange, Collection&lt;String&gt; availableVersions) {
-<span class="fc bfc" id="L539" title="All 2 branches covered.">        if (availableVersions.size() == 1) {</span>
-<span class="fc" id="L540">            return availableVersions.iterator().next();</span>
+<span class="fc bfc" id="L542" title="All 2 branches covered.">        if (availableVersions.size() == 1) {</span>
+<span class="fc" id="L543">            return availableVersions.iterator().next();</span>
         }
-<span class="fc bfc" id="L542" title="All 2 branches covered.">        for (String v : availableVersions) {</span>
+<span class="fc bfc" id="L545" title="All 2 branches covered.">        for (String v : availableVersions) {</span>
             try {
-<span class="fc" id="L544">                final Semver version = new Semver(v);</span>
-<span class="fc bfc" id="L545" title="All 2 branches covered.">                if (version.satisfies(versionRange)) {</span>
-<span class="fc" id="L546">                    return v;</span>
+<span class="fc" id="L547">                final Semver version = new Semver(v);</span>
+<span class="fc bfc" id="L548" title="All 2 branches covered.">                if (version.satisfies(versionRange)) {</span>
+<span class="fc" id="L549">                    return v;</span>
                 }
-<span class="nc" id="L548">            } catch (SemverException ex) {</span>
-<span class="nc" id="L549">                LOGGER.debug(&quot;invalid semver: &quot; + v);</span>
-<span class="fc" id="L550">            }</span>
-<span class="fc" id="L551">        }</span>
-<span class="fc" id="L552">        return availableVersions.iterator().next();</span>
+<span class="nc" id="L551">            } catch (SemverException ex) {</span>
+<span class="nc" id="L552">                LOGGER.debug(&quot;invalid semver: &quot; + v);</span>
+<span class="fc" id="L553">            }</span>
+<span class="fc" id="L554">        }</span>
+<span class="fc" id="L555">        return availableVersions.iterator().next();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

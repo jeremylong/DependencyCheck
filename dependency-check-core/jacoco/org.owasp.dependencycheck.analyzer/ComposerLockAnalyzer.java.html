@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComposerLockAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">ComposerLockAnalyzer.java</span></div><h1>ComposerLockAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComposerLockAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">ComposerLockAnalyzer.java</span></div><h1>ComposerLockAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -108,46 +108,43 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
 <span class="fc" id="L109">        engine.removeDependency(dependency);</span>
 <span class="fc" id="L110">        try (FileInputStream fis = new FileInputStream(dependency.getActualFile())) {</span>
-<span class="fc" id="L111">            final boolean skipdev = getSettings().getBoolean(Settings.KEYS.ANALYZER_COMPOSER_LOCK_SKIP_DEV, false);</span>
-<span class="fc" id="L112">            final ComposerLockParser clp = new ComposerLockParser(fis, skipdev);</span>
-<span class="fc" id="L113">            LOGGER.debug(&quot;Checking composer.lock file {}&quot;, dependency.getActualFilePath());</span>
-<span class="fc" id="L114">            clp.process();</span>
-<span class="fc" id="L115">            clp.getDependencies().stream().map((dep) -&gt; {</span>
-<span class="fc" id="L116">                final Dependency d = new Dependency(dependency.getActualFile(), true);</span>
-<span class="fc" id="L117">                final String filePath = String.format(&quot;%s:%s/%s/%s&quot;, dependency.getFilePath(), dep.getGroup(), dep.getProject(), dep.getVersion());</span>
-<span class="fc" id="L118">                d.setName(dep.getProject());</span>
-<span class="fc" id="L119">                d.setVersion(dep.getVersion());</span>
+<span class="fc" id="L111">            final ComposerLockParser clp = new ComposerLockParser(fis);</span>
+<span class="fc" id="L112">            LOGGER.debug(&quot;Checking composer.lock file {}&quot;, dependency.getActualFilePath());</span>
+<span class="fc" id="L113">            clp.process();</span>
+<span class="fc" id="L114">            clp.getDependencies().stream().map((dep) -&gt; {</span>
+<span class="fc" id="L115">                final Dependency d = new Dependency(dependency.getActualFile(), true);</span>
+<span class="fc" id="L116">                final String filePath = String.format(&quot;%s:%s/%s/%s&quot;, dependency.getFilePath(), dep.getGroup(), dep.getProject(), dep.getVersion());</span>
+<span class="fc" id="L117">                d.setName(dep.getProject());</span>
+<span class="fc" id="L118">                d.setVersion(dep.getVersion());</span>
                 try {
-<span class="fc" id="L121">                    final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;composer&quot;).withNamespace(dep.getGroup())</span>
-<span class="fc" id="L122">                            .withName(dep.getProject()).withVersion(dep.getVersion()).build();</span>
-<span class="fc" id="L123">                    d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
-<span class="nc" id="L124">                } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L125">                    LOGGER.debug(&quot;Unable to build package url for composer&quot;, ex);</span>
-<span class="nc" id="L126">                    d.addSoftwareIdentifier(new GenericIdentifier(&quot;composer:&quot; + dep.getGroup() + &quot;/&quot; + dep.getProject()</span>
-<span class="nc" id="L127">                            + &quot;@&quot; + dep.getVersion(), Confidence.HIGHEST));</span>
-<span class="fc" id="L128">                }</span>
-<span class="fc" id="L129">                d.setPackagePath(String.format(&quot;%s:%s&quot;, dep.getProject(), dep.getVersion()));</span>
-<span class="fc" id="L130">                d.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="fc" id="L131">                d.setFilePath(filePath);</span>
-<span class="fc" id="L132">                d.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
-<span class="fc" id="L133">                d.setSha256sum(Checksum.getSHA256Checksum(filePath));</span>
-<span class="fc" id="L134">                d.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
-<span class="fc" id="L135">                d.addEvidence(EvidenceType.VENDOR, COMPOSER_LOCK, &quot;vendor&quot;, dep.getGroup(), Confidence.HIGHEST);</span>
-<span class="fc" id="L136">                d.addEvidence(EvidenceType.PRODUCT, COMPOSER_LOCK, &quot;vendor&quot;, dep.getGroup(), Confidence.MEDIUM);</span>
-<span class="fc" id="L137">                d.addEvidence(EvidenceType.PRODUCT, COMPOSER_LOCK, &quot;product&quot;, dep.getProject(), Confidence.HIGHEST);</span>
-<span class="fc" id="L138">                d.addEvidence(EvidenceType.VENDOR, COMPOSER_LOCK, &quot;product&quot;, dep.getProject(), Confidence.HIGH);</span>
-<span class="fc" id="L139">                d.addEvidence(EvidenceType.VERSION, COMPOSER_LOCK, &quot;version&quot;, dep.getVersion(), Confidence.HIGHEST);</span>
-<span class="fc" id="L140">                return d;</span>
-<span class="fc" id="L141">            }).forEach((d) -&gt; {</span>
-<span class="fc" id="L142">                LOGGER.debug(&quot;Adding dependency {}&quot;, d.getDisplayFileName());</span>
-<span class="fc" id="L143">                engine.addDependency(d);</span>
-<span class="fc" id="L144">            });</span>
-<span class="nc" id="L145">        } catch (IOException ex) {</span>
-<span class="nc" id="L146">            LOGGER.warn(&quot;Error opening dependency {}&quot;, dependency.getActualFilePath());</span>
-<span class="nc" id="L147">        } catch (ComposerException ce) {</span>
-<span class="nc" id="L148">            LOGGER.warn(&quot;Error parsing composer.json {}&quot;, dependency.getActualFilePath(), ce);</span>
-<span class="pc" id="L149">        }</span>
-<span class="fc" id="L150">    }</span>
+<span class="fc" id="L120">                    final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;composer&quot;).withNamespace(dep.getGroup())</span>
+<span class="fc" id="L121">                            .withName(dep.getProject()).withVersion(dep.getVersion()).build();</span>
+<span class="fc" id="L122">                    d.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L123">                } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L124">                    LOGGER.debug(&quot;Unable to build package url for composer&quot;, ex);</span>
+<span class="nc" id="L125">                    d.addSoftwareIdentifier(new GenericIdentifier(&quot;composer:&quot; + dep.getGroup() + &quot;/&quot; + dep.getProject()</span>
+<span class="nc" id="L126">                            + &quot;@&quot; + dep.getVersion(), Confidence.HIGHEST));</span>
+<span class="fc" id="L127">                }</span>
+<span class="fc" id="L128">                d.setPackagePath(String.format(&quot;%s:%s&quot;, dep.getProject(), dep.getVersion()));</span>
+<span class="fc" id="L129">                d.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L130">                d.setFilePath(filePath);</span>
+<span class="fc" id="L131">                d.setSha1sum(Checksum.getSHA1Checksum(filePath));</span>
+<span class="fc" id="L132">                d.setSha256sum(Checksum.getSHA256Checksum(filePath));</span>
+<span class="fc" id="L133">                d.setMd5sum(Checksum.getMD5Checksum(filePath));</span>
+<span class="fc" id="L134">                d.addEvidence(EvidenceType.VENDOR, COMPOSER_LOCK, &quot;vendor&quot;, dep.getGroup(), Confidence.HIGHEST);</span>
+<span class="fc" id="L135">                d.addEvidence(EvidenceType.PRODUCT, COMPOSER_LOCK, &quot;product&quot;, dep.getProject(), Confidence.HIGHEST);</span>
+<span class="fc" id="L136">                d.addEvidence(EvidenceType.VERSION, COMPOSER_LOCK, &quot;version&quot;, dep.getVersion(), Confidence.HIGHEST);</span>
+<span class="fc" id="L137">                return d;</span>
+<span class="fc" id="L138">            }).forEach((d) -&gt; {</span>
+<span class="fc" id="L139">                LOGGER.debug(&quot;Adding dependency {}&quot;, d.getDisplayFileName());</span>
+<span class="fc" id="L140">                engine.addDependency(d);</span>
+<span class="fc" id="L141">            });</span>
+<span class="nc" id="L142">        } catch (IOException ex) {</span>
+<span class="nc" id="L143">            LOGGER.warn(&quot;Error opening dependency {}&quot;, dependency.getActualFilePath());</span>
+<span class="nc" id="L144">        } catch (ComposerException ce) {</span>
+<span class="nc" id="L145">            LOGGER.warn(&quot;Error parsing composer.json {}&quot;, dependency.getActualFilePath(), ce);</span>
+<span class="pc" id="L146">        }</span>
+<span class="fc" id="L147">    }</span>
 
     /**
      * Gets the key to determine whether the analyzer is enabled.
@@ -156,7 +153,7 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L159">        return Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED;</span>
+<span class="fc" id="L156">        return Settings.KEYS.ANALYZER_COMPOSER_LOCK_ENABLED;</span>
     }
 
     /**
@@ -166,7 +163,7 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
      */
     @Override
     public String getName() {
-<span class="fc" id="L169">        return ANALYZER_NAME;</span>
+<span class="fc" id="L166">        return ANALYZER_NAME;</span>
     }
 
     /**
@@ -176,7 +173,7 @@ import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
      */
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L179">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
+<span class="fc" id="L176">        return AnalysisPhase.INFORMATION_COLLECTION;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

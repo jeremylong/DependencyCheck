@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CentralSearch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.central</a> &gt; <span class="el_source">CentralSearch.java</span></div><h1>CentralSearch.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CentralSearch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.central</a> &gt; <span class="el_source">CentralSearch.java</span></div><h1>CentralSearch.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -17,20 +17,18 @@
  */
 package org.owasp.dependencycheck.data.central;
 
-import org.apache.hc.client5.http.impl.classic.AbstractHttpClientResponseHandler;
-import org.apache.hc.core5.http.message.BasicHeader;
-import org.owasp.dependencycheck.utils.DownloadFailedException;
-import org.owasp.dependencycheck.utils.Downloader;
-import org.owasp.dependencycheck.utils.ResourceNotFoundException;
 import org.owasp.dependencycheck.utils.TooManyRequestsException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -40,11 +38,13 @@ import org.owasp.dependencycheck.data.cache.DataCache;
 import org.owasp.dependencycheck.data.cache.DataCacheFactory;
 import org.owasp.dependencycheck.data.nexus.MavenArtifact;
 import org.owasp.dependencycheck.utils.Settings;
-import org.owasp.dependencycheck.utils.ToXMLDocumentResponseHandler;
+import org.owasp.dependencycheck.utils.URLConnectionFactory;
+import org.owasp.dependencycheck.utils.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Class of methods to search Maven Central via Central.
@@ -105,7 +105,7 @@ public class CentralSearch {
         }
 <span class="fc" id="L106">        this.query = queryStr;</span>
 <span class="fc" id="L107">        LOGGER.debug(&quot;Central Search Full URL: {}&quot;, String.format(query, rootURL, &quot;[SHA1]&quot;));</span>
-<span class="pc bpc" id="L108" title="2 of 4 branches missed.">        if (null != settings.getString(Settings.KEYS.PROXY_SERVER) || null != System.getProperty(&quot;https.proxyHost&quot;)) {</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if (null != settings.getString(Settings.KEYS.PROXY_SERVER)) {</span>
 <span class="nc" id="L109">            useProxy = true;</span>
 <span class="nc" id="L110">            LOGGER.debug(&quot;Using proxy&quot;);</span>
         } else {
@@ -154,87 +154,87 @@ public class CentralSearch {
 
 <span class="fc" id="L155">        LOGGER.trace(&quot;Searching Central url {}&quot;, url);</span>
 
+        // Determine if we need to use a proxy. The rules:
+        // 1) If the proxy is set, AND the setting is set to true, use the proxy
+        // 2) Otherwise, don't use the proxy (either the proxy isn't configured,
+        // or proxy is specifically set to false)
+<span class="fc" id="L161">        final URLConnectionFactory factory = new URLConnectionFactory(settings);</span>
+<span class="fc" id="L162">        final HttpURLConnection conn = factory.createHttpURLConnection(url, useProxy);</span>
+
+<span class="fc" id="L164">        conn.setDoOutput(true);</span>
+
         // JSON would be more elegant, but there's not currently a dependency
         // on JSON, so don't want to add one just for this
-<span class="fc" id="L159">        final BasicHeader acceptHeader = new BasicHeader(&quot;Accept&quot;, &quot;application/xml&quot;);</span>
-<span class="fc" id="L160">        final AbstractHttpClientResponseHandler&lt;Document&gt; handler = new ToXMLDocumentResponseHandler();</span>
-        try {
-<span class="fc" id="L162">            final Document doc = Downloader.getInstance().fetchAndHandle(url, handler, List.of(acceptHeader), useProxy);</span>
-<span class="fc" id="L163">            final boolean missing = addMavenArtifacts(doc, result);</span>
+<span class="fc" id="L168">        conn.addRequestProperty(&quot;Accept&quot;, &quot;application/xml&quot;);</span>
+<span class="fc" id="L169">        conn.connect();</span>
 
-<span class="fc bfc" id="L165" title="All 2 branches covered.">            if (missing) {</span>
-<span class="pc bpc" id="L166" title="1 of 2 branches missed.">                if (cache != null) {</span>
-<span class="fc" id="L167">                    cache.put(sha1, result);</span>
-                }
-<span class="fc" id="L169">                throw new FileNotFoundException(&quot;Artifact not found in Central&quot;);</span>
-            }
-<span class="nc" id="L171">        } catch (XPathExpressionException e) {</span>
-<span class="nc" id="L172">            final String errorMessage = &quot;Failed to parse MavenCentral XML Response: &quot; + e.getMessage();</span>
-<span class="nc" id="L173">            throw new IOException(errorMessage, e);</span>
-<span class="nc" id="L174">        } catch (TooManyRequestsException e) {</span>
-<span class="nc" id="L175">            final String errorMessage = &quot;Too many requests sent to MavenCentral; additional requests are being rejected.&quot;;</span>
-<span class="nc" id="L176">            throw new TooManyRequestsException(errorMessage, e);</span>
-<span class="nc" id="L177">        } catch (ResourceNotFoundException | DownloadFailedException e) {</span>
-<span class="nc" id="L178">            final String errorMessage = &quot;Could not connect to MavenCentral &quot; + e.getMessage();</span>
-<span class="nc" id="L179">            throw new IOException(errorMessage, e);</span>
-<span class="nc" id="L180">        } catch (URISyntaxException e) {</span>
-<span class="nc" id="L181">            final String errorMessage = &quot;Could not convert central search URL to a URI &quot; + e.getMessage();</span>
-<span class="nc" id="L182">            throw new IOException(errorMessage, e);</span>
-<span class="fc" id="L183">        }</span>
-<span class="pc bpc" id="L184" title="1 of 2 branches missed.">        if (cache != null) {</span>
-<span class="fc" id="L185">            cache.put(sha1, result);</span>
-        }
-<span class="fc" id="L187">        return result;</span>
-    }
-
-    /**
-     * Collect the artifacts from a MavenCentral search result and add them to the list.
-     * @param doc The Document received in response to the SHA1 search-request
-     * @param result The list of MavenArtifacts to which found artifacts will be added
-     * @return Whether the given document holds no search results
-     */
-    private boolean addMavenArtifacts(Document doc, List&lt;MavenArtifact&gt; result) throws XPathExpressionException {
-<span class="fc" id="L197">        boolean missing = false;</span>
-<span class="fc" id="L198">        final XPath xpath = XPathFactory.newInstance().newXPath();</span>
-<span class="fc" id="L199">        final String numFound = xpath.evaluate(&quot;/response/result/@numFound&quot;, doc);</span>
-<span class="fc bfc" id="L200" title="All 2 branches covered.">        if (&quot;0&quot;.equals(numFound)) {</span>
-<span class="fc" id="L201">            missing = true;</span>
-        } else {
-<span class="fc" id="L203">            final NodeList docs = (NodeList) xpath.evaluate(&quot;/response/result/doc&quot;, doc, XPathConstants.NODESET);</span>
-<span class="fc bfc" id="L204" title="All 2 branches covered.">            for (int i = 0; i &lt; docs.getLength(); i++) {</span>
-<span class="fc" id="L205">                final String g = xpath.evaluate(&quot;./str[@name='g']&quot;, docs.item(i));</span>
-<span class="fc" id="L206">                LOGGER.trace(&quot;GroupId: {}&quot;, g);</span>
-<span class="fc" id="L207">                final String a = xpath.evaluate(&quot;./str[@name='a']&quot;, docs.item(i));</span>
-<span class="fc" id="L208">                LOGGER.trace(&quot;ArtifactId: {}&quot;, a);</span>
-<span class="fc" id="L209">                final String v = xpath.evaluate(&quot;./str[@name='v']&quot;, docs.item(i));</span>
-<span class="fc" id="L210">                final NodeList attributes = (NodeList) xpath.evaluate(&quot;./arr[@name='ec']/str&quot;, docs.item(i), XPathConstants.NODESET);</span>
-<span class="fc" id="L211">                boolean pomAvailable = false;</span>
-<span class="fc" id="L212">                boolean jarAvailable = false;</span>
-<span class="fc bfc" id="L213" title="All 2 branches covered.">                for (int x = 0; x &lt; attributes.getLength(); x++) {</span>
-<span class="fc" id="L214">                    final String tmp = xpath.evaluate(&quot;.&quot;, attributes.item(x));</span>
-<span class="fc bfc" id="L215" title="All 2 branches covered.">                    if (&quot;.pom&quot;.equals(tmp)) {</span>
-<span class="fc" id="L216">                        pomAvailable = true;</span>
-<span class="fc bfc" id="L217" title="All 2 branches covered.">                    } else if (&quot;.jar&quot;.equals(tmp)) {</span>
-<span class="fc" id="L218">                        jarAvailable = true;</span>
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">        if (conn.getResponseCode() == 200) {</span>
+<span class="fc" id="L172">            boolean missing = false;</span>
+            try {
+<span class="fc" id="L174">                final DocumentBuilder builder = XmlUtils.buildSecureDocumentBuilder();</span>
+<span class="fc" id="L175">                final Document doc = builder.parse(conn.getInputStream());</span>
+<span class="fc" id="L176">                final XPath xpath = XPathFactory.newInstance().newXPath();</span>
+<span class="fc" id="L177">                final String numFound = xpath.evaluate(&quot;/response/result/@numFound&quot;, doc);</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">                if (&quot;0&quot;.equals(numFound)) {</span>
+<span class="fc" id="L179">                    missing = true;</span>
+                } else {
+<span class="fc" id="L181">                    final NodeList docs = (NodeList) xpath.evaluate(&quot;/response/result/doc&quot;, doc, XPathConstants.NODESET);</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">                    for (int i = 0; i &lt; docs.getLength(); i++) {</span>
+<span class="fc" id="L183">                        final String g = xpath.evaluate(&quot;./str[@name='g']&quot;, docs.item(i));</span>
+<span class="fc" id="L184">                        LOGGER.trace(&quot;GroupId: {}&quot;, g);</span>
+<span class="fc" id="L185">                        final String a = xpath.evaluate(&quot;./str[@name='a']&quot;, docs.item(i));</span>
+<span class="fc" id="L186">                        LOGGER.trace(&quot;ArtifactId: {}&quot;, a);</span>
+<span class="fc" id="L187">                        final String v = xpath.evaluate(&quot;./str[@name='v']&quot;, docs.item(i));</span>
+<span class="fc" id="L188">                        final NodeList attributes = (NodeList) xpath.evaluate(&quot;./arr[@name='ec']/str&quot;, docs.item(i), XPathConstants.NODESET);</span>
+<span class="fc" id="L189">                        boolean pomAvailable = false;</span>
+<span class="fc" id="L190">                        boolean jarAvailable = false;</span>
+<span class="fc bfc" id="L191" title="All 2 branches covered.">                        for (int x = 0; x &lt; attributes.getLength(); x++) {</span>
+<span class="fc" id="L192">                            final String tmp = xpath.evaluate(&quot;.&quot;, attributes.item(x));</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">                            if (&quot;.pom&quot;.equals(tmp)) {</span>
+<span class="fc" id="L194">                                pomAvailable = true;</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">                            } else if (&quot;.jar&quot;.equals(tmp)) {</span>
+<span class="fc" id="L196">                                jarAvailable = true;</span>
+                            }
+                        }
+<span class="fc" id="L199">                        final String centralContentUrl = settings.getString(Settings.KEYS.CENTRAL_CONTENT_URL);</span>
+<span class="fc" id="L200">                        String artifactUrl = null;</span>
+<span class="fc" id="L201">                        String pomUrl = null;</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">                        if (jarAvailable) {</span>
+                            //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
+<span class="fc" id="L204">                            artifactUrl = centralContentUrl + g.replace('.', '/') + '/' + a + '/'</span>
+                                    + v + '/' + a + '-' + v + &quot;.jar&quot;;
+                        }
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                        if (pomAvailable) {</span>
+                            //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
+<span class="fc" id="L209">                            pomUrl = centralContentUrl + g.replace('.', '/') + '/' + a + '/'</span>
+                                    + v + '/' + a + '-' + v + &quot;.pom&quot;;
+                        }
+<span class="fc" id="L212">                        result.add(new MavenArtifact(g, a, v, artifactUrl, pomUrl));</span>
                     }
                 }
-<span class="fc" id="L221">                final String centralContentUrl = settings.getString(Settings.KEYS.CENTRAL_CONTENT_URL);</span>
-<span class="fc" id="L222">                String artifactUrl = null;</span>
-<span class="fc" id="L223">                String pomUrl = null;</span>
-<span class="pc bpc" id="L224" title="1 of 2 branches missed.">                if (jarAvailable) {</span>
-                    //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
-<span class="fc" id="L226">                    artifactUrl = centralContentUrl + g.replace('.', '/') + '/' + a + '/'</span>
-                            + v + '/' + a + '-' + v + &quot;.jar&quot;;
+<span class="nc" id="L215">            } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {</span>
+                // Anything else is jacked up XML stuff that we really can't recover from well
+<span class="nc" id="L217">                final String errorMessage = &quot;Failed to parse MavenCentral XML Response: &quot; + e.getMessage();</span>
+<span class="nc" id="L218">                throw new IOException(errorMessage, e);</span>
+<span class="fc" id="L219">            }</span>
+
+<span class="fc bfc" id="L221" title="All 2 branches covered.">            if (missing) {</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">                if (cache != null) {</span>
+<span class="fc" id="L223">                    cache.put(sha1, result);</span>
                 }
-<span class="pc bpc" id="L229" title="1 of 2 branches missed.">                if (pomAvailable) {</span>
-                    //org/springframework/spring-core/3.2.0.RELEASE/spring-core-3.2.0.RELEASE.pom
-<span class="fc" id="L231">                    pomUrl = centralContentUrl + g.replace('.', '/') + '/' + a + '/'</span>
-                            + v + '/' + a + '-' + v + &quot;.pom&quot;;
-                }
-<span class="fc" id="L234">                result.add(new MavenArtifact(g, a, v, artifactUrl, pomUrl));</span>
+<span class="fc" id="L225">                throw new FileNotFoundException(&quot;Artifact not found in Central&quot;);</span>
             }
+<span class="pc bnc" id="L227" title="All 2 branches missed.">        } else if (conn.getResponseCode() == 429) {</span>
+<span class="nc" id="L228">            final String errorMessage = &quot;Too many requests sent to MavenCentral; additional requests are being rejected.&quot;;</span>
+<span class="nc" id="L229">            throw new TooManyRequestsException(errorMessage);</span>
+        } else {
+<span class="nc" id="L231">            final String errorMessage = &quot;Could not connect to MavenCentral (&quot; + conn.getResponseCode() + &quot;): &quot; + conn.getResponseMessage();</span>
+<span class="nc" id="L232">            throw new IOException(errorMessage);</span>
         }
-<span class="fc" id="L237">        return missing;</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">        if (cache != null) {</span>
+<span class="fc" id="L235">            cache.put(sha1, result);</span>
+        }
+<span class="fc" id="L237">        return result;</span>
     }
 
     /**
@@ -253,6 +253,5 @@ public class CentralSearch {
 <span class="fc" id="L253">        }</span>
 <span class="fc" id="L254">        return false;</span>
     }
-
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

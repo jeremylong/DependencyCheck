@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DependencyCheckScanAgent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.agent</a> &gt; <span class="el_source">DependencyCheckScanAgent.java</span></div><h1>DependencyCheckScanAgent.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DependencyCheckScanAgent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.agent</a> &gt; <span class="el_source">DependencyCheckScanAgent.java</span></div><h1>DependencyCheckScanAgent.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -178,17 +178,13 @@ import org.slf4j.LoggerFactory;
      */
 <span class="fc" id="L179">    private boolean centralAnalyzerEnabled = true;</span>
     /**
-     * Whether the build should fail if there are unused suppression rules.
-     */
-<span class="fc" id="L183">    private boolean failOnUnusedSuppressionRule = false;</span>
-    /**
      * The URL of Maven Central.
      */
     private String centralUrl;
     /**
      * Whether the nexus analyzer is enabled.
      */
-<span class="fc" id="L191">    private boolean nexusAnalyzerEnabled = true;</span>
+<span class="fc" id="L187">    private boolean nexusAnalyzerEnabled = true;</span>
     /**
      * The URL of the Nexus server.
      */
@@ -196,7 +192,7 @@ import org.slf4j.LoggerFactory;
     /**
      * Whether the defined proxy should be used when connecting to Nexus.
      */
-<span class="fc" id="L199">    private boolean nexusUsesProxy = true;</span>
+<span class="fc" id="L195">    private boolean nexusUsesProxy = true;</span>
     /**
      * The database driver name; such as org.h2.Driver.
      */
@@ -241,7 +237,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of applicationName
      */
     public String getApplicationName() {
-<span class="nc" id="L244">        return applicationName;</span>
+<span class="nc" id="L240">        return applicationName;</span>
     }
 
     /**
@@ -250,8 +246,8 @@ import org.slf4j.LoggerFactory;
      * @param applicationName new value of applicationName
      */
     public void setApplicationName(String applicationName) {
-<span class="fc" id="L253">        this.applicationName = applicationName;</span>
-<span class="fc" id="L254">    }</span>
+<span class="fc" id="L249">        this.applicationName = applicationName;</span>
+<span class="fc" id="L250">    }</span>
 
     /**
      * Get the value of nvdApiKey.
@@ -259,7 +255,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of nvdApiKey
      */
     public String getNvdApiKey() {
-<span class="nc" id="L262">        return nvdApiKey;</span>
+<span class="nc" id="L258">        return nvdApiKey;</span>
     }
 
     /**
@@ -268,8 +264,8 @@ import org.slf4j.LoggerFactory;
      * @param nvdApiKey new value of nvdApiKey
      */
     public void setNvdApiKey(String nvdApiKey) {
-<span class="nc" id="L271">        this.nvdApiKey = nvdApiKey;</span>
-<span class="nc" id="L272">    }</span>
+<span class="nc" id="L267">        this.nvdApiKey = nvdApiKey;</span>
+<span class="nc" id="L268">    }</span>
 
     /**
      * Returns a list of pre-determined dependencies.
@@ -277,7 +273,7 @@ import org.slf4j.LoggerFactory;
      * @return returns a list of dependencies
      */
     public List&lt;Dependency&gt; getDependencies() {
-<span class="fc" id="L280">        return dependencies;</span>
+<span class="fc" id="L276">        return dependencies;</span>
     }
 
     /**
@@ -286,8 +282,8 @@ import org.slf4j.LoggerFactory;
      * @param dependencies new value of dependencies
      */
     public void setDependencies(List&lt;Dependency&gt; dependencies) {
-<span class="fc" id="L289">        this.dependencies = dependencies;</span>
-<span class="fc" id="L290">    }</span>
+<span class="fc" id="L285">        this.dependencies = dependencies;</span>
+<span class="fc" id="L286">    }</span>
 
     /**
      * Get the value of dataDirectory.
@@ -295,7 +291,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of dataDirectory
      */
     public String getDataDirectory() {
-<span class="nc" id="L298">        return dataDirectory;</span>
+<span class="nc" id="L294">        return dataDirectory;</span>
     }
 
     /**
@@ -304,8 +300,8 @@ import org.slf4j.LoggerFactory;
      * @param dataDirectory new value of dataDirectory
      */
     public void setDataDirectory(String dataDirectory) {
-<span class="nc" id="L307">        this.dataDirectory = dataDirectory;</span>
-<span class="nc" id="L308">    }</span>
+<span class="nc" id="L303">        this.dataDirectory = dataDirectory;</span>
+<span class="nc" id="L304">    }</span>
 
     /**
      * Get the value of reportOutputDirectory.
@@ -313,7 +309,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of reportOutputDirectory
      */
     public String getReportOutputDirectory() {
-<span class="nc" id="L316">        return reportOutputDirectory;</span>
+<span class="nc" id="L312">        return reportOutputDirectory;</span>
     }
 
     /**
@@ -322,8 +318,8 @@ import org.slf4j.LoggerFactory;
      * @param reportOutputDirectory new value of reportOutputDirectory
      */
     public void setReportOutputDirectory(String reportOutputDirectory) {
-<span class="fc" id="L325">        this.reportOutputDirectory = reportOutputDirectory;</span>
-<span class="fc" id="L326">    }</span>
+<span class="fc" id="L321">        this.reportOutputDirectory = reportOutputDirectory;</span>
+<span class="fc" id="L322">    }</span>
 
     /**
      * Get the value of failBuildOnCVSS.
@@ -331,7 +327,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of failBuildOnCVSS
      */
     public Double getFailBuildOnCVSS() {
-<span class="nc" id="L334">        return failBuildOnCVSS;</span>
+<span class="nc" id="L330">        return failBuildOnCVSS;</span>
     }
 
     /**
@@ -340,8 +336,8 @@ import org.slf4j.LoggerFactory;
      * @param failBuildOnCVSS new value of failBuildOnCVSS
      */
     public void setFailBuildOnCVSS(Double failBuildOnCVSS) {
-<span class="nc" id="L343">        this.failBuildOnCVSS = failBuildOnCVSS;</span>
-<span class="nc" id="L344">    }</span>
+<span class="nc" id="L339">        this.failBuildOnCVSS = failBuildOnCVSS;</span>
+<span class="nc" id="L340">    }</span>
 
     /**
      * Get the value of autoUpdate.
@@ -349,7 +345,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of autoUpdate
      */
     public boolean isAutoUpdate() {
-<span class="nc" id="L352">        return autoUpdate;</span>
+<span class="nc" id="L348">        return autoUpdate;</span>
     }
 
     /**
@@ -358,8 +354,8 @@ import org.slf4j.LoggerFactory;
      * @param autoUpdate new value of autoUpdate
      */
     public void setAutoUpdate(boolean autoUpdate) {
-<span class="fc" id="L361">        this.autoUpdate = autoUpdate;</span>
-<span class="fc" id="L362">    }</span>
+<span class="fc" id="L357">        this.autoUpdate = autoUpdate;</span>
+<span class="fc" id="L358">    }</span>
 
     /**
      * Get the value of updateOnly.
@@ -367,7 +363,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of updateOnly
      */
     public boolean isUpdateOnly() {
-<span class="nc" id="L370">        return updateOnly;</span>
+<span class="nc" id="L366">        return updateOnly;</span>
     }
 
     /**
@@ -376,8 +372,8 @@ import org.slf4j.LoggerFactory;
      * @param updateOnly new value of updateOnly
      */
     public void setUpdateOnly(boolean updateOnly) {
-<span class="fc" id="L379">        this.updateOnly = updateOnly;</span>
-<span class="fc" id="L380">    }</span>
+<span class="fc" id="L375">        this.updateOnly = updateOnly;</span>
+<span class="fc" id="L376">    }</span>
 
     /**
      * Get the value of generateReport.
@@ -385,7 +381,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of generateReport
      */
     public boolean isGenerateReport() {
-<span class="nc" id="L388">        return generateReport;</span>
+<span class="nc" id="L384">        return generateReport;</span>
     }
 
     /**
@@ -394,8 +390,8 @@ import org.slf4j.LoggerFactory;
      * @param generateReport new value of generateReport
      */
     public void setGenerateReport(boolean generateReport) {
-<span class="nc" id="L397">        this.generateReport = generateReport;</span>
-<span class="nc" id="L398">    }</span>
+<span class="nc" id="L393">        this.generateReport = generateReport;</span>
+<span class="nc" id="L394">    }</span>
 
     /**
      * Get the value of reportFormat.
@@ -403,7 +399,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of reportFormat
      */
     public ReportGenerator.Format getReportFormat() {
-<span class="nc" id="L406">        return reportFormat;</span>
+<span class="nc" id="L402">        return reportFormat;</span>
     }
 
     /**
@@ -412,8 +408,8 @@ import org.slf4j.LoggerFactory;
      * @param reportFormat new value of reportFormat
      */
     public void setReportFormat(ReportGenerator.Format reportFormat) {
-<span class="fc" id="L415">        this.reportFormat = reportFormat;</span>
-<span class="fc" id="L416">    }</span>
+<span class="fc" id="L411">        this.reportFormat = reportFormat;</span>
+<span class="fc" id="L412">    }</span>
 
     /**
      * Get the value of proxyServer.
@@ -421,7 +417,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of proxyServer
      */
     public String getProxyServer() {
-<span class="nc" id="L424">        return proxyServer;</span>
+<span class="nc" id="L420">        return proxyServer;</span>
     }
 
     /**
@@ -430,8 +426,8 @@ import org.slf4j.LoggerFactory;
      * @param proxyServer new value of proxyServer
      */
     public void setProxyServer(String proxyServer) {
-<span class="nc" id="L433">        this.proxyServer = proxyServer;</span>
-<span class="nc" id="L434">    }</span>
+<span class="nc" id="L429">        this.proxyServer = proxyServer;</span>
+<span class="nc" id="L430">    }</span>
 
     /**
      * Get the value of proxyServer.
@@ -443,7 +439,7 @@ import org.slf4j.LoggerFactory;
      */
     @Deprecated
     public String getProxyUrl() {
-<span class="nc" id="L446">        return proxyServer;</span>
+<span class="nc" id="L442">        return proxyServer;</span>
     }
 
     /**
@@ -455,8 +451,8 @@ import org.slf4j.LoggerFactory;
      */
     @Deprecated
     public void setProxyUrl(String proxyUrl) {
-<span class="nc" id="L458">        this.proxyServer = proxyUrl;</span>
-<span class="nc" id="L459">    }</span>
+<span class="nc" id="L454">        this.proxyServer = proxyUrl;</span>
+<span class="nc" id="L455">    }</span>
 
     /**
      * Get the value of proxyPort.
@@ -464,7 +460,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of proxyPort
      */
     public String getProxyPort() {
-<span class="nc" id="L467">        return proxyPort;</span>
+<span class="nc" id="L463">        return proxyPort;</span>
     }
 
     /**
@@ -473,8 +469,8 @@ import org.slf4j.LoggerFactory;
      * @param proxyPort new value of proxyPort
      */
     public void setProxyPort(String proxyPort) {
-<span class="nc" id="L476">        this.proxyPort = proxyPort;</span>
-<span class="nc" id="L477">    }</span>
+<span class="nc" id="L472">        this.proxyPort = proxyPort;</span>
+<span class="nc" id="L473">    }</span>
 
     /**
      * Get the value of proxyUsername.
@@ -482,7 +478,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of proxyUsername
      */
     public String getProxyUsername() {
-<span class="nc" id="L485">        return proxyUsername;</span>
+<span class="nc" id="L481">        return proxyUsername;</span>
     }
 
     /**
@@ -491,8 +487,8 @@ import org.slf4j.LoggerFactory;
      * @param proxyUsername new value of proxyUsername
      */
     public void setProxyUsername(String proxyUsername) {
-<span class="nc" id="L494">        this.proxyUsername = proxyUsername;</span>
-<span class="nc" id="L495">    }</span>
+<span class="nc" id="L490">        this.proxyUsername = proxyUsername;</span>
+<span class="nc" id="L491">    }</span>
 
     /**
      * Get the value of proxyPassword.
@@ -500,7 +496,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of proxyPassword
      */
     public String getProxyPassword() {
-<span class="nc" id="L503">        return proxyPassword;</span>
+<span class="nc" id="L499">        return proxyPassword;</span>
     }
 
     /**
@@ -509,8 +505,8 @@ import org.slf4j.LoggerFactory;
      * @param proxyPassword new value of proxyPassword
      */
     public void setProxyPassword(String proxyPassword) {
-<span class="nc" id="L512">        this.proxyPassword = proxyPassword;</span>
-<span class="nc" id="L513">    }</span>
+<span class="nc" id="L508">        this.proxyPassword = proxyPassword;</span>
+<span class="nc" id="L509">    }</span>
 
     /**
      * Get the value of connectionTimeout.
@@ -518,7 +514,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of connectionTimeout
      */
     public String getConnectionTimeout() {
-<span class="nc" id="L521">        return connectionTimeout;</span>
+<span class="nc" id="L517">        return connectionTimeout;</span>
     }
 
     /**
@@ -527,8 +523,8 @@ import org.slf4j.LoggerFactory;
      * @param connectionTimeout new value of connectionTimeout
      */
     public void setConnectionTimeout(String connectionTimeout) {
-<span class="nc" id="L530">        this.connectionTimeout = connectionTimeout;</span>
-<span class="nc" id="L531">    }</span>
+<span class="nc" id="L526">        this.connectionTimeout = connectionTimeout;</span>
+<span class="nc" id="L527">    }</span>
 
     /**
      * Get the value of readTimeout.
@@ -536,7 +532,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of readTimeout
      */
     public String getReadTimeout() {
-<span class="nc" id="L539">        return readTimeout;</span>
+<span class="nc" id="L535">        return readTimeout;</span>
     }
 
     /**
@@ -545,8 +541,8 @@ import org.slf4j.LoggerFactory;
      * @param readTimeout new value of readTimeout
      */
     public void setReadTimeout(String readTimeout) {
-<span class="nc" id="L548">        this.readTimeout = readTimeout;</span>
-<span class="nc" id="L549">    }</span>
+<span class="nc" id="L544">        this.readTimeout = readTimeout;</span>
+<span class="nc" id="L545">    }</span>
 
     /**
      * Get the value of logFile.
@@ -554,7 +550,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of logFile
      */
     public String getLogFile() {
-<span class="nc" id="L557">        return logFile;</span>
+<span class="nc" id="L553">        return logFile;</span>
     }
 
     /**
@@ -563,8 +559,8 @@ import org.slf4j.LoggerFactory;
      * @param logFile new value of logFile
      */
     public void setLogFile(String logFile) {
-<span class="nc" id="L566">        this.logFile = logFile;</span>
-<span class="nc" id="L567">    }</span>
+<span class="nc" id="L562">        this.logFile = logFile;</span>
+<span class="nc" id="L563">    }</span>
 
     /**
      * Get the value of suppressionFile.
@@ -572,7 +568,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of suppressionFile
      */
     public String getSuppressionFile() {
-<span class="nc" id="L575">        return suppressionFile;</span>
+<span class="nc" id="L571">        return suppressionFile;</span>
     }
 
     /**
@@ -581,8 +577,8 @@ import org.slf4j.LoggerFactory;
      * @param suppressionFile new value of suppressionFile
      */
     public void setSuppressionFile(String suppressionFile) {
-<span class="nc" id="L584">        this.suppressionFile = suppressionFile;</span>
-<span class="nc" id="L585">    }</span>
+<span class="nc" id="L580">        this.suppressionFile = suppressionFile;</span>
+<span class="nc" id="L581">    }</span>
 
     /**
      * Get the value of showSummary.
@@ -590,7 +586,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of showSummary
      */
     public boolean isShowSummary() {
-<span class="nc" id="L593">        return showSummary;</span>
+<span class="nc" id="L589">        return showSummary;</span>
     }
 
     /**
@@ -599,8 +595,8 @@ import org.slf4j.LoggerFactory;
      * @param showSummary new value of showSummary
      */
     public void setShowSummary(boolean showSummary) {
-<span class="nc" id="L602">        this.showSummary = showSummary;</span>
-<span class="nc" id="L603">    }</span>
+<span class="nc" id="L598">        this.showSummary = showSummary;</span>
+<span class="nc" id="L599">    }</span>
 
     /**
      * Sets starting string that identifies CPEs that are qualified to be
@@ -610,8 +606,8 @@ import org.slf4j.LoggerFactory;
      * (i.e. cpe:/a: )
      */
     public void setCpeStartsWithFilter(String cpeStartsWithFilter) {
-<span class="nc" id="L613">        this.cpeStartsWithFilter = cpeStartsWithFilter;</span>
-<span class="nc" id="L614">    }</span>
+<span class="nc" id="L609">        this.cpeStartsWithFilter = cpeStartsWithFilter;</span>
+<span class="nc" id="L610">    }</span>
 
     /**
      * Returns the starting string that identifies CPEs that are qualified to be
@@ -620,26 +616,8 @@ import org.slf4j.LoggerFactory;
      * @return the CPE starting filter (i.e. cpe:/a: )
      */
     public String getCpeStartsWithFilter() {
-<span class="nc" id="L623">        return cpeStartsWithFilter;</span>
+<span class="nc" id="L619">        return cpeStartsWithFilter;</span>
     }
-
-    /**
-     * Get the value of failOnUnusedSuppressionRule.
-     *
-     * @return the value of failOnUnusedSuppressionRule
-     */
-    public boolean isFailOnUnusedSuppressionRule() {
-<span class="nc" id="L632">        return failOnUnusedSuppressionRule;</span>
-    }
-
-    /**
-     * Set the value of failOnUnusedSuppressionRule.
-     *
-     * @param failOnUnusedSuppressionRule new value of failOnUnusedSuppressionRule
-     */
-    public void setFailOnUnusedSuppressionRule(boolean failOnUnusedSuppressionRule) {
-<span class="nc" id="L641">        this.failOnUnusedSuppressionRule = failOnUnusedSuppressionRule;</span>
-<span class="nc" id="L642">    }</span>
 
     /**
      * Get the value of centralAnalyzerEnabled.
@@ -647,7 +625,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of centralAnalyzerEnabled
      */
     public boolean isCentralAnalyzerEnabled() {
-<span class="nc" id="L650">        return centralAnalyzerEnabled;</span>
+<span class="nc" id="L628">        return centralAnalyzerEnabled;</span>
     }
 
     /**
@@ -656,8 +634,8 @@ import org.slf4j.LoggerFactory;
      * @param centralAnalyzerEnabled new value of centralAnalyzerEnabled
      */
     public void setCentralAnalyzerEnabled(boolean centralAnalyzerEnabled) {
-<span class="fc" id="L659">        this.centralAnalyzerEnabled = centralAnalyzerEnabled;</span>
-<span class="fc" id="L660">    }</span>
+<span class="fc" id="L637">        this.centralAnalyzerEnabled = centralAnalyzerEnabled;</span>
+<span class="fc" id="L638">    }</span>
 
     /**
      * Get the value of centralUrl.
@@ -665,7 +643,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of centralUrl
      */
     public String getCentralUrl() {
-<span class="nc" id="L668">        return centralUrl;</span>
+<span class="nc" id="L646">        return centralUrl;</span>
     }
 
     /**
@@ -674,8 +652,8 @@ import org.slf4j.LoggerFactory;
      * @param centralUrl new value of centralUrl
      */
     public void setCentralUrl(String centralUrl) {
-<span class="nc" id="L677">        this.centralUrl = centralUrl;</span>
-<span class="nc" id="L678">    }</span>
+<span class="nc" id="L655">        this.centralUrl = centralUrl;</span>
+<span class="nc" id="L656">    }</span>
 
     /**
      * Get the value of nexusAnalyzerEnabled.
@@ -683,7 +661,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of nexusAnalyzerEnabled
      */
     public boolean isNexusAnalyzerEnabled() {
-<span class="nc" id="L686">        return nexusAnalyzerEnabled;</span>
+<span class="nc" id="L664">        return nexusAnalyzerEnabled;</span>
     }
 
     /**
@@ -692,8 +670,8 @@ import org.slf4j.LoggerFactory;
      * @param nexusAnalyzerEnabled new value of nexusAnalyzerEnabled
      */
     public void setNexusAnalyzerEnabled(boolean nexusAnalyzerEnabled) {
-<span class="nc" id="L695">        this.nexusAnalyzerEnabled = nexusAnalyzerEnabled;</span>
-<span class="nc" id="L696">    }</span>
+<span class="nc" id="L673">        this.nexusAnalyzerEnabled = nexusAnalyzerEnabled;</span>
+<span class="nc" id="L674">    }</span>
 
     /**
      * Get the value of nexusUrl.
@@ -701,7 +679,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of nexusUrl
      */
     public String getNexusUrl() {
-<span class="nc" id="L704">        return nexusUrl;</span>
+<span class="nc" id="L682">        return nexusUrl;</span>
     }
 
     /**
@@ -710,8 +688,8 @@ import org.slf4j.LoggerFactory;
      * @param nexusUrl new value of nexusUrl
      */
     public void setNexusUrl(String nexusUrl) {
-<span class="nc" id="L713">        this.nexusUrl = nexusUrl;</span>
-<span class="nc" id="L714">    }</span>
+<span class="nc" id="L691">        this.nexusUrl = nexusUrl;</span>
+<span class="nc" id="L692">    }</span>
 
     /**
      * Get the value of nexusUsesProxy.
@@ -719,7 +697,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of nexusUsesProxy
      */
     public boolean isNexusUsesProxy() {
-<span class="nc" id="L722">        return nexusUsesProxy;</span>
+<span class="nc" id="L700">        return nexusUsesProxy;</span>
     }
 
     /**
@@ -728,8 +706,8 @@ import org.slf4j.LoggerFactory;
      * @param nexusUsesProxy new value of nexusUsesProxy
      */
     public void setNexusUsesProxy(boolean nexusUsesProxy) {
-<span class="nc" id="L731">        this.nexusUsesProxy = nexusUsesProxy;</span>
-<span class="nc" id="L732">    }</span>
+<span class="nc" id="L709">        this.nexusUsesProxy = nexusUsesProxy;</span>
+<span class="nc" id="L710">    }</span>
 
     /**
      * Get the value of databaseDriverName.
@@ -737,7 +715,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of databaseDriverName
      */
     public String getDatabaseDriverName() {
-<span class="nc" id="L740">        return databaseDriverName;</span>
+<span class="nc" id="L718">        return databaseDriverName;</span>
     }
 
     /**
@@ -746,8 +724,8 @@ import org.slf4j.LoggerFactory;
      * @param databaseDriverName new value of databaseDriverName
      */
     public void setDatabaseDriverName(String databaseDriverName) {
-<span class="nc" id="L749">        this.databaseDriverName = databaseDriverName;</span>
-<span class="nc" id="L750">    }</span>
+<span class="nc" id="L727">        this.databaseDriverName = databaseDriverName;</span>
+<span class="nc" id="L728">    }</span>
 
     /**
      * Get the value of databaseDriverPath.
@@ -755,7 +733,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of databaseDriverPath
      */
     public String getDatabaseDriverPath() {
-<span class="nc" id="L758">        return databaseDriverPath;</span>
+<span class="nc" id="L736">        return databaseDriverPath;</span>
     }
 
     /**
@@ -764,8 +742,8 @@ import org.slf4j.LoggerFactory;
      * @param databaseDriverPath new value of databaseDriverPath
      */
     public void setDatabaseDriverPath(String databaseDriverPath) {
-<span class="nc" id="L767">        this.databaseDriverPath = databaseDriverPath;</span>
-<span class="nc" id="L768">    }</span>
+<span class="nc" id="L745">        this.databaseDriverPath = databaseDriverPath;</span>
+<span class="nc" id="L746">    }</span>
 
     /**
      * Get the value of connectionString.
@@ -773,7 +751,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of connectionString
      */
     public String getConnectionString() {
-<span class="nc" id="L776">        return connectionString;</span>
+<span class="nc" id="L754">        return connectionString;</span>
     }
 
     /**
@@ -782,8 +760,8 @@ import org.slf4j.LoggerFactory;
      * @param connectionString new value of connectionString
      */
     public void setConnectionString(String connectionString) {
-<span class="nc" id="L785">        this.connectionString = connectionString;</span>
-<span class="nc" id="L786">    }</span>
+<span class="nc" id="L763">        this.connectionString = connectionString;</span>
+<span class="nc" id="L764">    }</span>
 
     /**
      * Get the value of databaseUser.
@@ -791,7 +769,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of databaseUser
      */
     public String getDatabaseUser() {
-<span class="nc" id="L794">        return databaseUser;</span>
+<span class="nc" id="L772">        return databaseUser;</span>
     }
 
     /**
@@ -800,8 +778,8 @@ import org.slf4j.LoggerFactory;
      * @param databaseUser new value of databaseUser
      */
     public void setDatabaseUser(String databaseUser) {
-<span class="nc" id="L803">        this.databaseUser = databaseUser;</span>
-<span class="nc" id="L804">    }</span>
+<span class="nc" id="L781">        this.databaseUser = databaseUser;</span>
+<span class="nc" id="L782">    }</span>
 
     /**
      * Get the value of databasePassword.
@@ -809,7 +787,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of databasePassword
      */
     public String getDatabasePassword() {
-<span class="nc" id="L812">        return databasePassword;</span>
+<span class="nc" id="L790">        return databasePassword;</span>
     }
 
     /**
@@ -818,8 +796,8 @@ import org.slf4j.LoggerFactory;
      * @param databasePassword new value of databasePassword
      */
     public void setDatabasePassword(String databasePassword) {
-<span class="nc" id="L821">        this.databasePassword = databasePassword;</span>
-<span class="nc" id="L822">    }</span>
+<span class="nc" id="L799">        this.databasePassword = databasePassword;</span>
+<span class="nc" id="L800">    }</span>
 
     /**
      * Get the value of zipExtensions.
@@ -827,7 +805,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of zipExtensions
      */
     public String getZipExtensions() {
-<span class="nc" id="L830">        return zipExtensions;</span>
+<span class="nc" id="L808">        return zipExtensions;</span>
     }
 
     /**
@@ -836,8 +814,8 @@ import org.slf4j.LoggerFactory;
      * @param zipExtensions new value of zipExtensions
      */
     public void setZipExtensions(String zipExtensions) {
-<span class="nc" id="L839">        this.zipExtensions = zipExtensions;</span>
-<span class="nc" id="L840">    }</span>
+<span class="nc" id="L817">        this.zipExtensions = zipExtensions;</span>
+<span class="nc" id="L818">    }</span>
 
     /**
      * Get the value of pathToCore.
@@ -845,7 +823,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of pathToCore
      */
     public String getPathToDotnetCore() {
-<span class="nc" id="L848">        return pathToCore;</span>
+<span class="nc" id="L826">        return pathToCore;</span>
     }
 
     /**
@@ -854,8 +832,8 @@ import org.slf4j.LoggerFactory;
      * @param pathToCore new value of pathToCore
      */
     public void setPathToDotnetCore(String pathToCore) {
-<span class="nc" id="L857">        this.pathToCore = pathToCore;</span>
-<span class="nc" id="L858">    }</span>
+<span class="nc" id="L835">        this.pathToCore = pathToCore;</span>
+<span class="nc" id="L836">    }</span>
 
     /**
      * Get the value of propertiesFilePath.
@@ -863,7 +841,7 @@ import org.slf4j.LoggerFactory;
      * @return the value of propertiesFilePath
      */
     public String getPropertiesFilePath() {
-<span class="nc" id="L866">        return propertiesFilePath;</span>
+<span class="nc" id="L844">        return propertiesFilePath;</span>
     }
 
     /**
@@ -872,8 +850,8 @@ import org.slf4j.LoggerFactory;
      * @param propertiesFilePath new value of propertiesFilePath
      */
     public void setPropertiesFilePath(String propertiesFilePath) {
-<span class="nc" id="L875">        this.propertiesFilePath = propertiesFilePath;</span>
-<span class="nc" id="L876">    }</span>
+<span class="nc" id="L853">        this.propertiesFilePath = propertiesFilePath;</span>
+<span class="nc" id="L854">    }</span>
     //&lt;/editor-fold&gt;
 
     /**
@@ -887,26 +865,26 @@ import org.slf4j.LoggerFactory;
      */
     @SuppressWarnings(&quot;squid:S2095&quot;)
     private Engine executeDependencyCheck() throws ExceptionCollection {
-<span class="fc" id="L890">        populateSettings();</span>
+<span class="fc" id="L868">        populateSettings();</span>
         final Engine engine;
         try {
-<span class="fc" id="L893">            engine = new Engine(settings);</span>
-<span class="nc" id="L894">        } catch (DatabaseException ex) {</span>
-<span class="nc" id="L895">            throw new ExceptionCollection(ex, true);</span>
-<span class="fc" id="L896">        }</span>
-<span class="pc bpc" id="L897" title="1 of 2 branches missed.">        if (this.updateOnly) {</span>
+<span class="fc" id="L871">            engine = new Engine(settings);</span>
+<span class="nc" id="L872">        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L873">            throw new ExceptionCollection(ex, true);</span>
+<span class="fc" id="L874">        }</span>
+<span class="pc bpc" id="L875" title="1 of 2 branches missed.">        if (this.updateOnly) {</span>
             try {
-<span class="nc" id="L899">                engine.doUpdates();</span>
-<span class="nc" id="L900">            } catch (UpdateException ex) {</span>
-<span class="nc" id="L901">                throw new ExceptionCollection(ex);</span>
+<span class="nc" id="L877">                engine.doUpdates();</span>
+<span class="nc" id="L878">            } catch (UpdateException ex) {</span>
+<span class="nc" id="L879">                throw new ExceptionCollection(ex);</span>
             } finally {
-<span class="nc" id="L903">                engine.close();</span>
-<span class="nc" id="L904">            }</span>
+<span class="nc" id="L881">                engine.close();</span>
+<span class="nc" id="L882">            }</span>
         } else {
-<span class="fc" id="L906">            engine.setDependencies(this.dependencies);</span>
-<span class="fc" id="L907">            engine.analyzeDependencies();</span>
+<span class="fc" id="L884">            engine.setDependencies(this.dependencies);</span>
+<span class="fc" id="L885">            engine.analyzeDependencies();</span>
         }
-<span class="fc" id="L909">        return engine;</span>
+<span class="fc" id="L887">        return engine;</span>
     }
 
     /**
@@ -919,12 +897,12 @@ import org.slf4j.LoggerFactory;
      */
     private void generateExternalReports(Engine engine, File outDirectory) throws ScanAgentException {
         try {
-<span class="fc" id="L922">            engine.writeReports(applicationName, outDirectory, this.reportFormat.name(), null);</span>
-<span class="nc" id="L923">        } catch (ReportException ex) {</span>
-<span class="nc" id="L924">            LOGGER.debug(&quot;Unexpected exception occurred during analysis; please see the verbose error log for more details.&quot;, ex);</span>
-<span class="nc" id="L925">            throw new ScanAgentException(&quot;Error generating the report&quot;, ex);</span>
-<span class="fc" id="L926">        }</span>
-<span class="fc" id="L927">    }</span>
+<span class="fc" id="L900">            engine.writeReports(applicationName, outDirectory, this.reportFormat.name(), null);</span>
+<span class="nc" id="L901">        } catch (ReportException ex) {</span>
+<span class="nc" id="L902">            LOGGER.debug(&quot;Unexpected exception occurred during analysis; please see the verbose error log for more details.&quot;, ex);</span>
+<span class="nc" id="L903">            throw new ScanAgentException(&quot;Error generating the report&quot;, ex);</span>
+<span class="fc" id="L904">        }</span>
+<span class="fc" id="L905">    }</span>
 
     /**
      * Takes the properties supplied and updates the dependency-check settings.
@@ -932,50 +910,49 @@ import org.slf4j.LoggerFactory;
      * proxy server, port, and connection timeout.
      */
     private void populateSettings() {
-<span class="fc" id="L935">        settings = new Settings();</span>
-<span class="pc bpc" id="L936" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
-<span class="nc" id="L937">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
+<span class="fc" id="L913">        settings = new Settings();</span>
+<span class="pc bpc" id="L914" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
+<span class="nc" id="L915">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
         } else {
-<span class="fc" id="L939">            final File jarPath = new File(DependencyCheckScanAgent.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
-<span class="fc" id="L940">            final File base = jarPath.getParentFile();</span>
-<span class="fc" id="L941">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
-<span class="fc" id="L942">            final File dataDir = new File(base, sub);</span>
-<span class="fc" id="L943">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
+<span class="fc" id="L917">            final File jarPath = new File(DependencyCheckScanAgent.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
+<span class="fc" id="L918">            final File base = jarPath.getParentFile();</span>
+<span class="fc" id="L919">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
+<span class="fc" id="L920">            final File dataDir = new File(base, sub);</span>
+<span class="fc" id="L921">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
         }
-<span class="pc bpc" id="L945" title="1 of 2 branches missed.">        if (propertiesFilePath != null) {</span>
+<span class="pc bpc" id="L923" title="1 of 2 branches missed.">        if (propertiesFilePath != null) {</span>
             try {
-<span class="nc" id="L947">                settings.mergeProperties(propertiesFilePath);</span>
-<span class="nc" id="L948">                LOGGER.info(&quot;Successfully loaded user-defined properties&quot;);</span>
-<span class="nc" id="L949">            } catch (IOException e) {</span>
-<span class="nc" id="L950">                LOGGER.error(&quot;Unable to merge user-defined properties&quot;, e);</span>
-<span class="nc" id="L951">                LOGGER.error(&quot;Continuing execution&quot;);</span>
-<span class="nc" id="L952">            }</span>
+<span class="nc" id="L925">                settings.mergeProperties(propertiesFilePath);</span>
+<span class="nc" id="L926">                LOGGER.info(&quot;Successfully loaded user-defined properties&quot;);</span>
+<span class="nc" id="L927">            } catch (IOException e) {</span>
+<span class="nc" id="L928">                LOGGER.error(&quot;Unable to merge user-defined properties&quot;, e);</span>
+<span class="nc" id="L929">                LOGGER.error(&quot;Continuing execution&quot;);</span>
+<span class="nc" id="L930">            }</span>
         }
 
-<span class="fc" id="L955">        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);</span>
-<span class="fc" id="L956">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);</span>
-<span class="fc" id="L957">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);</span>
-<span class="fc" id="L958">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);</span>
-<span class="fc" id="L959">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);</span>
-<span class="fc" id="L960">        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);</span>
-<span class="fc" id="L961">        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_READ_TIMEOUT, readTimeout);</span>
-<span class="fc" id="L962">        settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);</span>
-<span class="fc" id="L963">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, cpeStartsWithFilter);</span>
-<span class="fc" id="L964">        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);</span>
-<span class="fc" id="L965">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_CENTRAL_URL, centralUrl);</span>
-<span class="fc" id="L966">        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);</span>
-<span class="fc" id="L967">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);</span>
-<span class="fc" id="L968">        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);</span>
-<span class="fc" id="L969">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);</span>
-<span class="fc" id="L970">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);</span>
-<span class="fc" id="L971">        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
-<span class="fc" id="L972">        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
-<span class="fc" id="L973">        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
-<span class="fc" id="L974">        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);</span>
-<span class="fc" id="L975">        settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);</span>
-<span class="fc" id="L976">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);</span>
-<span class="fc" id="L977">        settings.setBoolean(Settings.KEYS.FAIL_ON_UNUSED_SUPPRESSION_RULE, failOnUnusedSuppressionRule);</span>
-<span class="fc" id="L978">    }</span>
+<span class="fc" id="L933">        settings.setBoolean(Settings.KEYS.AUTO_UPDATE, autoUpdate);</span>
+<span class="fc" id="L934">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_SERVER, proxyServer);</span>
+<span class="fc" id="L935">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PORT, proxyPort);</span>
+<span class="fc" id="L936">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_USERNAME, proxyUsername);</span>
+<span class="fc" id="L937">        settings.setStringIfNotEmpty(Settings.KEYS.PROXY_PASSWORD, proxyPassword);</span>
+<span class="fc" id="L938">        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_TIMEOUT, connectionTimeout);</span>
+<span class="fc" id="L939">        settings.setStringIfNotEmpty(Settings.KEYS.CONNECTION_READ_TIMEOUT, readTimeout);</span>
+<span class="fc" id="L940">        settings.setStringIfNotEmpty(Settings.KEYS.SUPPRESSION_FILE, suppressionFile);</span>
+<span class="fc" id="L941">        settings.setStringIfNotEmpty(Settings.KEYS.CVE_CPE_STARTS_WITH_FILTER, cpeStartsWithFilter);</span>
+<span class="fc" id="L942">        settings.setBoolean(Settings.KEYS.ANALYZER_CENTRAL_ENABLED, centralAnalyzerEnabled);</span>
+<span class="fc" id="L943">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_CENTRAL_URL, centralUrl);</span>
+<span class="fc" id="L944">        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_ENABLED, nexusAnalyzerEnabled);</span>
+<span class="fc" id="L945">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_NEXUS_URL, nexusUrl);</span>
+<span class="fc" id="L946">        settings.setBoolean(Settings.KEYS.ANALYZER_NEXUS_USES_PROXY, nexusUsesProxy);</span>
+<span class="fc" id="L947">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_NAME, databaseDriverName);</span>
+<span class="fc" id="L948">        settings.setStringIfNotEmpty(Settings.KEYS.DB_DRIVER_PATH, databaseDriverPath);</span>
+<span class="fc" id="L949">        settings.setStringIfNotEmpty(Settings.KEYS.DB_CONNECTION_STRING, connectionString);</span>
+<span class="fc" id="L950">        settings.setStringIfNotEmpty(Settings.KEYS.DB_USER, databaseUser);</span>
+<span class="fc" id="L951">        settings.setStringIfNotEmpty(Settings.KEYS.DB_PASSWORD, databasePassword);</span>
+<span class="fc" id="L952">        settings.setStringIfNotEmpty(Settings.KEYS.ADDITIONAL_ZIP_EXTENSIONS, zipExtensions);</span>
+<span class="fc" id="L953">        settings.setStringIfNotEmpty(Settings.KEYS.NVD_API_KEY, nvdApiKey);</span>
+<span class="fc" id="L954">        settings.setStringIfNotEmpty(Settings.KEYS.ANALYZER_ASSEMBLY_DOTNET_PATH, pathToCore);</span>
+<span class="fc" id="L955">    }</span>
 
     /**
      * Executes the dependency-check and generates the report.
@@ -985,33 +962,33 @@ import org.slf4j.LoggerFactory;
      * there is an exception executing the scan.
      */
     public Engine execute() throws ScanAgentException {
-<span class="fc" id="L988">        Engine engine = null;</span>
+<span class="fc" id="L965">        Engine engine = null;</span>
         try {
-<span class="fc" id="L990">            engine = executeDependencyCheck();</span>
-<span class="pc bpc" id="L991" title="1 of 2 branches missed.">            if (!this.updateOnly) {</span>
-<span class="pc bpc" id="L992" title="1 of 2 branches missed.">                if (this.generateReport) {</span>
-<span class="fc" id="L993">                    generateExternalReports(engine, new File(this.reportOutputDirectory));</span>
+<span class="fc" id="L967">            engine = executeDependencyCheck();</span>
+<span class="pc bpc" id="L968" title="1 of 2 branches missed.">            if (!this.updateOnly) {</span>
+<span class="pc bpc" id="L969" title="1 of 2 branches missed.">                if (this.generateReport) {</span>
+<span class="fc" id="L970">                    generateExternalReports(engine, new File(this.reportOutputDirectory));</span>
                 }
-<span class="pc bpc" id="L995" title="1 of 2 branches missed.">                if (this.showSummary) {</span>
-<span class="fc" id="L996">                    showSummary(engine.getDependencies());</span>
+<span class="pc bpc" id="L972" title="1 of 2 branches missed.">                if (this.showSummary) {</span>
+<span class="fc" id="L973">                    showSummary(engine.getDependencies());</span>
                 }
-<span class="pc bpc" id="L998" title="1 of 2 branches missed.">                if (this.failBuildOnCVSS &lt;= 10.0) {</span>
-<span class="nc" id="L999">                    checkForFailure(engine.getDependencies());</span>
+<span class="pc bpc" id="L975" title="1 of 2 branches missed.">                if (this.failBuildOnCVSS &lt;= 10.0) {</span>
+<span class="nc" id="L976">                    checkForFailure(engine.getDependencies());</span>
                 }
             }
-<span class="nc" id="L1002">        } catch (ExceptionCollection ex) {</span>
-<span class="nc bnc" id="L1003" title="All 2 branches missed.">            if (ex.isFatal()) {</span>
-<span class="nc" id="L1004">                LOGGER.error(&quot;A fatal exception occurred during analysis; analysis has stopped. Please see the debug log for more details.&quot;);</span>
-<span class="nc" id="L1005">                LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="nc" id="L979">        } catch (ExceptionCollection ex) {</span>
+<span class="nc bnc" id="L980" title="All 2 branches missed.">            if (ex.isFatal()) {</span>
+<span class="nc" id="L981">                LOGGER.error(&quot;A fatal exception occurred during analysis; analysis has stopped. Please see the debug log for more details.&quot;);</span>
+<span class="nc" id="L982">                LOGGER.debug(&quot;&quot;, ex);</span>
             }
-<span class="nc" id="L1007">            throw new ScanAgentException(&quot;One or more exceptions occurred during analysis; please see the debug log for more details.&quot;, ex);</span>
+<span class="nc" id="L984">            throw new ScanAgentException(&quot;One or more exceptions occurred during analysis; please see the debug log for more details.&quot;, ex);</span>
         } finally {
-<span class="pc bpc" id="L1009" title="1 of 2 branches missed.">            if (engine != null) {</span>
-<span class="fc" id="L1010">                engine.close();</span>
+<span class="pc bpc" id="L986" title="1 of 2 branches missed.">            if (engine != null) {</span>
+<span class="fc" id="L987">                engine.close();</span>
             }
-<span class="fc" id="L1012">            settings.cleanup(true);</span>
+<span class="fc" id="L989">            settings.cleanup(true);</span>
         }
-<span class="fc" id="L1014">        return engine;</span>
+<span class="fc" id="L991">        return engine;</span>
     }
 
     /**
@@ -1023,44 +1000,39 @@ import org.slf4j.LoggerFactory;
      * there is an exception executing the scan.
      */
     private void checkForFailure(Dependency[] dependencies) throws ScanAgentException {
-<span class="nc" id="L1026">        final StringBuilder ids = new StringBuilder();</span>
-<span class="nc bnc" id="L1027" title="All 2 branches missed.">        for (Dependency d : dependencies) {</span>
-<span class="nc" id="L1028">            boolean addName = true;</span>
-<span class="nc bnc" id="L1029" title="All 2 branches missed.">            for (Vulnerability v : d.getVulnerabilities()) {</span>
-<span class="nc bnc" id="L1030" title="All 4 branches missed.">                if ((v.getCvssV2() != null &amp;&amp; v.getCvssV2().getCvssData().getBaseScore() &gt;= failBuildOnCVSS)</span>
-<span class="nc bnc" id="L1031" title="All 4 branches missed.">                        || (v.getCvssV3() != null &amp;&amp; v.getCvssV3().getCvssData().getBaseScore() &gt;= failBuildOnCVSS)</span>
-<span class="nc bnc" id="L1032" title="All 4 branches missed.">                        || (v.getCvssV4() != null &amp;&amp; v.getCvssV4().getCvssData().getBaseScore() &gt;= failBuildOnCVSS)</span>
-<span class="nc bnc" id="L1033" title="All 4 branches missed.">                        || (v.getUnscoredSeverity() != null &amp;&amp; SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) &gt;= failBuildOnCVSS)</span>
+<span class="nc" id="L1003">        final StringBuilder ids = new StringBuilder();</span>
+<span class="nc bnc" id="L1004" title="All 2 branches missed.">        for (Dependency d : dependencies) {</span>
+<span class="nc" id="L1005">            boolean addName = true;</span>
+<span class="nc bnc" id="L1006" title="All 2 branches missed.">            for (Vulnerability v : d.getVulnerabilities()) {</span>
+<span class="nc bnc" id="L1007" title="All 4 branches missed.">                if ((v.getCvssV2() != null &amp;&amp; v.getCvssV2().getCvssData().getBaseScore() &gt;= failBuildOnCVSS)</span>
+<span class="nc bnc" id="L1008" title="All 4 branches missed.">                        || (v.getCvssV3() != null &amp;&amp; v.getCvssV3().getCvssData().getBaseScore() &gt;= failBuildOnCVSS)</span>
+<span class="nc bnc" id="L1009" title="All 4 branches missed.">                        || (v.getUnscoredSeverity() != null &amp;&amp; SeverityUtil.estimateCvssV2(v.getUnscoredSeverity()) &gt;= failBuildOnCVSS)</span>
                         //safety net to fail on any if for some reason the above misses on 0
-<span class="nc bnc" id="L1035" title="All 2 branches missed.">                        || (failBuildOnCVSS &lt;= 0.0f)) {</span>
-<span class="nc bnc" id="L1036" title="All 2 branches missed.">                    if (addName) {</span>
-<span class="nc" id="L1037">                        addName = false;</span>
-<span class="nc" id="L1038">                        ids.append(NEW_LINE).append(d.getFileName()).append(&quot; (&quot;)</span>
-<span class="nc" id="L1039">                           .append(Stream.concat(d.getSoftwareIdentifiers().stream(), d.getVulnerableSoftwareIdentifiers().stream())</span>
-<span class="nc" id="L1040">                                         .map(Identifier::getValue)</span>
-<span class="nc" id="L1041">                                         .collect(Collectors.joining(&quot;, &quot;)))</span>
-<span class="nc" id="L1042">                           .append(&quot;): &quot;)</span>
-<span class="nc" id="L1043">                           .append(v.getName());</span>
+<span class="nc bnc" id="L1011" title="All 2 branches missed.">                        || (failBuildOnCVSS &lt;= 0.0f)) {</span>
+<span class="nc bnc" id="L1012" title="All 2 branches missed.">                    if (addName) {</span>
+<span class="nc" id="L1013">                        addName = false;</span>
+<span class="nc" id="L1014">                        ids.append(NEW_LINE).append(d.getFileName()).append(&quot;: &quot;);</span>
+<span class="nc" id="L1015">                        ids.append(v.getName());</span>
                     } else {
-<span class="nc" id="L1045">                        ids.append(&quot;, &quot;).append(v.getName());</span>
+<span class="nc" id="L1017">                        ids.append(&quot;, &quot;).append(v.getName());</span>
                     }
                 }
-<span class="nc" id="L1048">            }</span>
+<span class="nc" id="L1020">            }</span>
         }
-<span class="nc bnc" id="L1050" title="All 2 branches missed.">        if (ids.length() &gt; 0) {</span>
+<span class="nc bnc" id="L1022" title="All 2 branches missed.">        if (ids.length() &gt; 0) {</span>
             final String msg;
-<span class="nc bnc" id="L1052" title="All 2 branches missed.">            if (showSummary) {</span>
-<span class="nc" id="L1053">                msg = String.format(&quot;%n%nDependency-Check Failure:%n&quot;</span>
+<span class="nc bnc" id="L1024" title="All 2 branches missed.">            if (showSummary) {</span>
+<span class="nc" id="L1025">                msg = String.format(&quot;%n%nDependency-Check Failure:%n&quot;</span>
                         + &quot;One or more dependencies were identified with vulnerabilities that have a CVSS score greater than or equal to '%.1f': %s%n&quot;
                         + &quot;See the dependency-check report for more details.%n%n&quot;, failBuildOnCVSS, ids);
             } else {
-<span class="nc" id="L1057">                msg = String.format(&quot;%n%nDependency-Check Failure:%n&quot;</span>
+<span class="nc" id="L1029">                msg = String.format(&quot;%n%nDependency-Check Failure:%n&quot;</span>
                         + &quot;One or more dependencies were identified with vulnerabilities.%n%n&quot;
                         + &quot;See the dependency-check report for more details.%n%n&quot;);
             }
-<span class="nc" id="L1061">            throw new ScanAgentException(msg);</span>
+<span class="nc" id="L1033">            throw new ScanAgentException(msg);</span>
         }
-<span class="nc" id="L1063">    }</span>
+<span class="nc" id="L1035">    }</span>
 
     /**
      * Generates a warning message listing a summary of dependencies and their
@@ -1069,8 +1041,8 @@ import org.slf4j.LoggerFactory;
      * @param dependencies a list of dependency objects
      */
     public static void showSummary(Dependency[] dependencies) {
-<span class="fc" id="L1072">        showSummary(null, dependencies);</span>
-<span class="fc" id="L1073">    }</span>
+<span class="fc" id="L1044">        showSummary(null, dependencies);</span>
+<span class="fc" id="L1045">    }</span>
 
     /**
      * Generates a warning message listing a summary of dependencies and their
@@ -1080,31 +1052,31 @@ import org.slf4j.LoggerFactory;
      * @param dependencies a list of dependency objects
      */
     public static void showSummary(String projectName, Dependency[] dependencies) {
-<span class="fc" id="L1083">        final StringBuilder summary = new StringBuilder();</span>
-<span class="fc bfc" id="L1084" title="All 2 branches covered.">        for (Dependency d : dependencies) {</span>
-<span class="fc" id="L1085">            final String ids = d.getVulnerabilities(true).stream()</span>
-<span class="fc" id="L1086">                    .map(Vulnerability::getName)</span>
-<span class="fc" id="L1087">                    .collect(Collectors.joining(&quot;, &quot;));</span>
-<span class="pc bpc" id="L1088" title="1 of 2 branches missed.">            if (ids.length() &gt; 0) {</span>
-<span class="fc" id="L1089">                summary.append(d.getFileName()).append(&quot; (&quot;);</span>
-<span class="fc" id="L1090">                summary.append(Stream.concat(d.getSoftwareIdentifiers().stream(), d.getVulnerableSoftwareIdentifiers().stream())</span>
-<span class="fc" id="L1091">                        .map(Identifier::getValue)</span>
-<span class="fc" id="L1092">                        .collect(Collectors.joining(&quot;, &quot;)));</span>
-<span class="fc" id="L1093">                summary.append(&quot;) : &quot;).append(ids).append(NEW_LINE);</span>
+<span class="fc" id="L1055">        final StringBuilder summary = new StringBuilder();</span>
+<span class="fc bfc" id="L1056" title="All 2 branches covered.">        for (Dependency d : dependencies) {</span>
+<span class="fc" id="L1057">            final String ids = d.getVulnerabilities(true).stream()</span>
+<span class="fc" id="L1058">                    .map(Vulnerability::getName)</span>
+<span class="fc" id="L1059">                    .collect(Collectors.joining(&quot;, &quot;));</span>
+<span class="pc bpc" id="L1060" title="1 of 2 branches missed.">            if (ids.length() &gt; 0) {</span>
+<span class="fc" id="L1061">                summary.append(d.getFileName()).append(&quot; (&quot;);</span>
+<span class="fc" id="L1062">                summary.append(Stream.concat(d.getSoftwareIdentifiers().stream(), d.getVulnerableSoftwareIdentifiers().stream())</span>
+<span class="fc" id="L1063">                        .map(Identifier::getValue)</span>
+<span class="fc" id="L1064">                        .collect(Collectors.joining(&quot;, &quot;)));</span>
+<span class="fc" id="L1065">                summary.append(&quot;) : &quot;).append(ids).append(NEW_LINE);</span>
             }
         }
-<span class="pc bpc" id="L1096" title="1 of 2 branches missed.">        if (summary.length() &gt; 0) {</span>
-<span class="pc bpc" id="L1097" title="3 of 4 branches missed.">            if (projectName == null || projectName.isEmpty()) {</span>
-<span class="fc" id="L1098">                LOGGER.warn(&quot;\n\nOne or more dependencies were identified with known vulnerabilities:\n\n{}\n\n&quot;</span>
+<span class="pc bpc" id="L1068" title="1 of 2 branches missed.">        if (summary.length() &gt; 0) {</span>
+<span class="pc bpc" id="L1069" title="3 of 4 branches missed.">            if (projectName == null || projectName.isEmpty()) {</span>
+<span class="fc" id="L1070">                LOGGER.warn(&quot;\n\nOne or more dependencies were identified with known vulnerabilities:\n\n{}\n\n&quot;</span>
                         + &quot;See the dependency-check report for more details.\n\n&quot;,
                         summary);
             } else {
-<span class="nc" id="L1102">                LOGGER.warn(&quot;\n\nOne or more dependencies were identified with known vulnerabilities in {}:\n\n{}\n\n&quot;</span>
+<span class="nc" id="L1074">                LOGGER.warn(&quot;\n\nOne or more dependencies were identified with known vulnerabilities in {}:\n\n{}\n\n&quot;</span>
                         + &quot;See the dependency-check report for more details.\n\n&quot;,
                         projectName,
                         summary);
             }
         }
-<span class="fc" id="L1108">    }</span>
+<span class="fc" id="L1080">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

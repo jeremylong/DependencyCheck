@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PomParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.pom</a> &gt; <span class="el_source">PomParser.java</span></div><h1>PomParser.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PomParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.xml.pom</a> &gt; <span class="el_source">PomParser.java</span></div><h1>PomParser.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -111,18 +111,17 @@ import org.xml.sax.XMLReader;
 <span class="fc" id="L111">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
 <span class="fc" id="L112">            xmlReader.setContentHandler(handler);</span>
 
-<span class="fc" id="L114">            final BOMInputStream bomStream = BOMInputStream.builder()</span>
-<span class="fc" id="L115">                    .setInputStream(new XmlInputStream(new PomProjectInputStream(inputStream))).get();</span>
-<span class="fc" id="L116">            final ByteOrderMark bom = bomStream.getBOM();</span>
-<span class="fc" id="L117">            final String defaultEncoding = StandardCharsets.UTF_8.name();</span>
-<span class="pc bpc" id="L118" title="1 of 2 branches missed.">            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();</span>
-<span class="fc" id="L119">            final Reader reader = new InputStreamReader(bomStream, charsetName);</span>
-<span class="fc" id="L120">            final InputSource in = new InputSource(reader);</span>
-<span class="fc" id="L121">            xmlReader.parse(in);</span>
-<span class="fc" id="L122">            return handler.getModel();</span>
-<span class="fc" id="L123">        } catch (ParserConfigurationException | SAXException | IOException ex) {</span>
-<span class="fc" id="L124">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="fc" id="L125">            throw new PomParseException(ex);</span>
+<span class="fc" id="L114">            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(new PomProjectInputStream(inputStream)));</span>
+<span class="fc" id="L115">            final ByteOrderMark bom = bomStream.getBOM();</span>
+<span class="fc" id="L116">            final String defaultEncoding = StandardCharsets.UTF_8.name();</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();</span>
+<span class="fc" id="L118">            final Reader reader = new InputStreamReader(bomStream, charsetName);</span>
+<span class="fc" id="L119">            final InputSource in = new InputSource(reader);</span>
+<span class="fc" id="L120">            xmlReader.parse(in);</span>
+<span class="fc" id="L121">            return handler.getModel();</span>
+<span class="fc" id="L122">        } catch (ParserConfigurationException | SAXException | IOException ex) {</span>
+<span class="fc" id="L123">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L124">            throw new PomParseException(ex);</span>
         }
     }
 
@@ -137,23 +136,23 @@ import org.xml.sax.XMLReader;
      */
     public Model parseWithoutDocTypeCleanup(InputStream inputStream) throws PomParseException {
         try {
-<span class="fc" id="L140">            final PomHandler handler = new PomHandler();</span>
-<span class="fc" id="L141">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();</span>
-<span class="fc" id="L142">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
-<span class="fc" id="L143">            xmlReader.setContentHandler(handler);</span>
+<span class="fc" id="L139">            final PomHandler handler = new PomHandler();</span>
+<span class="fc" id="L140">            final SAXParser saxParser = XmlUtils.buildSecureSaxParser();</span>
+<span class="fc" id="L141">            final XMLReader xmlReader = saxParser.getXMLReader();</span>
+<span class="fc" id="L142">            xmlReader.setContentHandler(handler);</span>
 
-<span class="fc" id="L145">            final BOMInputStream bomStream = BOMInputStream.builder().setInputStream(new XmlInputStream(inputStream)).get();</span>
-<span class="fc" id="L146">            final ByteOrderMark bom = bomStream.getBOM();</span>
-<span class="fc" id="L147">            final String defaultEncoding = StandardCharsets.UTF_8.name();</span>
-<span class="pc bpc" id="L148" title="1 of 2 branches missed.">            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();</span>
-<span class="fc" id="L149">            final Reader reader = new InputStreamReader(bomStream, charsetName);</span>
-<span class="fc" id="L150">            final InputSource in = new InputSource(reader);</span>
-<span class="fc" id="L151">            xmlReader.parse(in);</span>
-<span class="fc" id="L152">            return handler.getModel();</span>
-<span class="fc" id="L153">        } catch (ParserConfigurationException | SAXException | IOException ex) {</span>
-<span class="fc" id="L154">            LOGGER.debug(&quot;&quot;, ex);</span>
-<span class="fc" id="L155">            throw new PomParseException(ex);</span>
+<span class="fc" id="L144">            final BOMInputStream bomStream = new BOMInputStream(new XmlInputStream(inputStream));</span>
+<span class="fc" id="L145">            final ByteOrderMark bom = bomStream.getBOM();</span>
+<span class="fc" id="L146">            final String defaultEncoding = StandardCharsets.UTF_8.name();</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">            final String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();</span>
+<span class="fc" id="L148">            final Reader reader = new InputStreamReader(bomStream, charsetName);</span>
+<span class="fc" id="L149">            final InputSource in = new InputSource(reader);</span>
+<span class="fc" id="L150">            xmlReader.parse(in);</span>
+<span class="fc" id="L151">            return handler.getModel();</span>
+<span class="fc" id="L152">        } catch (ParserConfigurationException | SAXException | IOException ex) {</span>
+<span class="fc" id="L153">            LOGGER.debug(&quot;&quot;, ex);</span>
+<span class="fc" id="L154">            throw new PomParseException(ex);</span>
         }
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>AbstractNpmAnalyzer xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -513,55 +513,58 @@
 <a class="jxr_linenumber" name="L505" href="#L505">505</a> <em class="jxr_javadoccomment">     * @param vuln the vulnerability to add</em>
 <a class="jxr_linenumber" name="L506" href="#L506">506</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L507" href="#L507">507</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> replaceOrAddVulnerability(<a href="../../../../org/owasp/dependencycheck/dependency/Dependency.html">Dependency</a> dependency, <a href="../../../../org/owasp/dependencycheck/dependency/Vulnerability.html">Vulnerability</a> vuln) {
-<a class="jxr_linenumber" name="L508" href="#L508">508</a>         <strong class="jxr_keyword">boolean</strong> found = vuln.getSource() == Vulnerability.Source.NPM &amp;&amp; 
-<a class="jxr_linenumber" name="L509" href="#L509">509</a>                 dependency.getVulnerabilities().stream().anyMatch(existing -&gt; {
-<a class="jxr_linenumber" name="L510" href="#L510">510</a>             <strong class="jxr_keyword">return</strong> existing.getReferences().stream().anyMatch(ref -&gt;{
-<a class="jxr_linenumber" name="L511" href="#L511">511</a>                     <strong class="jxr_keyword">return</strong> ref.getName() != <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L512" href="#L512">512</a>                             &amp;&amp; ref.getName().equals(<span class="jxr_string">"https://nodesecurity.io/advisories/"</span> + vuln.getName());
-<a class="jxr_linenumber" name="L513" href="#L513">513</a>             });
-<a class="jxr_linenumber" name="L514" href="#L514">514</a>         });
-<a class="jxr_linenumber" name="L515" href="#L515">515</a>         <strong class="jxr_keyword">if</strong> (!found) {
-<a class="jxr_linenumber" name="L516" href="#L516">516</a>             dependency.addVulnerability(vuln);
+<a class="jxr_linenumber" name="L508" href="#L508">508</a>         <strong class="jxr_keyword">boolean</strong> found = false;
+<a class="jxr_linenumber" name="L509" href="#L509">509</a>         <strong class="jxr_keyword">for</strong> (Vulnerability existing : dependency.getVulnerabilities()) {
+<a class="jxr_linenumber" name="L510" href="#L510">510</a>             <strong class="jxr_keyword">for</strong> (Reference ref : existing.getReferences()) {
+<a class="jxr_linenumber" name="L511" href="#L511">511</a>                 <strong class="jxr_keyword">if</strong> (ref.getName() != <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L512" href="#L512">512</a>                         &amp;&amp; vuln.getSource().toString().equals(<span class="jxr_string">"NPM"</span>)
+<a class="jxr_linenumber" name="L513" href="#L513">513</a>                         &amp;&amp; ref.getName().equals(<span class="jxr_string">"https://nodesecurity.io/advisories/"</span> + vuln.getName())) {
+<a class="jxr_linenumber" name="L514" href="#L514">514</a>                     found = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L515" href="#L515">515</a>                 }
+<a class="jxr_linenumber" name="L516" href="#L516">516</a>             }
 <a class="jxr_linenumber" name="L517" href="#L517">517</a>         }
-<a class="jxr_linenumber" name="L518" href="#L518">518</a>     }
-<a class="jxr_linenumber" name="L519" href="#L519">519</a> 
-<a class="jxr_linenumber" name="L520" href="#L520">520</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L521" href="#L521">521</a> <em class="jxr_javadoccomment">     * Returns the node audit search utility.</em>
-<a class="jxr_linenumber" name="L522" href="#L522">522</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L523" href="#L523">523</a> <em class="jxr_javadoccomment">     * @return the node audit search utility</em>
-<a class="jxr_linenumber" name="L524" href="#L524">524</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L525" href="#L525">525</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../org/owasp/dependencycheck/data/nodeaudit/NodeAuditSearch.html">NodeAuditSearch</a> getSearcher() {
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>         <strong class="jxr_keyword">return</strong> searcher;
-<a class="jxr_linenumber" name="L527" href="#L527">527</a>     }
-<a class="jxr_linenumber" name="L528" href="#L528">528</a> 
-<a class="jxr_linenumber" name="L529" href="#L529">529</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L530" href="#L530">530</a> <em class="jxr_javadoccomment">     * Give an NPM version range and a collection of versions, this method</em>
-<a class="jxr_linenumber" name="L531" href="#L531">531</a> <em class="jxr_javadoccomment">     * attempts to select a specific version from the collection that is in the</em>
-<a class="jxr_linenumber" name="L532" href="#L532">532</a> <em class="jxr_javadoccomment">     * range.</em>
-<a class="jxr_linenumber" name="L533" href="#L533">533</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L534" href="#L534">534</a> <em class="jxr_javadoccomment">     * @param versionRange the version range to evaluate</em>
-<a class="jxr_linenumber" name="L535" href="#L535">535</a> <em class="jxr_javadoccomment">     * @param availableVersions the collection of possible versions to select</em>
-<a class="jxr_linenumber" name="L536" href="#L536">536</a> <em class="jxr_javadoccomment">     * @return the selected range from the versionRange</em>
-<a class="jxr_linenumber" name="L537" href="#L537">537</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L538" href="#L538">538</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String determineVersionFromMap(String versionRange, Collection&lt;String&gt; availableVersions) {
-<a class="jxr_linenumber" name="L539" href="#L539">539</a>         <strong class="jxr_keyword">if</strong> (availableVersions.size() == 1) {
-<a class="jxr_linenumber" name="L540" href="#L540">540</a>             <strong class="jxr_keyword">return</strong> availableVersions.iterator().next();
-<a class="jxr_linenumber" name="L541" href="#L541">541</a>         }
-<a class="jxr_linenumber" name="L542" href="#L542">542</a>         <strong class="jxr_keyword">for</strong> (String v : availableVersions) {
-<a class="jxr_linenumber" name="L543" href="#L543">543</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L544" href="#L544">544</a>                 <strong class="jxr_keyword">final</strong> Semver version = <strong class="jxr_keyword">new</strong> Semver(v);
-<a class="jxr_linenumber" name="L545" href="#L545">545</a>                 <strong class="jxr_keyword">if</strong> (version.satisfies(versionRange)) {
-<a class="jxr_linenumber" name="L546" href="#L546">546</a>                     <strong class="jxr_keyword">return</strong> v;
-<a class="jxr_linenumber" name="L547" href="#L547">547</a>                 }
-<a class="jxr_linenumber" name="L548" href="#L548">548</a>             } <strong class="jxr_keyword">catch</strong> (SemverException ex) {
-<a class="jxr_linenumber" name="L549" href="#L549">549</a>                 LOGGER.debug(<span class="jxr_string">"invalid semver: "</span> + v);
-<a class="jxr_linenumber" name="L550" href="#L550">550</a>             }
-<a class="jxr_linenumber" name="L551" href="#L551">551</a>         }
-<a class="jxr_linenumber" name="L552" href="#L552">552</a>         <strong class="jxr_keyword">return</strong> availableVersions.iterator().next();
-<a class="jxr_linenumber" name="L553" href="#L553">553</a>     }
-<a class="jxr_linenumber" name="L554" href="#L554">554</a> }
+<a class="jxr_linenumber" name="L518" href="#L518">518</a>         <strong class="jxr_keyword">if</strong> (!found) {
+<a class="jxr_linenumber" name="L519" href="#L519">519</a>             dependency.addVulnerability(vuln);
+<a class="jxr_linenumber" name="L520" href="#L520">520</a>         }
+<a class="jxr_linenumber" name="L521" href="#L521">521</a>     }
+<a class="jxr_linenumber" name="L522" href="#L522">522</a> 
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L524" href="#L524">524</a> <em class="jxr_javadoccomment">     * Returns the node audit search utility.</em>
+<a class="jxr_linenumber" name="L525" href="#L525">525</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L526" href="#L526">526</a> <em class="jxr_javadoccomment">     * @return the node audit search utility</em>
+<a class="jxr_linenumber" name="L527" href="#L527">527</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L528" href="#L528">528</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../org/owasp/dependencycheck/data/nodeaudit/NodeAuditSearch.html">NodeAuditSearch</a> getSearcher() {
+<a class="jxr_linenumber" name="L529" href="#L529">529</a>         <strong class="jxr_keyword">return</strong> searcher;
+<a class="jxr_linenumber" name="L530" href="#L530">530</a>     }
+<a class="jxr_linenumber" name="L531" href="#L531">531</a> 
+<a class="jxr_linenumber" name="L532" href="#L532">532</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L533" href="#L533">533</a> <em class="jxr_javadoccomment">     * Give an NPM version range and a collection of versions, this method</em>
+<a class="jxr_linenumber" name="L534" href="#L534">534</a> <em class="jxr_javadoccomment">     * attempts to select a specific version from the collection that is in the</em>
+<a class="jxr_linenumber" name="L535" href="#L535">535</a> <em class="jxr_javadoccomment">     * range.</em>
+<a class="jxr_linenumber" name="L536" href="#L536">536</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L537" href="#L537">537</a> <em class="jxr_javadoccomment">     * @param versionRange the version range to evaluate</em>
+<a class="jxr_linenumber" name="L538" href="#L538">538</a> <em class="jxr_javadoccomment">     * @param availableVersions the collection of possible versions to select</em>
+<a class="jxr_linenumber" name="L539" href="#L539">539</a> <em class="jxr_javadoccomment">     * @return the selected range from the versionRange</em>
+<a class="jxr_linenumber" name="L540" href="#L540">540</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L541" href="#L541">541</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String determineVersionFromMap(String versionRange, Collection&lt;String&gt; availableVersions) {
+<a class="jxr_linenumber" name="L542" href="#L542">542</a>         <strong class="jxr_keyword">if</strong> (availableVersions.size() == 1) {
+<a class="jxr_linenumber" name="L543" href="#L543">543</a>             <strong class="jxr_keyword">return</strong> availableVersions.iterator().next();
+<a class="jxr_linenumber" name="L544" href="#L544">544</a>         }
+<a class="jxr_linenumber" name="L545" href="#L545">545</a>         <strong class="jxr_keyword">for</strong> (String v : availableVersions) {
+<a class="jxr_linenumber" name="L546" href="#L546">546</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L547" href="#L547">547</a>                 <strong class="jxr_keyword">final</strong> Semver version = <strong class="jxr_keyword">new</strong> Semver(v);
+<a class="jxr_linenumber" name="L548" href="#L548">548</a>                 <strong class="jxr_keyword">if</strong> (version.satisfies(versionRange)) {
+<a class="jxr_linenumber" name="L549" href="#L549">549</a>                     <strong class="jxr_keyword">return</strong> v;
+<a class="jxr_linenumber" name="L550" href="#L550">550</a>                 }
+<a class="jxr_linenumber" name="L551" href="#L551">551</a>             } <strong class="jxr_keyword">catch</strong> (SemverException ex) {
+<a class="jxr_linenumber" name="L552" href="#L552">552</a>                 LOGGER.debug(<span class="jxr_string">"invalid semver: "</span> + v);
+<a class="jxr_linenumber" name="L553" href="#L553">553</a>             }
+<a class="jxr_linenumber" name="L554" href="#L554">554</a>         }
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>         <strong class="jxr_keyword">return</strong> availableVersions.iterator().next();
+<a class="jxr_linenumber" name="L556" href="#L556">556</a>     }
+<a class="jxr_linenumber" name="L557" href="#L557">557</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2025 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

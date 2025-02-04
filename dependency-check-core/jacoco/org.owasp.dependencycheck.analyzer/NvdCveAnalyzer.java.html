@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NvdCveAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">NvdCveAnalyzer.java</span></div><h1>NvdCveAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NvdCveAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">NvdCveAnalyzer.java</span></div><h1>NvdCveAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -128,7 +128,7 @@ import org.owasp.dependencycheck.utils.Settings;
      * @param vulns the vulnerability to add
      */
     private void replaceOrAddVulnerability(Dependency dependency, List&lt;Vulnerability&gt; vulns) {
-<span class="fc" id="L131">        vulns.forEach(v -&gt; v.getReferences().forEach(ref -&gt; dependency.getVulnerabilities().forEach(existing -&gt; {</span>
+<span class="pc" id="L131">        vulns.forEach(v -&gt; v.getReferences().forEach(ref -&gt; dependency.getVulnerabilities().forEach(existing -&gt; {</span>
 <span class="nc bnc" id="L132" title="All 2 branches missed.">                if (existing.getSource() == Source.NPM</span>
 <span class="nc bnc" id="L133" title="All 2 branches missed.">                        &amp;&amp; ref.getName() != null</span>
 <span class="nc bnc" id="L134" title="All 2 branches missed.">                        &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + existing.getName())) {</span>
@@ -183,10 +183,10 @@ import org.owasp.dependencycheck.utils.Settings;
      * &lt;code&gt;false&lt;/code&gt;
      */
     private boolean ecosystemMatchesTargetSoftware(String ecosystem, String targetSoftware) {
-<span class="pc bpc" id="L186" title="1 of 4 branches missed.">        if (&quot;*&quot;.equals(targetSoftware) || &quot;-&quot;.equals(targetSoftware)) {</span>
+<span class="pc bpc" id="L186" title="3 of 4 branches missed.">        if (&quot;*&quot;.equals(targetSoftware) || &quot;-&quot;.equals(targetSoftware)) {</span>
 <span class="fc" id="L187">            return true;</span>
         }
-<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        if (Ecosystem.NODEJS.equals(ecosystem)) {</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        if (Ecosystem.NODEJS.equals(ecosystem)) {</span>
 <span class="nc bnc" id="L190" title="All 2 branches missed.">            switch (targetSoftware.toLowerCase()) {</span>
                 case &quot;nodejs&quot;:
                 case &quot;node.js&quot;:
@@ -198,7 +198,7 @@ import org.owasp.dependencycheck.utils.Settings;
 <span class="nc" id="L198">                    return false;</span>
             }
         }
-<span class="fc" id="L201">        return true;</span>
+<span class="nc" id="L201">        return true;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

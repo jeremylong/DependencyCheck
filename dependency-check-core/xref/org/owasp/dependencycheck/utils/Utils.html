@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>Utils xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -71,7 +71,7 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> getJavaUpdateVersion() {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <em class="jxr_comment">//"1.8.0_144" "11.0.2+9" "17.0.8.1"</em>
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">final</strong> String runtimeVersion = System.getProperty(<span class="jxr_string">"java.version"</span>);
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          String runtimeVersion = System.getProperty(<span class="jxr_string">"java.runtime.version"</span>);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">return</strong> parseUpdate(runtimeVersion);
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      }
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  
@@ -84,7 +84,7 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">int</strong> parseUpdate(String runtimeVersion) {
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          LOGGER.debug(runtimeVersion);
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>              <strong class="jxr_keyword">final</strong> String[] parts = runtimeVersion.split(<span class="jxr_string">"&#92;&#92;."</span>);
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>              String[] parts = runtimeVersion.split(<span class="jxr_string">"&#92;&#92;."</span>);
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>              <strong class="jxr_keyword">if</strong> (parts.length == 4 &amp;&amp; isNumeric(parts)) {
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>                  <strong class="jxr_keyword">return</strong> Integer.parseInt(parts[2]);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>              }
@@ -125,9 +125,16 @@
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>         }
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>     }
-<a class="jxr_linenumber" name="L120" href="#L120">120</a> }
+<a class="jxr_linenumber" name="L120" href="#L120">120</a> 
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] args) {
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>         System.out.println(<span class="jxr_string">"Java runtime : "</span> + System.getProperty(<span class="jxr_string">"java.runtime.version"</span>));
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>         System.out.println(<span class="jxr_string">"Java version : "</span> + getJavaVersion());
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>         System.out.println(<span class="jxr_string">"Java update  : "</span> + getJavaUpdateVersion());
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> 
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>     }
+<a class="jxr_linenumber" name="L127" href="#L127">127</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2024 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

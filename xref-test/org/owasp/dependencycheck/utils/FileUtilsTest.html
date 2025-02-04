@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>FileUtilsTest xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -66,26 +66,9 @@
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          assertTrue(<span class="jxr_string">"delete returned a failed status"</span>, status);
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          assertFalse(<span class="jxr_string">"Temporary file exists after attempting deletion"</span>, file.exists());
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      }
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>  
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     * Test of delete method with a non-empty directory, of class FileUtils.</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      @Test
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testDeleteWithSubDirectories() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>  
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>          File dir = <strong class="jxr_keyword">new</strong> File(getSettings().getTempDirectory(), <span class="jxr_string">"delete-me"</span>);
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          dir.mkdirs();
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>          File file = File.createTempFile(<span class="jxr_string">"tmp"</span>, <span class="jxr_string">"deleteme"</span>, dir);
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          assertTrue(<span class="jxr_string">"Unable to create a temporary file "</span> + file.getAbsolutePath(), file.exists());
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>  
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <em class="jxr_comment">// delete the file</em>
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <strong class="jxr_keyword">boolean</strong> status = FileUtils.delete(dir);
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>          assertTrue(<span class="jxr_string">"delete returned a failed status"</span>, status);
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>          assertFalse(<span class="jxr_string">"Temporary file exists after attempting deletion"</span>, file.exists());
-<a class="jxr_linenumber" name="L77" href="#L77">77</a>      }
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>  }
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2025 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

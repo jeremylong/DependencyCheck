@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FalsePositiveAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">FalsePositiveAnalyzer.java</span></div><h1>FalsePositiveAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FalsePositiveAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">FalsePositiveAnalyzer.java</span></div><h1>FalsePositiveAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -181,24 +181,24 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L181">                        final CpeIdentifier nextCpeId = (CpeIdentifier) nextId;</span>
 <span class="fc" id="L182">                        final Cpe nextCpe = nextCpeId.getCpe();</span>
                         //TODO fix the version problem below
-<span class="fc bfc" id="L184" title="All 2 branches covered.">                        if (currentCpe.getVendor().equals(nextCpe.getVendor())) {</span>
-<span class="fc bfc" id="L185" title="All 2 branches covered.">                            if (currentCpe.getProduct().equals(nextCpe.getProduct())) {</span>
+<span class="pc bpc" id="L184" title="1 of 2 branches missed.">                        if (currentCpe.getVendor().equals(nextCpe.getVendor())) {</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">                            if (currentCpe.getProduct().equals(nextCpe.getProduct())) {</span>
                                 // see if one is contained in the other.. remove the contained one from dependency.getIdentifier
-<span class="fc" id="L187">                                final String currentVersion = currentCpe.getVersion();</span>
-<span class="fc" id="L188">                                final String nextVersion = nextCpe.getVersion();</span>
-<span class="pc bpc" id="L189" title="3 of 4 branches missed.">                                if (currentVersion == null &amp;&amp; nextVersion == null) {</span>
+<span class="nc" id="L187">                                final String currentVersion = currentCpe.getVersion();</span>
+<span class="nc" id="L188">                                final String nextVersion = nextCpe.getVersion();</span>
+<span class="nc bnc" id="L189" title="All 4 branches missed.">                                if (currentVersion == null &amp;&amp; nextVersion == null) {</span>
                                     //how did we get here?
 <span class="nc" id="L191">                                    LOGGER.debug(&quot;currentVersion and nextVersion are both null?&quot;);</span>
-<span class="pc bpc" id="L192" title="3 of 4 branches missed.">                                } else if (currentVersion == null &amp;&amp; nextVersion != null) {</span>
+<span class="nc bnc" id="L192" title="All 4 branches missed.">                                } else if (currentVersion == null &amp;&amp; nextVersion != null) {</span>
 <span class="nc" id="L193">                                    dependency.removeVulnerableSoftwareIdentifier(currentId);</span>
-<span class="pc bpc" id="L194" title="3 of 4 branches missed.">                                } else if (nextVersion == null &amp;&amp; currentVersion != null) {</span>
+<span class="nc bnc" id="L194" title="All 4 branches missed.">                                } else if (nextVersion == null &amp;&amp; currentVersion != null) {</span>
 <span class="nc" id="L195">                                    dependency.removeVulnerableSoftwareIdentifier(nextId);</span>
-<span class="pc bpc" id="L196" title="1 of 2 branches missed.">                                } else if (currentVersion.length() &lt; nextVersion.length()) {</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">                                } else if (currentVersion.length() &lt; nextVersion.length()) {</span>
 <span class="nc bnc" id="L197" title="All 4 branches missed.">                                    if (nextVersion.startsWith(currentVersion) || &quot;-&quot;.equals(currentVersion)) {</span>
 <span class="nc" id="L198">                                        dependency.removeVulnerableSoftwareIdentifier(currentId);</span>
                                     }
-<span class="pc bpc" id="L200" title="3 of 4 branches missed.">                                } else if (currentVersion.startsWith(nextVersion) || &quot;-&quot;.equals(nextVersion)) {</span>
-<span class="fc" id="L201">                                    dependency.removeVulnerableSoftwareIdentifier(nextId);</span>
+<span class="nc bnc" id="L200" title="All 4 branches missed.">                                } else if (currentVersion.startsWith(nextVersion) || &quot;-&quot;.equals(nextVersion)) {</span>
+<span class="nc" id="L201">                                    dependency.removeVulnerableSoftwareIdentifier(nextId);</span>
                                 }
                             }
                         }
@@ -276,13 +276,13 @@ import us.springett.parsers.cpe.values.Part;
 <span class="nc bnc" id="L276" title="All 2 branches missed.">                        || dependency.getFileName().toLowerCase().endsWith(&quot;.ear&quot;)</span>
 <span class="nc bnc" id="L277" title="All 2 branches missed.">                        || dependency.getFileName().toLowerCase().endsWith(&quot;.war&quot;))) {</span>
 <span class="fc" id="L278">                    toRemove.add(i);</span>
-<span class="fc bfc" id="L279" title="All 4 branches covered.">                } else if (((&quot;jquery&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;jquery&quot;.equals(cpe.getProduct()))</span>
+<span class="pc bpc" id="L279" title="3 of 4 branches missed.">                } else if (((&quot;jquery&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;jquery&quot;.equals(cpe.getProduct()))</span>
 <span class="pc bpc" id="L280" title="3 of 4 branches missed.">                        || (&quot;prototypejs&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;prototype&quot;.equals(cpe.getProduct()))</span>
 <span class="pc bpc" id="L281" title="3 of 4 branches missed.">                        || (&quot;yahoo&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;yui&quot;.equals(cpe.getProduct())))</span>
-<span class="pc bpc" id="L282" title="1 of 2 branches missed.">                        &amp;&amp; (dependency.getFileName().toLowerCase().endsWith(&quot;.jar&quot;)</span>
-<span class="pc bpc" id="L283" title="1 of 2 branches missed.">                        || dependency.getFileName().toLowerCase().endsWith(&quot;pom.xml&quot;)</span>
-<span class="pc bpc" id="L284" title="1 of 2 branches missed.">                        || dependency.getFileName().toLowerCase().endsWith(&quot;.dll&quot;)</span>
-<span class="pc bpc" id="L285" title="1 of 2 branches missed.">                        || dependency.getFileName().toLowerCase().endsWith(&quot;.exe&quot;))) {</span>
+<span class="nc bnc" id="L282" title="All 2 branches missed.">                        &amp;&amp; (dependency.getFileName().toLowerCase().endsWith(&quot;.jar&quot;)</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">                        || dependency.getFileName().toLowerCase().endsWith(&quot;pom.xml&quot;)</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">                        || dependency.getFileName().toLowerCase().endsWith(&quot;.dll&quot;)</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">                        || dependency.getFileName().toLowerCase().endsWith(&quot;.exe&quot;))) {</span>
 <span class="nc" id="L286">                    toRemove.add(i);</span>
 <span class="pc bpc" id="L287" title="3 of 4 branches missed.">                } else if (((&quot;microsoft&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;excel&quot;.equals(cpe.getProduct()))</span>
 <span class="pc bpc" id="L288" title="3 of 4 branches missed.">                        || (&quot;microsoft&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;word&quot;.equals(cpe.getProduct()))</span>
@@ -349,24 +349,24 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L349">        final String fileName = dependency.getFileName();</span>
 <span class="pc bpc" id="L350" title="1 of 4 branches missed.">        if (fileName != null &amp;&amp; fileName.contains(&quot;axis2&quot;)) {</span>
 <span class="fc" id="L351">            dependency.getVulnerableSoftwareIdentifiers().stream()</span>
-<span class="pc" id="L352">                    .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
-<span class="pc" id="L353">                    .map(i -&gt; (CpeIdentifier) i)</span>
+<span class="fc" id="L352">                    .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
+<span class="fc" id="L353">                    .map(i -&gt; (CpeIdentifier) i)</span>
 <span class="fc" id="L354">                    .forEach((i) -&gt; {</span>
-<span class="nc" id="L355">                        final Cpe cpe = i.getCpe();</span>
-<span class="nc bnc" id="L356" title="All 4 branches missed.">                        if (&quot;apache&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;axis&quot;.equals(cpe.getProduct())) {</span>
-<span class="nc" id="L357">                            identifiersToRemove.add(i);</span>
+<span class="fc" id="L355">                        final Cpe cpe = i.getCpe();</span>
+<span class="pc bpc" id="L356" title="2 of 4 branches missed.">                        if (&quot;apache&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;axis&quot;.equals(cpe.getProduct())) {</span>
+<span class="fc" id="L357">                            identifiersToRemove.add(i);</span>
                         }
-<span class="nc" id="L359">                    });</span>
-<span class="pc bpc" id="L360" title="1 of 4 branches missed.">        } else if (fileName != null &amp;&amp; fileName.contains(&quot;axis&quot;)) {</span>
-<span class="fc" id="L361">            dependency.getVulnerableSoftwareIdentifiers().stream()</span>
-<span class="fc" id="L362">                    .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
-<span class="fc" id="L363">                    .map(i -&gt; (CpeIdentifier) i)</span>
-<span class="fc" id="L364">                    .forEach((i) -&gt; {</span>
-<span class="fc" id="L365">                        final Cpe cpe = i.getCpe();</span>
-<span class="pc bpc" id="L366" title="2 of 4 branches missed.">                        if (&quot;apache&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;axis2&quot;.equals(cpe.getProduct())) {</span>
+<span class="fc" id="L359">                    });</span>
+<span class="pc bpc" id="L360" title="2 of 4 branches missed.">        } else if (fileName != null &amp;&amp; fileName.contains(&quot;axis&quot;)) {</span>
+<span class="nc" id="L361">            dependency.getVulnerableSoftwareIdentifiers().stream()</span>
+<span class="nc" id="L362">                    .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
+<span class="nc" id="L363">                    .map(i -&gt; (CpeIdentifier) i)</span>
+<span class="nc" id="L364">                    .forEach((i) -&gt; {</span>
+<span class="nc" id="L365">                        final Cpe cpe = i.getCpe();</span>
+<span class="nc bnc" id="L366" title="All 4 branches missed.">                        if (&quot;apache&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;axis2&quot;.equals(cpe.getProduct())) {</span>
 <span class="nc" id="L367">                            identifiersToRemove.add(i);</span>
                         }
-<span class="fc" id="L369">                    });</span>
+<span class="nc" id="L369">                    });</span>
         }
 <span class="fc" id="L371">        identifiersToRemove.forEach(dependency::removeVulnerableSoftwareIdentifier);</span>
 <span class="fc" id="L372">    }</span>
@@ -389,8 +389,8 @@ import us.springett.parsers.cpe.values.Part;
 <span class="fc" id="L389">                .map(i -&gt; (CpeIdentifier) i)</span>
 <span class="fc" id="L390">                .forEach((i) -&gt; {</span>
 <span class="fc" id="L391">                    final Cpe cpe = i.getCpe();</span>
-<span class="fc bfc" id="L392" title="All 2 branches covered.">                    if (((&quot;oracle&quot;.equals(cpe.getVendor())</span>
-<span class="pc bpc" id="L393" title="2 of 4 branches missed.">                            &amp;&amp; (&quot;opensso&quot;.equals(cpe.getProduct()) || &quot;opensso_enterprise&quot;.equals(cpe.getProduct()))))</span>
+<span class="pc bpc" id="L392" title="1 of 2 branches missed.">                    if (((&quot;oracle&quot;.equals(cpe.getVendor())</span>
+<span class="pc bnc" id="L393" title="All 4 branches missed.">                            &amp;&amp; (&quot;opensso&quot;.equals(cpe.getProduct()) || &quot;opensso_enterprise&quot;.equals(cpe.getProduct()))))</span>
 <span class="pc bpc" id="L394" title="1 of 2 branches missed.">                            || (&quot;sun&quot;.equals(cpe.getVendor())</span>
 <span class="nc bnc" id="L395" title="All 4 branches missed.">                            &amp;&amp; (&quot;opensso&quot;.equals(cpe.getProduct()) || &quot;opensso_enterprise&quot;.equals(cpe.getProduct())))) {</span>
 
@@ -416,15 +416,15 @@ import us.springett.parsers.cpe.values.Part;
 <span class="nc" id="L416">                            LOGGER.warn(&quot;Unable to add oracle and sun CPEs&quot;, ex);</span>
 <span class="nc" id="L417">                        }</span>
                     }
-<span class="fc bfc" id="L419" title="All 4 branches covered.">                    if (&quot;apache&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;santuario_xml_security_for_java&quot;.equals(cpe.getProduct())) {</span>
+<span class="pc bpc" id="L419" title="1 of 4 branches missed.">                    if (&quot;apache&quot;.equals(cpe.getVendor()) &amp;&amp; &quot;santuario_xml_security_for_java&quot;.equals(cpe.getProduct())) {</span>
                         try {
-<span class="fc" id="L421">                            final Cpe newCpe1 = builder.part(Part.APPLICATION).vendor(&quot;apache&quot;)</span>
-<span class="fc" id="L422">                                    .product(&quot;xml_security_for_java&quot;).version(cpe.getVersion()).build();</span>
-<span class="fc" id="L423">                            final CpeIdentifier newCpeId1 = new CpeIdentifier(newCpe1, i.getConfidence());</span>
-<span class="fc" id="L424">                            identifiersToAdd.add(newCpeId1);</span>
+<span class="nc" id="L421">                            final Cpe newCpe1 = builder.part(Part.APPLICATION).vendor(&quot;apache&quot;)</span>
+<span class="nc" id="L422">                                    .product(&quot;xml_security_for_java&quot;).version(cpe.getVersion()).build();</span>
+<span class="nc" id="L423">                            final CpeIdentifier newCpeId1 = new CpeIdentifier(newCpe1, i.getConfidence());</span>
+<span class="nc" id="L424">                            identifiersToAdd.add(newCpeId1);</span>
 <span class="nc" id="L425">                        } catch (CpeValidationException ex) {</span>
 <span class="nc" id="L426">                            LOGGER.warn(&quot;Unable to add apache xml_security_for_java CPE&quot;, ex);</span>
-<span class="fc" id="L427">                        }</span>
+<span class="nc" id="L427">                        }</span>
                     }
 <span class="fc" id="L429">                });</span>
 <span class="fc" id="L430">        identifiersToAdd.forEach(dependency::addVulnerableSoftwareIdentifier);</span>
@@ -484,4 +484,4 @@ import us.springett.parsers.cpe.values.Part;
 <span class="nc" id="L484">        return null;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BundlerAuditProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.processing</a> &gt; <span class="el_source">BundlerAuditProcessor.java</span></div><h1>BundlerAuditProcessor.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BundlerAuditProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.processing</a> &gt; <span class="el_source">BundlerAuditProcessor.java</span></div><h1>BundlerAuditProcessor.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -22,7 +22,23 @@ import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
 import io.github.jeremylong.openvulnerability.client.nvd.CvssV2;
 import io.github.jeremylong.openvulnerability.client.nvd.CvssV2Data;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.ADVISORY;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CRITICALITY;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CVE;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.NAME;
+import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.VERSION;
 import org.owasp.dependencycheck.data.nvdcve.CveDB;
 import org.owasp.dependencycheck.data.nvdcve.DatabaseException;
 import org.owasp.dependencycheck.dependency.Confidence;
@@ -40,22 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.springett.parsers.cpe.exceptions.CpeValidationException;
 import us.springett.parsers.cpe.values.Part;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.ADVISORY;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CRITICALITY;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.CVE;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.DEPENDENCY_ECOSYSTEM;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.NAME;
-import static org.owasp.dependencycheck.analyzer.RubyBundleAuditAnalyzer.VERSION;
 
 /**
  * Processor for the output of bundler-audit.
@@ -133,7 +133,7 @@ public class BundlerAuditProcessor extends Processor&lt;InputStream&gt; {
 <span class="nc" id="L133">                    appendToDescription = false;</span>
 <span class="nc" id="L134">                    gem = nextLine.substring(NAME.length());</span>
 <span class="nc bnc" id="L135" title="All 2 branches missed.">                    if (!map.containsKey(gem)) {</span>
-<span class="nc" id="L136">                        map.put(gem, createDependencyForGem(engine, gemDependency.getActualFile(), parentName, fileName, filePath, gem));</span>
+<span class="nc" id="L136">                        map.put(gem, createDependencyForGem(engine, parentName, fileName, filePath, gem));</span>
                     }
 <span class="nc" id="L138">                    dependency = map.get(gem);</span>
 <span class="nc" id="L139">                    LOGGER.debug(&quot;bundle-audit ({}): {}&quot;, parentName, nextLine);</span>
@@ -241,16 +241,15 @@ public class BundlerAuditProcessor extends Processor&lt;InputStream&gt; {
 <span class="nc bnc" id="L241" title="All 2 branches missed.">                } else if (&quot;Low&quot;.equalsIgnoreCase(criticality)) {</span>
 <span class="nc" id="L242">                    score = 2.0;</span>
                 }
-<span class="nc" id="L244">                LOGGER.debug(&quot;bundle-audit vulnerability missing CVSS data: {}&quot;, vulnerability.getName());</span>
-<span class="nc" id="L245">                final CvssV2Data cvssData = new CvssV2Data(&quot;2.0&quot;, null, null, null, null, null, null, null, score, criticality.toUpperCase(),</span>
+<span class="nc" id="L244">                final CvssV2Data cvssData = new CvssV2Data(null, null, null, null, null, null, null, null, score, criticality.toUpperCase(),</span>
                         null, null, null, null, null, null, null, null, null, null);
-<span class="nc" id="L247">                final CvssV2 cvssV2 = new CvssV2(null, null, cvssData, criticality.toUpperCase(), null, null, null, null, null, null, null);</span>
-<span class="nc" id="L248">                vulnerability.setCvssV2(cvssV2);</span>
-<span class="nc" id="L249">                vulnerability.setUnscoredSeverity(null);</span>
+<span class="nc" id="L246">                final CvssV2 cvssV2 = new CvssV2(null, null, cvssData, criticality.toUpperCase(), null, null, null, null, null, null, null);</span>
+<span class="nc" id="L247">                vulnerability.setCvssV2(cvssV2);</span>
+<span class="nc" id="L248">                vulnerability.setUnscoredSeverity(null);</span>
             }
         }
-<span class="nc" id="L252">        LOGGER.debug(&quot;bundle-audit ({}): {}&quot;, parentName, nextLine);</span>
-<span class="nc" id="L253">    }</span>
+<span class="nc" id="L251">        LOGGER.debug(&quot;bundle-audit ({}): {}&quot;, parentName, nextLine);</span>
+<span class="nc" id="L252">    }</span>
 
     /**
      * Creates a vulnerability.
@@ -264,47 +263,46 @@ public class BundlerAuditProcessor extends Processor&lt;InputStream&gt; {
      * CPE vulnerability object
      */
     private Vulnerability createVulnerability(String parentName, Dependency dependency, String gem, String nextLine) throws CpeValidationException {
-<span class="nc" id="L267">        Vulnerability vulnerability = null;</span>
-<span class="nc bnc" id="L268" title="All 2 branches missed.">        if (null != dependency) {</span>
-<span class="nc" id="L269">            final String version = nextLine.substring(VERSION.length());</span>
-<span class="nc" id="L270">            dependency.addEvidence(EvidenceType.VERSION,</span>
+<span class="nc" id="L266">        Vulnerability vulnerability = null;</span>
+<span class="nc bnc" id="L267" title="All 2 branches missed.">        if (null != dependency) {</span>
+<span class="nc" id="L268">            final String version = nextLine.substring(VERSION.length());</span>
+<span class="nc" id="L269">            dependency.addEvidence(EvidenceType.VERSION,</span>
                     &quot;bundler-audit&quot;,
                     &quot;Version&quot;,
                     version,
                     Confidence.HIGHEST);
-<span class="nc" id="L275">            dependency.setVersion(version);</span>
-<span class="nc" id="L276">            dependency.setName(gem);</span>
+<span class="nc" id="L274">            dependency.setVersion(version);</span>
+<span class="nc" id="L275">            dependency.setName(gem);</span>
             try {
-<span class="nc" id="L278">                final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;gem&quot;).withName(dependency.getName())</span>
-<span class="nc" id="L279">                        .withVersion(dependency.getVersion()).build();</span>
-<span class="nc" id="L280">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
-<span class="nc" id="L281">            } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L282">                LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
-<span class="nc" id="L283">                final GenericIdentifier id = new GenericIdentifier(&quot;gem:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(),</span>
+<span class="nc" id="L277">                final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;gem&quot;).withName(dependency.getName())</span>
+<span class="nc" id="L278">                        .withVersion(dependency.getVersion()).build();</span>
+<span class="nc" id="L279">                dependency.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L280">            } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L281">                LOGGER.debug(&quot;Unable to build package url for python&quot;, ex);</span>
+<span class="nc" id="L282">                final GenericIdentifier id = new GenericIdentifier(&quot;gem:&quot; + dependency.getName() + &quot;@&quot; + dependency.getVersion(),</span>
                         Confidence.HIGHEST);
-<span class="nc" id="L285">                dependency.addSoftwareIdentifier(id);</span>
-<span class="nc" id="L286">            }</span>
+<span class="nc" id="L284">                dependency.addSoftwareIdentifier(id);</span>
+<span class="nc" id="L285">            }</span>
 
-<span class="nc" id="L288">            vulnerability = new Vulnerability(); // don't add to dependency until we have name set later</span>
-<span class="nc" id="L289">            vulnerability.setSource(Vulnerability.Source.BUNDLEAUDIT);</span>
-<span class="nc" id="L290">            final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();</span>
-<span class="nc" id="L291">            final VulnerableSoftware vs = builder.part(Part.APPLICATION)</span>
-<span class="nc" id="L292">                    .vendor(gem)</span>
-<span class="nc" id="L293">                    .product(String.format(&quot;%s_project&quot;, gem))</span>
-<span class="nc" id="L294">                    .version(version).build();</span>
-<span class="nc" id="L295">            vulnerability.addVulnerableSoftware(vs);</span>
-<span class="nc" id="L296">            vulnerability.setMatchedVulnerableSoftware(vs);</span>
-<span class="nc" id="L297">            vulnerability.setUnscoredSeverity(&quot;UNKNOWN&quot;);</span>
+<span class="nc" id="L287">            vulnerability = new Vulnerability(); // don't add to dependency until we have name set later</span>
+<span class="nc" id="L288">            vulnerability.setSource(Vulnerability.Source.BUNDLEAUDIT);</span>
+<span class="nc" id="L289">            final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();</span>
+<span class="nc" id="L290">            final VulnerableSoftware vs = builder.part(Part.APPLICATION)</span>
+<span class="nc" id="L291">                    .vendor(gem)</span>
+<span class="nc" id="L292">                    .product(String.format(&quot;%s_project&quot;, gem))</span>
+<span class="nc" id="L293">                    .version(version).build();</span>
+<span class="nc" id="L294">            vulnerability.addVulnerableSoftware(vs);</span>
+<span class="nc" id="L295">            vulnerability.setMatchedVulnerableSoftware(vs);</span>
+<span class="nc" id="L296">            vulnerability.setUnscoredSeverity(&quot;UNKNOWN&quot;);</span>
         }
-<span class="nc" id="L299">        LOGGER.debug(&quot;bundle-audit ({}): {}&quot;, parentName, nextLine);</span>
-<span class="nc" id="L300">        return vulnerability;</span>
+<span class="nc" id="L298">        LOGGER.debug(&quot;bundle-audit ({}): {}&quot;, parentName, nextLine);</span>
+<span class="nc" id="L299">        return vulnerability;</span>
     }
 
     /**
      * Creates the dependency based off of the gem.
      *
      * @param engine the engine used for scanning
-     * @param gemFile the gem file
      * @param parentName the gem parent
      * @param fileName the file name
      * @param filePath the file path
@@ -312,23 +310,28 @@ public class BundlerAuditProcessor extends Processor&lt;InputStream&gt; {
      * @return the dependency to add
      * @throws IOException thrown if a temporary gem file could not be written
      */
-    private Dependency createDependencyForGem(Engine engine, File gemFile, String parentName, String fileName,
-            String filePath, String gem) throws IOException {
-<span class="nc" id="L317">        final String displayFileName = String.format(&quot;%s%c%s:%s&quot;, parentName, File.separatorChar, fileName, gem);</span>
-<span class="nc" id="L318">        final Dependency dependency = new Dependency(gemFile, true);</span>
-<span class="nc" id="L319">        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));</span>
-<span class="nc" id="L320">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="nc" id="L321">        dependency.addEvidence(EvidenceType.PRODUCT, &quot;bundler-audit&quot;, &quot;Name&quot;, gem, Confidence.HIGHEST);</span>
-<span class="nc" id="L322">        dependency.addEvidence(EvidenceType.VENDOR, &quot;bundler-audit&quot;, &quot;Name&quot;, gem, Confidence.HIGH);</span>
+    private Dependency createDependencyForGem(Engine engine, String parentName, String fileName, String filePath, String gem) throws IOException {
+        final File gemFile;
+        try {
+<span class="nc" id="L316">            gemFile = File.createTempFile(gem, &quot;_Gemfile.lock&quot;, engine.getSettings().getTempDirectory());</span>
+<span class="nc" id="L317">        } catch (IOException ioe) {</span>
+<span class="nc" id="L318">            throw new IOException(&quot;Unable to create temporary gem file&quot;);</span>
+<span class="nc" id="L319">        }</span>
+<span class="nc" id="L320">        final String displayFileName = String.format(&quot;%s%c%s:%s&quot;, parentName, File.separatorChar, fileName, gem);</span>
+
+<span class="nc" id="L322">        FileUtils.write(gemFile, displayFileName, Charset.defaultCharset()); // unique contents to avoid dependency bundling</span>
+<span class="nc" id="L323">        final Dependency dependency = new Dependency(gemFile);</span>
+<span class="nc" id="L324">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="nc" id="L325">        dependency.addEvidence(EvidenceType.PRODUCT, &quot;bundler-audit&quot;, &quot;Name&quot;, gem, Confidence.HIGHEST);</span>
         //TODO add package URL - note, this may require parsing the gemfile.lock and getting the version for each entry
 
-<span class="nc" id="L325">        dependency.setDisplayFileName(displayFileName);</span>
-<span class="nc" id="L326">        dependency.setFileName(fileName);</span>
-<span class="nc" id="L327">        dependency.setFilePath(filePath);</span>
+<span class="nc" id="L328">        dependency.setDisplayFileName(displayFileName);</span>
+<span class="nc" id="L329">        dependency.setFileName(fileName);</span>
+<span class="nc" id="L330">        dependency.setFilePath(filePath);</span>
         //sha1sum is used for anchor links in the HtML report
-<span class="nc" id="L329">        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));</span>
-<span class="nc" id="L330">        engine.addDependency(dependency);</span>
-<span class="nc" id="L331">        return dependency;</span>
+<span class="nc" id="L332">        dependency.setSha1sum(Checksum.getSHA1Checksum(displayFileName));</span>
+<span class="nc" id="L333">        engine.addDependency(dependency);</span>
+<span class="nc" id="L334">        return dependency;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

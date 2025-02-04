@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>NugetconfAnalyzer xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -190,36 +190,33 @@
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>                 child.setMd5sum(Checksum.getMD5Checksum(String.format(<span class="jxr_string">"%s:%s"</span>, id, version)));
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>                 child.addEvidence(EvidenceType.VERSION, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"version"</span>, np.getVersion(), Confidence.HIGHEST);
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>                 child.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, np.getId(), Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>                 child.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, np.getId(), Confidence.MEDIUM);
-<a class="jxr_linenumber" name="L186" href="#L186">186</a> 
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>                 <em class="jxr_comment">// handle package names the same way as the MSBuild analyzer</em>
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>                 <strong class="jxr_keyword">if</strong> (id.indexOf('.') &gt; 0) {
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>                     <strong class="jxr_keyword">final</strong> String[] parts = id.split(<span class="jxr_string">"&#92;&#92;."</span>);
-<a class="jxr_linenumber" name="L190" href="#L190">190</a> 
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>                     <em class="jxr_comment">// example: Microsoft.EntityFrameworkCore</em>
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>                     child.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, parts[0], Confidence.MEDIUM);
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>                     child.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, parts[1], Confidence.MEDIUM);
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>                     child.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, parts[1], Confidence.LOW);
-<a class="jxr_linenumber" name="L195" href="#L195">195</a> 
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>                     <strong class="jxr_keyword">if</strong> (parts.length &gt; 2) {
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>                         <strong class="jxr_keyword">final</strong> String <strong class="jxr_keyword">rest</strong> = id.substring(id.indexOf('.') + 1);
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>                         child.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, <strong class="jxr_keyword">rest</strong>, Confidence.MEDIUM);
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>                         child.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, <strong class="jxr_keyword">rest</strong>, Confidence.LOW);
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>                     }
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>                 } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>                     <em class="jxr_comment">// example: jQuery</em>
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>                     child.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, id, Confidence.LOW);
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>                 }
-<a class="jxr_linenumber" name="L205" href="#L205">205</a> 
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>                 engine.addDependency(child);
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>             }
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>         } <strong class="jxr_keyword">catch</strong> (Throwable e) {
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(e);
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>         }
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>     }
-<a class="jxr_linenumber" name="L212" href="#L212">212</a> }
+<a class="jxr_linenumber" name="L185" href="#L185">185</a> 
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>                 <em class="jxr_comment">// handle package names the same way as the MSBuild analyzer</em>
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>                 <strong class="jxr_keyword">if</strong> (id.indexOf('.') &gt; 0) {
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>                     <strong class="jxr_keyword">final</strong> String[] parts = id.split(<span class="jxr_string">"&#92;&#92;."</span>);
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> 
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>                     <em class="jxr_comment">// example: Microsoft.EntityFrameworkCore</em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>                     child.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, parts[0], Confidence.MEDIUM);
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>                     child.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, parts[1], Confidence.MEDIUM);
+<a class="jxr_linenumber" name="L193" href="#L193">193</a> 
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>                     <strong class="jxr_keyword">if</strong> (parts.length &gt; 2) {
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>                         <strong class="jxr_keyword">final</strong> String <strong class="jxr_keyword">rest</strong> = id.substring(id.indexOf('.') + 1);
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>                         child.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, <strong class="jxr_keyword">rest</strong>, Confidence.MEDIUM);
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>                     }
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>                 } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>                     <em class="jxr_comment">// example: jQuery</em>
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>                     child.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"packages.config"</span>, <span class="jxr_string">"id"</span>, id, Confidence.LOW);
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>                 }
+<a class="jxr_linenumber" name="L202" href="#L202">202</a> 
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>                 engine.addDependency(child);
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>             }
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>         } <strong class="jxr_keyword">catch</strong> (Throwable e) {
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/analyzer/exception/AnalysisException.html">AnalysisException</a>(e);
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>         }
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>     }
+<a class="jxr_linenumber" name="L209" href="#L209">209</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2025 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

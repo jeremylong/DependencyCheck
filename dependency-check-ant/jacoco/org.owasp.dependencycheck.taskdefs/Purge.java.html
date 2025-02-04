@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Purge.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Ant Task</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.taskdefs</a> &gt; <span class="el_source">Purge.java</span></div><h1>Purge.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Purge.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Ant Task</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.taskdefs</a> &gt; <span class="el_source">Purge.java</span></div><h1>Purge.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-ant.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -21,15 +21,17 @@ import io.github.jeremylong.jcs3.slf4j.Slf4jAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.owasp.dependencycheck.Engine;
-import org.owasp.dependencycheck.utils.Downloader;
-import org.owasp.dependencycheck.utils.InvalidSettingException;
 import org.owasp.dependencycheck.utils.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.impl.StaticLoggerBinder;
+import org.slf4j.spi.LocationAwareLogger;
 
 /**
  * An Ant task definition to execute dependency-check during an Ant build.
@@ -50,26 +52,40 @@ public class Purge extends Task {
     /**
      * The location of the data directory that contains
      */
-<span class="fc" id="L53">    private String dataDirectory = null;</span>
+<span class="fc" id="L55">    private String dataDirectory = null;</span>
     /**
      * Indicates if dependency-check should fail the build if an exception
      * occurs.
      */
-<span class="fc" id="L58">    private boolean failOnError = true;</span>
+<span class="fc" id="L60">    private boolean failOnError = true;</span>
+
+    /**
+     * The URL to hosted suppressions file with base FP suppressions.
+     */
+<span class="fc" id="L65">    private String hostedSuppressionsUrl = null;</span>
 
     /**
      * Construct a new DependencyCheckTask.
      */
     public Purge() {
-<span class="fc" id="L64">        super();</span>
+<span class="fc" id="L71">        super();</span>
 
         // Call this before Dependency Check Core starts logging anything - this way, all SLF4J messages from
         // core end up coming through this tasks logger
-<span class="fc" id="L68">        StaticLoggerBinder.getSingleton().setTask(this);</span>
-<span class="fc" id="L69">    }</span>
+<span class="fc" id="L75">        StaticLoggerBinder.getSingleton().setTask(this);</span>
+<span class="fc" id="L76">    }</span>
 
     public Settings getSettings() {
-<span class="fc" id="L72">        return settings;</span>
+<span class="fc" id="L79">        return settings;</span>
+    }
+
+    /**
+     * Get the value of dataDirectory.
+     *
+     * @return the value of dataDirectory
+     */
+    public String getDataDirectory() {
+<span class="nc" id="L88">        return dataDirectory;</span>
     }
 
     /**
@@ -78,8 +94,8 @@ public class Purge extends Task {
      * @param dataDirectory new value of dataDirectory
      */
     public void setDataDirectory(String dataDirectory) {
-<span class="nc" id="L81">        this.dataDirectory = dataDirectory;</span>
-<span class="nc" id="L82">    }</span>
+<span class="nc" id="L97">        this.dataDirectory = dataDirectory;</span>
+<span class="nc" id="L98">    }</span>
 
     /**
      * Get the value of failOnError.
@@ -87,7 +103,7 @@ public class Purge extends Task {
      * @return the value of failOnError
      */
     public boolean isFailOnError() {
-<span class="nc" id="L90">        return failOnError;</span>
+<span class="nc" id="L106">        return failOnError;</span>
     }
 
     /**
@@ -96,8 +112,26 @@ public class Purge extends Task {
      * @param failOnError new value of failOnError
      */
     public void setFailOnError(boolean failOnError) {
-<span class="nc" id="L99">        this.failOnError = failOnError;</span>
-<span class="nc" id="L100">    }</span>
+<span class="nc" id="L115">        this.failOnError = failOnError;</span>
+<span class="nc" id="L116">    }</span>
+
+    /**
+     * Get the value of hostedSuppressionsUrl.
+     *
+     * @return the value of hostedSuppressionsUrl
+     */
+    public String getHostedSuppressionsUrl() {
+<span class="nc" id="L124">        return hostedSuppressionsUrl;</span>
+    }
+
+    /**
+     * Set the value of hostedSuppressionsUrl.
+     *
+     * @param hostedSuppressionsUrl new value of hostedSuppressionsUrl
+     */
+    public void setHostedSuppressionsUrl(final String hostedSuppressionsUrl) {
+<span class="nc" id="L133">        this.hostedSuppressionsUrl = hostedSuppressionsUrl;</span>
+<span class="nc" id="L134">    }</span>
 
     /**
      * Sets the
@@ -113,31 +147,24 @@ public class Purge extends Task {
      */
     @Override
     public final void execute() throws BuildException {
-<span class="fc" id="L116">        muteNoisyLoggers();</span>
-<span class="fc" id="L117">        final ClassLoader current = Thread.currentThread().getContextClassLoader();</span>
+<span class="fc" id="L150">        muteJCS();</span>
+<span class="fc" id="L151">        final ClassLoader current = Thread.currentThread().getContextClassLoader();</span>
         try {
-<span class="fc" id="L119">            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());</span>
+<span class="fc" id="L153">            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());</span>
 
-<span class="fc" id="L121">            executeWithContextClassloader();</span>
+<span class="fc" id="L155">            executeWithContextClassloader();</span>
         } finally {
-<span class="fc" id="L123">            Thread.currentThread().setContextClassLoader(current);</span>
+<span class="fc" id="L157">            Thread.currentThread().setContextClassLoader(current);</span>
         }
-<span class="fc" id="L125">    }</span>
+<span class="fc" id="L159">    }</span>
 
     /**
      * Hacky method of muting the noisy logging from JCS.
      */
-    private void muteNoisyLoggers() {
-<span class="fc" id="L131">        System.setProperty(&quot;jcs.logSystem&quot;, &quot;slf4j&quot;);</span>
-<span class="fc" id="L132">        Slf4jAdapter.muteLogging(true);</span>
-
-<span class="fc" id="L134">        final String[] noisyLoggers = {</span>
-            &quot;org.apache.hc&quot;
-        };
-<span class="fc bfc" id="L137" title="All 2 branches covered.">        for (String loggerName : noisyLoggers) {</span>
-<span class="fc" id="L138">            System.setProperty(&quot;org.slf4j.simpleLogger.log.&quot; + loggerName, &quot;error&quot;);</span>
-        }
-<span class="fc" id="L140">    }</span>
+    private void muteJCS() {
+<span class="fc" id="L165">        System.setProperty(&quot;jcs.logSystem&quot;, &quot;slf4j&quot;);</span>
+<span class="fc" id="L166">        Slf4jAdapter.muteLogging(true);</span>
+<span class="fc" id="L167">    }</span>
 
     /**
      * Executes the dependency-check purge to delete the existing local copy of
@@ -148,18 +175,13 @@ public class Purge extends Task {
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     protected void executeWithContextClassloader() throws BuildException {
-<span class="nc" id="L151">        populateSettings();</span>
-        try {
-<span class="nc" id="L153">            Downloader.getInstance().configure(settings);</span>
-<span class="nc" id="L154">        } catch (InvalidSettingException e) {</span>
-<span class="nc" id="L155">            throw new BuildException(e);</span>
-<span class="nc" id="L156">        }</span>
-<span class="nc" id="L157">        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {</span>
-<span class="nc" id="L158">            engine.purge();</span>
+<span class="nc" id="L178">        populateSettings();</span>
+<span class="nc" id="L179">        try (Engine engine = new Engine(Engine.Mode.EVIDENCE_PROCESSING, getSettings())) {</span>
+<span class="nc" id="L180">            engine.purge();</span>
         } finally {
-<span class="nc" id="L160">            settings.cleanup(true);</span>
+<span class="nc" id="L182">            settings.cleanup(true);</span>
         }
-<span class="nc" id="L162">    }</span>
+<span class="nc" id="L184">    }</span>
 
     /**
      * Takes the properties supplied and updates the dependency-check settings.
@@ -171,25 +193,26 @@ public class Purge extends Task {
     //see note on `Check.dealWithReferences()` for information on this suppression
     @SuppressWarnings(&quot;squid:RedundantThrowsDeclarationCheck&quot;)
     protected void populateSettings() throws BuildException {
-<span class="fc" id="L174">        settings = new Settings();</span>
-<span class="fc" id="L175">        try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {</span>
-<span class="fc" id="L176">            settings.mergeProperties(taskProperties);</span>
-<span class="nc" id="L177">        } catch (IOException ex) {</span>
-<span class="nc" id="L178">            final String msg = &quot;Unable to load the dependency-check ant task.properties file.&quot;;</span>
-<span class="nc bnc" id="L179" title="All 2 branches missed.">            if (this.failOnError) {</span>
-<span class="nc" id="L180">                throw new BuildException(msg, ex);</span>
+<span class="fc" id="L196">        settings = new Settings();</span>
+<span class="fc" id="L197">        try (InputStream taskProperties = this.getClass().getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {</span>
+<span class="fc" id="L198">            settings.mergeProperties(taskProperties);</span>
+<span class="nc" id="L199">        } catch (IOException ex) {</span>
+<span class="nc" id="L200">            final String msg = &quot;Unable to load the dependency-check ant task.properties file.&quot;;</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">            if (this.failOnError) {</span>
+<span class="nc" id="L202">                throw new BuildException(msg, ex);</span>
             }
-<span class="nc" id="L182">            log(msg, ex, Project.MSG_WARN);</span>
-<span class="fc" id="L183">        }</span>
-<span class="pc bpc" id="L184" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
-<span class="nc" id="L185">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
+<span class="nc" id="L204">            log(msg, ex, Project.MSG_WARN);</span>
+<span class="fc" id="L205">        }</span>
+<span class="fc" id="L206">        settings.setStringIfNotEmpty(Settings.KEYS.HOSTED_SUPPRESSIONS_URL, hostedSuppressionsUrl);</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">        if (dataDirectory != null) {</span>
+<span class="nc" id="L208">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDirectory);</span>
         } else {
-<span class="fc" id="L187">            final File jarPath = new File(Purge.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
-<span class="fc" id="L188">            final File base = jarPath.getParentFile();</span>
-<span class="fc" id="L189">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
-<span class="fc" id="L190">            final File dataDir = new File(base, sub);</span>
-<span class="fc" id="L191">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
+<span class="fc" id="L210">            final File jarPath = new File(Purge.class.getProtectionDomain().getCodeSource().getLocation().getPath());</span>
+<span class="fc" id="L211">            final File base = jarPath.getParentFile();</span>
+<span class="fc" id="L212">            final String sub = settings.getString(Settings.KEYS.DATA_DIRECTORY);</span>
+<span class="fc" id="L213">            final File dataDir = new File(base, sub);</span>
+<span class="fc" id="L214">            settings.setString(Settings.KEYS.DATA_DIRECTORY, dataDir.getAbsolutePath());</span>
         }
-<span class="fc" id="L193">    }</span>
+<span class="fc" id="L216">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

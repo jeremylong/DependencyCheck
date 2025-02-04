@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ODCConnectionTransport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.ossindex</a> &gt; <span class="el_source">ODCConnectionTransport.java</span></div><h1>ODCConnectionTransport.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ODCConnectionTransport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.ossindex</a> &gt; <span class="el_source">ODCConnectionTransport.java</span></div><h1>ODCConnectionTransport.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -18,21 +18,13 @@
 package org.owasp.dependencycheck.data.ossindex;
 
 import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.message.BasicHeader;
-import org.owasp.dependencycheck.utils.Downloader;
-import org.owasp.dependencycheck.utils.ResourceNotFoundException;
-import org.owasp.dependencycheck.utils.TooManyRequestsException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.URLConnectionFactory;
 import org.sonatype.ossindex.service.client.OssindexClientConfiguration;
 import org.sonatype.ossindex.service.client.transport.BasicAuthHelper;
-import org.sonatype.ossindex.service.client.transport.Transport;
+import org.sonatype.ossindex.service.client.transport.HttpUrlConnectionTransport;
 import org.sonatype.ossindex.service.client.transport.UserAgentSupplier;
 
 /**
@@ -41,12 +33,20 @@ import org.sonatype.ossindex.service.client.transport.UserAgentSupplier;
  *
  * @author Jeremy Long
  */
-public class ODCConnectionTransport implements Transport {
+public class ODCConnectionTransport extends HttpUrlConnectionTransport {
 
+    /**
+     * The authorization header.
+     */
+    private static final String AUTHORIZATION = &quot;Authorization&quot;;
     /**
      * The OSS Index client configuration.
      */
     private final OssindexClientConfiguration configuration;
+    /**
+     * The URL Connection factory.
+     */
+    private final URLConnectionFactory connectionFactory;
     /**
      * The user agent to send in the HTTP connection.
      */
@@ -55,41 +55,28 @@ public class ODCConnectionTransport implements Transport {
     /**
      * Constructs a new transport object to connect to the OSS Index.
      *
+     * @param settings the ODC settings
      * @param config the OSS client configuration
      * @param userAgent the user agent to send to OSS Index
      */
-<span class="fc" id="L61">    public ODCConnectionTransport(OssindexClientConfiguration config, UserAgentSupplier userAgent) {</span>
-<span class="fc" id="L62">        this.userAgent = userAgent;</span>
-<span class="fc" id="L63">        this.configuration = config;</span>
-<span class="fc" id="L64">    }</span>
+    public ODCConnectionTransport(Settings settings, OssindexClientConfiguration config, UserAgentSupplier userAgent) {
+<span class="fc" id="L63">        super(userAgent);</span>
+<span class="fc" id="L64">        this.userAgent = userAgent;</span>
+<span class="fc" id="L65">        this.configuration = config;</span>
+<span class="fc" id="L66">        connectionFactory = new URLConnectionFactory(settings);</span>
+<span class="fc" id="L67">    }</span>
 
     @Override
-    public void init(OssindexClientConfiguration configuration) {
-        // no initialisation needed
-<span class="fc" id="L69">    }</span>
+    protected HttpURLConnection connect(final URL url) throws IOException {
+<span class="fc" id="L71">        final HttpURLConnection connection = connectionFactory.createHttpURLConnection(url);</span>
+<span class="fc" id="L72">        connection.setRequestProperty(&quot;User-Agent&quot;, userAgent.get());</span>
 
-    @Override
-    public String post(URI url, String payloadType, String payload, String acceptType) throws TransportException, IOException {
-        try {
-<span class="fc" id="L74">            final List&lt;Header&gt; headers = new ArrayList&lt;&gt;(3);</span>
-<span class="fc" id="L75">            headers.add(new BasicHeader(HttpHeaders.ACCEPT, acceptType));</span>
-<span class="fc" id="L76">            headers.add(new BasicHeader(HttpHeaders.USER_AGENT, userAgent.get()));</span>
-            // TODO consider to promote pre-emptive authentication by default to the Downloader and also load the OSSIndex credentials there.
-<span class="fc" id="L78">            final String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());</span>
-<span class="pc bpc" id="L79" title="1 of 2 branches missed.">            if (authorization != null) {</span>
-<span class="nc" id="L80">                headers.add(new BasicHeader(HttpHeaders.AUTHORIZATION, authorization));</span>
-            }
-<span class="fc" id="L82">            return Downloader.getInstance().postBasedFetchContent(url, payload, ContentType.create(payloadType, StandardCharsets.UTF_8), headers);</span>
-<span class="nc" id="L83">        } catch (TooManyRequestsException e) {</span>
-<span class="nc" id="L84">            throw new TransportException(&quot;Too many requests for &quot; + url.toString() + &quot; HTTP status 429&quot;, e);</span>
-<span class="nc" id="L85">        } catch (ResourceNotFoundException e) {</span>
-<span class="nc" id="L86">            throw new TransportException(&quot;Not found for &quot; + url.toString() + &quot;HTTP status 404&quot;, e);</span>
+<span class="fc" id="L74">        final String authorization = BasicAuthHelper.authorizationHeader(configuration.getAuthConfiguration());</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if (authorization != null) {</span>
+<span class="nc" id="L76">            connection.setRequestProperty(AUTHORIZATION, authorization);</span>
         }
+<span class="fc" id="L78">        return connection;</span>
     }
 
-    @Override
-    public void close() throws Exception {
-        // no resource closure needed; fully delegated to HTTPClient
-<span class="fc" id="L93">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

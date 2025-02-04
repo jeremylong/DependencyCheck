@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CocoaPodsAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">CocoaPodsAnalyzer.java</span></div><h1>CocoaPodsAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CocoaPodsAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">CocoaPodsAnalyzer.java</span></div><h1>CocoaPodsAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -20,6 +20,15 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.annotation.concurrent.ThreadSafe;
+
+import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
@@ -28,20 +37,11 @@ import org.owasp.dependencycheck.dependency.Dependency;
 import org.owasp.dependencycheck.dependency.EvidenceType;
 import org.owasp.dependencycheck.dependency.naming.GenericIdentifier;
 import org.owasp.dependencycheck.dependency.naming.PurlIdentifier;
-import org.owasp.dependencycheck.utils.Checksum;
 import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
+import org.owasp.dependencycheck.utils.Checksum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.concurrent.ThreadSafe;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This analyzer is used to analyze SWIFT and Objective-C packages by collecting
@@ -170,7 +170,7 @@ import java.util.regex.Pattern;
 
         final String contents;
         try {
-<span class="fc" id="L173">            contents = new String(Files.readAllBytes(podfileLock.getActualFile().toPath()), StandardCharsets.UTF_8);</span>
+<span class="fc" id="L173">            contents = FileUtils.readFileToString(podfileLock.getActualFile(), Charset.defaultCharset());</span>
 <span class="nc" id="L174">        } catch (IOException e) {</span>
 <span class="nc" id="L175">            throw new AnalysisException(</span>
                     &quot;Problem occurred while reading dependency file.&quot;, e);
@@ -229,7 +229,7 @@ import java.util.regex.Pattern;
 <span class="fc" id="L229">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
         String contents;
         try {
-<span class="fc" id="L232">            contents = new String(Files.readAllBytes(dependency.getActualFile().toPath()), StandardCharsets.UTF_8);</span>
+<span class="fc" id="L232">            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());</span>
 <span class="nc" id="L233">        } catch (IOException e) {</span>
 <span class="nc" id="L234">            throw new AnalysisException(</span>
                     &quot;Problem occurred while reading dependency file.&quot;, e);
@@ -258,48 +258,46 @@ import java.util.regex.Pattern;
             }
 
 <span class="fc" id="L260">            final String summary = determineEvidence(contents, blockVariable, &quot;summary&quot;);</span>
-<span class="fc bfc" id="L261" title="All 2 branches covered.">            if (!summary.isEmpty()) {</span>
-<span class="fc" id="L262">                dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, &quot;summary&quot;, summary, Confidence.HIGHEST);</span>
-<span class="fc" id="L263">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;summary&quot;, summary, Confidence.MEDIUM);</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">            if (!summary.isEmpty()) {</span>
+<span class="nc" id="L262">                dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, &quot;summary&quot;, summary, Confidence.HIGHEST);</span>
             }
 
-<span class="fc" id="L266">            final String author = determineEvidence(contents, blockVariable, &quot;authors?&quot;);</span>
-<span class="pc bpc" id="L267" title="1 of 2 branches missed.">            if (!author.isEmpty()) {</span>
-<span class="fc" id="L268">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;author&quot;, author, Confidence.HIGHEST);</span>
+<span class="fc" id="L265">            final String author = determineEvidence(contents, blockVariable, &quot;authors?&quot;);</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">            if (!author.isEmpty()) {</span>
+<span class="fc" id="L267">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;author&quot;, author, Confidence.HIGHEST);</span>
             }
-<span class="fc" id="L270">            final String homepage = determineEvidence(contents, blockVariable, &quot;homepage&quot;);</span>
-<span class="pc bpc" id="L271" title="1 of 2 branches missed.">            if (!homepage.isEmpty()) {</span>
-<span class="fc" id="L272">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;homepage&quot;, homepage, Confidence.HIGHEST);</span>
-<span class="fc" id="L273">                dependency.addEvidence(EvidenceType.PRODUCT, PODSPEC, &quot;homepage&quot;, homepage, Confidence.LOW);</span>
+<span class="fc" id="L269">            final String homepage = determineEvidence(contents, blockVariable, &quot;homepage&quot;);</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">            if (!homepage.isEmpty()) {</span>
+<span class="fc" id="L271">                dependency.addEvidence(EvidenceType.VENDOR, PODSPEC, &quot;homepage&quot;, homepage, Confidence.HIGHEST);</span>
             }
-<span class="fc" id="L275">            final String license = determineEvidence(contents, blockVariable, &quot;licen[cs]es?&quot;);</span>
-<span class="pc bpc" id="L276" title="1 of 2 branches missed.">            if (!license.isEmpty()) {</span>
-<span class="fc" id="L277">                dependency.setLicense(license);</span>
+<span class="fc" id="L273">            final String license = determineEvidence(contents, blockVariable, &quot;licen[cs]es?&quot;);</span>
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">            if (!license.isEmpty()) {</span>
+<span class="fc" id="L275">                dependency.setLicense(license);</span>
             }
 
-<span class="pc bpc" id="L280" title="1 of 2 branches missed.">            if (builder != null) {</span>
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">            if (builder != null) {</span>
                 try {
-<span class="fc" id="L282">                    final PurlIdentifier purl = new PurlIdentifier(builder.build(), homepage, Confidence.HIGHEST);</span>
-<span class="fc" id="L283">                    dependency.addSoftwareIdentifier(purl);</span>
-<span class="nc" id="L284">                } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L285">                    LOGGER.debug(&quot;Unable to generate purl for cocoapod&quot;, ex);</span>
-<span class="nc" id="L286">                    final StringBuilder sb = new StringBuilder(&quot;pkg:cocoapods/&quot;);</span>
-<span class="nc" id="L287">                    sb.append(name);</span>
-<span class="nc bnc" id="L288" title="All 2 branches missed.">                    if (!version.isEmpty()) {</span>
-<span class="nc" id="L289">                        sb.append(&quot;@&quot;).append(version);</span>
+<span class="fc" id="L280">                    final PurlIdentifier purl = new PurlIdentifier(builder.build(), homepage, Confidence.HIGHEST);</span>
+<span class="fc" id="L281">                    dependency.addSoftwareIdentifier(purl);</span>
+<span class="nc" id="L282">                } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L283">                    LOGGER.debug(&quot;Unable to generate purl for cocoapod&quot;, ex);</span>
+<span class="nc" id="L284">                    final StringBuilder sb = new StringBuilder(&quot;pkg:cocoapods/&quot;);</span>
+<span class="nc" id="L285">                    sb.append(name);</span>
+<span class="nc bnc" id="L286" title="All 2 branches missed.">                    if (!version.isEmpty()) {</span>
+<span class="nc" id="L287">                        sb.append(&quot;@&quot;).append(version);</span>
                     }
-<span class="nc" id="L291">                    final GenericIdentifier id = new GenericIdentifier(sb.toString(), Confidence.HIGHEST);</span>
-<span class="nc" id="L292">                    dependency.addSoftwareIdentifier(id);</span>
-<span class="fc" id="L293">                }</span>
+<span class="nc" id="L289">                    final GenericIdentifier id = new GenericIdentifier(sb.toString(), Confidence.HIGHEST);</span>
+<span class="nc" id="L290">                    dependency.addSoftwareIdentifier(id);</span>
+<span class="fc" id="L291">                }</span>
             }
         }
-<span class="pc bpc" id="L296" title="2 of 4 branches missed.">        if (dependency.getVersion() != null &amp;&amp; !dependency.getVersion().isEmpty()) {</span>
-<span class="fc" id="L297">            dependency.setDisplayFileName(String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion()));</span>
+<span class="pc bpc" id="L294" title="2 of 4 branches missed.">        if (dependency.getVersion() != null &amp;&amp; !dependency.getVersion().isEmpty()) {</span>
+<span class="fc" id="L295">            dependency.setDisplayFileName(String.format(&quot;%s:%s&quot;, dependency.getName(), dependency.getVersion()));</span>
         } else {
-<span class="nc" id="L299">            dependency.setDisplayFileName(dependency.getName());</span>
+<span class="nc" id="L297">            dependency.setDisplayFileName(dependency.getName());</span>
         }
-<span class="fc" id="L301">        setPackagePath(dependency);</span>
-<span class="fc" id="L302">    }</span>
+<span class="fc" id="L299">        setPackagePath(dependency);</span>
+<span class="fc" id="L300">    }</span>
 
     /**
      * Extracts evidence from the contents and adds it to the given evidence
@@ -311,23 +309,23 @@ import java.util.regex.Pattern;
      * @return the evidence
      */
     private String determineEvidence(String contents, String blockVariable, String fieldPattern) {
-<span class="fc" id="L314">        String value = &quot;&quot;;</span>
+<span class="fc" id="L312">        String value = &quot;&quot;;</span>
 
         //capture array value between [ ]
-<span class="fc" id="L317">        final Matcher arrayMatcher = Pattern.compile(</span>
-<span class="fc" id="L318">                String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?\\{\\s*?(.*?)\\s*?\\}&quot;, blockVariable, fieldPattern),</span>
-<span class="fc" id="L319">                Pattern.CASE_INSENSITIVE).matcher(contents);</span>
-<span class="fc bfc" id="L320" title="All 2 branches covered.">        if (arrayMatcher.find()) {</span>
-<span class="fc" id="L321">            value = arrayMatcher.group(1);</span>
+<span class="fc" id="L315">        final Matcher arrayMatcher = Pattern.compile(</span>
+<span class="fc" id="L316">                String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?\\{\\s*?(.*?)\\s*?\\}&quot;, blockVariable, fieldPattern),</span>
+<span class="fc" id="L317">                Pattern.CASE_INSENSITIVE).matcher(contents);</span>
+<span class="fc bfc" id="L318" title="All 2 branches covered.">        if (arrayMatcher.find()) {</span>
+<span class="fc" id="L319">            value = arrayMatcher.group(1);</span>
         } else { //capture single value between quotes
-<span class="fc" id="L323">            final Matcher matcher = Pattern.compile(</span>
-<span class="fc" id="L324">                    String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?(['\&quot;])(.*?)\\1&quot;, blockVariable, fieldPattern),</span>
-<span class="fc" id="L325">                    Pattern.CASE_INSENSITIVE).matcher(contents);</span>
-<span class="fc bfc" id="L326" title="All 2 branches covered.">            if (matcher.find()) {</span>
-<span class="fc" id="L327">                value = matcher.group(2);</span>
+<span class="fc" id="L321">            final Matcher matcher = Pattern.compile(</span>
+<span class="fc" id="L322">                    String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?(['\&quot;])(.*?)\\1&quot;, blockVariable, fieldPattern),</span>
+<span class="fc" id="L323">                    Pattern.CASE_INSENSITIVE).matcher(contents);</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">            if (matcher.find()) {</span>
+<span class="fc" id="L325">                value = matcher.group(2);</span>
             }
         }
-<span class="fc" id="L330">        return value;</span>
+<span class="fc" id="L328">        return value;</span>
     }
 
     /**
@@ -336,11 +334,11 @@ import java.util.regex.Pattern;
      * @param dep the dependency to update
      */
     private void setPackagePath(Dependency dep) {
-<span class="fc" id="L339">        final File file = new File(dep.getFilePath());</span>
-<span class="fc" id="L340">        final String parent = file.getParent();</span>
-<span class="pc bpc" id="L341" title="1 of 2 branches missed.">        if (parent != null) {</span>
-<span class="fc" id="L342">            dep.setPackagePath(parent);</span>
+<span class="fc" id="L337">        final File file = new File(dep.getFilePath());</span>
+<span class="fc" id="L338">        final String parent = file.getParent();</span>
+<span class="pc bpc" id="L339" title="1 of 2 branches missed.">        if (parent != null) {</span>
+<span class="fc" id="L340">            dep.setPackagePath(parent);</span>
         }
-<span class="fc" id="L344">    }</span>
+<span class="fc" id="L342">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

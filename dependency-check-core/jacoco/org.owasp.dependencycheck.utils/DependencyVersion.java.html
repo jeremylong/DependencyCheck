@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DependencyVersion.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">DependencyVersion.java</span></div><h1>DependencyVersion.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DependencyVersion.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">DependencyVersion.java</span></div><h1>DependencyVersion.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -78,7 +78,7 @@ public class DependencyVersion implements Iterable&lt;String&gt;, Comparable&lt;
 <span class="fc" id="L78">        versionParts = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L79" title="All 2 branches covered.">        if (version != null) {</span>
 <span class="fc" id="L80">            final Pattern rx = Pattern</span>
-<span class="fc" id="L81">                    .compile(&quot;(\\d{1,100}[a-z]{1,3}$|[a-z]{1,3}[_-]?\\d{1,100}|\\d{1,100}|(rc|release|snapshot|beta|alpha)$)&quot;,</span>
+<span class="fc" id="L81">                    .compile(&quot;(\\d+[a-z]{1,3}$|[a-z]{1,3}[_-]?\\d+|\\d+|(rc|release|snapshot|beta|alpha)$)&quot;,</span>
                             Pattern.CASE_INSENSITIVE);
 <span class="fc" id="L83">            final Matcher matcher = rx.matcher(version.toLowerCase());</span>
 <span class="fc bfc" id="L84" title="All 2 branches covered.">            while (matcher.find()) {</span>
@@ -169,7 +169,7 @@ public class DependencyVersion implements Iterable&lt;String&gt;, Comparable&lt;
 
 <span class="fc bfc" id="L170" title="All 2 branches covered.">        if (other.versionParts.size() &gt; minVersionMatchLength) {</span>
 <span class="pc bpc" id="L171" title="1 of 2 branches missed.">            for (int i = minVersionMatchLength; i &lt; other.versionParts.size(); i++) {</span>
-<span class="fc bfc" id="L172" title="All 2 branches covered.">                if (!&quot;0&quot;.equals(other.versionParts.get(i))) {</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">                if (!&quot;0&quot;.equals(other.versionParts.get(i))) {</span>
 <span class="fc" id="L173">                    return false;</span>
                 }
             }
@@ -266,4 +266,4 @@ public class DependencyVersion implements Iterable&lt;String&gt;, Comparable&lt;
 <span class="fc" id="L266">        return Integer.compare(left.size(), right.size());</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CveItemOperator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvdcve</a> &gt; <span class="el_source">CveItemOperator.java</span></div><h1>CveItemOperator.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CveItemOperator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvdcve</a> &gt; <span class="el_source">CveItemOperator.java</span></div><h1>CveItemOperator.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -18,8 +18,6 @@
 package org.owasp.dependencycheck.data.nvdcve;
 
 import io.github.jeremylong.openvulnerability.client.nvd.Config;
-
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
 
@@ -49,9 +47,9 @@ public class CveItemOperator {
      *
      * @param cpeStartsWithFilter the filter to use for CPE entries
      */
-<span class="fc" id="L52">    public CveItemOperator(String cpeStartsWithFilter) {</span>
-<span class="fc" id="L53">        this.cpeStartsWithFilter = cpeStartsWithFilter;</span>
-<span class="fc" id="L54">    }</span>
+<span class="fc" id="L50">    public CveItemOperator(String cpeStartsWithFilter) {</span>
+<span class="fc" id="L51">        this.cpeStartsWithFilter = cpeStartsWithFilter;</span>
+<span class="fc" id="L52">    }</span>
 
     /**
      * Extracts the english description from the CVE object.
@@ -60,8 +58,8 @@ public class CveItemOperator {
      * @return the English descriptions from the CVE object
      */
     public String extractDescription(DefCveItem cve) {
-<span class="nc" id="L63">        return cve.getCve().getDescriptions().stream().filter((desc)</span>
-<span class="nc" id="L64">                -&gt; &quot;en&quot;.equals(desc.getLang())).map(LangString::getValue).collect(Collectors.joining(&quot; &quot;));</span>
+<span class="nc" id="L61">        return cve.getCve().getDescriptions().stream().filter((desc)</span>
+<span class="nc" id="L62">                -&gt; &quot;en&quot;.equals(desc.getLang())).map(LangString::getValue).collect(Collectors.joining(&quot; &quot;));</span>
     }
 
     //CSOFF: MissingSwitchDefault
@@ -80,61 +78,61 @@ public class CveItemOperator {
         // the following should be analyzed to determine if an ecosystem should be returned.
         // Note that these all have 'bindings' in the description of a vulnerability in more than
         // one case these were related to language bindings; as such the list need to be reviewed and refined.
-<span class="nc bnc" id="L83" title="All 4 branches missed.">        if ((&quot;mysql&quot;.equals(vendor) &amp;&amp; &quot;mysql&quot;.equals(product))</span>
-<span class="nc bnc" id="L84" title="All 4 branches missed.">                || (&quot;postgresql&quot;.equals(vendor) &amp;&amp; &quot;postgresql&quot;.equals(product))</span>
-<span class="nc bnc" id="L85" title="All 4 branches missed.">                || (&quot;picketlink&quot;.equals(vendor) &amp;&amp; &quot;picketlink&quot;.equals(product))</span>
-<span class="nc bnc" id="L86" title="All 4 branches missed.">                || (&quot;libxl_project&quot;.equals(vendor) &amp;&amp; &quot;libxl&quot;.equals(product))</span>
-<span class="nc bnc" id="L87" title="All 4 branches missed.">                || (&quot;ocaml&quot;.equals(vendor) &amp;&amp; &quot;postgresql-ocaml&quot;.equals(product))</span>
-<span class="nc bnc" id="L88" title="All 4 branches missed.">                || (&quot;curses_project&quot;.equals(vendor) &amp;&amp; &quot;curses&quot;.equals(product))</span>
-<span class="nc bnc" id="L89" title="All 4 branches missed.">                || (&quot;dalekjs&quot;.equals(vendor) &amp;&amp; &quot;dalekjs&quot;.equals(product))</span>
-<span class="nc bnc" id="L90" title="All 4 branches missed.">                || (&quot;microsoft&quot;.equals(vendor) &amp;&amp; &quot;internet_explorer&quot;.equals(product))</span>
-<span class="nc bnc" id="L91" title="All 4 branches missed.">                || (&quot;jenkins&quot;.equals(vendor) &amp;&amp; &quot;ssh_credentials&quot;.equals(product))</span>
-<span class="nc bnc" id="L92" title="All 4 branches missed.">                || (&quot;kubernetes&quot;.equals(vendor) &amp;&amp; &quot;kubernetes&quot;.equals(product))</span>
-<span class="nc bnc" id="L93" title="All 4 branches missed.">                || (&quot;gnome&quot;.equals(vendor) &amp;&amp; &quot;nautilus-python&quot;.equals(product))</span>
-<span class="nc bnc" id="L94" title="All 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;qpid_proton&quot;.equals(product))</span>
-<span class="nc bnc" id="L95" title="All 4 branches missed.">                || (&quot;mysql-ocaml&quot;.equals(vendor) &amp;&amp; &quot;mysql-ocaml&quot;.equals(product))</span>
-<span class="nc bnc" id="L96" title="All 4 branches missed.">                || (&quot;google&quot;.equals(vendor) &amp;&amp; &quot;chrome&quot;.equals(product))</span>
-<span class="nc bnc" id="L97" title="All 4 branches missed.">                || (&quot;canonical&quot;.equals(vendor) &amp;&amp; &quot;ltsp_display_manager&quot;.equals(product))</span>
-<span class="nc bnc" id="L98" title="All 4 branches missed.">                || (&quot;gnome&quot;.equals(vendor) &amp;&amp; &quot;vala&quot;.equals(product))</span>
-<span class="nc bnc" id="L99" title="All 4 branches missed.">                || (&quot;apple&quot;.equals(vendor) &amp;&amp; &quot;safari&quot;.equals(product))</span>
-<span class="nc bnc" id="L100" title="All 4 branches missed.">                || (&quot;mapbox&quot;.equals(vendor) &amp;&amp; &quot;npm-test-sqlite3-trunk&quot;.equals(product))</span>
-<span class="nc bnc" id="L101" title="All 4 branches missed.">                || (&quot;apple&quot;.equals(vendor) &amp;&amp; &quot;webkit&quot;.equals(product))</span>
-<span class="nc bnc" id="L102" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;firefox&quot;.equals(product))</span>
-<span class="nc bnc" id="L103" title="All 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;thrift&quot;.equals(product))</span>
-<span class="nc bnc" id="L104" title="All 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;qpid&quot;.equals(product))</span>
-<span class="nc bnc" id="L105" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;thunderbird&quot;.equals(product))</span>
-<span class="nc bnc" id="L106" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;firefox_esr&quot;.equals(product))</span>
-<span class="nc bnc" id="L107" title="All 4 branches missed.">                || (&quot;redhat&quot;.equals(vendor) &amp;&amp; &quot;jboss_amq_clients_2&quot;.equals(product))</span>
-<span class="nc bnc" id="L108" title="All 4 branches missed.">                || (&quot;node-opencv_project&quot;.equals(vendor) &amp;&amp; &quot;node-opencv&quot;.equals(product))</span>
-<span class="nc bnc" id="L109" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;seamonkey&quot;.equals(product))</span>
-<span class="nc bnc" id="L110" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;thunderbird_esr&quot;.equals(product))</span>
-<span class="nc bnc" id="L111" title="All 4 branches missed.">                || (&quot;mnet_soft_factory&quot;.equals(vendor) &amp;&amp; &quot;nodemanager_professional&quot;.equals(product))</span>
-<span class="nc bnc" id="L112" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;mozilla_suite&quot;.equals(product))</span>
-<span class="nc bnc" id="L113" title="All 4 branches missed.">                || (&quot;theforeman&quot;.equals(vendor) &amp;&amp; &quot;hammer_cli&quot;.equals(product))</span>
-<span class="nc bnc" id="L114" title="All 4 branches missed.">                || (&quot;ibm&quot;.equals(vendor) &amp;&amp; &quot;websphere_application_server&quot;.equals(product))</span>
-<span class="nc bnc" id="L115" title="All 4 branches missed.">                || (&quot;sap&quot;.equals(vendor) &amp;&amp; &quot;hana_extend_application_services&quot;.equals(product))</span>
-<span class="nc bnc" id="L116" title="All 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;zookeeper&quot;.equals(product))) {</span>
-<span class="nc" id="L117">            return null;</span>
+<span class="nc bnc" id="L81" title="All 4 branches missed.">        if ((&quot;mysql&quot;.equals(vendor) &amp;&amp; &quot;mysql&quot;.equals(product))</span>
+<span class="nc bnc" id="L82" title="All 4 branches missed.">                || (&quot;postgresql&quot;.equals(vendor) &amp;&amp; &quot;postgresql&quot;.equals(product))</span>
+<span class="nc bnc" id="L83" title="All 4 branches missed.">                || (&quot;picketlink&quot;.equals(vendor) &amp;&amp; &quot;picketlink&quot;.equals(product))</span>
+<span class="nc bnc" id="L84" title="All 4 branches missed.">                || (&quot;libxl_project&quot;.equals(vendor) &amp;&amp; &quot;libxl&quot;.equals(product))</span>
+<span class="nc bnc" id="L85" title="All 4 branches missed.">                || (&quot;ocaml&quot;.equals(vendor) &amp;&amp; &quot;postgresql-ocaml&quot;.equals(product))</span>
+<span class="nc bnc" id="L86" title="All 4 branches missed.">                || (&quot;curses_project&quot;.equals(vendor) &amp;&amp; &quot;curses&quot;.equals(product))</span>
+<span class="nc bnc" id="L87" title="All 4 branches missed.">                || (&quot;dalekjs&quot;.equals(vendor) &amp;&amp; &quot;dalekjs&quot;.equals(product))</span>
+<span class="nc bnc" id="L88" title="All 4 branches missed.">                || (&quot;microsoft&quot;.equals(vendor) &amp;&amp; &quot;internet_explorer&quot;.equals(product))</span>
+<span class="nc bnc" id="L89" title="All 4 branches missed.">                || (&quot;jenkins&quot;.equals(vendor) &amp;&amp; &quot;ssh_credentials&quot;.equals(product))</span>
+<span class="nc bnc" id="L90" title="All 4 branches missed.">                || (&quot;kubernetes&quot;.equals(vendor) &amp;&amp; &quot;kubernetes&quot;.equals(product))</span>
+<span class="nc bnc" id="L91" title="All 4 branches missed.">                || (&quot;gnome&quot;.equals(vendor) &amp;&amp; &quot;nautilus-python&quot;.equals(product))</span>
+<span class="nc bnc" id="L92" title="All 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;qpid_proton&quot;.equals(product))</span>
+<span class="nc bnc" id="L93" title="All 4 branches missed.">                || (&quot;mysql-ocaml&quot;.equals(vendor) &amp;&amp; &quot;mysql-ocaml&quot;.equals(product))</span>
+<span class="nc bnc" id="L94" title="All 4 branches missed.">                || (&quot;google&quot;.equals(vendor) &amp;&amp; &quot;chrome&quot;.equals(product))</span>
+<span class="nc bnc" id="L95" title="All 4 branches missed.">                || (&quot;canonical&quot;.equals(vendor) &amp;&amp; &quot;ltsp_display_manager&quot;.equals(product))</span>
+<span class="nc bnc" id="L96" title="All 4 branches missed.">                || (&quot;gnome&quot;.equals(vendor) &amp;&amp; &quot;vala&quot;.equals(product))</span>
+<span class="nc bnc" id="L97" title="All 4 branches missed.">                || (&quot;apple&quot;.equals(vendor) &amp;&amp; &quot;safari&quot;.equals(product))</span>
+<span class="nc bnc" id="L98" title="All 4 branches missed.">                || (&quot;mapbox&quot;.equals(vendor) &amp;&amp; &quot;npm-test-sqlite3-trunk&quot;.equals(product))</span>
+<span class="nc bnc" id="L99" title="All 4 branches missed.">                || (&quot;apple&quot;.equals(vendor) &amp;&amp; &quot;webkit&quot;.equals(product))</span>
+<span class="nc bnc" id="L100" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;firefox&quot;.equals(product))</span>
+<span class="nc bnc" id="L101" title="All 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;thrift&quot;.equals(product))</span>
+<span class="nc bnc" id="L102" title="All 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;qpid&quot;.equals(product))</span>
+<span class="nc bnc" id="L103" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;thunderbird&quot;.equals(product))</span>
+<span class="nc bnc" id="L104" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;firefox_esr&quot;.equals(product))</span>
+<span class="nc bnc" id="L105" title="All 4 branches missed.">                || (&quot;redhat&quot;.equals(vendor) &amp;&amp; &quot;jboss_amq_clients_2&quot;.equals(product))</span>
+<span class="nc bnc" id="L106" title="All 4 branches missed.">                || (&quot;node-opencv_project&quot;.equals(vendor) &amp;&amp; &quot;node-opencv&quot;.equals(product))</span>
+<span class="nc bnc" id="L107" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;seamonkey&quot;.equals(product))</span>
+<span class="nc bnc" id="L108" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;thunderbird_esr&quot;.equals(product))</span>
+<span class="nc bnc" id="L109" title="All 4 branches missed.">                || (&quot;mnet_soft_factory&quot;.equals(vendor) &amp;&amp; &quot;nodemanager_professional&quot;.equals(product))</span>
+<span class="nc bnc" id="L110" title="All 4 branches missed.">                || (&quot;mozilla&quot;.equals(vendor) &amp;&amp; &quot;mozilla_suite&quot;.equals(product))</span>
+<span class="nc bnc" id="L111" title="All 4 branches missed.">                || (&quot;theforeman&quot;.equals(vendor) &amp;&amp; &quot;hammer_cli&quot;.equals(product))</span>
+<span class="nc bnc" id="L112" title="All 4 branches missed.">                || (&quot;ibm&quot;.equals(vendor) &amp;&amp; &quot;websphere_application_server&quot;.equals(product))</span>
+<span class="nc bnc" id="L113" title="All 4 branches missed.">                || (&quot;sap&quot;.equals(vendor) &amp;&amp; &quot;hana_extend_application_services&quot;.equals(product))</span>
+<span class="nc bnc" id="L114" title="All 4 branches missed.">                || (&quot;apache&quot;.equals(vendor) &amp;&amp; &quot;zookeeper&quot;.equals(product))) {</span>
+<span class="nc" id="L115">            return null;</span>
         }
 
-<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (&quot;ibm&quot;.equals(vendor)</span>
-<span class="nc bnc" id="L121" title="All 2 branches missed.">                &amp;&amp; &quot;java&quot;.equals(product)) {</span>
-<span class="nc" id="L122">            return Ecosystem.NATIVE;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if (&quot;ibm&quot;.equals(vendor)</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                &amp;&amp; &quot;java&quot;.equals(product)) {</span>
+<span class="nc" id="L120">            return Ecosystem.NATIVE;</span>
         }
 
-<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (&quot;oracle&quot;.equals(vendor)</span>
-<span class="nc bnc" id="L126" title="All 2 branches missed.">                &amp;&amp; &quot;vm&quot;.equals(product)) {</span>
-<span class="nc" id="L127">            return Ecosystem.NATIVE;</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (&quot;oracle&quot;.equals(vendor)</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">                &amp;&amp; &quot;vm&quot;.equals(product)) {</span>
+<span class="nc" id="L125">            return Ecosystem.NATIVE;</span>
         }
-<span class="nc bnc" id="L129" title="All 12 branches missed.">        switch (targetSw) {</span>
+<span class="nc bnc" id="L127" title="All 12 branches missed.">        switch (targetSw) {</span>
             case &quot;asp.net&quot;://.net
             case &quot;c#&quot;://.net
             case &quot;.net&quot;://.net
             case &quot;dotnetnuke&quot;://.net
-<span class="nc" id="L134">                return Ecosystem.DOTNET;</span>
+<span class="nc" id="L132">                return Ecosystem.DOTNET;</span>
             case &quot;android&quot;://android
             case &quot;java&quot;://java
-<span class="nc" id="L137">                return Ecosystem.JAVA;</span>
+<span class="nc" id="L135">                return Ecosystem.JAVA;</span>
             case &quot;c/c++&quot;://c++
             case &quot;borland_c++&quot;://c++
             case &quot;visual_c++&quot;://c++
@@ -145,21 +143,21 @@ public class CveItemOperator {
             case &quot;suse_linux&quot;://native
             case &quot;redhat_enterprise_linux&quot;://native
             case &quot;debian&quot;://native
-<span class="nc" id="L148">                return Ecosystem.NATIVE;</span>
+<span class="nc" id="L146">                return Ecosystem.NATIVE;</span>
             case &quot;coldfusion&quot;://coldfusion
-<span class="nc" id="L150">                return Ecosystem.COLDFUSION;</span>
+<span class="nc" id="L148">                return Ecosystem.COLDFUSION;</span>
             case &quot;ios&quot;://ios
             case &quot;iphone&quot;://ios
             case &quot;ipad&quot;://ios
             case &quot;iphone_os&quot;://ios
-<span class="nc" id="L155">                return Ecosystem.IOS;</span>
+<span class="nc" id="L153">                return Ecosystem.IOS;</span>
             case &quot;jquery&quot;://javascript
-<span class="nc" id="L157">                return Ecosystem.JAVASCRIPT;</span>
+<span class="nc" id="L155">                return Ecosystem.JAVASCRIPT;</span>
             case &quot;node.js&quot;://node.js
             case &quot;nodejs&quot;://node.js
-<span class="nc" id="L160">                return Ecosystem.NODEJS;</span>
+<span class="nc" id="L158">                return Ecosystem.NODEJS;</span>
             case &quot;perl&quot;://perl
-<span class="nc" id="L162">                return Ecosystem.PERL;</span>
+<span class="nc" id="L160">                return Ecosystem.PERL;</span>
             case &quot;joomla!&quot;://php
             case &quot;joomla&quot;://php
             case &quot;mybb&quot;://php
@@ -177,13 +175,13 @@ public class CveItemOperator {
             case &quot;openpne&quot;://php
             case &quot;vbulletin3&quot;://php
             case &quot;vbulletin4&quot;://php
-<span class="nc" id="L180">                return Ecosystem.PHP;</span>
+<span class="nc" id="L178">                return Ecosystem.PHP;</span>
             case &quot;python&quot;://python
-<span class="nc" id="L182">                return Ecosystem.PYTHON;</span>
+<span class="nc" id="L180">                return Ecosystem.PYTHON;</span>
             case &quot;ruby&quot;://ruby
-<span class="nc" id="L184">                return Ecosystem.RUBY;</span>
+<span class="nc" id="L182">                return Ecosystem.RUBY;</span>
         }
-<span class="nc" id="L186">        return baseEcosystem;</span>
+<span class="nc" id="L184">        return baseEcosystem;</span>
     }
     //CSON: MissingSwitchDefault
 
@@ -196,7 +194,7 @@ public class CveItemOperator {
      * @return the ecosystem if one is identified
      */
     public String extractEcosystem(String baseEcosystem, VulnerableSoftware parsedCpe) {
-<span class="nc" id="L199">        return extractEcosystem(baseEcosystem, parsedCpe.getVendor(), parsedCpe.getProduct(), parsedCpe.getTargetSw());</span>
+<span class="nc" id="L197">        return extractEcosystem(baseEcosystem, parsedCpe.getVendor(), parsedCpe.getProduct(), parsedCpe.getTargetSw());</span>
     }
 
     /**
@@ -207,7 +205,7 @@ public class CveItemOperator {
      * &lt;code&gt;false&lt;/code&gt;
      */
     public boolean isRejected(String description) {
-<span class="nc bnc" id="L210" title="All 4 branches missed.">        return description.startsWith(&quot;** REJECT **&quot;) || description.startsWith(&quot;DO NOT USE THIS CANDIDATE NUMBER&quot;);</span>
+<span class="nc bnc" id="L208" title="All 4 branches missed.">        return description.startsWith(&quot;** REJECT **&quot;) || description.startsWith(&quot;DO NOT USE THIS CANDIDATE NUMBER&quot;);</span>
     }
 
     /**
@@ -218,20 +216,18 @@ public class CveItemOperator {
      * @return &lt;code&gt;true&lt;/code&gt; if the CVE affects CPEs identified by the
      * configured CPE Starts with filter
      */
-    boolean testCveCpeStartWithFilter(final DefCveItem cve) {
-<span class="pc bpc" id="L222" title="1 of 2 branches missed.">        if (cve.getCve().getConfigurations() != null) {</span>
+    protected boolean testCveCpeStartWithFilter(final DefCveItem cve) {
+<span class="nc bnc" id="L220" title="All 2 branches missed.">        if (cve.getCve().getConfigurations() != null) {</span>
             //cycle through to see if this is a CPE we care about (use the CPE filters
-<span class="fc" id="L224">            return cve.getCve().getConfigurations().stream()</span>
-<span class="fc" id="L225">                    .map(Config::getNodes)</span>
-<span class="fc" id="L226">                    .flatMap(List::stream)</span>
-<span class="fc" id="L227">                    .filter(Objects::nonNull)</span>
-<span class="fc" id="L228">                    .map(Node::getCpeMatch)</span>
-<span class="fc" id="L229">                    .filter(Objects::nonNull)</span>
-<span class="fc" id="L230">                    .flatMap(List::stream)</span>
-<span class="pc bpc" id="L231" title="1 of 4 branches missed.">                    .filter(cpe -&gt; cpe != null &amp;&amp; cpe.getCriteria() != null)</span>
-<span class="fc" id="L232">                    .anyMatch(cpe -&gt; cpe.getCriteria().startsWith(cpeStartsWithFilter));</span>
+<span class="nc" id="L222">            return cve.getCve().getConfigurations().stream()</span>
+<span class="nc" id="L223">                    .map(Config::getNodes)</span>
+<span class="nc" id="L224">                    .flatMap(List::stream)</span>
+<span class="nc" id="L225">                    .map(Node::getCpeMatch)</span>
+<span class="nc" id="L226">                    .flatMap(List::stream)</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">                    .filter(cpe -&gt; cpe.getCriteria() != null)</span>
+<span class="nc" id="L228">                    .anyMatch(cpe -&gt; cpe.getCriteria().startsWith(cpeStartsWithFilter));</span>
         }
-<span class="nc" id="L234">        return false;</span>
+<span class="nc" id="L230">        return false;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

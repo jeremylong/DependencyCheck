@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NpmAuditParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nodeaudit</a> &gt; <span class="el_source">NpmAuditParser.java</span></div><h1>NpmAuditParser.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NpmAuditParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nodeaudit</a> &gt; <span class="el_source">NpmAuditParser.java</span></div><h1>NpmAuditParser.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -132,16 +132,16 @@ import org.owasp.dependencycheck.utils.CvssUtil;
             }
 <span class="pc bpc" id="L133" title="1 of 2 branches missed.">            if (baseScore &gt;= 0.0) {</span>
 <span class="fc" id="L134">                final String vector = jsonCvss.optString(&quot;vectorString&quot;);</span>
-<span class="pc bpc" id="L135" title="1 of 4 branches missed.">                if (vector != null &amp;&amp; !&quot;null&quot;.equals(vector)) {</span>
-<span class="pc bpc" id="L136" title="2 of 4 branches missed.">                    if (vector.startsWith(&quot;CVSS:3&quot;) &amp;&amp; baseScore &gt;= 0.0) {</span>
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                if (vector != null) {</span>
+<span class="pc bpc" id="L136" title="1 of 4 branches missed.">                    if (vector.startsWith(&quot;CVSS:3&quot;) &amp;&amp; baseScore &gt;= 0.0) {</span>
                         try {
 <span class="fc" id="L138">                            final CvssV3 cvss = CvssUtil.vectorToCvssV3(vector, baseScore);</span>
 <span class="fc" id="L139">                            advisory.setCvssV3(cvss);</span>
 <span class="nc" id="L140">                        } catch (IllegalArgumentException iae) {</span>
-<span class="nc" id="L141">                            LOGGER.warn(&quot;Invalid CVSS vector format encountered in NPM Audit results '{}': {} &quot;, vector, iae.getMessage());</span>
+<span class="nc" id="L141">                            LOGGER.warn(&quot;Invalid CVSS vector format encountered in NPM Audit results '{}' &quot;, vector, iae);</span>
 <span class="pc" id="L142">                        }</span>
                     } else {
-<span class="nc" id="L144">                        LOGGER.warn(&quot;Unsupported CVSS vector format in NPM Audit results, please file a feature &quot;</span>
+<span class="fc" id="L144">                        LOGGER.warn(&quot;Unsupported CVSS vector format in NPM Audit results, please file a feature &quot;</span>
                                 + &quot;request at https://github.com/jeremylong/DependencyCheck/issues/new/choose to &quot;
                                 + &quot;support vector format '{}' &quot;, vector);
                     }
@@ -151,4 +151,4 @@ import org.owasp.dependencycheck.utils.CvssUtil;
 <span class="fc" id="L151">        return advisory;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

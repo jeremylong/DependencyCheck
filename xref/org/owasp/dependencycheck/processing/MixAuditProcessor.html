@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>MixAuditProcessor xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -174,47 +174,46 @@
 <a class="jxr_linenumber" name="L166" href="#L166">166</a> 
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>         dep.addEvidence(EvidenceType.VERSION, <span class="jxr_string">"mix_audit"</span>, <span class="jxr_string">"Version"</span>, version, Confidence.HIGHEST);
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>         dep.addEvidence(EvidenceType.PRODUCT, <span class="jxr_string">"mix_audit"</span>, <span class="jxr_string">"Package"</span>, packageName, Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>         dep.addEvidence(EvidenceType.VENDOR, <span class="jxr_string">"mix_audit"</span>, <span class="jxr_string">"Package"</span>, packageName, Confidence.HIGH);
-<a class="jxr_linenumber" name="L170" href="#L170">170</a> 
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>             <strong class="jxr_keyword">final</strong> PackageURL purl = PackageURLBuilder.aPackageURL().withType(<span class="jxr_string">"hex"</span>).withName(packageName)
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>                     .withVersion(version).build();
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>             dep.addSoftwareIdentifier(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/PurlIdentifier.html">PurlIdentifier</a>(purl, Confidence.HIGHEST));
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>         } <strong class="jxr_keyword">catch</strong> (MalformedPackageURLException ex) {
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>             LOGGER.debug(<span class="jxr_string">"Unable to build package url for hex"</span>, ex);
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/GenericIdentifier.html">GenericIdentifier</a> id = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/GenericIdentifier.html">GenericIdentifier</a>(<span class="jxr_string">"hex:"</span> + packageName + <span class="jxr_string">"@"</span> + version,
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>                     Confidence.HIGHEST);
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>             dep.addSoftwareIdentifier(id);
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>         }
-<a class="jxr_linenumber" name="L181" href="#L181">181</a> 
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>         <strong class="jxr_keyword">return</strong> dep;
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>     }
-<a class="jxr_linenumber" name="L184" href="#L184">184</a> 
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Vulnerability.html">Vulnerability</a> createVulnerability(<a href="../../../../org/owasp/dependencycheck/data/elixir/MixAuditResult.html">MixAuditResult</a> result) <strong class="jxr_keyword">throws</strong> CpeValidationException {
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>         <strong class="jxr_keyword">final</strong> String product = result.getDependencyPackage();
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">final</strong> String version = result.getDependencyVersion();
-<a class="jxr_linenumber" name="L188" href="#L188">188</a> 
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Vulnerability.html">Vulnerability</a> vulnerability = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Vulnerability.html">Vulnerability</a>();
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>         vulnerability.setSource(Vulnerability.Source.MIXAUDIT);
-<a class="jxr_linenumber" name="L191" href="#L191">191</a> 
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftwareBuilder.html">VulnerableSoftwareBuilder</a> builder = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftwareBuilder.html">VulnerableSoftwareBuilder</a>();
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftware.html">VulnerableSoftware</a> vs = builder.part(Part.APPLICATION)
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>                 .vendor(String.format(<span class="jxr_string">"%s_project"</span>, product))
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>                 .product(product)
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>                 .version(version).build();
-<a class="jxr_linenumber" name="L197" href="#L197">197</a> 
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>         vulnerability.addVulnerableSoftware(vs);
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         vulnerability.setMatchedVulnerableSoftware(vs);
-<a class="jxr_linenumber" name="L200" href="#L200">200</a> 
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>         vulnerability.setUnscoredSeverity(<span class="jxr_string">"UNKOWN"</span>);
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>         vulnerability.setDescription(result.getDescription());
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>         vulnerability.setName(result.getCve());
-<a class="jxr_linenumber" name="L204" href="#L204">204</a> 
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>         <strong class="jxr_keyword">return</strong> vulnerability;
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>     }
-<a class="jxr_linenumber" name="L207" href="#L207">207</a> }
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> 
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>             <strong class="jxr_keyword">final</strong> PackageURL purl = PackageURLBuilder.aPackageURL().withType(<span class="jxr_string">"hex"</span>).withName(packageName)
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>                     .withVersion(version).build();
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>             dep.addSoftwareIdentifier(<strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/PurlIdentifier.html">PurlIdentifier</a>(purl, Confidence.HIGHEST));
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>         } <strong class="jxr_keyword">catch</strong> (MalformedPackageURLException ex) {
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>             LOGGER.debug(<span class="jxr_string">"Unable to build package url for hex"</span>, ex);
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/GenericIdentifier.html">GenericIdentifier</a> id = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/naming/GenericIdentifier.html">GenericIdentifier</a>(<span class="jxr_string">"hex:"</span> + packageName + <span class="jxr_string">"@"</span> + version,
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>                     Confidence.HIGHEST);
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>             dep.addSoftwareIdentifier(id);
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>         }
+<a class="jxr_linenumber" name="L180" href="#L180">180</a> 
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>         <strong class="jxr_keyword">return</strong> dep;
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>     }
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> 
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Vulnerability.html">Vulnerability</a> createVulnerability(<a href="../../../../org/owasp/dependencycheck/data/elixir/MixAuditResult.html">MixAuditResult</a> result) <strong class="jxr_keyword">throws</strong> CpeValidationException {
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">final</strong> String product = result.getDependencyPackage();
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>         <strong class="jxr_keyword">final</strong> String version = result.getDependencyVersion();
+<a class="jxr_linenumber" name="L187" href="#L187">187</a> 
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Vulnerability.html">Vulnerability</a> vulnerability = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/Vulnerability.html">Vulnerability</a>();
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>         vulnerability.setSource(Vulnerability.Source.MIXAUDIT);
+<a class="jxr_linenumber" name="L190" href="#L190">190</a> 
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftwareBuilder.html">VulnerableSoftwareBuilder</a> builder = <strong class="jxr_keyword">new</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftwareBuilder.html">VulnerableSoftwareBuilder</a>();
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/owasp/dependencycheck/dependency/VulnerableSoftware.html">VulnerableSoftware</a> vs = builder.part(Part.APPLICATION)
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>                 .vendor(String.format(<span class="jxr_string">"%s_project"</span>, product))
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>                 .product(product)
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>                 .version(version).build();
+<a class="jxr_linenumber" name="L196" href="#L196">196</a> 
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>         vulnerability.addVulnerableSoftware(vs);
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>         vulnerability.setMatchedVulnerableSoftware(vs);
+<a class="jxr_linenumber" name="L199" href="#L199">199</a> 
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         vulnerability.setUnscoredSeverity(<span class="jxr_string">"UNKOWN"</span>);
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>         vulnerability.setDescription(result.getDescription());
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>         vulnerability.setName(result.getCve());
+<a class="jxr_linenumber" name="L203" href="#L203">203</a> 
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>         <strong class="jxr_keyword">return</strong> vulnerability;
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>     }
+<a class="jxr_linenumber" name="L206" href="#L206">206</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2025 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

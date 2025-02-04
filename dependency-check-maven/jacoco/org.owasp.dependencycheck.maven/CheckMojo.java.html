@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CheckMojo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.maven</a> &gt; <span class="el_source">CheckMojo.java</span></div><h1>CheckMojo.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CheckMojo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Maven Plugin</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.maven</a> &gt; <span class="el_source">CheckMojo.java</span></div><h1>CheckMojo.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-maven.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -20,7 +20,6 @@ package org.owasp.dependencycheck.maven;
 import java.util.Locale;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -41,12 +40,12 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
         requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         requiresOnline = true
 )
-<span class="fc" id="L44">public class CheckMojo extends BaseDependencyCheckMojo {</span>
+<span class="fc" id="L43">public class CheckMojo extends BaseDependencyCheckMojo {</span>
 
     /**
      * The name of the report in the site.
      */
-<span class="fc" id="L49">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
+<span class="fc" id="L48">    @SuppressWarnings(&quot;CanBeFinal&quot;)</span>
     @Parameter(property = &quot;name&quot;, defaultValue = &quot;dependency-check&quot;, required = true)
     private String name = &quot;dependency-check&quot;;
 
@@ -58,19 +57,15 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     public boolean canGenerateReport() {
-        try {
-<span class="fc" id="L62">            populateSettings();</span>
-<span class="nc" id="L63">        } catch (MojoFailureException | MojoExecutionException e) {</span>
-<span class="nc" id="L64">            return false;</span>
-<span class="fc" id="L65">        }</span>
-<span class="fc" id="L66">        boolean isCapable = false;</span>
-<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        for (Artifact a : getProject().getArtifacts()) {</span>
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">            if (!getArtifactScopeExcluded().passes(a.getScope())) {</span>
-<span class="fc" id="L69">                isCapable = true;</span>
-<span class="fc" id="L70">                break;</span>
+<span class="fc" id="L60">        populateSettings();</span>
+<span class="fc" id="L61">        boolean isCapable = false;</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        for (Artifact a : getProject().getArtifacts()) {</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">            if (!getArtifactScopeExcluded().passes(a.getScope())) {</span>
+<span class="fc" id="L64">                isCapable = true;</span>
+<span class="fc" id="L65">                break;</span>
             }
-<span class="nc" id="L72">        }</span>
-<span class="fc" id="L73">        return isCapable;</span>
+<span class="nc" id="L67">        }</span>
+<span class="fc" id="L68">        return isCapable;</span>
     }
 
     /**
@@ -81,7 +76,7 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     public String getName(Locale locale) {
-<span class="fc" id="L84">        return name;</span>
+<span class="fc" id="L79">        return name;</span>
     }
 
     /**
@@ -93,7 +88,7 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     public String getDescription(Locale locale) {
-<span class="fc" id="L96">        return &quot;Generates a report providing details on any published vulnerabilities within project dependencies. &quot;</span>
+<span class="fc" id="L91">        return &quot;Generates a report providing details on any published vulnerabilities within project dependencies. &quot;</span>
                 + &quot;This report is a best effort and may contain false positives and false negatives.&quot;;
     }
 
@@ -106,7 +101,7 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     protected ExceptionCollection scanDependencies(final Engine engine) throws MojoExecutionException {
-<span class="fc" id="L109">        return scanArtifacts(getProject(), engine);</span>
+<span class="fc" id="L104">        return scanArtifacts(getProject(), engine);</span>
     }
 
     /**
@@ -120,9 +115,9 @@ import org.owasp.dependencycheck.exception.ExceptionCollection;
      */
     @Override
     protected ExceptionCollection scanPlugins(final Engine engine, final ExceptionCollection exCollection) throws MojoExecutionException {
-<span class="nc" id="L123">        final ExceptionCollection exCol = scanPlugins(getProject(), engine, exCollection);</span>
-<span class="nc" id="L124">        return exCol;</span>
+<span class="nc" id="L118">        final ExceptionCollection exCol = scanPlugins(getProject(), engine, exCollection);</span>
+<span class="nc" id="L119">        return exCol;</span>
     }
 
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
