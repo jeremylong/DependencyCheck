@@ -1073,7 +1073,7 @@ public class CPEAnalyzer extends AbstractAnalyzer {
      * @implNote This method is not intended to cover every possible case where the ecosystem is represented by the word. It is a
      * best-effort attempt to prevent {@link #considerDependencyVersion(Dependency, String, String, Confidence, Set)}
      * from not taking an exact-match versioned CPE into account because the ecosystem-related word does not appear in
-     * the dependencyName. It helps prevent false-positive cases like https://github.com/jeremylong/DependencyCheck/issues/5545
+     * the dependencyName. It helps prevent false-positive cases like https://github.com/dependency-check/DependencyCheck/issues/5545
      * @see #considerDependencyVersion(Dependency, String, String, Confidence, Set)
      */
     private boolean wordMatchesEcosystem(@Nullable String ecosystem, String word) {

@@ -17,7 +17,7 @@ see the note about Central [here](./index.html).
 
 To setup a centralized database the following generalized steps can be used:
 
-<ol><li>Create the database and tables using either <a href="https://github.com/jeremylong/DependencyCheck/blob/main/core/src/main/resources/data/initialize.sql">initialize.sql</a>
+<ol><li>Create the database and tables using either <a href="https://github.com/dependency-check/DependencyCheck/blob/main/core/src/main/resources/data/initialize.sql">initialize.sql</a>
    or one of the other initialization scripts <a href="https://github.com/jeremylong/DependencyCheck/tree/main/core/src/main/resources/data">found here</a>. <b>Note that some of the
    scripts may need to be updated to correctly create the database and/or add users.</b>
     <ul><li>If you are using H2 in server mode, as of version 6.0.0, the dependency-check-core JAR file needs to be available in the H2 path due to how functions/stored procedures work in H2.</li></ul>

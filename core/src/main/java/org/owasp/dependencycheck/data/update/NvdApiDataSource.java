@@ -392,7 +392,7 @@ public class NvdApiDataSource implements CachedWebDataSource {
                                 + "If this is occurring in a CI environment";
                     } else {
                         msg = "Error updating the NVD Data; the NVD returned a 403 or 404 error\n\nConsider using an NVD API Key; "
-                                + "see https://github.com/jeremylong/DependencyCheck?tab=readme-ov-file#nvd-api-key-highly-recommended";
+                                + "see https://github.com/dependency-check/DependencyCheck?tab=readme-ov-file#nvd-api-key-highly-recommended";
                     }
                     throw new UpdateException(msg);
                 } else {

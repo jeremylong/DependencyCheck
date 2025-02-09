@@ -362,7 +362,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * The paths to the suppression files. The parameter value can be a local
      * file path, a URL to a suppression file, or even a reference to a file on
      * the class path (see
-     * https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799)
+     * https://github.com/dependency-check/DependencyCheck/issues/1878#issuecomment-487533799)
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFiles")
@@ -371,7 +371,7 @@ public abstract class BaseDependencyCheckMojo extends AbstractMojo implements Ma
      * The paths to the suppression file. The parameter value can be a local
      * file path, a URL to a suppression file, or even a reference to a file on
      * the class path (see
-     * https://github.com/jeremylong/DependencyCheck/issues/1878#issuecomment-487533799)
+     * https://github.com/dependency-check/DependencyCheck/issues/1878#issuecomment-487533799)
      */
     @SuppressWarnings("CanBeFinal")
     @Parameter(property = "suppressionFile")

@@ -83,7 +83,7 @@ jobs:
           ARTIFACTID: ${{ fromJSON(steps.purl-parser.outputs.result).name }}
           VERSION: ${{ fromJSON(steps.purl-parser.outputs.result).version }}
         run: |
-          ver=$(curl -s https://jeremylong.github.io/DependencyCheck/current.txt)
+          ver=$(curl -s https://dependency-check.github.io/DependencyCheck/current.txt)
           mkdir ./fp-project
           cp ${{github.workspace}}/odc/.github/workflows/files/maven-pom.start ./fp-project/pom.xml
           echo -n $ver >> ./fp-project/pom.xml

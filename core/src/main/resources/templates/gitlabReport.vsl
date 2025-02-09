@@ -12,7 +12,7 @@
             },
 
             ## optional properties
-            "url": "https://github.com/jeremylong/DependencyCheck/"
+            "url": "https://github.com/dependency-check/DependencyCheck/"
         },
         ## this describes the tool responsible for interpreting the scan result
         ## in our case it's the same as the scanner
@@ -25,7 +25,7 @@
             },
 
             ## optional properties
-            "url": "https://github.com/jeremylong/DependencyCheck/"
+            "url": "https://github.com/dependency-check/DependencyCheck/"
         },
 
         "end_time": "$enc.json($scanDateGitLab)",

@@ -4,7 +4,7 @@ The dependency-check-update task downloads and updates the local copy of the NVD
 There are several reasons that one may want to use this task; primarily, creating
 an update that will be run only once a day or once every few days (but not greater
 than 7 days) and then use the `autoUpdate="false"` setting on individual
-dependency-check scans. See [Internet Access Required](https://jeremylong.github.io/DependencyCheck/data/index.html)
+dependency-check scans. See [Internet Access Required](https://dependency-check.github.io/DependencyCheck/data/index.html)
 for more information on why this task would be used.
 
 ```xml
@@ -51,7 +51,7 @@ The following properties can be configured in the plugin. However, they are less
  databaseUser                    | The username used when connecting to the database.                                                                                                                                                                                 | &nbsp;                                                                                 
  databasePassword                | The password used when connecting to the database.                                                                                                                                                                                 | &nbsp;                                                                                 
  hostedSuppressionsEnabled       | Whether the hosted suppression file will be used.                                                                                                                                                                                  | true                                                                                   
- hostedSuppressionsUrl           | The URL to a mirrored copy of the hosted suppressions file for internet-constrained environments                                                                                                                                   | https://jeremylong.github.io/DependencyCheck/suppressions/publishedSuppressions.xml    
+ hostedSuppressionsUrl           | The URL to a mirrored copy of the hosted suppressions file for internet-constrained environments                                                                                                                                   | https://dependency-check.github.io/DependencyCheck/suppressions/publishedSuppressions.xml    
  hostedSuppressionsUser          | The user for a Basic-auth-protected mirrored copy of the hosted suppressions file for internet-constrained environments                                                                                                            | &nbsp;                                                                                 
  hostedSuppressionsPassword      | The password/token for a Basic-auth-protected mirrored copy of the hosted suppressions file for internet-constrained environments                                                                                                  | &nbsp;                                                                                 
  hostedSuppressionsBearerToken   | The bearer token for a Bearer-auth-protected mirrored copy of the hosted suppressions file for internet-constrained environments                                                                                                   | &nbsp;                                                                                 

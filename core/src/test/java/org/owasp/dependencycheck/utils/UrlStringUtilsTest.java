@@ -55,18 +55,18 @@ public class UrlStringUtilsTest {
      */
     @Test
     public void testExtractImportantUrlData() throws Exception {
-        String text = "http://github.com/jeremylong/DependencyCheck/.gitignore";
-        List<String> expResult = Arrays.asList("jeremylong", "DependencyCheck", "gitignore");
+        String text = "http://github.com/dependency-check/DependencyCheck/.gitignore";
+        List<String> expResult = Arrays.asList("dependency-check", "DependencyCheck", "gitignore");
         List<String> result = UrlStringUtils.extractImportantUrlData(text);
         assertEquals(expResult, result);
         
-        text = "http://jeremylong.github.io/DependencyCheck/index.html";
-        expResult = Arrays.asList("jeremylong", "DependencyCheck", "index");
+        text = "https://dependency-check.github.io/DependencyCheck/index.html";
+        expResult = Arrays.asList("dependency-check", "DependencyCheck", "index");
         result = UrlStringUtils.extractImportantUrlData(text);
         assertEquals(expResult, result);
         
-        text = "http://example.com/jeremylong/DependencyCheck/something";
-        expResult = Arrays.asList("example", "jeremylong", "DependencyCheck", "something");
+        text = "http://example.com/dependency-check/DependencyCheck/something";
+        expResult = Arrays.asList("example", "dependency-check", "DependencyCheck", "something");
         result = UrlStringUtils.extractImportantUrlData(text);
         assertEquals(expResult, result);
     }

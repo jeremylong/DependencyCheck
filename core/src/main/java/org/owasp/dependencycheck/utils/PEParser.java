@@ -9,7 +9,7 @@
  ****************************************************************************** */
 /** ****************************************************************************
  * This is a copy of https://github.com/kichik/pecoff4j/blob/2137804a7c1f1aa5f4272a9623bad452f7aab0ad/java/src/org/boris/pecoff4j/io/PEParser.java#L1
- * Added a logger and more forgiving error handling while reading files per https://github.com/jeremylong/DependencyCheck/issues/2601
+ * Added a logger and more forgiving error handling while reading files per https://github.com/dependency-check/DependencyCheck/issues/2601
  ***************************************************************************** */
 package org.owasp.dependencycheck.utils;
 

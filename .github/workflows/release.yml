@@ -186,7 +186,7 @@ jobs:
           prerelease: false
           draft: false
           body: |
-            Refer to the [CHANGELOG.md](https://github.com/jeremylong/DependencyCheck/blob/main/CHANGELOG.md#change-log) for information about improvements and upgrade notes.
+            Refer to the [CHANGELOG.md](https://github.com/dependency-check/DependencyCheck/blob/main/CHANGELOG.md#change-log) for information about improvements and upgrade notes.
 
       - name: Upload CLI
         id: upload-release-cli

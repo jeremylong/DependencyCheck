@@ -1,4 +1,4 @@
-[![Maven Central](https://img.shields.io/maven-central/v/org.owasp/dependency-check-maven.svg)](https://mvnrepository.com/artifact/org.owasp/dependency-check-maven) [![Build and Deploy Snapshot](https://github.com/jeremylong/DependencyCheck/actions/workflows/build.yml/badge.svg)](https://github.com/jeremylong/DependencyCheck/actions/workflows/build.yml) [![Coverity Scan Build Status](https://img.shields.io/coverity/scan/1654.svg)](https://scan.coverity.com/projects/dependencycheck) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6b6021d481dc41a888c5da0d9ecf9494)](https://www.codacy.com/app/jeremylong/DependencyCheck?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jeremylong/DependencyCheck&amp;utm_campaign=Badge_Grade) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/843/badge)](https://bestpractices.coreinfrastructure.org/projects/843) [![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
+[![Maven Central](https://img.shields.io/maven-central/v/org.owasp/dependency-check-maven.svg)](https://mvnrepository.com/artifact/org.owasp/dependency-check-maven) [![Build and Deploy Snapshot](https://github.com/dependency-check/DependencyCheck/actions/workflows/build.yml/badge.svg)](https://github.com/dependency-check/DependencyCheck/actions/workflows/build.yml) [![Coverity Scan Build Status](https://img.shields.io/coverity/scan/1654.svg)](https://scan.coverity.com/projects/dependencycheck) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6b6021d481dc41a888c5da0d9ecf9494)](https://www.codacy.com/app/jeremylong/DependencyCheck?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jeremylong/DependencyCheck&amp;utm_campaign=Badge_Grade) [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/843/badge)](https://bestpractices.coreinfrastructure.org/projects/843) [![Apache 2.0 License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 [![Black Hat Arsenal](https://raw.githubusercontent.com/toolswatch/badges/master/arsenal/usa/2018.svg?sanitize=true)](https://www.blackhat.com/us-18/arsenal.html#jeremy-long) [![Black Hat Arsenal](https://raw.githubusercontent.com/toolswatch/badges/master/arsenal/usa/2015.svg?sanitize=true)](https://www.blackhat.com/us-15/arsenal.html#jeremy-long) [![Black Hat Arsenal](https://raw.githubusercontent.com/toolswatch/badges/master/arsenal/usa/2014.svg?sanitize=true)](https://www.blackhat.com/us-14/arsenal.html#Long) [![Black Hat Arsenal](https://raw.githubusercontent.com/toolswatch/badges/master/arsenal/usa/2013.svg?sanitize=true)](https://www.blackhat.com/us-13/arsenal.html#Long)
 
@@ -6,7 +6,7 @@
 
 Dependency-Check is a Software Composition Analysis (SCA) tool that attempts to detect publicly disclosed vulnerabilities contained within a project's dependencies. It does this by determining if there is a Common Platform Enumeration (CPE) identifier for a given dependency. If found, it will generate a report linking to the associated CVE entries.
 
-Documentation and links to production binary releases can be found on the [github pages](http://jeremylong.github.io/DependencyCheck/). Additionally, more information about the architecture and ways to extend dependency-check can be found on the [wiki].
+Documentation and links to production binary releases can be found on the [github pages](https://dependency-check.github.io/DependencyCheck). Additionally, more information about the architecture and ways to extend dependency-check can be found on the [wiki].
 
 ## Notice
 
@@ -79,7 +79,7 @@ Minimum Java Version: Java 11
 ### Internet Access
 
 OWASP dependency-check requires access to several externally hosted resources.
-For more information see [Internet Access Required](https://jeremylong.github.io/DependencyCheck/data/index.html).
+For more information see [Internet Access Required](https://dependency-check.github.io/DependencyCheck/data/index.html).
 
 ### Build Tools
 
@@ -104,13 +104,13 @@ For instructions on the use of the Jenkins plugin please see the [OWASP Dependen
 ### Command Line
 
 More detailed instructions can be found on the
-[dependency-check github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-cli/).
-The latest CLI can be downloaded from github in the [releases section](https://github.com/jeremylong/DependencyCheck/releases).
+[dependency-check github pages](https://dependency-check.github.io/DependencyCheck/dependency-check-cli/).
+The latest CLI can be downloaded from github in the [releases section](https://github.com/dependency-check/DependencyCheck/releases).
 
 Downloading the latest release:
 ```
-$ VERSION=$(curl -s https://jeremylong.github.io/DependencyCheck/current.txt)
-$ curl -Ls "https://github.com/jeremylong/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip" --output dependency-check.zip
+$ VERSION=$(curl -s https://dependency-check.github.io/DependencyCheck/current.txt)
+$ curl -Ls "https://github.com/dependency-check/DependencyCheck/releases/download/v$VERSION/dependency-check-$VERSION-release.zip" --output dependency-check.zip
 ```
 
 On *nix
@@ -133,7 +133,7 @@ $ dependency-check --out . --scan [path to jar files to be scanned]
 
 ### Maven Plugin
 
-More detailed instructions can be found on the [dependency-check-maven github pages](http://jeremylong.github.io/DependencyCheck/dependency-check-maven).
+More detailed instructions can be found on the [dependency-check-maven github pages](https://dependency-check.github.io/DependencyCheck/dependency-check-maven).
 By default, the plugin is tied to the `verify` phase (i.e. `mvn verify`). Alternatively,
 one can directly invoke the plugin via `mvn org.owasp:dependency-check-maven:check`.
 
@@ -165,11 +165,11 @@ The dependency-check plugin can be configured using the following:
 
 ### Gradle Plugin
 
-For instructions on the use of the Gradle Plugin, please see the [dependency-check-gradle github page](http://jeremylong.github.io/DependencyCheck/dependency-check-gradle).
+For instructions on the use of the Gradle Plugin, please see the [dependency-check-gradle github page](https://dependency-check.github.io/DependencyCheck/dependency-check-gradle).
 
 ### Ant Task
 
-For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](http://jeremylong.github.io/DependencyCheck/dependency-check-ant).
+For instructions on the use of the Ant Task, please see the [dependency-check-ant github page](https://dependency-check.github.io/DependencyCheck/dependency-check-ant).
 
 ## Development Prerequisites
 
@@ -193,7 +193,7 @@ The repository has some large files due to test resources. The team has tried to
 However, it is recommended that you perform a shallow clone to save yourself time:
 
 ```bash
-git clone --depth 1 https://github.com/jeremylong/DependencyCheck.git
+git clone --depth 1 https://github.com/dependency-check/DependencyCheck.git
 ```
 
 On *nix
@@ -339,7 +339,7 @@ mvn org.owasp:dependency-check-maven:aggregate -P-test-dependencies -DskipProvid
 Building the documentation
 --------------------------
 
-The documentation on the [github pages](http://jeremylong.github.io/DependencyCheck/) is generated from this repository:
+The documentation on the [github pages](https://dependency-check.github.io/DependencyCheck/) is generated from this repository:
 
     mvn -s settings.xml site  site:staging
 
@@ -357,7 +357,7 @@ mvn -s settings.xml install
 License
 -------
 
-Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://raw.githubusercontent.com/jeremylong/DependencyCheck/main/LICENSE.txt) file for the full license.
+Permission to modify and redistribute is granted under the terms of the Apache 2.0 license. See the [LICENSE.txt](https://raw.githubusercontent.com/dependency-check/DependencyCheck/main/LICENSE.txt) file for the full license.
 
 Dependency-Check makes use of several other open source libraries. Please see the [NOTICE.txt][notices] file for more information.
 
@@ -365,5 +365,5 @@ This product uses the NVD API but is not endorsed or certified by the NVD.
 
 Copyright (c) 2012-2024 Jeremy Long. All Rights Reserved.
 
-  [wiki]: https://github.com/jeremylong/DependencyCheck/wiki
-  [notices]: https://github.com/jeremylong/DependencyCheck/blob/main/NOTICE.txt
+  [wiki]: https://github.com/dependency-check/DependencyCheck/wiki
+  [notices]: https://github.com/dependency-check/DependencyCheck/blob/main/NOTICE.txt

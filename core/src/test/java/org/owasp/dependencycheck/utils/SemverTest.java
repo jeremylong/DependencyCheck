@@ -26,7 +26,7 @@ import org.semver4j.Semver;
 public class SemverTest {
 
     /**
-     * Test of semver4j. See https://github.com/jeremylong/DependencyCheck/issues/5128#issuecomment-1343080426
+     * Test of semver4j. See https://github.com/dependency-check/DependencyCheck/issues/5128#issuecomment-1343080426
      */
     @Test
     public void testSemver() {
@@ -34,7 +34,7 @@ public class SemverTest {
         assertTrue(semver.satisfies("^3.0.0-0"));
     }
     /**
-     * Test of semver4j. See https://github.com/jeremylong/DependencyCheck/issues/5158
+     * Test of semver4j. See https://github.com/dependency-check/DependencyCheck/issues/5158
      */
     @Test
     public void testSemverComplex() {

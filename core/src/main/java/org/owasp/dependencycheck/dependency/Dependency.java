@@ -867,7 +867,7 @@ public class Dependency extends EvidenceCollection implements Serializable {
     public synchronized void addRelatedDependency(Dependency dependency) {
         if (this == dependency) {
             LOGGER.warn("Attempted to add a circular reference - please post the log file to issue #172 here "
-                    + "https://github.com/jeremylong/DependencyCheck/issues/172");
+                    + "https://github.com/dependency-check/DependencyCheck/issues/172");
             LOGGER.debug("this: {}", this);
             LOGGER.debug("dependency: {}", dependency);
         } else if (NAME_COMPARATOR.compare(this, dependency) == 0) {

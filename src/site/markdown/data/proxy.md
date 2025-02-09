@@ -66,4 +66,4 @@ is made by dependency-check to identify this situation it does not appear to be
 `mvn -Ddownloader.quick.query.timestamp=false`.
 
 If trying the above and it still fails please open a ticket in the 
-[github repo](https://github.com/jeremylong/DependencyCheck/issues).
+[github repo](https://github.com/dependency-check/DependencyCheck/issues).

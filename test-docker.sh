@@ -63,7 +63,7 @@ docker run --rm \
     --project "test scan" \
     --out /report \
     --log /report/odc.log \
-    --nvdDatafeed https://jeremylong.github.io/DependencyCheck/hb_nvd/
+    --nvdDatafeed https://dependency-check.github.io/DependencyCheck/hb_nvd/
 
 # return to original working directory
 cd -

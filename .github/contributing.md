@@ -3,8 +3,8 @@
 ## Reporting Bugs
 
 - Ensure you're running the latest version of dependency-check.
-- Ensure the bug has not [already been reported](https://github.com/jeremylong/DependencyCheck/issues).
-- If you're unable to find an open issue addressing the problem, please [submit a new issue](https://github.com/jeremylong/DependencyCheck/issues/new/choose).
+- Ensure the bug has not [already been reported](https://github.com/dependency-check/DependencyCheck/issues).
+- If you're unable to find an open issue addressing the problem, please [submit a new issue](https://github.com/dependency-check/DependencyCheck/issues/new/choose).
   - Please fill out the appropriate section of the bug report template provided.
   - Delete any sections not needed in the template.
   
@@ -14,13 +14,13 @@
 
 ## Asking Questions
 
-- Your question may be answered by taking a look at the [documentation](https://jeremylong.github.io/DependencyCheck/).
-- Search both the [open and closed issues issues in GitHub](https://github.com/jeremylong/DependencyCheck/issues/)
-- If you still have a question ask a [new question](https://github.com/jeremylong/DependencyCheck/issues/new?assignees=&labels=question&template=ask-a-question.md&title=)
+- Your question may be answered by taking a look at the [documentation](https://dependency-check.github.io/DependencyCheck/).
+- Search both the [open and closed issues issues in GitHub](https://github.com/dependency-check/DependencyCheck/issues/)
+- If you still have a question ask a [new question](https://github.com/dependency-check/DependencyCheck/issues/new?assignees=&labels=question&template=ask-a-question.md&title=)
 
 ## Enhancement Requests
 
-- Suggest changes by [submitting a new issue](https://github.com/jeremylong/DependencyCheck/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=) and begin coding.
+- Suggest changes by [submitting a new issue](https://github.com/dependency-check/DependencyCheck/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=) and begin coding.
 
 ## Contributing Code
 
