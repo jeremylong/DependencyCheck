@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>OssIndexAnalyzer xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -279,7 +279,7 @@
 <a class="jxr_linenumber" name="L271" href="#L271">271</a>                                             .orElse(<strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L272" href="#L272">272</a>                                     <strong class="jxr_keyword">if</strong> (existing != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L273" href="#L273">273</a>                                         <em class="jxr_comment">//TODO - can we enhance anything other than the references?</em>
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>                                         existing.getReferences().addAll(v.getReferences());
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>                                         existing.addReferences(v.getReferences());
 <a class="jxr_linenumber" name="L275" href="#L275">275</a>                                     } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L276" href="#L276">276</a>                                         dependency.addVulnerability(v);
 <a class="jxr_linenumber" name="L277" href="#L277">277</a>                                     }
@@ -411,6 +411,6 @@
 <a class="jxr_linenumber" name="L403" href="#L403">403</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2025 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

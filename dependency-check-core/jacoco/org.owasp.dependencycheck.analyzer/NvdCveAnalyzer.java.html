@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NvdCveAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">NvdCveAnalyzer.java</span></div><h1>NvdCveAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NvdCveAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">NvdCveAnalyzer.java</span></div><h1>NvdCveAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -18,7 +18,9 @@
 package org.owasp.dependencycheck.analyzer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.concurrent.ThreadSafe;
 
 import org.owasp.dependencycheck.Engine;
@@ -42,7 +44,7 @@ import org.owasp.dependencycheck.utils.Settings;
  * @author Jeremy Long
  */
 @ThreadSafe
-<span class="fc" id="L45">public class NvdCveAnalyzer extends AbstractAnalyzer {</span>
+<span class="fc" id="L47">public class NvdCveAnalyzer extends AbstractAnalyzer {</span>
 
     /**
      * Analyzes a dependency and attempts to determine if there are any CPE
@@ -55,39 +57,39 @@ import org.owasp.dependencycheck.utils.Settings;
      */
     @Override
     protected void analyzeDependency(Dependency dependency, Engine engine) throws AnalysisException {
-<span class="fc" id="L58">        final CveDB cveDB = engine.getDatabase();</span>
+<span class="fc" id="L60">        final CveDB cveDB = engine.getDatabase();</span>
         try {
-<span class="fc" id="L60">            dependency.getVulnerableSoftwareIdentifiers().stream()</span>
-<span class="fc" id="L61">                    .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
-<span class="fc" id="L62">                    .map(i -&gt; (CpeIdentifier) i)</span>
-<span class="fc" id="L63">                    .forEach(i -&gt; {</span>
+<span class="fc" id="L62">            dependency.getVulnerableSoftwareIdentifiers().stream()</span>
+<span class="fc" id="L63">                    .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
+<span class="fc" id="L64">                    .map(i -&gt; (CpeIdentifier) i)</span>
+<span class="fc" id="L65">                    .forEach(i -&gt; {</span>
                         try {
-<span class="fc" id="L65">                            final List&lt;Vulnerability&gt; vulns = filterEcosystem(dependency.getEcosystem(), cveDB.getVulnerabilities(i.getCpe()));</span>
+<span class="fc" id="L67">                            final List&lt;Vulnerability&gt; vulns = filterEcosystem(dependency.getEcosystem(), cveDB.getVulnerabilities(i.getCpe()));</span>
 
-<span class="fc bfc" id="L67" title="All 2 branches covered.">                            if (Ecosystem.NODEJS.equals(dependency.getEcosystem())) {</span>
-<span class="fc" id="L68">                                replaceOrAddVulnerability(dependency, vulns);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                            if (Ecosystem.NODEJS.equals(dependency.getEcosystem())) {</span>
+<span class="fc" id="L70">                                replaceOrAddVulnerability(dependency, vulns);</span>
                             } else {
-<span class="fc" id="L70">                                dependency.addVulnerabilities(vulns);</span>
+<span class="fc" id="L72">                                dependency.addVulnerabilities(vulns);</span>
                             }
-<span class="nc" id="L72">                        } catch (DatabaseException ex) {</span>
-<span class="nc" id="L73">                            throw new LambdaExceptionWrapper(new AnalysisException(ex));</span>
-<span class="fc" id="L74">                        }</span>
-<span class="fc" id="L75">                    });</span>
-<span class="fc" id="L76">            dependency.getSuppressedIdentifiers().stream()</span>
-<span class="pc" id="L77">                    .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
-<span class="pc" id="L78">                    .map(i -&gt; (CpeIdentifier) i)</span>
-<span class="fc" id="L79">                    .forEach(i -&gt; {</span>
+<span class="nc" id="L74">                        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L75">                            throw new LambdaExceptionWrapper(new AnalysisException(ex));</span>
+<span class="fc" id="L76">                        }</span>
+<span class="fc" id="L77">                    });</span>
+<span class="fc" id="L78">            dependency.getSuppressedIdentifiers().stream()</span>
+<span class="pc" id="L79">                    .filter((i) -&gt; (i instanceof CpeIdentifier))</span>
+<span class="pc" id="L80">                    .map(i -&gt; (CpeIdentifier) i)</span>
+<span class="fc" id="L81">                    .forEach(i -&gt; {</span>
                         try {
-<span class="nc" id="L81">                            final List&lt;Vulnerability&gt; vulns = cveDB.getVulnerabilities(i.getCpe());</span>
-<span class="nc" id="L82">                            dependency.addSuppressedVulnerabilities(vulns);</span>
-<span class="nc" id="L83">                        } catch (DatabaseException ex) {</span>
-<span class="nc" id="L84">                            throw new LambdaExceptionWrapper(new AnalysisException(ex));</span>
-<span class="nc" id="L85">                        }</span>
-<span class="nc" id="L86">                    });</span>
-<span class="nc" id="L87">        } catch (LambdaExceptionWrapper ex) {</span>
-<span class="nc" id="L88">            throw (AnalysisException) ex.getCause();</span>
-<span class="fc" id="L89">        }</span>
-<span class="fc" id="L90">    }</span>
+<span class="nc" id="L83">                            final List&lt;Vulnerability&gt; vulns = cveDB.getVulnerabilities(i.getCpe());</span>
+<span class="nc" id="L84">                            dependency.addSuppressedVulnerabilities(vulns);</span>
+<span class="nc" id="L85">                        } catch (DatabaseException ex) {</span>
+<span class="nc" id="L86">                            throw new LambdaExceptionWrapper(new AnalysisException(ex));</span>
+<span class="nc" id="L87">                        }</span>
+<span class="nc" id="L88">                    });</span>
+<span class="nc" id="L89">        } catch (LambdaExceptionWrapper ex) {</span>
+<span class="nc" id="L90">            throw (AnalysisException) ex.getCause();</span>
+<span class="fc" id="L91">        }</span>
+<span class="fc" id="L92">    }</span>
 
     /**
      * Returns the name of this analyzer.
@@ -96,7 +98,7 @@ import org.owasp.dependencycheck.utils.Settings;
      */
     @Override
     public String getName() {
-<span class="fc" id="L99">        return &quot;NVD CVE Analyzer&quot;;</span>
+<span class="fc" id="L101">        return &quot;NVD CVE Analyzer&quot;;</span>
     }
 
     /**
@@ -106,7 +108,7 @@ import org.owasp.dependencycheck.utils.Settings;
      */
     @Override
     public AnalysisPhase getAnalysisPhase() {
-<span class="fc" id="L109">        return AnalysisPhase.FINDING_ANALYSIS;</span>
+<span class="fc" id="L111">        return AnalysisPhase.FINDING_ANALYSIS;</span>
     }
 
     /**
@@ -117,7 +119,7 @@ import org.owasp.dependencycheck.utils.Settings;
      */
     @Override
     protected String getAnalyzerEnabledSettingKey() {
-<span class="fc" id="L120">        return Settings.KEYS.ANALYZER_NVD_CVE_ENABLED;</span>
+<span class="fc" id="L122">        return Settings.KEYS.ANALYZER_NVD_CVE_ENABLED;</span>
     }
 
     /**
@@ -128,15 +130,15 @@ import org.owasp.dependencycheck.utils.Settings;
      * @param vulns the vulnerability to add
      */
     private void replaceOrAddVulnerability(Dependency dependency, List&lt;Vulnerability&gt; vulns) {
-<span class="pc" id="L131">        vulns.forEach(v -&gt; v.getReferences().forEach(ref -&gt; dependency.getVulnerabilities().forEach(existing -&gt; {</span>
-<span class="nc bnc" id="L132" title="All 2 branches missed.">                if (existing.getSource() == Source.NPM</span>
-<span class="nc bnc" id="L133" title="All 2 branches missed.">                        &amp;&amp; ref.getName() != null</span>
-<span class="nc bnc" id="L134" title="All 2 branches missed.">                        &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + existing.getName())) {</span>
-<span class="nc" id="L135">                    dependency.removeVulnerability(existing);</span>
+<span class="fc" id="L133">        vulns.forEach(v -&gt; v.getReferences().forEach(ref -&gt; dependency.getVulnerabilities().forEach(existing -&gt; {</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">                if (existing.getSource() == Source.NPM</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">                        &amp;&amp; ref.getName() != null</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">                        &amp;&amp; ref.getName().equals(&quot;https://nodesecurity.io/advisories/&quot; + existing.getName())) {</span>
+<span class="nc" id="L137">                    dependency.removeVulnerability(existing);</span>
                 }
-<span class="nc" id="L137">            })));</span>
-<span class="fc" id="L138">        dependency.addVulnerabilities(vulns);</span>
-<span class="fc" id="L139">    }</span>
+<span class="nc" id="L139">            })));</span>
+<span class="fc" id="L140">        dependency.addVulnerabilities(vulns);</span>
+<span class="fc" id="L141">    }</span>
 
     /**
      * Filters the list of vulnerabilities for the given ecosystem compared to
@@ -147,29 +149,29 @@ import org.owasp.dependencycheck.utils.Settings;
      * @return the filtered list of vulnerabilities
      */
     private synchronized List&lt;Vulnerability&gt; filterEcosystem(String ecosystem, List&lt;Vulnerability&gt; vulnerabilities) {
-<span class="fc" id="L150">        final List&lt;Vulnerability&gt; remove = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L151">        vulnerabilities.forEach((v) -&gt; {</span>
-<span class="fc" id="L152">            boolean found = false;</span>
-<span class="fc" id="L153">            final List&lt;VulnerableSoftware&gt; removeSoftare = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L154" title="All 2 branches covered.">            for (VulnerableSoftware s : v.getVulnerableSoftware()) {</span>
-<span class="pc bpc" id="L155" title="1 of 2 branches missed.">                if (ecosystemMatchesTargetSoftware(ecosystem, s.getTargetSw())) {</span>
-<span class="fc" id="L156">                    found = true;</span>
+<span class="fc" id="L152">        final List&lt;Vulnerability&gt; remove = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L153">        vulnerabilities.forEach((v) -&gt; {</span>
+<span class="fc" id="L154">            boolean found = false;</span>
+<span class="fc" id="L155">            final Set&lt;VulnerableSoftware&gt; removeSoftware = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">            for (VulnerableSoftware s : v.getVulnerableSoftware()) {</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">                if (ecosystemMatchesTargetSoftware(ecosystem, s.getTargetSw())) {</span>
+<span class="fc" id="L158">                    found = true;</span>
                 } else {
-<span class="nc" id="L158">                    removeSoftare.add(s);</span>
+<span class="nc" id="L160">                    removeSoftware.add(s);</span>
                 }
-<span class="fc" id="L160">            }</span>
-<span class="pc bpc" id="L161" title="1 of 2 branches missed.">            if (found) {</span>
-<span class="pc bpc" id="L162" title="1 of 2 branches missed.">                if (!removeSoftare.isEmpty()) {</span>
-<span class="nc" id="L163">                    removeSoftare.forEach(v.getVulnerableSoftware()::remove);</span>
+<span class="fc" id="L162">            }</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">            if (found) {</span>
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">                if (!removeSoftware.isEmpty()) {</span>
+<span class="nc" id="L165">                    v.removeVulnerableSoftware(removeSoftware);</span>
                 }
             } else {
-<span class="nc" id="L166">                remove.add(v);</span>
+<span class="nc" id="L168">                remove.add(v);</span>
             }
-<span class="fc" id="L168">        });</span>
-<span class="pc bpc" id="L169" title="1 of 2 branches missed.">        if (!remove.isEmpty()) {</span>
-<span class="nc" id="L170">            vulnerabilities.removeAll(remove);</span>
+<span class="fc" id="L170">        });</span>
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">        if (!remove.isEmpty()) {</span>
+<span class="nc" id="L172">            vulnerabilities.removeAll(remove);</span>
         }
-<span class="fc" id="L172">        return vulnerabilities;</span>
+<span class="fc" id="L174">        return vulnerabilities;</span>
     }
 
     /**
@@ -183,22 +185,22 @@ import org.owasp.dependencycheck.utils.Settings;
      * &lt;code&gt;false&lt;/code&gt;
      */
     private boolean ecosystemMatchesTargetSoftware(String ecosystem, String targetSoftware) {
-<span class="pc bpc" id="L186" title="3 of 4 branches missed.">        if (&quot;*&quot;.equals(targetSoftware) || &quot;-&quot;.equals(targetSoftware)) {</span>
-<span class="fc" id="L187">            return true;</span>
+<span class="pc bpc" id="L188" title="1 of 4 branches missed.">        if (&quot;*&quot;.equals(targetSoftware) || &quot;-&quot;.equals(targetSoftware)) {</span>
+<span class="fc" id="L189">            return true;</span>
         }
-<span class="nc bnc" id="L189" title="All 2 branches missed.">        if (Ecosystem.NODEJS.equals(ecosystem)) {</span>
-<span class="nc bnc" id="L190" title="All 2 branches missed.">            switch (targetSoftware.toLowerCase()) {</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (Ecosystem.NODEJS.equals(ecosystem)) {</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">            switch (targetSoftware.toLowerCase()) {</span>
                 case &quot;nodejs&quot;:
                 case &quot;node.js&quot;:
                 case &quot;node_js&quot;:
                 case &quot;npm&quot;:
                 case &quot;node-js&quot;:
-<span class="nc" id="L196">                    return true;</span>
+<span class="nc" id="L198">                    return true;</span>
                 default:
-<span class="nc" id="L198">                    return false;</span>
+<span class="nc" id="L200">                    return false;</span>
             }
         }
-<span class="nc" id="L201">        return true;</span>
+<span class="fc" id="L203">        return true;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

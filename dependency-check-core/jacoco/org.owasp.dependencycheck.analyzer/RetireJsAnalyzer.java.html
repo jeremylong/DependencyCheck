@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RetireJsAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">RetireJsAnalyzer.java</span></div><h1>RetireJsAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RetireJsAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">RetireJsAnalyzer.java</span></div><h1>RetireJsAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -385,7 +385,7 @@ import org.apache.commons.io.IOUtils;
 <span class="fc" id="L385">                            final List&lt;String&gt; value = entry.getValue();</span>
                             // CSOFF: NeedBraces
 <span class="pc bpc" id="L387" title="1 of 2 branches missed.">                            if (null != key) {</span>
-<span class="pc bpc" id="L388" title="3 of 5 branches missed.">                                switch (key) {</span>
+<span class="pc bpc" id="L388" title="2 of 5 branches missed.">                                switch (key) {</span>
                                     case &quot;summary&quot;:
 <span class="pc bpc" id="L390" title="1 of 2 branches missed.">                                        if (null == individualVuln.getName()) {</span>
 <span class="fc" id="L391">                                            individualVuln.setName(value.get(0));</span>
@@ -393,13 +393,13 @@ import org.apache.commons.io.IOUtils;
 <span class="fc" id="L393">                                        individualVuln.setDescription(value.get(0));</span>
 <span class="fc" id="L394">                                        break;</span>
                                     case &quot;issue&quot;:
-<span class="nc" id="L396">                                        individualVuln.setName(libraryResult.getLibrary().getName() + &quot; issue: &quot; + value.get(0));</span>
-<span class="nc bnc" id="L397" title="All 2 branches missed.">                                        if (UrlValidator.getInstance().isValid(value.get(0))) {</span>
+<span class="fc" id="L396">                                        individualVuln.setName(libraryResult.getLibrary().getName() + &quot; issue: &quot; + value.get(0));</span>
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">                                        if (UrlValidator.getInstance().isValid(value.get(0))) {</span>
 <span class="nc" id="L398">                                            individualVuln.addReference(key, key, value.get(0));</span>
                                         } else {
-<span class="nc" id="L400">                                            individualVuln.addReference(key, value.get(0), null);</span>
+<span class="fc" id="L400">                                            individualVuln.addReference(key, value.get(0), null);</span>
                                         }
-<span class="nc" id="L402">                                        break;</span>
+<span class="fc" id="L402">                                        break;</span>
                                     case &quot;bug&quot;:
 <span class="nc" id="L404">                                        individualVuln.setName(libraryResult.getLibrary().getName() + &quot; bug: &quot; + value.get(0));</span>
 <span class="nc bnc" id="L405" title="All 2 branches missed.">                                        if (UrlValidator.getInstance().isValid(value.get(0))) {</span>
@@ -456,4 +456,4 @@ import org.apache.commons.io.IOUtils;
 <span class="fc" id="L456">        Log.set(Log.LEVEL_INFO);</span>
 <span class="fc" id="L457">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

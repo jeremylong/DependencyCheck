@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
 <head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 <title>ReportGeneratorIT xref</title>
 <link type="text/css" rel="stylesheet" href="../../../../stylesheet.css" />
@@ -206,7 +206,7 @@
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>                 engine.writeReports(<span class="jxr_string">"Test Report"</span>, <span class="jxr_string">"org.owasp"</span>, <span class="jxr_string">"dependency-check-core"</span>, <span class="jxr_string">"1.4.8"</span>, writeSarifTo, <span class="jxr_string">"SARIF"</span>, exceptions);
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>             }
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>             <em class="jxr_comment">//Test XML</em>
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>             InputStream xsdStream = ReportGenerator.<strong class="jxr_keyword">class</strong>.getClassLoader().getResourceAsStream(<span class="jxr_string">"schema/dependency-check.4.0.xsd"</span>);
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>             InputStream xsdStream = ReportGenerator.<strong class="jxr_keyword">class</strong>.getClassLoader().getResourceAsStream(<span class="jxr_string">"schema/dependency-check.4.1.xsd"</span>);
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>             StreamSource xsdSource = <strong class="jxr_keyword">new</strong> StreamSource(xsdStream);
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>             StreamSource xmlSource = <strong class="jxr_keyword">new</strong> StreamSource(writeTo);
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>             SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -274,6 +274,6 @@
 <a class="jxr_linenumber" name="L266" href="#L266">266</a> }
 </pre>
 <hr/>
-<div id="footer">Copyright &#169; 2012&#x2013;2023 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
+<div id="footer">Copyright &#169; 2012&#x2013;2025 <a href="https://www.owasp.org">OWASP</a>. All rights reserved.</div>
 </body>
 </html>

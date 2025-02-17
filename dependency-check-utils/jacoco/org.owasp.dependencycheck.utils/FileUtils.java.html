@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">FileUtils.java</span></div><h1>FileUtils.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FileUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Utils</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.utils</a> &gt; <span class="el_source">FileUtils.java</span></div><h1>FileUtils.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-utils.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -24,15 +24,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.UUID;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,7 @@ public final class FileUtils {
     /**
      * The logger.
      */
-<span class="fc" id="L49">    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);</span>
+<span class="fc" id="L51">    private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);</span>
     /**
      * Bit bucket for non-Windows systems
      */
@@ -72,8 +74,8 @@ public final class FileUtils {
     @Nullable
     public static String getFileExtension(@NotNull String fileName) {
         @Nullable
-<span class="fc" id="L75">        final String fileExt = FilenameUtils.getExtension(fileName);</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">        return StringUtils.isNoneEmpty(fileExt) ? StringUtils.lowerCase(fileExt) : null;</span>
+<span class="fc" id="L77">        final String fileExt = FilenameUtils.getExtension(fileName);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        return StringUtils.isNoneEmpty(fileExt) ? StringUtils.lowerCase(fileExt) : null;</span>
     }
 
     /**
@@ -84,21 +86,23 @@ public final class FileUtils {
      * @return true if the file was deleted successfully, otherwise false
      */
     public static boolean delete(@Nullable File file) {
-<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if (file == null) {</span>
-<span class="nc" id="L88">            LOGGER.warn(&quot;cannot delete null File&quot;);</span>
-<span class="nc" id="L89">            return false;</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (file == null) {</span>
+<span class="nc" id="L90">            LOGGER.warn(&quot;cannot delete null File&quot;);</span>
+<span class="nc" id="L91">            return false;</span>
         }
 
-        try {
-<span class="fc" id="L93">            org.apache.commons.io.FileUtils.forceDelete(file);</span>
-<span class="nc" id="L94">        } catch (IOException ex) {</span>
-<span class="nc" id="L95">            LOGGER.trace(ex.getMessage(), ex);</span>
-<span class="nc" id="L96">            LOGGER.debug(&quot;Failed to delete file: {} (error message: {}); attempting to delete on exit.&quot;, file.getPath(), ex.getMessage());</span>
-<span class="nc" id="L97">            file.deleteOnExit();</span>
-<span class="nc" id="L98">            return false;</span>
-<span class="fc" id="L99">        }</span>
+<span class="fc" id="L94">        try (Stream&lt;Path&gt; paths = Files.walk(file.toPath())) {</span>
+<span class="fc" id="L95">            paths.sorted(Comparator.reverseOrder())</span>
+<span class="fc" id="L96">            .map(Path::toFile)</span>
+<span class="fc" id="L97">            .forEach(File::delete);</span>
+<span class="nc" id="L98">        } catch (IOException ex) {</span>
+<span class="nc" id="L99">            LOGGER.trace(ex.getMessage(), ex);</span>
+<span class="nc" id="L100">            LOGGER.debug(&quot;Failed to delete file: {} (error message: {}); attempting to delete on exit.&quot;, file.getPath(), ex.getMessage());</span>
+<span class="nc" id="L101">            file.deleteOnExit();</span>
+<span class="nc" id="L102">            return false;</span>
+<span class="fc" id="L103">        }</span>
 
-<span class="fc" id="L101">        return true;</span>
+<span class="fc" id="L105">        return true;</span>
     }
 
     /**
@@ -111,15 +115,15 @@ public final class FileUtils {
      */
     @NotNull
     public static File createTempDirectory(@Nullable final File base) throws IOException {
-<span class="fc" id="L114">        final File tempDir = new File(base, &quot;dctemp&quot; + UUID.randomUUID());</span>
-<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (tempDir.exists()) {</span>
-<span class="nc" id="L116">            return createTempDirectory(base);</span>
+<span class="fc" id="L118">        final File tempDir = new File(base, &quot;dctemp&quot; + UUID.randomUUID());</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        if (tempDir.exists()) {</span>
+<span class="nc" id="L120">            return createTempDirectory(base);</span>
         }
-<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (!tempDir.mkdirs()) {</span>
-<span class="nc" id="L119">            throw new IOException(&quot;Could not create temp directory `&quot; + tempDir.getAbsolutePath() + &quot;`&quot;);</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (!tempDir.mkdirs()) {</span>
+<span class="nc" id="L123">            throw new IOException(&quot;Could not create temp directory `&quot; + tempDir.getAbsolutePath() + &quot;`&quot;);</span>
         }
-<span class="fc" id="L121">        LOGGER.debug(&quot;Temporary directory is `{}`&quot;, tempDir.getAbsolutePath());</span>
-<span class="fc" id="L122">        return tempDir;</span>
+<span class="fc" id="L125">        LOGGER.debug(&quot;Temporary directory is `{}`&quot;, tempDir.getAbsolutePath());</span>
+<span class="fc" id="L126">        return tempDir;</span>
     }
 
     /**
@@ -130,7 +134,7 @@ public final class FileUtils {
      */
     @NotNull
     public static String getBitBucket() {
-<span class="nc bnc" id="L133" title="All 2 branches missed.">        return SystemUtils.IS_OS_WINDOWS ? BIT_BUCKET_WIN : BIT_BUCKET_UNIX;</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        return SystemUtils.IS_OS_WINDOWS ? BIT_BUCKET_WIN : BIT_BUCKET_UNIX;</span>
     }
 
     /**
@@ -140,14 +144,14 @@ public final class FileUtils {
      * @param closeable to be closed
      */
     public static void close(@Nullable final Closeable closeable) {
-<span class="nc bnc" id="L143" title="All 2 branches missed.">        if (null != closeable) {</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (null != closeable) {</span>
             try {
-<span class="nc" id="L145">                closeable.close();</span>
-<span class="nc" id="L146">            } catch (IOException ex) {</span>
-<span class="nc" id="L147">                LOGGER.trace(&quot;&quot;, ex);</span>
-<span class="nc" id="L148">            }</span>
+<span class="nc" id="L149">                closeable.close();</span>
+<span class="nc" id="L150">            } catch (IOException ex) {</span>
+<span class="nc" id="L151">                LOGGER.trace(&quot;&quot;, ex);</span>
+<span class="nc" id="L152">            }</span>
         }
-<span class="nc" id="L150">    }</span>
+<span class="nc" id="L154">    }</span>
 
     /**
      * Gets the {@link java.io.InputStream} for this resource.
@@ -158,15 +162,15 @@ public final class FileUtils {
      */
     @Nullable
     public static InputStream getResourceAsStream(@NotNull String resource) throws FileNotFoundException {
-<span class="fc" id="L161">        final ClassLoader classLoader = FileUtils.class.getClassLoader();</span>
-<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        final InputStream inputStream = classLoader != null</span>
-<span class="pc" id="L163">                ? classLoader.getResourceAsStream(resource)</span>
-<span class="pc" id="L164">                : ClassLoader.getSystemResourceAsStream(resource);</span>
+<span class="fc" id="L165">        final ClassLoader classLoader = FileUtils.class.getClassLoader();</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">        final InputStream inputStream = classLoader != null</span>
+<span class="fc" id="L167">                ? classLoader.getResourceAsStream(resource)</span>
+<span class="pc" id="L168">                : ClassLoader.getSystemResourceAsStream(resource);</span>
 
-<span class="pc bpc" id="L166" title="1 of 2 branches missed.">        if (inputStream == null) {</span>
-<span class="nc" id="L167">            return new FileInputStream(resource);</span>
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if (inputStream == null) {</span>
+<span class="nc" id="L171">            return new FileInputStream(resource);</span>
         }
-<span class="fc" id="L169">        return inputStream;</span>
+<span class="fc" id="L173">        return inputStream;</span>
     }
 
     /**
@@ -177,21 +181,21 @@ public final class FileUtils {
      * @return the file reference for the resource
      */
     public static File getResourceAsFile(final String resource) {
-<span class="nc" id="L180">        final ClassLoader classLoader = FileUtils.class.getClassLoader();</span>
-<span class="nc" id="L181">        String path = null;</span>
-<span class="nc bnc" id="L182" title="All 2 branches missed.">        if (classLoader != null) {</span>
-<span class="nc" id="L183">            final URL url = classLoader.getResource(resource);</span>
-<span class="nc bnc" id="L184" title="All 2 branches missed.">            if (url != null) {</span>
-<span class="nc" id="L185">                path = url.getFile();</span>
+<span class="nc" id="L184">        final ClassLoader classLoader = FileUtils.class.getClassLoader();</span>
+<span class="nc" id="L185">        String path = null;</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        if (classLoader != null) {</span>
+<span class="nc" id="L187">            final URL url = classLoader.getResource(resource);</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            if (url != null) {</span>
+<span class="nc" id="L189">                path = url.getFile();</span>
             }
-<span class="nc" id="L187">        } else {</span>
-<span class="nc" id="L188">            path = ClassLoader.getSystemResource(resource).getFile();</span>
+<span class="nc" id="L191">        } else {</span>
+<span class="nc" id="L192">            path = ClassLoader.getSystemResource(resource).getFile();</span>
         }
 
-<span class="nc bnc" id="L191" title="All 2 branches missed.">        if (path == null) {</span>
-<span class="nc" id="L192">            return new File(resource);</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">        if (path == null) {</span>
+<span class="nc" id="L196">            return new File(resource);</span>
         }
-<span class="nc" id="L194">        return new File(path);</span>
+<span class="nc" id="L198">        return new File(path);</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

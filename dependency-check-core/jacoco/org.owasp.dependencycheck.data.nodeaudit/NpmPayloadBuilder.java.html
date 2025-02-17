@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NpmPayloadBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nodeaudit</a> &gt; <span class="el_source">NpmPayloadBuilder.java</span></div><h1>NpmPayloadBuilder.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NpmPayloadBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nodeaudit</a> &gt; <span class="el_source">NpmPayloadBuilder.java</span></div><h1>NpmPayloadBuilder.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -24,11 +24,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonString;
-import javax.json.JsonValue;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
 import javax.annotation.concurrent.ThreadSafe;
 import org.apache.commons.collections4.MultiValuedMap;
 
@@ -40,6 +40,7 @@ import org.apache.commons.collections4.MultiValuedMap;
  */
 @ThreadSafe
 public final class NpmPayloadBuilder {
+
     /**
      * Private constructor for utility class.
      */
@@ -59,79 +60,88 @@ public final class NpmPayloadBuilder {
      */
     public static JsonObject build(JsonObject lockJson, JsonObject packageJson,
             MultiValuedMap&lt;String, String&gt; dependencyMap, boolean skipDevDependencies) {
-<span class="fc" id="L62">        final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();</span>
-<span class="fc" id="L63">        addProjectInfo(packageJson, payloadBuilder);</span>
+<span class="fc" id="L63">        final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();</span>
+<span class="fc" id="L64">        addProjectInfo(packageJson, payloadBuilder);</span>
 
         // NPM Audit expects 'requires' to be an object containing key/value
         // pairs corresponding to the module name (key) and version (value).
-<span class="fc" id="L67">        final JsonObjectBuilder requiresBuilder = Json.createObjectBuilder();</span>
+<span class="fc" id="L68">        final JsonObjectBuilder requiresBuilder = Json.createObjectBuilder();</span>
 
-<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if (packageJson.containsKey(&quot;dependencies&quot;)) {</span>
-<span class="fc" id="L70">            packageJson.getJsonObject(&quot;dependencies&quot;).entrySet()</span>
-<span class="fc" id="L71">                    .stream()</span>
-<span class="fc" id="L72">                    .collect(Collectors.toMap(</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if (packageJson.containsKey(&quot;dependencies&quot;)) {</span>
+<span class="fc" id="L71">            packageJson.getJsonObject(&quot;dependencies&quot;).entrySet()</span>
+<span class="fc" id="L72">                    .stream()</span>
+<span class="fc" id="L73">                    .collect(Collectors.toMap(</span>
                             Map.Entry::getKey,
                             Map.Entry::getValue,
-<span class="nc" id="L75">                            (oldValue, newValue) -&gt; newValue, TreeMap::new))</span>
-<span class="fc" id="L76">                    .forEach((key, value) -&gt; {</span>
-<span class="fc bfc" id="L77" title="All 2 branches covered.">                        if (NodePackageAnalyzer.shouldSkipDependency(key, ((JsonString) value).getString())) {</span>
-<span class="fc" id="L78">                            return;</span>
+<span class="nc" id="L76">                            (oldValue, newValue) -&gt; newValue, TreeMap::new))</span>
+<span class="fc" id="L77">                    .forEach((key, value) -&gt; {</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                        if (NodePackageAnalyzer.shouldSkipDependency(key, ((JsonString) value).getString())) {</span>
+<span class="fc" id="L79">                            return;</span>
                         }
-<span class="fc" id="L80">                        requiresBuilder.add(key, value);</span>
-<span class="fc" id="L81">                        dependencyMap.put(key, value.toString());</span>
-<span class="fc" id="L82">                    });</span>
+<span class="fc" id="L81">                        requiresBuilder.add(key, value);</span>
+<span class="fc" id="L82">                        dependencyMap.put(key, value.toString());</span>
+<span class="fc" id="L83">                    });</span>
         }
 
-<span class="pc bpc" id="L85" title="1 of 4 branches missed.">        if (!skipDevDependencies &amp;&amp; packageJson.containsKey(&quot;devDependencies&quot;)) {</span>
-<span class="fc" id="L86">            packageJson.getJsonObject(&quot;devDependencies&quot;).entrySet()</span>
-<span class="fc" id="L87">                    .stream()</span>
-<span class="fc" id="L88">                    .collect(Collectors.toMap(</span>
+<span class="pc bpc" id="L86" title="1 of 4 branches missed.">        if (!skipDevDependencies &amp;&amp; packageJson.containsKey(&quot;devDependencies&quot;)) {</span>
+<span class="fc" id="L87">            packageJson.getJsonObject(&quot;devDependencies&quot;).entrySet()</span>
+<span class="fc" id="L88">                    .stream()</span>
+<span class="fc" id="L89">                    .collect(Collectors.toMap(</span>
                             Map.Entry::getKey,
                             Map.Entry::getValue,
-<span class="nc" id="L91">                            (oldValue, newValue) -&gt; newValue, TreeMap::new))</span>
-<span class="fc" id="L92">                    .forEach((key, value) -&gt; {</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">                        if (NodePackageAnalyzer.shouldSkipDependency(key, ((JsonString) value).getString())) {</span>
-<span class="fc" id="L94">                            return;</span>
+<span class="nc" id="L92">                            (oldValue, newValue) -&gt; newValue, TreeMap::new))</span>
+<span class="fc" id="L93">                    .forEach((key, value) -&gt; {</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">                        if (NodePackageAnalyzer.shouldSkipDependency(key, ((JsonString) value).getString())) {</span>
+<span class="fc" id="L95">                            return;</span>
                         }
-<span class="fc" id="L96">                        requiresBuilder.add(key, value);</span>
-<span class="fc" id="L97">                        dependencyMap.put(key, value.toString());</span>
-<span class="fc" id="L98">                    });</span>
+<span class="fc" id="L97">                        requiresBuilder.add(key, value);</span>
+<span class="fc" id="L98">                        dependencyMap.put(key, value.toString());</span>
+<span class="fc" id="L99">                    });</span>
         }
 
-<span class="fc" id="L101">        payloadBuilder.add(&quot;requires&quot;, requiresBuilder.build());</span>
+<span class="fc" id="L102">        payloadBuilder.add(&quot;requires&quot;, requiresBuilder.build());</span>
 
-<span class="fc" id="L103">        final JsonObjectBuilder dependenciesBuilder = Json.createObjectBuilder();</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        final int lockJsonVersion = lockJson.containsKey(&quot;lockfileVersion&quot;) ? lockJson.getInt(&quot;lockfileVersion&quot;) : 1;</span>
-<span class="fc" id="L105">        JsonObject dependencies = lockJson.getJsonObject(&quot;dependencies&quot;);</span>
-<span class="fc bfc" id="L106" title="All 4 branches covered.">        if (lockJsonVersion &gt;= 2 &amp;&amp; dependencies == null) {</span>
-<span class="fc" id="L107">            dependencies = lockJson.getJsonObject(&quot;packages&quot;);</span>
+<span class="fc" id="L104">        final JsonObjectBuilder dependenciesBuilder = Json.createObjectBuilder();</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">        final int lockJsonVersion = lockJson.containsKey(&quot;lockfileVersion&quot;) ? lockJson.getInt(&quot;lockfileVersion&quot;) : 1;</span>
+<span class="fc" id="L106">        JsonObject dependencies = lockJson.getJsonObject(&quot;dependencies&quot;);</span>
+<span class="fc bfc" id="L107" title="All 4 branches covered.">        if (lockJsonVersion &gt;= 2 &amp;&amp; dependencies == null) {</span>
+<span class="fc" id="L108">            dependencies = lockJson.getJsonObject(&quot;packages&quot;);</span>
         }
 
-<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (dependencies != null) {</span>
-<span class="fc" id="L111">            dependencies.forEach((k, value) -&gt; {</span>
-<span class="fc" id="L112">                String key = k;</span>
-<span class="fc" id="L113">                final int indexOfNodeModule = key.lastIndexOf(NodePackageAnalyzer.NODE_MODULES_DIRNAME + &quot;/&quot;);</span>
-<span class="fc bfc" id="L114" title="All 2 branches covered.">                if (indexOfNodeModule &gt;= 0) {</span>
-<span class="fc" id="L115">                    key = key.substring(indexOfNodeModule + NodePackageAnalyzer.NODE_MODULES_DIRNAME.length() + 1);</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">        if (dependencies != null) {</span>
+<span class="fc" id="L112">            dependencies.forEach((k, value) -&gt; {</span>
+<span class="fc" id="L113">                String key = k;</span>
+<span class="fc" id="L114">                final int indexOfNodeModule = key.lastIndexOf(NodePackageAnalyzer.NODE_MODULES_DIRNAME + &quot;/&quot;);</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">                if (indexOfNodeModule &gt;= 0) {</span>
+<span class="fc" id="L116">                    key = key.substring(indexOfNodeModule + NodePackageAnalyzer.NODE_MODULES_DIRNAME.length() + 1);</span>
                 }
 
-<span class="fc" id="L118">                final JsonObject dep = ((JsonObject) value);</span>
-<span class="fc" id="L119">                final String version = dep.getString(&quot;version&quot;, &quot;&quot;);</span>
-<span class="fc" id="L120">                final boolean isDev = dep.getBoolean(&quot;dev&quot;, false);</span>
-<span class="pc bpc" id="L121" title="3 of 4 branches missed.">                if (skipDevDependencies &amp;&amp; isDev) {</span>
-<span class="nc" id="L122">                    return;</span>
+<span class="fc" id="L119">                JsonObject dep = ((JsonObject) value);</span>
+
+                //After Version 3, dependencies can't be taken directly from package-lock.json
+<span class="pc bpc" id="L122" title="1 of 6 branches missed.">                if (lockJsonVersion &gt; 2 &amp;&amp; dep.containsKey(&quot;dependencies&quot;) &amp;&amp; dep.get(&quot;dependencies&quot;) instanceof JsonObject) {</span>
+<span class="fc" id="L123">                    final JsonObjectBuilder depBuilder = Json.createObjectBuilder(dep);</span>
+<span class="fc" id="L124">                    depBuilder.remove(&quot;dependencies&quot;);</span>
+<span class="fc" id="L125">                    depBuilder.add(&quot;requires&quot;, dep.get(&quot;dependencies&quot;));</span>
+<span class="fc" id="L126">                    dep = depBuilder.build();</span>
                 }
-<span class="fc bfc" id="L124" title="All 2 branches covered.">                if (NodePackageAnalyzer.shouldSkipDependency(key, version)) {</span>
-<span class="fc" id="L125">                    return;</span>
+
+<span class="fc" id="L129">                final String version = dep.getString(&quot;version&quot;, &quot;&quot;);</span>
+<span class="fc" id="L130">                final boolean isDev = dep.getBoolean(&quot;dev&quot;, false);</span>
+<span class="pc bpc" id="L131" title="3 of 4 branches missed.">                if (skipDevDependencies &amp;&amp; isDev) {</span>
+<span class="nc" id="L132">                    return;</span>
                 }
-<span class="fc" id="L127">                dependencyMap.put(key, version);</span>
-<span class="fc" id="L128">                dependenciesBuilder.add(key, buildDependencies(dep, dependencyMap));</span>
-<span class="fc" id="L129">            });</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">                if (NodePackageAnalyzer.shouldSkipDependency(key, version)) {</span>
+<span class="fc" id="L135">                    return;</span>
+                }
+<span class="fc" id="L137">                dependencyMap.put(key, version);</span>
+<span class="fc" id="L138">                dependenciesBuilder.add(key, buildDependencies(dep, dependencyMap));</span>
+<span class="fc" id="L139">            });</span>
         }
-<span class="fc" id="L131">        payloadBuilder.add(&quot;dependencies&quot;, dependenciesBuilder.build());</span>
+<span class="fc" id="L141">        payloadBuilder.add(&quot;dependencies&quot;, dependenciesBuilder.build());</span>
 
-<span class="fc" id="L133">        addConstantElements(payloadBuilder);</span>
-<span class="fc" id="L134">        return payloadBuilder.build();</span>
+<span class="fc" id="L143">        addConstantElements(payloadBuilder);</span>
+<span class="fc" id="L144">        return payloadBuilder.build();</span>
     }
 
     /**
@@ -145,53 +155,53 @@ public final class NpmPayloadBuilder {
      * @return the JSON payload for NPN Audit
      */
     public static JsonObject build(JsonObject packageJson, MultiValuedMap&lt;String, String&gt; dependencyMap,
-                                   final boolean skipDevDependencies) {
-<span class="fc" id="L149">        final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();</span>
-<span class="fc" id="L150">        addProjectInfo(packageJson, payloadBuilder);</span>
+            final boolean skipDevDependencies) {
+<span class="fc" id="L159">        final JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();</span>
+<span class="fc" id="L160">        addProjectInfo(packageJson, payloadBuilder);</span>
 
         // NPM Audit expects 'requires' to be an object containing key/value
         // pairs corresponding to the module name (key) and version (value).
-<span class="fc" id="L154">        final JsonObjectBuilder requiresBuilder = Json.createObjectBuilder();</span>
-<span class="fc" id="L155">        final JsonObjectBuilder dependenciesBuilder = Json.createObjectBuilder();</span>
+<span class="fc" id="L164">        final JsonObjectBuilder requiresBuilder = Json.createObjectBuilder();</span>
+<span class="fc" id="L165">        final JsonObjectBuilder dependenciesBuilder = Json.createObjectBuilder();</span>
 
-<span class="fc" id="L157">        final JsonObject dependencies = packageJson.getJsonObject(&quot;dependencies&quot;);</span>
-<span class="pc bpc" id="L158" title="1 of 2 branches missed.">        if (dependencies != null) {</span>
-<span class="fc" id="L159">            dependencies.forEach((name, value) -&gt; {</span>
+<span class="fc" id="L167">        final JsonObject dependencies = packageJson.getJsonObject(&quot;dependencies&quot;);</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">        if (dependencies != null) {</span>
+<span class="fc" id="L169">            dependencies.forEach((name, value) -&gt; {</span>
                 final String version;
-<span class="pc bpc" id="L161" title="1 of 2 branches missed.">                if (value.getValueType() == JsonValue.ValueType.OBJECT) {</span>
-<span class="fc" id="L162">                    final JsonObject dep = ((JsonObject) value);</span>
-<span class="fc" id="L163">                    version = Optional.ofNullable(dep.getJsonString(&quot;version&quot;))</span>
-<span class="fc" id="L164">                            .map(JsonString::getString)</span>
-<span class="fc" id="L165">                            .orElse(null);</span>
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">                if (value.getValueType() == JsonValue.ValueType.OBJECT) {</span>
+<span class="fc" id="L172">                    final JsonObject dep = ((JsonObject) value);</span>
+<span class="fc" id="L173">                    version = Optional.ofNullable(dep.getJsonString(&quot;version&quot;))</span>
+<span class="fc" id="L174">                            .map(JsonString::getString)</span>
+<span class="fc" id="L175">                            .orElse(null);</span>
 
-<span class="fc" id="L167">                    final boolean isDev = dep.getBoolean(&quot;dev&quot;, false);</span>
-<span class="pc bpc" id="L168" title="3 of 4 branches missed.">                    if (skipDevDependencies &amp;&amp; isDev) {</span>
-<span class="nc" id="L169">                        return;</span>
+<span class="fc" id="L177">                    final boolean isDev = dep.getBoolean(&quot;dev&quot;, false);</span>
+<span class="pc bpc" id="L178" title="3 of 4 branches missed.">                    if (skipDevDependencies &amp;&amp; isDev) {</span>
+<span class="nc" id="L179">                        return;</span>
                     }
-<span class="fc bfc" id="L171" title="All 2 branches covered.">                    if (NodePackageAnalyzer.shouldSkipDependency(name, version)) {</span>
-<span class="fc" id="L172">                        return;</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">                    if (NodePackageAnalyzer.shouldSkipDependency(name, version)) {</span>
+<span class="fc" id="L182">                        return;</span>
                     }
-<span class="fc" id="L174">                    dependencyMap.put(name, version);</span>
-<span class="fc" id="L175">                    dependenciesBuilder.add(name, buildDependencies(dep, dependencyMap));</span>
-<span class="fc" id="L176">                } else {</span>
+<span class="fc" id="L184">                    dependencyMap.put(name, version);</span>
+<span class="fc" id="L185">                    dependenciesBuilder.add(name, buildDependencies(dep, dependencyMap));</span>
+<span class="fc" id="L186">                } else {</span>
                     //TODO I think the following is dead code and no real &quot;dependencies&quot;
                     //     section in a lock file will look like this
-<span class="nc" id="L179">                    final String tmp = value.toString();</span>
-<span class="nc bnc" id="L180" title="All 2 branches missed.">                    if (tmp.startsWith(&quot;\&quot;&quot;)) {</span>
-<span class="nc" id="L181">                        version = tmp.substring(1, tmp.length() - 1);</span>
+<span class="nc" id="L189">                    final String tmp = value.toString();</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                    if (tmp.startsWith(&quot;\&quot;&quot;)) {</span>
+<span class="nc" id="L191">                        version = tmp.substring(1, tmp.length() - 1);</span>
                     } else {
-<span class="nc" id="L183">                        version = tmp;</span>
+<span class="nc" id="L193">                        version = tmp;</span>
                     }
                 }
-<span class="fc bfc" id="L186" title="All 2 branches covered.">                requiresBuilder.add(name, Objects.isNull(version) ? &quot;*&quot; : &quot;^&quot; + version);</span>
-<span class="fc" id="L187">            });</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">                requiresBuilder.add(name, Objects.isNull(version) ? &quot;*&quot; : &quot;^&quot; + version);</span>
+<span class="fc" id="L197">            });</span>
         }
-<span class="fc" id="L189">        payloadBuilder.add(&quot;requires&quot;, requiresBuilder.build());</span>
+<span class="fc" id="L199">        payloadBuilder.add(&quot;requires&quot;, requiresBuilder.build());</span>
 
-<span class="fc" id="L191">        payloadBuilder.add(&quot;dependencies&quot;, dependenciesBuilder.build());</span>
+<span class="fc" id="L201">        payloadBuilder.add(&quot;dependencies&quot;, dependenciesBuilder.build());</span>
 
-<span class="fc" id="L193">        addConstantElements(payloadBuilder);</span>
-<span class="fc" id="L194">        return payloadBuilder.build();</span>
+<span class="fc" id="L203">        addConstantElements(payloadBuilder);</span>
+<span class="fc" id="L204">        return payloadBuilder.build();</span>
     }
 
     /**
@@ -201,15 +211,15 @@ public final class NpmPayloadBuilder {
      * @param payloadBuilder a reference to the npm audit API payload builder
      */
     private static void addProjectInfo(JsonObject packageJson, final JsonObjectBuilder payloadBuilder) {
-<span class="fc" id="L204">        final String projectName = packageJson.getString(&quot;name&quot;, &quot;&quot;);</span>
-<span class="fc" id="L205">        final String projectVersion = packageJson.getString(&quot;version&quot;, &quot;&quot;);</span>
-<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        if (!projectName.isEmpty()) {</span>
-<span class="fc" id="L207">            payloadBuilder.add(&quot;name&quot;, projectName);</span>
+<span class="fc" id="L214">        final String projectName = packageJson.getString(&quot;name&quot;, &quot;&quot;);</span>
+<span class="fc" id="L215">        final String projectVersion = packageJson.getString(&quot;version&quot;, &quot;&quot;);</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">        if (!projectName.isEmpty()) {</span>
+<span class="fc" id="L217">            payloadBuilder.add(&quot;name&quot;, projectName);</span>
         }
-<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        if (!projectVersion.isEmpty()) {</span>
-<span class="fc" id="L210">            payloadBuilder.add(&quot;version&quot;, projectVersion);</span>
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">        if (!projectVersion.isEmpty()) {</span>
+<span class="fc" id="L220">            payloadBuilder.add(&quot;version&quot;, projectVersion);</span>
         }
-<span class="fc" id="L212">    }</span>
+<span class="fc" id="L222">    }</span>
 
     /**
      * Adds the constant data elements to the npm audit API payload.
@@ -217,14 +227,14 @@ public final class NpmPayloadBuilder {
      * @param payloadBuilder a reference to the npm audit API payload builder
      */
     private static void addConstantElements(final JsonObjectBuilder payloadBuilder) {
-<span class="fc" id="L220">        payloadBuilder.add(&quot;install&quot;, Json.createArrayBuilder().build());</span>
-<span class="fc" id="L221">        payloadBuilder.add(&quot;remove&quot;, Json.createArrayBuilder().build());</span>
-<span class="fc" id="L222">        payloadBuilder.add(&quot;metadata&quot;, Json.createObjectBuilder()</span>
-<span class="fc" id="L223">                .add(&quot;npm_version&quot;, &quot;6.9.0&quot;)</span>
-<span class="fc" id="L224">                .add(&quot;node_version&quot;, &quot;v10.5.0&quot;)</span>
-<span class="fc" id="L225">                .add(&quot;platform&quot;, &quot;linux&quot;)</span>
+<span class="fc" id="L230">        payloadBuilder.add(&quot;install&quot;, Json.createArrayBuilder().build());</span>
+<span class="fc" id="L231">        payloadBuilder.add(&quot;remove&quot;, Json.createArrayBuilder().build());</span>
+<span class="fc" id="L232">        payloadBuilder.add(&quot;metadata&quot;, Json.createObjectBuilder()</span>
+<span class="fc" id="L233">                .add(&quot;npm_version&quot;, &quot;6.9.0&quot;)</span>
+<span class="fc" id="L234">                .add(&quot;node_version&quot;, &quot;v10.5.0&quot;)</span>
+<span class="fc" id="L235">                .add(&quot;platform&quot;, &quot;linux&quot;)</span>
         );
-<span class="fc" id="L227">    }</span>
+<span class="fc" id="L237">    }</span>
 
     /**
      * Recursively builds the dependency structure - copying only the needed
@@ -235,49 +245,49 @@ public final class NpmPayloadBuilder {
      * @return the dependencies structure needed for the npm audit API payload
      */
     private static JsonObject buildDependencies(JsonObject dep, MultiValuedMap&lt;String, String&gt; dependencyMap) {
-<span class="fc" id="L238">        final JsonObjectBuilder depBuilder = Json.createObjectBuilder();</span>
-<span class="fc" id="L239">        Optional.ofNullable(dep.getJsonString(&quot;version&quot;))</span>
-<span class="fc" id="L240">                        .map(JsonString::getString)</span>
-<span class="fc" id="L241">                        .ifPresent(version -&gt; depBuilder.add(&quot;version&quot;, version));</span>
+<span class="fc" id="L248">        final JsonObjectBuilder depBuilder = Json.createObjectBuilder();</span>
+<span class="fc" id="L249">        Optional.ofNullable(dep.getJsonString(&quot;version&quot;))</span>
+<span class="fc" id="L250">                .map(JsonString::getString)</span>
+<span class="fc" id="L251">                .ifPresent(version -&gt; depBuilder.add(&quot;version&quot;, version));</span>
 
         //not installed package (like, dependency of an optional dependency) doesn't contains integrity
-<span class="fc bfc" id="L244" title="All 2 branches covered.">        if (dep.containsKey(&quot;integrity&quot;)) {</span>
-<span class="fc" id="L245">            depBuilder.add(&quot;integrity&quot;, dep.getString(&quot;integrity&quot;));</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">        if (dep.containsKey(&quot;integrity&quot;)) {</span>
+<span class="fc" id="L255">            depBuilder.add(&quot;integrity&quot;, dep.getString(&quot;integrity&quot;));</span>
         }
-<span class="fc bfc" id="L247" title="All 2 branches covered.">        if (dep.containsKey(&quot;requires&quot;)) {</span>
-<span class="fc" id="L248">            final JsonObjectBuilder requiresBuilder = Json.createObjectBuilder();</span>
-<span class="fc" id="L249">            dep.getJsonObject(&quot;requires&quot;).forEach((key, value) -&gt; {</span>
-<span class="pc bpc" id="L250" title="1 of 2 branches missed.">                if (NodePackageAnalyzer.shouldSkipDependency(key, ((JsonString) value).getString())) {</span>
-<span class="nc" id="L251">                    return;</span>
+<span class="fc bfc" id="L257" title="All 2 branches covered.">        if (dep.containsKey(&quot;requires&quot;)) {</span>
+<span class="fc" id="L258">            final JsonObjectBuilder requiresBuilder = Json.createObjectBuilder();</span>
+<span class="fc" id="L259">            dep.getJsonObject(&quot;requires&quot;).forEach((key, value) -&gt; {</span>
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">                if (NodePackageAnalyzer.shouldSkipDependency(key, ((JsonString) value).getString())) {</span>
+<span class="nc" id="L261">                    return;</span>
                 }
 
-<span class="fc" id="L254">                requiresBuilder.add(key, value);</span>
-<span class="fc" id="L255">            });</span>
-<span class="fc" id="L256">            depBuilder.add(&quot;requires&quot;, requiresBuilder.build());</span>
+<span class="fc" id="L264">                requiresBuilder.add(key, value);</span>
+<span class="fc" id="L265">            });</span>
+<span class="fc" id="L266">            depBuilder.add(&quot;requires&quot;, requiresBuilder.build());</span>
         }
-<span class="fc bfc" id="L258" title="All 2 branches covered.">        if (dep.containsKey(&quot;dependencies&quot;)) {</span>
-<span class="fc" id="L259">            final JsonObjectBuilder dependeciesBuilder = Json.createObjectBuilder();</span>
-<span class="fc" id="L260">            dep.getJsonObject(&quot;dependencies&quot;).forEach((key, value) -&gt; {</span>
-<span class="fc bfc" id="L261" title="All 2 branches covered.">                if (value.getValueType() == JsonValue.ValueType.OBJECT) {</span>
-<span class="fc" id="L262">                    final JsonObject currentDep = (JsonObject) value;</span>
-<span class="fc" id="L263">                    final String v = currentDep.getString(&quot;version&quot;);</span>
-<span class="fc" id="L264">                    dependencyMap.put(key, v);</span>
-<span class="fc" id="L265">                    dependeciesBuilder.add(key, buildDependencies(currentDep, dependencyMap));</span>
-<span class="fc" id="L266">                } else {</span>
-<span class="fc" id="L267">                    final String tmp = value.toString();</span>
-                    final String v;
-<span class="pc bpc" id="L269" title="1 of 2 branches missed.">                    if (tmp.startsWith(&quot;\&quot;&quot;)) {</span>
-<span class="fc" id="L270">                        v = tmp.substring(1, tmp.length() - 1);</span>
-                    } else {
-<span class="nc" id="L272">                        v = tmp;</span>
-                    }
+<span class="fc bfc" id="L268" title="All 2 branches covered.">        if (dep.containsKey(&quot;dependencies&quot;)) {</span>
+<span class="fc" id="L269">            final JsonObjectBuilder dependeciesBuilder = Json.createObjectBuilder();</span>
+<span class="fc" id="L270">            dep.getJsonObject(&quot;dependencies&quot;).forEach((key, value) -&gt; {</span>
+<span class="pc bpc" id="L271" title="1 of 2 branches missed.">                if (value.getValueType() == JsonValue.ValueType.OBJECT) {</span>
+<span class="fc" id="L272">                    final JsonObject currentDep = (JsonObject) value;</span>
+<span class="fc" id="L273">                    final String v = currentDep.getString(&quot;version&quot;);</span>
 <span class="fc" id="L274">                    dependencyMap.put(key, v);</span>
-<span class="fc" id="L275">                    dependeciesBuilder.add(key, v);</span>
+<span class="fc" id="L275">                    dependeciesBuilder.add(key, buildDependencies(currentDep, dependencyMap));</span>
+<span class="fc" id="L276">                } else {</span>
+<span class="nc" id="L277">                    final String tmp = value.toString();</span>
+                    final String v;
+<span class="nc bnc" id="L279" title="All 2 branches missed.">                    if (tmp.startsWith(&quot;\&quot;&quot;)) {</span>
+<span class="nc" id="L280">                        v = tmp.substring(1, tmp.length() - 1);</span>
+                    } else {
+<span class="nc" id="L282">                        v = tmp;</span>
+                    }
+<span class="nc" id="L284">                    dependencyMap.put(key, v);</span>
+<span class="nc" id="L285">                    dependeciesBuilder.add(key, v);</span>
                 }
-<span class="fc" id="L277">            });</span>
-<span class="fc" id="L278">            depBuilder.add(&quot;dependencies&quot;, dependeciesBuilder.build());</span>
+<span class="fc" id="L287">            });</span>
+<span class="fc" id="L288">            depBuilder.add(&quot;dependencies&quot;, dependeciesBuilder.build());</span>
         }
-<span class="fc" id="L280">        return depBuilder.build();</span>
+<span class="fc" id="L290">        return depBuilder.build();</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

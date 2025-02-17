@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RubyGemspecAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">RubyGemspecAnalyzer.java</span></div><h1>RubyGemspecAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RubyGemspecAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">RubyGemspecAnalyzer.java</span></div><h1>RubyGemspecAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -20,16 +20,6 @@ package org.owasp.dependencycheck.analyzer;
 import com.github.packageurl.MalformedPackageURLException;
 import com.github.packageurl.PackageURL;
 import com.github.packageurl.PackageURLBuilder;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.concurrent.ThreadSafe;
-
-import org.apache.commons.io.FileUtils;
 import org.owasp.dependencycheck.Engine;
 import org.owasp.dependencycheck.analyzer.exception.AnalysisException;
 import org.owasp.dependencycheck.data.nvd.ecosystem.Ecosystem;
@@ -43,6 +33,16 @@ import org.owasp.dependencycheck.utils.FileFilterBuilder;
 import org.owasp.dependencycheck.utils.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.ThreadSafe;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Used to analyze Ruby Gem specifications and collect information that can be
@@ -143,7 +143,7 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L143">        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
         String contents;
         try {
-<span class="fc" id="L146">            contents = FileUtils.readFileToString(dependency.getActualFile(), Charset.defaultCharset());</span>
+<span class="fc" id="L146">            contents = new String(Files.readAllBytes(dependency.getActualFile().toPath()), StandardCharsets.UTF_8);</span>
 <span class="nc" id="L147">        } catch (IOException e) {</span>
 <span class="nc" id="L148">            throw new AnalysisException(</span>
                     &quot;Problem occurred while reading dependency file.&quot;, e);
@@ -171,7 +171,7 @@ import org.slf4j.LoggerFactory;
                     &quot;homepage&quot;, &quot;homepage&quot;, Confidence.HIGHEST);
 <span class="fc" id="L172">            final String license = addStringEvidence(dependency, EvidenceType.VENDOR, contents, blockVariable,</span>
                     &quot;license&quot;, &quot;licen[cs]es?&quot;, Confidence.HIGHEST);
-<span class="pc bpc" id="L174" title="2 of 4 branches missed.">            if (license != null &amp;&amp; !license.isEmpty()) {</span>
+<span class="pc bpc" id="L174" title="1 of 4 branches missed.">            if (license != null &amp;&amp; !license.isEmpty()) {</span>
 <span class="fc" id="L175">                dependency.setLicense(license);</span>
             }
 <span class="fc" id="L177">            final String value = addStringEvidence(dependency, EvidenceType.VERSION, contents,</span>
@@ -235,11 +235,11 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L235">        } else { //capture single value between quotes</span>
 <span class="fc" id="L236">            final Matcher matcher = Pattern.compile(</span>
 <span class="fc" id="L237">                    String.format(&quot;\\s*?%s\\.%s\\s*?=\\s*?(['\&quot;])(.*?)\\1&quot;, blockVariable, fieldPattern), Pattern.CASE_INSENSITIVE).matcher(contents);</span>
-<span class="pc bpc" id="L238" title="1 of 2 branches missed.">            if (matcher.find()) {</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">            if (matcher.find()) {</span>
 <span class="fc" id="L239">                value = matcher.group(2);</span>
             }
         }
-<span class="pc bpc" id="L242" title="1 of 2 branches missed.">        if (value.length() &gt; 0) {</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">        if (value.length() &gt; 0) {</span>
 <span class="fc" id="L243">            dependency.addEvidence(type, GEMSPEC, field, value, confidence);</span>
         }
 
@@ -265,7 +265,7 @@ import org.slf4j.LoggerFactory;
             }
 <span class="nc bnc" id="L266" title="All 2 branches missed.">            for (File f : matchingFiles) {</span>
                 try {
-<span class="nc" id="L268">                    final List&lt;String&gt; lines = FileUtils.readLines(f, Charset.defaultCharset());</span>
+<span class="nc" id="L268">                    final List&lt;String&gt; lines = Files.readAllLines(f.toPath(), StandardCharsets.UTF_8);</span>
 <span class="nc bnc" id="L269" title="All 2 branches missed.">                    if (lines.size() == 1) { //TODO other checking?</span>
 <span class="nc" id="L270">                        final String value = lines.get(0).trim();</span>
 <span class="nc bnc" id="L271" title="All 4 branches missed.">                        if (version == null || !version.equals(value)) {</span>
@@ -299,4 +299,4 @@ import org.slf4j.LoggerFactory;
         }
 <span class="fc" id="L300">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

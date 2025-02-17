@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MixAuditProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.processing</a> &gt; <span class="el_source">MixAuditProcessor.java</span></div><h1>MixAuditProcessor.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MixAuditProcessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.processing</a> &gt; <span class="el_source">MixAuditProcessor.java</span></div><h1>MixAuditProcessor.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -166,42 +166,43 @@ public class MixAuditProcessor extends Processor&lt;InputStream&gt; {
 
 <span class="nc" id="L167">        dep.addEvidence(EvidenceType.VERSION, &quot;mix_audit&quot;, &quot;Version&quot;, version, Confidence.HIGHEST);</span>
 <span class="nc" id="L168">        dep.addEvidence(EvidenceType.PRODUCT, &quot;mix_audit&quot;, &quot;Package&quot;, packageName, Confidence.HIGHEST);</span>
+<span class="nc" id="L169">        dep.addEvidence(EvidenceType.VENDOR, &quot;mix_audit&quot;, &quot;Package&quot;, packageName, Confidence.HIGH);</span>
 
         try {
-<span class="nc" id="L171">            final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;hex&quot;).withName(packageName)</span>
-<span class="nc" id="L172">                    .withVersion(version).build();</span>
-<span class="nc" id="L173">            dep.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
-<span class="nc" id="L174">        } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L175">            LOGGER.debug(&quot;Unable to build package url for hex&quot;, ex);</span>
-<span class="nc" id="L176">            final GenericIdentifier id = new GenericIdentifier(&quot;hex:&quot; + packageName + &quot;@&quot; + version,</span>
+<span class="nc" id="L172">            final PackageURL purl = PackageURLBuilder.aPackageURL().withType(&quot;hex&quot;).withName(packageName)</span>
+<span class="nc" id="L173">                    .withVersion(version).build();</span>
+<span class="nc" id="L174">            dep.addSoftwareIdentifier(new PurlIdentifier(purl, Confidence.HIGHEST));</span>
+<span class="nc" id="L175">        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L176">            LOGGER.debug(&quot;Unable to build package url for hex&quot;, ex);</span>
+<span class="nc" id="L177">            final GenericIdentifier id = new GenericIdentifier(&quot;hex:&quot; + packageName + &quot;@&quot; + version,</span>
                     Confidence.HIGHEST);
-<span class="nc" id="L178">            dep.addSoftwareIdentifier(id);</span>
-<span class="nc" id="L179">        }</span>
+<span class="nc" id="L179">            dep.addSoftwareIdentifier(id);</span>
+<span class="nc" id="L180">        }</span>
 
-<span class="nc" id="L181">        return dep;</span>
+<span class="nc" id="L182">        return dep;</span>
     }
 
     private Vulnerability createVulnerability(MixAuditResult result) throws CpeValidationException {
-<span class="nc" id="L185">        final String product = result.getDependencyPackage();</span>
-<span class="nc" id="L186">        final String version = result.getDependencyVersion();</span>
+<span class="nc" id="L186">        final String product = result.getDependencyPackage();</span>
+<span class="nc" id="L187">        final String version = result.getDependencyVersion();</span>
 
-<span class="nc" id="L188">        final Vulnerability vulnerability = new Vulnerability();</span>
-<span class="nc" id="L189">        vulnerability.setSource(Vulnerability.Source.MIXAUDIT);</span>
+<span class="nc" id="L189">        final Vulnerability vulnerability = new Vulnerability();</span>
+<span class="nc" id="L190">        vulnerability.setSource(Vulnerability.Source.MIXAUDIT);</span>
 
-<span class="nc" id="L191">        final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();</span>
-<span class="nc" id="L192">        final VulnerableSoftware vs = builder.part(Part.APPLICATION)</span>
-<span class="nc" id="L193">                .vendor(String.format(&quot;%s_project&quot;, product))</span>
-<span class="nc" id="L194">                .product(product)</span>
-<span class="nc" id="L195">                .version(version).build();</span>
+<span class="nc" id="L192">        final VulnerableSoftwareBuilder builder = new VulnerableSoftwareBuilder();</span>
+<span class="nc" id="L193">        final VulnerableSoftware vs = builder.part(Part.APPLICATION)</span>
+<span class="nc" id="L194">                .vendor(String.format(&quot;%s_project&quot;, product))</span>
+<span class="nc" id="L195">                .product(product)</span>
+<span class="nc" id="L196">                .version(version).build();</span>
 
-<span class="nc" id="L197">        vulnerability.addVulnerableSoftware(vs);</span>
-<span class="nc" id="L198">        vulnerability.setMatchedVulnerableSoftware(vs);</span>
+<span class="nc" id="L198">        vulnerability.addVulnerableSoftware(vs);</span>
+<span class="nc" id="L199">        vulnerability.setMatchedVulnerableSoftware(vs);</span>
 
-<span class="nc" id="L200">        vulnerability.setUnscoredSeverity(&quot;UNKOWN&quot;);</span>
-<span class="nc" id="L201">        vulnerability.setDescription(result.getDescription());</span>
-<span class="nc" id="L202">        vulnerability.setName(result.getCve());</span>
+<span class="nc" id="L201">        vulnerability.setUnscoredSeverity(&quot;UNKOWN&quot;);</span>
+<span class="nc" id="L202">        vulnerability.setDescription(result.getDescription());</span>
+<span class="nc" id="L203">        vulnerability.setName(result.getCve());</span>
 
-<span class="nc" id="L204">        return vulnerability;</span>
+<span class="nc" id="L205">        return vulnerability;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

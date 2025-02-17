@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>H2Functions.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvdcve</a> &gt; <span class="el_source">H2Functions.java</span></div><h1>H2Functions.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>H2Functions.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.data.nvdcve</a> &gt; <span class="el_source">H2Functions.java</span></div><h1>H2Functions.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -178,6 +178,47 @@ public final class H2Functions {
      * @param v3BaseScore the CVSS v3 base score
      * @param v3BaseSeverity the CVSS v3 base severity
      * @param v3Version the CVSS v3 version
+     * @param v4version CVSS v4 data
+     * @param v4attackVector CVSS v4 data
+     * @param v4attackComplexity CVSS v4 data
+     * @param v4attackRequirements CVSS v4 data
+     * @param v4privilegesRequired CVSS v4 data
+     * @param v4userInteraction CVSS v4 data
+     * @param v4vulnConfidentialityImpact CVSS v4 data
+     * @param v4vulnIntegrityImpact CVSS v4 data
+     * @param v4vulnAvailabilityImpact CVSS v4 data
+     * @param v4subConfidentialityImpact CVSS v4 data
+     * @param v4subIntegrityImpact CVSS v4 data
+     * @param v4subAvailabilityImpact CVSS v4 data
+     * @param v4exploitMaturity CVSS v4 data
+     * @param v4confidentialityRequirement CVSS v4 data
+     * @param v4integrityRequirement CVSS v4 data
+     * @param v4availabilityRequirement CVSS v4 data
+     * @param v4modifiedAttackVector CVSS v4 data
+     * @param v4modifiedAttackComplexity CVSS v4 data
+     * @param v4modifiedAttackRequirements CVSS v4 data
+     * @param v4modifiedPrivilegesRequired CVSS v4 data
+     * @param v4modifiedUserInteraction CVSS v4 data
+     * @param v4modifiedVulnConfidentialityImpact CVSS v4 data
+     * @param v4modifiedVulnIntegrityImpact CVSS v4 data
+     * @param v4modifiedVulnAvailabilityImpact CVSS v4 data
+     * @param v4modifiedSubConfidentialityImpact CVSS v4 data
+     * @param v4modifiedSubIntegrityImpact CVSS v4 data
+     * @param v4modifiedSubAvailabilityImpact CVSS v4 data
+     * @param v4safety CVSS v4 data
+     * @param v4automatable CVSS v4 data
+     * @param v4recovery CVSS v4 data
+     * @param v4valueDensity CVSS v4 data
+     * @param v4vulnerabilityResponseEffort CVSS v4 data
+     * @param v4providerUrgency CVSS v4 data
+     * @param v4baseScore CVSS v4 data
+     * @param v4baseSeverity CVSS v4 data
+     * @param v4threatScore CVSS v4 data
+     * @param v4threatSeverity CVSS v4 data
+     * @param v4environmentalScore CVSS v4 data
+     * @param v4environmentalSeverity CVSS v4 data
+     * @param v4source CVSS v4 data
+     * @param v4type CVSS v4 data
      * @return a result set containing the vulnerability id
      * @throws SQLException thrown if there is an error updating or inserting
      * the vulnerability
@@ -192,45 +233,58 @@ public final class H2Functions {
             Float v3ImpactScore, String v3AttackVector, String v3AttackComplexity,
             String v3PrivilegesRequired, String v3UserInteraction, String v3Scope,
             String v3ConfidentialityImpact, String v3IntegrityImpact, String v3AvailabilityImpact,
-            Float v3BaseScore, String v3BaseSeverity, String v3Version) throws SQLException {
+            Float v3BaseScore, String v3BaseSeverity, String v3Version, String v4version,
+            String v4attackVector, String v4attackComplexity, String v4attackRequirements,
+            String v4privilegesRequired, String v4userInteraction, String v4vulnConfidentialityImpact,
+            String v4vulnIntegrityImpact, String v4vulnAvailabilityImpact, String v4subConfidentialityImpact,
+            String v4subIntegrityImpact, String v4subAvailabilityImpact, String v4exploitMaturity,
+            String v4confidentialityRequirement, String v4integrityRequirement, String v4availabilityRequirement,
+            String v4modifiedAttackVector, String v4modifiedAttackComplexity, String v4modifiedAttackRequirements,
+            String v4modifiedPrivilegesRequired, String v4modifiedUserInteraction, String v4modifiedVulnConfidentialityImpact,
+            String v4modifiedVulnIntegrityImpact, String v4modifiedVulnAvailabilityImpact, String v4modifiedSubConfidentialityImpact,
+            String v4modifiedSubIntegrityImpact, String v4modifiedSubAvailabilityImpact, String v4safety,
+            String v4automatable, String v4recovery, String v4valueDensity, String v4vulnerabilityResponseEffort,
+            String v4providerUrgency, Float v4baseScore, String v4baseSeverity, Float v4threatScore,
+            String v4threatSeverity, Float v4environmentalScore, String v4environmentalSeverity,
+            String v4source, String v4type) throws SQLException {
 
-<span class="nc" id="L197">        final SimpleResultSet ret = new SimpleResultSet();</span>
-<span class="nc" id="L198">        ret.addColumn(&quot;id&quot;, Types.INTEGER, 10, 0);</span>
-<span class="nc" id="L199">        final String url = conn.getMetaData().getURL();</span>
-<span class="nc bnc" id="L200" title="All 2 branches missed.">        if (&quot;jdbc:columnlist:connection&quot;.equals(url)) {</span>
+<span class="nc" id="L251">        final SimpleResultSet ret = new SimpleResultSet();</span>
+<span class="nc" id="L252">        ret.addColumn(&quot;id&quot;, Types.INTEGER, 10, 0);</span>
+<span class="nc" id="L253">        final String url = conn.getMetaData().getURL();</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">        if (&quot;jdbc:columnlist:connection&quot;.equals(url)) {</span>
             // Virtual Table Functions get called multiple times by H2
             // JDBC URL jdbc:columnlist:connection indicates that H2 only wants to discover
             // the metadata (list of result columns) of the result and is not interested in the actual
             // execution of the function, so we should exit early with an empty resultset.
-<span class="nc" id="L205">            return ret;</span>
+<span class="nc" id="L259">            return ret;</span>
         }
 
-<span class="nc" id="L208">        int vulnerabilityId = 0;</span>
-<span class="nc" id="L209">        try (PreparedStatement selectVulnerabilityId = conn.prepareStatement(&quot;SELECT id FROM VULNERABILITY CVE WHERE cve=?&quot;)) {</span>
-<span class="nc" id="L210">            selectVulnerabilityId.setString(1, cve);</span>
-<span class="nc" id="L211">            try (ResultSet rs = selectVulnerabilityId.executeQuery()) {</span>
-<span class="nc bnc" id="L212" title="All 2 branches missed.">                if (rs.next()) {</span>
-<span class="nc" id="L213">                    vulnerabilityId = rs.getInt(1);</span>
+<span class="nc" id="L262">        int vulnerabilityId = 0;</span>
+<span class="nc" id="L263">        try (PreparedStatement selectVulnerabilityId = conn.prepareStatement(&quot;SELECT id FROM VULNERABILITY CVE WHERE cve=?&quot;)) {</span>
+<span class="nc" id="L264">            selectVulnerabilityId.setString(1, cve);</span>
+<span class="nc" id="L265">            try (ResultSet rs = selectVulnerabilityId.executeQuery()) {</span>
+<span class="nc bnc" id="L266" title="All 2 branches missed.">                if (rs.next()) {</span>
+<span class="nc" id="L267">                    vulnerabilityId = rs.getInt(1);</span>
                 }
             }
         }
-<span class="nc" id="L217">        PreparedStatement merge = null;</span>
+<span class="nc" id="L271">        PreparedStatement merge = null;</span>
         try {
-<span class="nc bnc" id="L219" title="All 2 branches missed.">            if (vulnerabilityId &gt; 0) {</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">            if (vulnerabilityId &gt; 0) {</span>
                 //do deletes and updates
-<span class="nc" id="L221">                try (PreparedStatement refs = conn.prepareStatement(&quot;DELETE FROM reference WHERE cveid = ?&quot;)) {</span>
-<span class="nc" id="L222">                    refs.setInt(1, vulnerabilityId);</span>
-<span class="nc" id="L223">                    refs.executeUpdate();</span>
+<span class="nc" id="L275">                try (PreparedStatement refs = conn.prepareStatement(&quot;DELETE FROM reference WHERE cveid = ?&quot;)) {</span>
+<span class="nc" id="L276">                    refs.setInt(1, vulnerabilityId);</span>
+<span class="nc" id="L277">                    refs.executeUpdate();</span>
                 }
-<span class="nc" id="L225">                try (PreparedStatement software = conn.prepareStatement(&quot;DELETE FROM software WHERE cveid = ?&quot;)) {</span>
-<span class="nc" id="L226">                    software.setInt(1, vulnerabilityId);</span>
-<span class="nc" id="L227">                    software.executeUpdate();</span>
+<span class="nc" id="L279">                try (PreparedStatement software = conn.prepareStatement(&quot;DELETE FROM software WHERE cveid = ?&quot;)) {</span>
+<span class="nc" id="L280">                    software.setInt(1, vulnerabilityId);</span>
+<span class="nc" id="L281">                    software.executeUpdate();</span>
                 }
-<span class="nc" id="L229">                try (PreparedStatement cwe = conn.prepareStatement(&quot;DELETE FROM cweEntry WHERE cveid = ?&quot;)) {</span>
-<span class="nc" id="L230">                    cwe.setInt(1, vulnerabilityId);</span>
-<span class="nc" id="L231">                    cwe.executeUpdate();</span>
+<span class="nc" id="L283">                try (PreparedStatement cwe = conn.prepareStatement(&quot;DELETE FROM cweEntry WHERE cveid = ?&quot;)) {</span>
+<span class="nc" id="L284">                    cwe.setInt(1, vulnerabilityId);</span>
+<span class="nc" id="L285">                    cwe.executeUpdate();</span>
                 }
-<span class="nc" id="L233">                merge = conn.prepareStatement(&quot;UPDATE VULNERABILITY SET description=?, &quot;</span>
+<span class="nc" id="L287">                merge = conn.prepareStatement(&quot;UPDATE VULNERABILITY SET description=?, &quot;</span>
                         + &quot;v2Severity=?, v2ExploitabilityScore=?, &quot;
                         + &quot;v2ImpactScore=?, v2AcInsufInfo=?, v2ObtainAllPrivilege=?, &quot;
                         + &quot;v2ObtainUserPrivilege=?, v2ObtainOtherPrivilege=?, v2UserInteractionRequired=?, &quot;
@@ -240,12 +294,27 @@ public final class H2Functions {
                         + &quot;v3ImpactScore=?, v3AttackVector=?, v3AttackComplexity=?, &quot;
                         + &quot;v3PrivilegesRequired=?, v3UserInteraction=?, v3Scope=?, &quot;
                         + &quot;v3ConfidentialityImpact=?, v3IntegrityImpact=?, v3AvailabilityImpact=?, &quot;
-                        + &quot;v3BaseScore=?, v3BaseSeverity=?, v3Version=? &quot;
+                        + &quot;v3BaseScore=?, v3BaseSeverity=?, v3Version=?, v4version=?, v4attackVector=?, &quot;
+                        + &quot;v4attackComplexity=?, v4attackRequirements=?, v4privilegesRequired=?, &quot;
+                        + &quot;v4userInteraction=?, v4vulnConfidentialityImpact=?, v4vulnIntegrityImpact=?, &quot;
+                        + &quot;v4vulnAvailabilityImpact=?, v4subConfidentialityImpact=?, v4subIntegrityImpact=?, &quot;
+                        + &quot;v4subAvailabilityImpact=?, v4exploitMaturity=?, &quot;
+                        + &quot;v4confidentialityRequirement=?, v4integrityRequirement=?, &quot;
+                        + &quot;v4availabilityRequirement=?, v4modifiedAttackVector=?, &quot;
+                        + &quot;v4modifiedAttackComplexity=?, v4modifiedAttackRequirements=?, &quot;
+                        + &quot;v4modifiedPrivilegesRequired=?, v4modifiedUserInteraction=?, &quot;
+                        + &quot;v4modifiedVulnConfidentialityImpact=?, v4modifiedVulnIntegrityImpact=?, &quot;
+                        + &quot;v4modifiedVulnAvailabilityImpact=?, v4modifiedSubConfidentialityImpact=?, &quot;
+                        + &quot;v4modifiedSubIntegrityImpact=?, v4modifiedSubAvailabilityImpact=?, &quot;
+                        + &quot;v4safety=?, v4automatable=?, v4recovery=?, v4valueDensity=?, &quot;
+                        + &quot;v4vulnerabilityResponseEffort=?, v4providerUrgency=?, v4baseScore=?, &quot;
+                        + &quot;v4baseSeverity=?, v4threatScore=?, v4threatSeverity=?, v4environmentalScore=?, &quot;
+                        + &quot;v4environmentalSeverity=?, v4source=?, v4type=?&quot;
                         + &quot;WHERE id=?&quot;);
             } else {
                 //just do insert
-<span class="nc" id="L247">                final String[] returnedColumns = {&quot;id&quot;};</span>
-<span class="nc" id="L248">                merge = conn.prepareStatement(&quot;INSERT INTO VULNERABILITY (description, &quot;</span>
+<span class="nc" id="L316">                final String[] returnedColumns = {&quot;id&quot;};</span>
+<span class="nc" id="L317">                merge = conn.prepareStatement(&quot;INSERT INTO VULNERABILITY (description, &quot;</span>
                         + &quot;v2Severity, v2ExploitabilityScore, &quot;
                         + &quot;v2ImpactScore, v2AcInsufInfo, v2ObtainAllPrivilege, &quot;
                         + &quot;v2ObtainUserPrivilege, v2ObtainOtherPrivilege, v2UserInteractionRequired, &quot;
@@ -255,63 +324,121 @@ public final class H2Functions {
                         + &quot;v3ImpactScore, v3AttackVector, v3AttackComplexity, &quot;
                         + &quot;v3PrivilegesRequired, v3UserInteraction, v3Scope, &quot;
                         + &quot;v3ConfidentialityImpact, v3IntegrityImpact, v3AvailabilityImpact, &quot;
-                        + &quot;v3BaseScore, v3BaseSeverity, v3Version, cve) VALUES (?, ?, ?, ?, ?, ?, &quot;
-                        + &quot;?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)&quot;,
+                        + &quot;v3BaseScore, v3BaseSeverity, v3Version, v4version, v4attackVector, &quot;
+                        + &quot;v4attackComplexity, v4attackRequirements, v4privilegesRequired, &quot;
+                        + &quot;v4userInteraction, v4vulnConfidentialityImpact, v4vulnIntegrityImpact, &quot;
+                        + &quot;v4vulnAvailabilityImpact, v4subConfidentialityImpact, v4subIntegrityImpact, &quot;
+                        + &quot;v4subAvailabilityImpact, v4exploitMaturity,v4confidentialityRequirement, &quot;
+                        + &quot;v4integrityRequirement, v4availabilityRequirement,v4modifiedAttackVector, &quot;
+                        + &quot;v4modifiedAttackComplexity, v4modifiedAttackRequirements,v4modifiedPrivilegesRequired, &quot;
+                        + &quot;v4modifiedUserInteraction, v4modifiedVulnConfidentialityImpact,v4modifiedVulnIntegrityImpact, &quot;
+                        + &quot;v4modifiedVulnAvailabilityImpact, v4modifiedSubConfidentialityImpact,v4modifiedSubIntegrityImpact, &quot;
+                        + &quot;v4modifiedSubAvailabilityImpact, v4safety, v4automatable, v4recovery, v4valueDensity, &quot;
+                        + &quot;v4vulnerabilityResponseEffort, v4providerUrgency, v4baseScore, v4baseSeverity, &quot;
+                        + &quot;v4threatScore,v4threatSeverity, v4environmentalScore, v4environmentalSeverity, &quot;
+                        + &quot;v4source, v4type, cve) VALUES (?, ?, ?, ?, ?, ?, &quot;
+                        + &quot;?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, &quot;
+                        + &quot;?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, &quot;
+                        + &quot;?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)&quot;,
                         returnedColumns);
             }
 
-<span class="nc" id="L263">            merge.setString(1, description);</span>
+<span class="nc" id="L346">            merge.setString(1, description);</span>
 
-<span class="nc" id="L265">            setStringOrNull(merge, 2, v2Severity);</span>
-<span class="nc" id="L266">            setFloatOrNull(merge, 3, v2ExploitabilityScore);</span>
-<span class="nc" id="L267">            setFloatOrNull(merge, 4, v2ImpactScore);</span>
-<span class="nc" id="L268">            setBooleanOrNull(merge, 5, v2AcInsufInfo);</span>
-<span class="nc" id="L269">            setBooleanOrNull(merge, 6, v2ObtainAllPrivilege);</span>
-<span class="nc" id="L270">            setBooleanOrNull(merge, 7, v2ObtainUserPrivilege);</span>
-<span class="nc" id="L271">            setBooleanOrNull(merge, 8, v2ObtainOtherPrivilege);</span>
-<span class="nc" id="L272">            setBooleanOrNull(merge, 9, v2UserInteractionRequired);</span>
-<span class="nc" id="L273">            setFloatOrNull(merge, 10, v2Score);</span>
-<span class="nc" id="L274">            setStringOrNull(merge, 11, v2AccessVector);</span>
-<span class="nc" id="L275">            setStringOrNull(merge, 12, v2AccessComplexity);</span>
-<span class="nc" id="L276">            setStringOrNull(merge, 13, v2Authentication);</span>
-<span class="nc" id="L277">            setStringOrNull(merge, 14, v2ConfidentialityImpact);</span>
-<span class="nc" id="L278">            setStringOrNull(merge, 15, v2IntegrityImpact);</span>
-<span class="nc" id="L279">            setStringOrNull(merge, 16, v2AvailabilityImpact);</span>
-<span class="nc" id="L280">            setStringOrNull(merge, 17, v2Version);</span>
-<span class="nc" id="L281">            setFloatOrNull(merge, 18, v3ExploitabilityScore);</span>
-<span class="nc" id="L282">            setFloatOrNull(merge, 19, v3ImpactScore);</span>
-<span class="nc" id="L283">            setStringOrNull(merge, 20, v3AttackVector);</span>
-<span class="nc" id="L284">            setStringOrNull(merge, 21, v3AttackComplexity);</span>
-<span class="nc" id="L285">            setStringOrNull(merge, 22, v3PrivilegesRequired);</span>
-<span class="nc" id="L286">            setStringOrNull(merge, 23, v3UserInteraction);</span>
-<span class="nc" id="L287">            setStringOrNull(merge, 24, v3Scope);</span>
-<span class="nc" id="L288">            setStringOrNull(merge, 25, v3ConfidentialityImpact);</span>
-<span class="nc" id="L289">            setStringOrNull(merge, 26, v3IntegrityImpact);</span>
-<span class="nc" id="L290">            setStringOrNull(merge, 27, v3AvailabilityImpact);</span>
-<span class="nc" id="L291">            setFloatOrNull(merge, 28, v3BaseScore);</span>
-<span class="nc" id="L292">            setStringOrNull(merge, 29, v3BaseSeverity);</span>
-<span class="nc" id="L293">            setStringOrNull(merge, 30, v3Version);</span>
+<span class="nc" id="L348">            setStringOrNull(merge, 2, v2Severity);</span>
+<span class="nc" id="L349">            setFloatOrNull(merge, 3, v2ExploitabilityScore);</span>
+<span class="nc" id="L350">            setFloatOrNull(merge, 4, v2ImpactScore);</span>
+<span class="nc" id="L351">            setBooleanOrNull(merge, 5, v2AcInsufInfo);</span>
+<span class="nc" id="L352">            setBooleanOrNull(merge, 6, v2ObtainAllPrivilege);</span>
+<span class="nc" id="L353">            setBooleanOrNull(merge, 7, v2ObtainUserPrivilege);</span>
+<span class="nc" id="L354">            setBooleanOrNull(merge, 8, v2ObtainOtherPrivilege);</span>
+<span class="nc" id="L355">            setBooleanOrNull(merge, 9, v2UserInteractionRequired);</span>
+<span class="nc" id="L356">            setFloatOrNull(merge, 10, v2Score);</span>
+<span class="nc" id="L357">            setStringOrNull(merge, 11, v2AccessVector);</span>
+<span class="nc" id="L358">            setStringOrNull(merge, 12, v2AccessComplexity);</span>
+<span class="nc" id="L359">            setStringOrNull(merge, 13, v2Authentication);</span>
+<span class="nc" id="L360">            setStringOrNull(merge, 14, v2ConfidentialityImpact);</span>
+<span class="nc" id="L361">            setStringOrNull(merge, 15, v2IntegrityImpact);</span>
+<span class="nc" id="L362">            setStringOrNull(merge, 16, v2AvailabilityImpact);</span>
+<span class="nc" id="L363">            setStringOrNull(merge, 17, v2Version);</span>
+<span class="nc" id="L364">            setFloatOrNull(merge, 18, v3ExploitabilityScore);</span>
+<span class="nc" id="L365">            setFloatOrNull(merge, 19, v3ImpactScore);</span>
+<span class="nc" id="L366">            setStringOrNull(merge, 20, v3AttackVector);</span>
+<span class="nc" id="L367">            setStringOrNull(merge, 21, v3AttackComplexity);</span>
+<span class="nc" id="L368">            setStringOrNull(merge, 22, v3PrivilegesRequired);</span>
+<span class="nc" id="L369">            setStringOrNull(merge, 23, v3UserInteraction);</span>
+<span class="nc" id="L370">            setStringOrNull(merge, 24, v3Scope);</span>
+<span class="nc" id="L371">            setStringOrNull(merge, 25, v3ConfidentialityImpact);</span>
+<span class="nc" id="L372">            setStringOrNull(merge, 26, v3IntegrityImpact);</span>
+<span class="nc" id="L373">            setStringOrNull(merge, 27, v3AvailabilityImpact);</span>
+<span class="nc" id="L374">            setFloatOrNull(merge, 28, v3BaseScore);</span>
+<span class="nc" id="L375">            setStringOrNull(merge, 29, v3BaseSeverity);</span>
+<span class="nc" id="L376">            setStringOrNull(merge, 30, v3Version);</span>
 
-<span class="nc bnc" id="L295" title="All 2 branches missed.">            if (vulnerabilityId == 0) {</span>
-<span class="nc" id="L296">                merge.setString(31, cve);</span>
+<span class="nc" id="L378">            setStringOrNull(merge, 31, v4version);</span>
+<span class="nc" id="L379">            setStringOrNull(merge, 32, v4attackVector);</span>
+<span class="nc" id="L380">            setStringOrNull(merge, 33, v4attackComplexity);</span>
+<span class="nc" id="L381">            setStringOrNull(merge, 34, v4attackRequirements);</span>
+<span class="nc" id="L382">            setStringOrNull(merge, 35, v4privilegesRequired);</span>
+<span class="nc" id="L383">            setStringOrNull(merge, 36, v4userInteraction);</span>
+<span class="nc" id="L384">            setStringOrNull(merge, 37, v4vulnConfidentialityImpact);</span>
+<span class="nc" id="L385">            setStringOrNull(merge, 38, v4vulnIntegrityImpact);</span>
+<span class="nc" id="L386">            setStringOrNull(merge, 39, v4vulnAvailabilityImpact);</span>
+<span class="nc" id="L387">            setStringOrNull(merge, 40, v4subConfidentialityImpact);</span>
+<span class="nc" id="L388">            setStringOrNull(merge, 41, v4subIntegrityImpact);</span>
+<span class="nc" id="L389">            setStringOrNull(merge, 42, v4subAvailabilityImpact);</span>
+<span class="nc" id="L390">            setStringOrNull(merge, 43, v4exploitMaturity);</span>
+<span class="nc" id="L391">            setStringOrNull(merge, 44, v4confidentialityRequirement);</span>
+<span class="nc" id="L392">            setStringOrNull(merge, 45, v4integrityRequirement);</span>
+<span class="nc" id="L393">            setStringOrNull(merge, 46, v4availabilityRequirement);</span>
+<span class="nc" id="L394">            setStringOrNull(merge, 47, v4modifiedAttackVector);</span>
+<span class="nc" id="L395">            setStringOrNull(merge, 48, v4modifiedAttackComplexity);</span>
+<span class="nc" id="L396">            setStringOrNull(merge, 49, v4modifiedAttackRequirements);</span>
+<span class="nc" id="L397">            setStringOrNull(merge, 50, v4modifiedPrivilegesRequired);</span>
+<span class="nc" id="L398">            setStringOrNull(merge, 51, v4modifiedUserInteraction);</span>
+<span class="nc" id="L399">            setStringOrNull(merge, 52, v4modifiedVulnConfidentialityImpact);</span>
+<span class="nc" id="L400">            setStringOrNull(merge, 53, v4modifiedVulnIntegrityImpact);</span>
+<span class="nc" id="L401">            setStringOrNull(merge, 54, v4modifiedVulnAvailabilityImpact);</span>
+<span class="nc" id="L402">            setStringOrNull(merge, 55, v4modifiedSubConfidentialityImpact);</span>
+<span class="nc" id="L403">            setStringOrNull(merge, 56, v4modifiedSubIntegrityImpact);</span>
+<span class="nc" id="L404">            setStringOrNull(merge, 57, v4modifiedSubAvailabilityImpact);</span>
+<span class="nc" id="L405">            setStringOrNull(merge, 58, v4safety);</span>
+<span class="nc" id="L406">            setStringOrNull(merge, 59, v4automatable);</span>
+<span class="nc" id="L407">            setStringOrNull(merge, 60, v4recovery);</span>
+<span class="nc" id="L408">            setStringOrNull(merge, 61, v4valueDensity);</span>
+<span class="nc" id="L409">            setStringOrNull(merge, 62, v4vulnerabilityResponseEffort);</span>
+<span class="nc" id="L410">            setStringOrNull(merge, 63, v4providerUrgency);</span>
+<span class="nc" id="L411">            setFloatOrNull(merge, 64, v4baseScore);</span>
+<span class="nc" id="L412">            setStringOrNull(merge, 65, v4baseSeverity);</span>
+<span class="nc" id="L413">            setFloatOrNull(merge, 66, v4threatScore);</span>
+<span class="nc" id="L414">            setStringOrNull(merge, 67, v4threatSeverity);</span>
+<span class="nc" id="L415">            setFloatOrNull(merge, 68, v4environmentalScore);</span>
+<span class="nc" id="L416">            setStringOrNull(merge, 69, v4environmentalSeverity);</span>
+<span class="nc" id="L417">            setStringOrNull(merge, 70, v4source);</span>
+<span class="nc" id="L418">            setStringOrNull(merge, 71, v4type);</span>
+
+            //cve must be the last entry
+<span class="nc bnc" id="L421" title="All 2 branches missed.">            if (vulnerabilityId == 0) {</span>
+<span class="nc" id="L422">                merge.setString(72, cve);</span>
             } else {
-<span class="nc" id="L298">                merge.setInt(31, vulnerabilityId);</span>
+<span class="nc" id="L424">                merge.setInt(72, vulnerabilityId);</span>
             }
-<span class="nc" id="L300">            final int count = merge.executeUpdate();</span>
-<span class="nc bnc" id="L301" title="All 2 branches missed.">            if (vulnerabilityId == 0) {</span>
-<span class="nc" id="L302">                try (ResultSet rs = merge.getGeneratedKeys()) {</span>
-<span class="nc bnc" id="L303" title="All 2 branches missed.">                    if (rs.next()) {</span>
-<span class="nc" id="L304">                        vulnerabilityId = rs.getInt(1);</span>
+
+<span class="nc" id="L427">            final int count = merge.executeUpdate();</span>
+<span class="nc bnc" id="L428" title="All 2 branches missed.">            if (vulnerabilityId == 0) {</span>
+<span class="nc" id="L429">                try (ResultSet rs = merge.getGeneratedKeys()) {</span>
+<span class="nc bnc" id="L430" title="All 2 branches missed.">                    if (rs.next()) {</span>
+<span class="nc" id="L431">                        vulnerabilityId = rs.getInt(1);</span>
                     }
                 }
             }
         } finally {
-<span class="nc bnc" id="L309" title="All 2 branches missed.">            if (merge != null) {</span>
-<span class="nc" id="L310">                merge.close();</span>
+<span class="nc bnc" id="L436" title="All 2 branches missed.">            if (merge != null) {</span>
+<span class="nc" id="L437">                merge.close();</span>
             }
         }
-<span class="nc" id="L313">        ret.addRow(vulnerabilityId);</span>
-<span class="nc" id="L314">        return ret;</span>
+<span class="nc" id="L440">        ret.addRow(vulnerabilityId);</span>
+<span class="nc" id="L441">        return ret;</span>
     }
     //CSON: ParameterNumber
 
@@ -329,53 +456,54 @@ public final class H2Functions {
      * @param requiredAction the action required
      * @param dueDate the due date
      * @param notes notes
-     * @throws SQLException
+     * @throws SQLException thrown if there is a database error merging the
+     * Known Exploited information to the database
      */
     public static void mergeKnownExploited(final Connection conn, String cveId,
             String vendorProject, String product, String vulnerabilityName,
             String dateAdded, String shortDescription, String requiredAction,
             String dueDate, String notes) throws SQLException {
 
-<span class="nc" id="L339">        String id = &quot;&quot;;</span>
-<span class="nc" id="L340">        try (PreparedStatement selectVulnerabilityId = conn.prepareStatement(&quot;SELECT cveID FROM knownExploited cveID WHERE cveID=?&quot;)) {</span>
-<span class="nc" id="L341">            selectVulnerabilityId.setString(1, cveId);</span>
-<span class="nc" id="L342">            try (ResultSet rs = selectVulnerabilityId.executeQuery()) {</span>
-<span class="nc bnc" id="L343" title="All 2 branches missed.">                if (rs.next()) {</span>
-<span class="nc" id="L344">                    id = rs.getString(1);</span>
+<span class="nc" id="L467">        String id = &quot;&quot;;</span>
+<span class="nc" id="L468">        try (PreparedStatement selectVulnerabilityId = conn.prepareStatement(&quot;SELECT cveID FROM knownExploited cveID WHERE cveID=?&quot;)) {</span>
+<span class="nc" id="L469">            selectVulnerabilityId.setString(1, cveId);</span>
+<span class="nc" id="L470">            try (ResultSet rs = selectVulnerabilityId.executeQuery()) {</span>
+<span class="nc bnc" id="L471" title="All 2 branches missed.">                if (rs.next()) {</span>
+<span class="nc" id="L472">                    id = rs.getString(1);</span>
                 }
             }
         }
-<span class="nc" id="L348">        PreparedStatement merge = null;</span>
+<span class="nc" id="L476">        PreparedStatement merge = null;</span>
         try {
-<span class="nc bnc" id="L350" title="All 2 branches missed.">            if (Strings.isNullOrEmpty(id)) {</span>
-<span class="nc" id="L351">                merge = conn.prepareStatement(&quot;INSERT INTO knownExploited (&quot;</span>
+<span class="nc bnc" id="L478" title="All 2 branches missed.">            if (Strings.isNullOrEmpty(id)) {</span>
+<span class="nc" id="L479">                merge = conn.prepareStatement(&quot;INSERT INTO knownExploited (&quot;</span>
                         + &quot;vendorProject, product, vulnerabilityName, &quot;
                         + &quot;dateAdded, shortDescription, requiredAction, &quot;
                         + &quot;dueDate, notes, cveID) &quot;
                         + &quot;VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)&quot;);
             } else {
-<span class="nc" id="L357">                merge = conn.prepareStatement(&quot;UPDATE knownExploited SET &quot;</span>
+<span class="nc" id="L485">                merge = conn.prepareStatement(&quot;UPDATE knownExploited SET &quot;</span>
                         + &quot;vendorProject=?, product=?, vulnerabilityName=?, &quot;
                         + &quot;dateAdded=?, shortDescription=?, requiredAction=?, &quot;
                         + &quot;dueDate=?, notes=? WHERE cveID=?&quot;);
             }
 
-<span class="nc" id="L363">            setStringOrNull(merge, 1, vendorProject);</span>
-<span class="nc" id="L364">            setStringOrNull(merge, 2, product);</span>
-<span class="nc" id="L365">            setStringOrNull(merge, 3, vulnerabilityName);</span>
-<span class="nc" id="L366">            setStringOrNull(merge, 4, dateAdded);</span>
-<span class="nc" id="L367">            setStringOrNull(merge, 5, shortDescription);</span>
-<span class="nc" id="L368">            setStringOrNull(merge, 6, requiredAction);</span>
-<span class="nc" id="L369">            setStringOrNull(merge, 7, dueDate);</span>
-<span class="nc" id="L370">            setStringOrNull(merge, 8, notes);</span>
-<span class="nc" id="L371">            setStringOrNull(merge, 9, cveId);</span>
-<span class="nc" id="L372">            merge.execute();</span>
+<span class="nc" id="L491">            setStringOrNull(merge, 1, vendorProject);</span>
+<span class="nc" id="L492">            setStringOrNull(merge, 2, product);</span>
+<span class="nc" id="L493">            setStringOrNull(merge, 3, vulnerabilityName);</span>
+<span class="nc" id="L494">            setStringOrNull(merge, 4, dateAdded);</span>
+<span class="nc" id="L495">            setStringOrNull(merge, 5, shortDescription);</span>
+<span class="nc" id="L496">            setStringOrNull(merge, 6, requiredAction);</span>
+<span class="nc" id="L497">            setStringOrNull(merge, 7, dueDate);</span>
+<span class="nc" id="L498">            setStringOrNull(merge, 8, notes);</span>
+<span class="nc" id="L499">            setStringOrNull(merge, 9, cveId);</span>
+<span class="nc" id="L500">            merge.execute();</span>
         } finally {
-<span class="nc bnc" id="L374" title="All 2 branches missed.">            if (merge != null) {</span>
-<span class="nc" id="L375">                merge.close();</span>
+<span class="nc bnc" id="L502" title="All 2 branches missed.">            if (merge != null) {</span>
+<span class="nc" id="L503">                merge.close();</span>
             }
         }
-<span class="nc" id="L378">    }</span>
+<span class="nc" id="L506">    }</span>
     //CSON: ParameterNumber
 
     /**
@@ -387,12 +515,12 @@ public final class H2Functions {
      * @throws SQLException thrown if there is an error setting the parameter
      */
     private static void setStringOrNull(PreparedStatement ps, int i, String value) throws SQLException {
-<span class="nc bnc" id="L390" title="All 2 branches missed.">        if (value == null) {</span>
-<span class="nc" id="L391">            ps.setNull(i, java.sql.Types.NULL);</span>
+<span class="nc bnc" id="L518" title="All 2 branches missed.">        if (value == null) {</span>
+<span class="nc" id="L519">            ps.setNull(i, java.sql.Types.NULL);</span>
         } else {
-<span class="nc" id="L393">            ps.setString(i, value);</span>
+<span class="nc" id="L521">            ps.setString(i, value);</span>
         }
-<span class="nc" id="L395">    }</span>
+<span class="nc" id="L523">    }</span>
 
     /**
      * Sets a parameter value on a prepared statement with null checks.
@@ -403,12 +531,12 @@ public final class H2Functions {
      * @throws SQLException thrown if there is an error setting the parameter
      */
     private static void setFloatOrNull(PreparedStatement ps, int i, Float value) throws SQLException {
-<span class="nc bnc" id="L406" title="All 2 branches missed.">        if (value == null) {</span>
-<span class="nc" id="L407">            ps.setNull(i, java.sql.Types.NULL);</span>
+<span class="nc bnc" id="L534" title="All 2 branches missed.">        if (value == null) {</span>
+<span class="nc" id="L535">            ps.setNull(i, java.sql.Types.NULL);</span>
         } else {
-<span class="nc" id="L409">            ps.setFloat(i, value);</span>
+<span class="nc" id="L537">            ps.setFloat(i, value);</span>
         }
-<span class="nc" id="L411">    }</span>
+<span class="nc" id="L539">    }</span>
 
     /**
      * Sets a parameter value on a prepared statement with null checks.
@@ -419,11 +547,11 @@ public final class H2Functions {
      * @throws SQLException thrown if there is an error setting the parameter
      */
     private static void setBooleanOrNull(PreparedStatement ps, int i, Boolean value) throws SQLException {
-<span class="nc bnc" id="L422" title="All 2 branches missed.">        if (value == null) {</span>
-<span class="nc" id="L423">            ps.setNull(i, java.sql.Types.NULL);</span>
+<span class="nc bnc" id="L550" title="All 2 branches missed.">        if (value == null) {</span>
+<span class="nc" id="L551">            ps.setNull(i, java.sql.Types.NULL);</span>
         } else {
-<span class="nc" id="L425">            ps.setBoolean(i, value);</span>
+<span class="nc" id="L553">            ps.setBoolean(i, value);</span>
         }
-<span class="nc" id="L427">    }</span>
+<span class="nc" id="L555">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

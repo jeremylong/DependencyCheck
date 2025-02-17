@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PEAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">PEAnalyzer.java</span></div><h1>PEAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PEAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">PEAnalyzer.java</span></div><h1>PEAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -149,12 +149,12 @@ import org.slf4j.LoggerFactory;
      */
     @Override
     protected void analyzeDependency(final Dependency dependency, final Engine engine) throws AnalysisException {
-<span class="pc bpc" id="L152" title="1 of 2 branches missed.">        for (Evidence e : dependency.getEvidence()) {</span>
-<span class="nc bnc" id="L153" title="All 2 branches missed.">            if (&quot;grokassembly&quot;.equals(e.getSource())) {</span>
-<span class="nc" id="L154">                LOGGER.debug(&quot;Skipping {} because it was already analyzed by the Assembly Analyzer&quot;, dependency.getFileName());</span>
-<span class="nc" id="L155">                return;</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        for (Evidence e : dependency.getEvidence()) {</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            if (&quot;grokassembly&quot;.equals(e.getSource())) {</span>
+<span class="fc" id="L154">                LOGGER.debug(&quot;Skipping {} because it was already analyzed by the Assembly Analyzer&quot;, dependency.getFileName());</span>
+<span class="fc" id="L155">                return;</span>
             }
-<span class="nc" id="L157">        }</span>
+<span class="fc" id="L157">        }</span>
         try {
 <span class="fc" id="L159">            final File fileToCheck = dependency.getActualFile();</span>
 <span class="fc" id="L160">            final PE pe = PEParser.parse(fileToCheck.getPath());</span>
@@ -185,104 +185,106 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L185">                            break;</span>
                         case &quot;InternalName&quot;:
 <span class="fc" id="L187">                            dependency.addEvidence(EvidenceType.PRODUCT, &quot;PE Header&quot;, &quot;InternalName&quot;, value, Confidence.MEDIUM);</span>
-<span class="fc" id="L188">                            determineDependencyName(dependency, value);</span>
-<span class="fc" id="L189">                            break;</span>
+<span class="fc" id="L188">                            dependency.addEvidence(EvidenceType.VENDOR, &quot;PE Header&quot;, &quot;InternalName&quot;, value, Confidence.LOW);</span>
+<span class="fc" id="L189">                            determineDependencyName(dependency, value);</span>
+<span class="fc" id="L190">                            break;</span>
                         case &quot;LegalCopyright&quot;:
-<span class="fc" id="L191">                            dependency.addEvidence(EvidenceType.VENDOR, &quot;PE Header&quot;, &quot;LegalCopyright&quot;, value, Confidence.HIGHEST);</span>
-<span class="pc bpc" id="L192" title="3 of 4 branches missed.">                            if (dependency.getLicense() != null &amp;&amp; dependency.getLicense().length() &gt; 0) {</span>
-<span class="nc" id="L193">                                dependency.setLicense(dependency.getLicense() + &quot;/n/nLegal Copyright: &quot; + value);</span>
+<span class="fc" id="L192">                            dependency.addEvidence(EvidenceType.VENDOR, &quot;PE Header&quot;, &quot;LegalCopyright&quot;, value, Confidence.HIGHEST);</span>
+<span class="pc bpc" id="L193" title="3 of 4 branches missed.">                            if (dependency.getLicense() != null &amp;&amp; dependency.getLicense().length() &gt; 0) {</span>
+<span class="nc" id="L194">                                dependency.setLicense(dependency.getLicense() + &quot;/n/nLegal Copyright: &quot; + value);</span>
                             } else {
-<span class="fc" id="L195">                                dependency.setLicense(&quot;Legal Copyright: &quot; + value);</span>
+<span class="fc" id="L196">                                dependency.setLicense(&quot;Legal Copyright: &quot; + value);</span>
                             }
-<span class="fc" id="L197">                            break;</span>
+<span class="fc" id="L198">                            break;</span>
                         case &quot;OriginalFilename&quot;:
-<span class="fc" id="L199">                            dependency.addEvidence(EvidenceType.VERSION, &quot;PE Header&quot;, &quot;OriginalFilename&quot;, value, Confidence.MEDIUM);</span>
-<span class="fc" id="L200">                            determineDependencyName(dependency, value);</span>
-<span class="fc" id="L201">                            break;</span>
+<span class="fc" id="L200">                            dependency.addEvidence(EvidenceType.VERSION, &quot;PE Header&quot;, &quot;OriginalFilename&quot;, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L201">                            determineDependencyName(dependency, value);</span>
+<span class="fc" id="L202">                            break;</span>
                         case &quot;ProductName&quot;:
-<span class="fc" id="L203">                            dependency.addEvidence(EvidenceType.PRODUCT, &quot;PE Header&quot;, &quot;ProductName&quot;, value, Confidence.HIGHEST);</span>
-<span class="fc" id="L204">                            determineDependencyName(dependency, value);</span>
-<span class="fc" id="L205">                            break;</span>
+<span class="fc" id="L204">                            dependency.addEvidence(EvidenceType.PRODUCT, &quot;PE Header&quot;, &quot;ProductName&quot;, value, Confidence.HIGHEST);</span>
+<span class="fc" id="L205">                            dependency.addEvidence(EvidenceType.VENDOR, &quot;PE Header&quot;, &quot;ProductName&quot;, value, Confidence.MEDIUM);</span>
+<span class="fc" id="L206">                            determineDependencyName(dependency, value);</span>
+<span class="fc" id="L207">                            break;</span>
                         default:
-<span class="fc" id="L207">                            LOGGER.debug(&quot;PE Analyzer found `&quot; + key + &quot;` with a value:&quot; + value);</span>
+<span class="fc" id="L209">                            LOGGER.debug(&quot;PE Analyzer found `&quot; + key + &quot;` with a value:&quot; + value);</span>
                     }
-<span class="fc bfc" id="L209" title="All 4 branches covered.">                    if (fVersion != null &amp;&amp; pVersion != null) {</span>
-<span class="fc" id="L210">                        final int max = Math.min(fVersion.length(), pVersion.length());</span>
+<span class="fc bfc" id="L211" title="All 4 branches covered.">                    if (fVersion != null &amp;&amp; pVersion != null) {</span>
+<span class="fc" id="L212">                        final int max = Math.min(fVersion.length(), pVersion.length());</span>
                         int pos;
-<span class="fc bfc" id="L212" title="All 2 branches covered.">                        for (pos = 0; pos &lt; max; pos++) {</span>
-<span class="pc bpc" id="L213" title="1 of 2 branches missed.">                            if (fVersion.charAt(pos) != pVersion.charAt(pos)) {</span>
-<span class="nc" id="L214">                                break;</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                        for (pos = 0; pos &lt; max; pos++) {</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">                            if (fVersion.charAt(pos) != pVersion.charAt(pos)) {</span>
+<span class="nc" id="L216">                                break;</span>
                             }
                         }
-<span class="fc" id="L217">                        final DependencyVersion fileVersion = DependencyVersionUtil.parseVersion(fVersion, true);</span>
-<span class="fc" id="L218">                        final DependencyVersion productVersion = DependencyVersionUtil.parseVersion(pVersion, true);</span>
-<span class="pc bpc" id="L219" title="1 of 2 branches missed.">                        if (pos &gt; 0) {</span>
-<span class="fc" id="L220">                            final DependencyVersion matchingVersion = DependencyVersionUtil.parseVersion(fVersion.substring(0, pos), true);</span>
-<span class="pc bpc" id="L221" title="2 of 4 branches missed.">                            if (fileVersion != null &amp;&amp; fileVersion.toString().length() == fVersion.length()) {</span>
-<span class="pc bpc" id="L222" title="2 of 4 branches missed.">                                if (matchingVersion != null &amp;&amp; matchingVersion.getVersionParts().size() &gt; 2) {</span>
-<span class="nc" id="L223">                                    dependency.addEvidence(EvidenceType.VERSION, &quot;PE Header&quot;, &quot;FilteredVersion&quot;,</span>
-<span class="nc" id="L224">                                            matchingVersion.toString(), Confidence.HIGHEST);</span>
-<span class="nc" id="L225">                                    dependency.setVersion(matchingVersion.toString());</span>
+<span class="fc" id="L219">                        final DependencyVersion fileVersion = DependencyVersionUtil.parseVersion(fVersion, true);</span>
+<span class="fc" id="L220">                        final DependencyVersion productVersion = DependencyVersionUtil.parseVersion(pVersion, true);</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">                        if (pos &gt; 0) {</span>
+<span class="fc" id="L222">                            final DependencyVersion matchingVersion = DependencyVersionUtil.parseVersion(fVersion.substring(0, pos), true);</span>
+<span class="pc bpc" id="L223" title="2 of 4 branches missed.">                            if (fileVersion != null &amp;&amp; fileVersion.toString().length() == fVersion.length()) {</span>
+<span class="pc bpc" id="L224" title="2 of 4 branches missed.">                                if (matchingVersion != null &amp;&amp; matchingVersion.getVersionParts().size() &gt; 2) {</span>
+<span class="nc" id="L225">                                    dependency.addEvidence(EvidenceType.VERSION, &quot;PE Header&quot;, &quot;FilteredVersion&quot;,</span>
+<span class="nc" id="L226">                                            matchingVersion.toString(), Confidence.HIGHEST);</span>
+<span class="nc" id="L227">                                    dependency.setVersion(matchingVersion.toString());</span>
                                 }
                             }
                         }
-<span class="fc bfc" id="L229" title="All 2 branches covered.">                        if (dependency.getVersion() == null) {</span>
-<span class="pc bpc" id="L230" title="1 of 2 branches missed.">                            if (fVersion.length() &gt;= pVersion.length()) {</span>
-<span class="pc bpc" id="L231" title="2 of 4 branches missed.">                                if (fileVersion != null &amp;&amp; fileVersion.toString().length() == fVersion.length()) {</span>
-<span class="fc" id="L232">                                    dependency.setVersion(fileVersion.toString());</span>
-<span class="nc bnc" id="L233" title="All 4 branches missed.">                                } else if (productVersion != null &amp;&amp; productVersion.toString().length() == pVersion.length()) {</span>
-<span class="nc" id="L234">                                    dependency.setVersion(productVersion.toString());</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">                        if (dependency.getVersion() == null) {</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">                            if (fVersion.length() &gt;= pVersion.length()) {</span>
+<span class="pc bpc" id="L233" title="2 of 4 branches missed.">                                if (fileVersion != null &amp;&amp; fileVersion.toString().length() == fVersion.length()) {</span>
+<span class="fc" id="L234">                                    dependency.setVersion(fileVersion.toString());</span>
+<span class="nc bnc" id="L235" title="All 4 branches missed.">                                } else if (productVersion != null &amp;&amp; productVersion.toString().length() == pVersion.length()) {</span>
+<span class="nc" id="L236">                                    dependency.setVersion(productVersion.toString());</span>
                                 }
                             } else {
-<span class="nc bnc" id="L237" title="All 4 branches missed.">                                if (productVersion != null &amp;&amp; productVersion.toString().length() == pVersion.length()) {</span>
-<span class="nc" id="L238">                                    dependency.setVersion(productVersion.toString());</span>
-<span class="nc bnc" id="L239" title="All 4 branches missed.">                                } else if (fileVersion != null &amp;&amp; fileVersion.toString().length() == fVersion.length()) {</span>
-<span class="nc" id="L240">                                    dependency.setVersion(fileVersion.toString());</span>
+<span class="nc bnc" id="L239" title="All 4 branches missed.">                                if (productVersion != null &amp;&amp; productVersion.toString().length() == pVersion.length()) {</span>
+<span class="nc" id="L240">                                    dependency.setVersion(productVersion.toString());</span>
+<span class="nc bnc" id="L241" title="All 4 branches missed.">                                } else if (fileVersion != null &amp;&amp; fileVersion.toString().length() == fVersion.length()) {</span>
+<span class="nc" id="L242">                                    dependency.setVersion(fileVersion.toString());</span>
                                 }
                             }
                         }
-<span class="pc bpc" id="L244" title="1 of 2 branches missed.">                    } else if (pVersion != null) {</span>
-<span class="nc" id="L245">                        final DependencyVersion productVersion = DependencyVersionUtil.parseVersion(pVersion, true);</span>
-<span class="nc bnc" id="L246" title="All 4 branches missed.">                        if (productVersion != null &amp;&amp; dependency.getActualFile().getName().contains(productVersion.toString())) {</span>
-<span class="nc" id="L247">                            dependency.setVersion(productVersion.toString());</span>
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">                    } else if (pVersion != null) {</span>
+<span class="nc" id="L247">                        final DependencyVersion productVersion = DependencyVersionUtil.parseVersion(pVersion, true);</span>
+<span class="nc bnc" id="L248" title="All 4 branches missed.">                        if (productVersion != null &amp;&amp; dependency.getActualFile().getName().contains(productVersion.toString())) {</span>
+<span class="nc" id="L249">                            dependency.setVersion(productVersion.toString());</span>
                         }
-<span class="pc bfc" id="L249" title="All 2 branches covered.">                    } else if (fVersion != null) {</span>
-<span class="fc" id="L250">                        final DependencyVersion fileVersion = DependencyVersionUtil.parseVersion(fVersion, true);</span>
-<span class="pc bpc" id="L251" title="2 of 4 branches missed.">                        if (fileVersion != null &amp;&amp; dependency.getActualFile().getName().contains(fileVersion.toString())) {</span>
-<span class="nc" id="L252">                            dependency.setVersion(fileVersion.toString());</span>
+<span class="pc bfc" id="L251" title="All 2 branches covered.">                    } else if (fVersion != null) {</span>
+<span class="fc" id="L252">                        final DependencyVersion fileVersion = DependencyVersionUtil.parseVersion(fVersion, true);</span>
+<span class="pc bpc" id="L253" title="2 of 4 branches missed.">                        if (fileVersion != null &amp;&amp; dependency.getActualFile().getName().contains(fileVersion.toString())) {</span>
+<span class="nc" id="L254">                            dependency.setVersion(fileVersion.toString());</span>
                         }
                     }
-<span class="fc bfc" id="L255" title="All 4 branches covered.">                    if (dependency.getName() != null &amp;&amp; dependency.getVersion() != null) {</span>
+<span class="fc bfc" id="L257" title="All 4 branches covered.">                    if (dependency.getName() != null &amp;&amp; dependency.getVersion() != null) {</span>
                         try {
-<span class="fc" id="L257">                            dependency.addSoftwareIdentifier(new PurlIdentifier(&quot;generic&quot;, dependency.getName(),</span>
-<span class="fc" id="L258">                                    dependency.getVersion(), Confidence.MEDIUM));</span>
-<span class="nc" id="L259">                        } catch (MalformedPackageURLException ex) {</span>
-<span class="nc" id="L260">                            LOGGER.debug(&quot;Unable to create Package URL Identifier for &quot; + dependency.getName(), ex);</span>
-<span class="nc" id="L261">                            dependency.addSoftwareIdentifier(new GenericIdentifier(</span>
-<span class="nc" id="L262">                                    String.format(&quot;%s@%s&quot;, dependency.getName(), dependency.getVersion()),</span>
+<span class="fc" id="L259">                            dependency.addSoftwareIdentifier(new PurlIdentifier(&quot;generic&quot;, dependency.getName(),</span>
+<span class="fc" id="L260">                                    dependency.getVersion(), Confidence.MEDIUM));</span>
+<span class="nc" id="L261">                        } catch (MalformedPackageURLException ex) {</span>
+<span class="nc" id="L262">                            LOGGER.debug(&quot;Unable to create Package URL Identifier for &quot; + dependency.getName(), ex);</span>
+<span class="nc" id="L263">                            dependency.addSoftwareIdentifier(new GenericIdentifier(</span>
+<span class="nc" id="L264">                                    String.format(&quot;%s@%s&quot;, dependency.getName(), dependency.getVersion()),</span>
                                     Confidence.MEDIUM));
-<span class="fc" id="L264">                        }</span>
+<span class="fc" id="L266">                        }</span>
                     }
-<span class="fc bfc" id="L266" title="All 2 branches covered.">                    if (dependency.getEcosystem() == null) {</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">                    if (dependency.getEcosystem() == null) {</span>
                         //this could be an assembly
-<span class="fc" id="L268">                        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L270">                        dependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
                     }
                 }
             }
-<span class="nc" id="L272">        } catch (IOException ex) {</span>
-<span class="nc" id="L273">            throw new AnalysisException(ex);</span>
-<span class="fc" id="L274">        }</span>
-<span class="fc" id="L275">    }</span>
+<span class="nc" id="L274">        } catch (IOException ex) {</span>
+<span class="nc" id="L275">            throw new AnalysisException(ex);</span>
+<span class="fc" id="L276">        }</span>
+<span class="fc" id="L277">    }</span>
 
     private void determineDependencyName(final Dependency dependency, final String value) {
-<span class="pc bpc" id="L278" title="1 of 4 branches missed.">        if (dependency.getName() == null &amp;&amp; StringUtils.containsIgnoreCase(dependency.getActualFile().getName(), value)) {</span>
-<span class="fc" id="L279">            final String ext = FileUtils.getFileExtension(value);</span>
-<span class="pc bpc" id="L280" title="1 of 2 branches missed.">            if (ext != null) {</span>
-<span class="fc" id="L281">                dependency.setName(value.substring(0, value.length() - ext.length() - 1));</span>
+<span class="pc bpc" id="L280" title="1 of 4 branches missed.">        if (dependency.getName() == null &amp;&amp; StringUtils.containsIgnoreCase(dependency.getActualFile().getName(), value)) {</span>
+<span class="fc" id="L281">            final String ext = FileUtils.getFileExtension(value);</span>
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">            if (ext != null) {</span>
+<span class="fc" id="L283">                dependency.setName(value.substring(0, value.length() - ext.length() - 1));</span>
             } else {
-<span class="nc" id="L283">                dependency.setName(value);</span>
+<span class="nc" id="L285">                dependency.setName(value);</span>
             }
         }
-<span class="fc" id="L286">    }</span>
+<span class="fc" id="L288">    }</span>
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

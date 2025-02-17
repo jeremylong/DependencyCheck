@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JarAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">JarAnalyzer.java</span></div><h1>JarAnalyzer.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang=""><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JarAnalyzer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Dependency-Check Core</a> &gt; <a href="index.source.html" class="el_package">org.owasp.dependencycheck.analyzer</a> &gt; <span class="el_source">JarAnalyzer.java</span></div><h1>JarAnalyzer.java</h1><pre class="source lang-java linenums">/*
  * This file is part of dependency-check-core.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -406,7 +406,7 @@ import org.slf4j.LoggerFactory;
 <span class="pc bpc" id="L406" title="1 of 2 branches missed.">                    || Arrays.equals(buffer, ZIP_SPANNED_FIRST_BYTES))) {</span>
 <span class="fc" id="L407">                return true;</span>
             }
-<span class="nc" id="L409">        } catch (Exception e) {</span>
+<span class="pc" id="L409">        } catch (Exception e) {</span>
 <span class="nc" id="L410">            LOGGER.warn(&quot;Unable to check if '{}' is a zip file&quot;, dependency.getActualFilePath());</span>
 <span class="nc" id="L411">            LOGGER.trace(&quot;&quot;, e);</span>
 <span class="fc" id="L412">        }</span>
@@ -451,45 +451,45 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L451">                    pom.processProperties(pomProperties);</span>
 
 <span class="fc" id="L453">                    final String artifactId = new File(path).getParentFile().getName();</span>
-<span class="pc bpc" id="L454" title="1 of 2 branches missed.">                    if (dependency.getActualFile().getName().startsWith(artifactId)) {</span>
+<span class="fc bfc" id="L454" title="All 2 branches covered.">                    if (dependency.getActualFile().getName().startsWith(artifactId)) {</span>
 <span class="fc" id="L455">                        evidenceAdded |= setPomEvidence(dependency, pom, classes, true);</span>
                     } else {
-<span class="nc" id="L457">                        final String displayPath = String.format(&quot;%s%s%s&quot;,</span>
-<span class="nc" id="L458">                                dependency.getFilePath(),</span>
+<span class="fc" id="L457">                        final String displayPath = String.format(&quot;%s%s%s&quot;,</span>
+<span class="fc" id="L458">                                dependency.getFilePath(),</span>
                                 File.separator,
                                 path);
-<span class="nc" id="L461">                        final String displayName = String.format(&quot;%s%s%s&quot;,</span>
-<span class="nc" id="L462">                                dependency.getFileName(),</span>
+<span class="fc" id="L461">                        final String displayName = String.format(&quot;%s%s%s&quot;,</span>
+<span class="fc" id="L462">                                dependency.getFileName(),</span>
                                 File.separator,
                                 path);
-<span class="nc" id="L465">                        final Dependency newDependency = new Dependency();</span>
-<span class="nc" id="L466">                        newDependency.setActualFilePath(pomFile.getAbsolutePath());</span>
-<span class="nc" id="L467">                        newDependency.setFileName(displayName);</span>
-<span class="nc" id="L468">                        newDependency.setFilePath(displayPath);</span>
-<span class="nc" id="L469">                        newDependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
-<span class="nc" id="L470">                        String groupId = pom.getGroupId();</span>
-<span class="nc" id="L471">                        String version = pom.getVersion();</span>
-<span class="nc bnc" id="L472" title="All 2 branches missed.">                        if (groupId == null) {</span>
+<span class="fc" id="L465">                        final Dependency newDependency = new Dependency();</span>
+<span class="fc" id="L466">                        newDependency.setActualFilePath(pomFile.getAbsolutePath());</span>
+<span class="fc" id="L467">                        newDependency.setFileName(displayName);</span>
+<span class="fc" id="L468">                        newDependency.setFilePath(displayPath);</span>
+<span class="fc" id="L469">                        newDependency.setEcosystem(DEPENDENCY_ECOSYSTEM);</span>
+<span class="fc" id="L470">                        String groupId = pom.getGroupId();</span>
+<span class="fc" id="L471">                        String version = pom.getVersion();</span>
+<span class="pc bpc" id="L472" title="1 of 2 branches missed.">                        if (groupId == null) {</span>
 <span class="nc" id="L473">                            groupId = pom.getParentGroupId();</span>
                         }
-<span class="nc bnc" id="L475" title="All 2 branches missed.">                        if (version == null) {</span>
+<span class="pc bpc" id="L475" title="1 of 2 branches missed.">                        if (version == null) {</span>
 <span class="nc" id="L476">                            version = pom.getParentVersion();</span>
                         }
-<span class="nc bnc" id="L478" title="All 2 branches missed.">                        if (groupId == null) {</span>
+<span class="pc bpc" id="L478" title="1 of 2 branches missed.">                        if (groupId == null) {</span>
 <span class="nc" id="L479">                            newDependency.setName(pom.getArtifactId());</span>
 <span class="nc" id="L480">                            newDependency.setPackagePath(String.format(&quot;%s:%s&quot;, pom.getArtifactId(), version));</span>
                         } else {
-<span class="nc" id="L482">                            newDependency.setName(String.format(&quot;%s:%s&quot;, groupId, pom.getArtifactId()));</span>
-<span class="nc" id="L483">                            newDependency.setPackagePath(String.format(&quot;%s:%s:%s&quot;, groupId, pom.getArtifactId(), version));</span>
+<span class="fc" id="L482">                            newDependency.setName(String.format(&quot;%s:%s&quot;, groupId, pom.getArtifactId()));</span>
+<span class="fc" id="L483">                            newDependency.setPackagePath(String.format(&quot;%s:%s:%s&quot;, groupId, pom.getArtifactId(), version));</span>
                         }
-<span class="nc" id="L485">                        newDependency.setDisplayFileName(String.format(&quot;%s (shaded: %s)&quot;,</span>
-<span class="nc" id="L486">                                dependency.getDisplayFileName(), newDependency.getPackagePath()));</span>
-<span class="nc" id="L487">                        newDependency.setVersion(version);</span>
-<span class="nc" id="L488">                        setPomEvidence(newDependency, pom, null, true);</span>
-<span class="nc bnc" id="L489" title="All 2 branches missed.">                        if (dependency.getProjectReferences().size() &gt; 0) {</span>
+<span class="fc" id="L485">                        newDependency.setDisplayFileName(String.format(&quot;%s (shaded: %s)&quot;,</span>
+<span class="fc" id="L486">                                dependency.getDisplayFileName(), newDependency.getPackagePath()));</span>
+<span class="fc" id="L487">                        newDependency.setVersion(version);</span>
+<span class="fc" id="L488">                        setPomEvidence(newDependency, pom, null, true);</span>
+<span class="pc bpc" id="L489" title="1 of 2 branches missed.">                        if (dependency.getProjectReferences().size() &gt; 0) {</span>
 <span class="nc" id="L490">                            newDependency.addAllProjectReferences(dependency.getProjectReferences());</span>
                         }
-<span class="nc" id="L492">                        engine.addDependency(newDependency);</span>
+<span class="fc" id="L492">                        engine.addDependency(newDependency);</span>
                     }
 <span class="nc" id="L494">                } catch (AnalysisException ex) {</span>
 <span class="nc" id="L495">                    LOGGER.warn(&quot;An error occurred while analyzing '{}'.&quot;, dependency.getActualFilePath());</span>
@@ -601,11 +601,11 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L601">        String version = intepolationFailCheck(pom.getVersion());</span>
 <span class="fc" id="L602">        String parentVersion = intepolationFailCheck(pom.getParentVersion());</span>
 
-<span class="pc bpc" id="L604" title="3 of 4 branches missed.">        if ((&quot;org.sonatype.oss&quot;.equals(parentGroupId) &amp;&amp; &quot;oss-parent&quot;.equals(parentArtifactId))</span>
+<span class="pc bpc" id="L604" title="1 of 4 branches missed.">        if ((&quot;org.sonatype.oss&quot;.equals(parentGroupId) &amp;&amp; &quot;oss-parent&quot;.equals(parentArtifactId))</span>
 <span class="pc bpc" id="L605" title="3 of 4 branches missed.">                || (&quot;org.springframework.boot&quot;.equals(parentGroupId) &amp;&amp; &quot;spring-boot-starter-parent&quot;.equals(parentArtifactId))) {</span>
-<span class="nc" id="L606">            parentGroupId = null;</span>
-<span class="nc" id="L607">            parentArtifactId = null;</span>
-<span class="nc" id="L608">            parentVersion = null;</span>
+<span class="fc" id="L606">            parentGroupId = null;</span>
+<span class="fc" id="L607">            parentArtifactId = null;</span>
+<span class="fc" id="L608">            parentVersion = null;</span>
         }
 
 <span class="pc bpc" id="L611" title="6 of 8 branches missed.">        if ((groupid == null || groupid.isEmpty()) &amp;&amp; parentGroupId != null &amp;&amp; !parentGroupId.isEmpty()) {</span>
@@ -627,14 +627,14 @@ import org.slf4j.LoggerFactory;
 <span class="nc" id="L627">            version = parentVersion;</span>
         }
 
-<span class="pc bpc" id="L630" title="4 of 8 branches missed.">        if (isMainPom &amp;&amp; dependency.getName() == null &amp;&amp; originalArtifactID != null &amp;&amp; !originalArtifactID.isEmpty()) {</span>
+<span class="pc bpc" id="L630" title="3 of 8 branches missed.">        if (isMainPom &amp;&amp; dependency.getName() == null &amp;&amp; originalArtifactID != null &amp;&amp; !originalArtifactID.isEmpty()) {</span>
 <span class="pc bpc" id="L631" title="2 of 4 branches missed.">            if (originalGroupID != null &amp;&amp; !originalGroupID.isEmpty()) {</span>
 <span class="fc" id="L632">                dependency.setName(String.format(&quot;%s:%s&quot;, originalGroupID, originalArtifactID));</span>
             } else {
 <span class="nc" id="L634">                dependency.setName(originalArtifactID);</span>
             }
         }
-<span class="pc bpc" id="L637" title="4 of 8 branches missed.">        if (isMainPom &amp;&amp; dependency.getVersion() == null &amp;&amp; version != null &amp;&amp; !version.isEmpty()) {</span>
+<span class="pc bpc" id="L637" title="3 of 8 branches missed.">        if (isMainPom &amp;&amp; dependency.getVersion() == null &amp;&amp; version != null &amp;&amp; !version.isEmpty()) {</span>
 <span class="fc" id="L638">            dependency.setVersion(version);</span>
         }
 
@@ -708,26 +708,26 @@ import org.slf4j.LoggerFactory;
 
         // org name
 <span class="fc" id="L710">        final String org = pom.getOrganization();</span>
-<span class="pc bpc" id="L711" title="3 of 4 branches missed.">        if (org != null &amp;&amp; !org.isEmpty()) {</span>
-<span class="nc" id="L712">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;organization name&quot;, org, Confidence.HIGH);</span>
-<span class="nc" id="L713">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;organization name&quot;, org, Confidence.LOW);</span>
-<span class="nc" id="L714">            addMatchingValues(classes, org, dependency, EvidenceType.VENDOR);</span>
-<span class="nc" id="L715">            addMatchingValues(classes, org, dependency, EvidenceType.PRODUCT);</span>
+<span class="pc bpc" id="L711" title="1 of 4 branches missed.">        if (org != null &amp;&amp; !org.isEmpty()) {</span>
+<span class="fc" id="L712">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;organization name&quot;, org, Confidence.HIGH);</span>
+<span class="fc" id="L713">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;organization name&quot;, org, Confidence.LOW);</span>
+<span class="fc" id="L714">            addMatchingValues(classes, org, dependency, EvidenceType.VENDOR);</span>
+<span class="fc" id="L715">            addMatchingValues(classes, org, dependency, EvidenceType.PRODUCT);</span>
         }
         // org name
 <span class="fc" id="L718">        String orgUrl = pom.getOrganizationUrl();</span>
-<span class="pc bpc" id="L719" title="3 of 4 branches missed.">        if (orgUrl != null &amp;&amp; !orgUrl.isEmpty()) {</span>
-<span class="nc bnc" id="L720" title="All 4 branches missed.">            if (orgUrl.startsWith(&quot;https://github.com/&quot;) || orgUrl.startsWith(&quot;https://gitlab.com/&quot;)) {</span>
-<span class="nc" id="L721">                orgUrl = orgUrl.substring(19);</span>
-<span class="nc" id="L722">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, orgUrl, Confidence.HIGH);</span>
+<span class="pc bpc" id="L719" title="1 of 4 branches missed.">        if (orgUrl != null &amp;&amp; !orgUrl.isEmpty()) {</span>
+<span class="pc bpc" id="L720" title="1 of 4 branches missed.">            if (orgUrl.startsWith(&quot;https://github.com/&quot;) || orgUrl.startsWith(&quot;https://gitlab.com/&quot;)) {</span>
+<span class="fc" id="L721">                orgUrl = orgUrl.substring(19);</span>
+<span class="fc" id="L722">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, orgUrl, Confidence.HIGH);</span>
             } else {
-<span class="nc" id="L724">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;organization url&quot;, orgUrl, Confidence.LOW);</span>
+<span class="fc" id="L724">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;organization url&quot;, orgUrl, Confidence.LOW);</span>
             }
-<span class="nc" id="L726">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;organization url&quot;, orgUrl, Confidence.MEDIUM);</span>
+<span class="fc" id="L726">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;organization url&quot;, orgUrl, Confidence.MEDIUM);</span>
         }
         //pom name
 <span class="fc" id="L729">        final String pomName = pom.getName();</span>
-<span class="pc bpc" id="L730" title="3 of 6 branches missed.">        if (pomName != null &amp;&amp; !pomName.isEmpty() &amp;&amp; !&quot;${project.groupId}:${project.artifactId}&quot;.equals(pomName)) {</span>
+<span class="pc bpc" id="L730" title="2 of 6 branches missed.">        if (pomName != null &amp;&amp; !pomName.isEmpty() &amp;&amp; !&quot;${project.groupId}:${project.artifactId}&quot;.equals(pomName)) {</span>
 <span class="fc" id="L731">            foundSomething = true;</span>
 <span class="fc" id="L732">            dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;name&quot;, pomName, Confidence.HIGH);</span>
 <span class="fc" id="L733">            dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;name&quot;, pomName, Confidence.HIGH);</span>
@@ -748,10 +748,10 @@ import org.slf4j.LoggerFactory;
         }
 
 <span class="fc" id="L750">        String projectURL = pom.getProjectURL();</span>
-<span class="pc bpc" id="L751" title="1 of 4 branches missed.">        if (projectURL != null &amp;&amp; !projectURL.trim().isEmpty()) {</span>
-<span class="pc bpc" id="L752" title="2 of 4 branches missed.">            if (projectURL.startsWith(&quot;https://github.com/&quot;) || projectURL.startsWith(&quot;https://gitlab.com/&quot;)) {</span>
-<span class="nc" id="L753">                projectURL = projectURL.substring(19);</span>
-<span class="nc" id="L754">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, projectURL, Confidence.HIGH);</span>
+<span class="fc bfc" id="L751" title="All 4 branches covered.">        if (projectURL != null &amp;&amp; !projectURL.trim().isEmpty()) {</span>
+<span class="pc bpc" id="L752" title="1 of 4 branches missed.">            if (projectURL.startsWith(&quot;https://github.com/&quot;) || projectURL.startsWith(&quot;https://gitlab.com/&quot;)) {</span>
+<span class="fc" id="L753">                projectURL = projectURL.substring(19);</span>
+<span class="fc" id="L754">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, projectURL, Confidence.HIGH);</span>
             } else {
 <span class="fc" id="L756">                dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;url&quot;, projectURL, Confidence.MEDIUM);</span>
             }
@@ -761,7 +761,7 @@ import org.slf4j.LoggerFactory;
 
 <span class="pc bpc" id="L762" title="1 of 4 branches missed.">        if (pom.getDevelopers() != null &amp;&amp; !pom.getDevelopers().isEmpty()) {</span>
 <span class="fc bfc" id="L763" title="All 2 branches covered.">            for (Developer dev : pom.getDevelopers()) {</span>
-<span class="pc bpc" id="L764" title="1 of 2 branches missed.">                if (!Strings.isNullOrEmpty(dev.getId())) {</span>
+<span class="fc bfc" id="L764" title="All 2 branches covered.">                if (!Strings.isNullOrEmpty(dev.getId())) {</span>
 <span class="fc" id="L765">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer id&quot;, dev.getId(), Confidence.MEDIUM);</span>
 <span class="fc" id="L766">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer id&quot;, dev.getId(), Confidence.LOW);</span>
                 }
@@ -773,9 +773,9 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L773">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer email&quot;, dev.getEmail(), Confidence.LOW);</span>
 <span class="fc" id="L774">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer email&quot;, dev.getEmail(), Confidence.LOW);</span>
                 }
-<span class="pc bpc" id="L776" title="1 of 2 branches missed.">                if (!Strings.isNullOrEmpty(dev.getOrganizationUrl())) {</span>
-<span class="nc" id="L777">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer org URL&quot;, dev.getOrganizationUrl(), Confidence.MEDIUM);</span>
-<span class="nc" id="L778">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer org URL&quot;, dev.getOrganizationUrl(), Confidence.LOW);</span>
+<span class="fc bfc" id="L776" title="All 2 branches covered.">                if (!Strings.isNullOrEmpty(dev.getOrganizationUrl())) {</span>
+<span class="fc" id="L777">                    dependency.addEvidence(EvidenceType.VENDOR, &quot;pom&quot;, &quot;developer org URL&quot;, dev.getOrganizationUrl(), Confidence.MEDIUM);</span>
+<span class="fc" id="L778">                    dependency.addEvidence(EvidenceType.PRODUCT, &quot;pom&quot;, &quot;developer org URL&quot;, dev.getOrganizationUrl(), Confidence.LOW);</span>
                 }
 <span class="fc" id="L780">                final String devOrg = dev.getOrganization();</span>
 <span class="fc bfc" id="L781" title="All 2 branches covered.">                if (!Strings.isNullOrEmpty(devOrg)) {</span>
@@ -854,14 +854,14 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L854">        boolean foundSomething = false;</span>
 <span class="fc" id="L855">        try (JarFile jar = new JarFile(dependency.getActualFilePath(), false)) {</span>
 <span class="fc" id="L856">            final Manifest manifest = jar.getManifest();</span>
-<span class="pc bpc" id="L857" title="1 of 2 branches missed.">            if (manifest == null) {</span>
-<span class="nc bnc" id="L858" title="All 2 branches missed.">                if (!dependency.getFileName().toLowerCase().endsWith(&quot;-sources.jar&quot;)</span>
-<span class="nc bnc" id="L859" title="All 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-javadoc.jar&quot;)</span>
-<span class="nc bnc" id="L860" title="All 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-src.jar&quot;)</span>
-<span class="nc bnc" id="L861" title="All 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-doc.jar&quot;)) {</span>
-<span class="nc" id="L862">                    LOGGER.debug(&quot;Jar file '{}' does not contain a manifest.&quot;, dependency.getFileName());</span>
+<span class="fc bfc" id="L857" title="All 2 branches covered.">            if (manifest == null) {</span>
+<span class="pc bpc" id="L858" title="1 of 2 branches missed.">                if (!dependency.getFileName().toLowerCase().endsWith(&quot;-sources.jar&quot;)</span>
+<span class="pc bpc" id="L859" title="1 of 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-javadoc.jar&quot;)</span>
+<span class="pc bpc" id="L860" title="1 of 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-src.jar&quot;)</span>
+<span class="pc bpc" id="L861" title="1 of 2 branches missed.">                        &amp;&amp; !dependency.getFileName().toLowerCase().endsWith(&quot;-doc.jar&quot;)) {</span>
+<span class="fc" id="L862">                    LOGGER.debug(&quot;Jar file '{}' does not contain a manifest.&quot;, dependency.getFileName());</span>
                 }
-<span class="nc" id="L864">                return false;</span>
+<span class="fc" id="L864">                return false;</span>
             }
 <span class="fc" id="L866">            String source = &quot;Manifest&quot;;</span>
 <span class="fc" id="L867">            String specificationVersion = null;</span>
@@ -870,14 +870,14 @@ import org.slf4j.LoggerFactory;
 <span class="fc bfc" id="L870" title="All 2 branches covered.">            for (Entry&lt;Object, Object&gt; entry : atts.entrySet()) {</span>
 <span class="fc" id="L871">                String key = entry.getKey().toString();</span>
 <span class="fc" id="L872">                String value = atts.getValue(key);</span>
-<span class="pc bpc" id="L873" title="1 of 2 branches missed.">                if (HTML_DETECTION_PATTERN.matcher(value).find()) {</span>
-<span class="nc" id="L874">                    value = Jsoup.parse(value).text();</span>
+<span class="fc bfc" id="L873" title="All 2 branches covered.">                if (HTML_DETECTION_PATTERN.matcher(value).find()) {</span>
+<span class="fc" id="L874">                    value = Jsoup.parse(value).text();</span>
                 }
-<span class="pc bpc" id="L876" title="2 of 4 branches missed.">                if (value.startsWith(&quot;git@github.com:&quot;) || value.startsWith(&quot;git@gitlab.com:&quot;)) {</span>
-<span class="nc" id="L877">                    value = value.substring(15);</span>
+<span class="pc bpc" id="L876" title="1 of 4 branches missed.">                if (value.startsWith(&quot;git@github.com:&quot;) || value.startsWith(&quot;git@gitlab.com:&quot;)) {</span>
+<span class="fc" id="L877">                    value = value.substring(15);</span>
                 }
-<span class="pc bpc" id="L879" title="1 of 2 branches missed.">                if (IGNORE_VALUES.contains(value)) {</span>
-<span class="nc" id="L880">                    continue;</span>
+<span class="fc bfc" id="L879" title="All 2 branches covered.">                if (IGNORE_VALUES.contains(value)) {</span>
+<span class="fc" id="L880">                    continue;</span>
 <span class="fc bfc" id="L881" title="All 2 branches covered.">                } else if (key.equalsIgnoreCase(Attributes.Name.IMPLEMENTATION_TITLE.toString())) {</span>
 <span class="fc" id="L882">                    foundSomething = true;</span>
 <span class="fc" id="L883">                    dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.HIGH);</span>
@@ -925,29 +925,29 @@ import org.slf4j.LoggerFactory;
 <span class="fc bfc" id="L925" title="All 2 branches covered.">                            &amp;&amp; !key.endsWith(&quot;jdk&quot;)</span>
 <span class="fc bfc" id="L926" title="All 2 branches covered.">                            &amp;&amp; !key.contains(&quot;lastmodified&quot;)</span>
 <span class="fc bfc" id="L927" title="All 2 branches covered.">                            &amp;&amp; !key.endsWith(&quot;package&quot;)</span>
-<span class="pc bpc" id="L928" title="1 of 2 branches missed.">                            &amp;&amp; !key.endsWith(&quot;classpath&quot;)</span>
+<span class="fc bfc" id="L928" title="All 2 branches covered.">                            &amp;&amp; !key.endsWith(&quot;classpath&quot;)</span>
 <span class="pc bpc" id="L929" title="1 of 2 branches missed.">                            &amp;&amp; !key.endsWith(&quot;class-path&quot;)</span>
-<span class="pc bpc" id="L930" title="1 of 2 branches missed.">                            &amp;&amp; !key.endsWith(&quot;-scm&quot;) //todo change this to a regex?</span>
+<span class="fc bfc" id="L930" title="All 2 branches covered.">                            &amp;&amp; !key.endsWith(&quot;-scm&quot;) //todo change this to a regex?</span>
 <span class="pc bpc" id="L931" title="1 of 2 branches missed.">                            &amp;&amp; !key.startsWith(&quot;scm-&quot;)</span>
 <span class="pc bpc" id="L932" title="1 of 2 branches missed.">                            &amp;&amp; !value.trim().startsWith(&quot;scm:&quot;)</span>
-<span class="pc bpc" id="L933" title="1 of 2 branches missed.">                            &amp;&amp; !isImportPackage(key, value)</span>
+<span class="fc bfc" id="L933" title="All 2 branches covered.">                            &amp;&amp; !isImportPackage(key, value)</span>
 <span class="fc bfc" id="L934" title="All 2 branches covered.">                            &amp;&amp; !isPackage(key, value)) {</span>
 <span class="fc" id="L935">                        foundSomething = true;</span>
 <span class="fc bfc" id="L936" title="All 2 branches covered.">                        if (key.contains(&quot;version&quot;)) {</span>
 <span class="pc bpc" id="L937" title="1 of 2 branches missed.">                            if (!key.contains(&quot;specification&quot;)) {</span>
 <span class="fc" id="L938">                                dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);</span>
                             }
-<span class="pc bpc" id="L940" title="1 of 2 branches missed.">                        } else if (&quot;build-id&quot;.equals(key)) {</span>
-<span class="nc" id="L941">                            int pos = value.indexOf('(');</span>
-<span class="nc bnc" id="L942" title="All 2 branches missed.">                            if (pos &gt; 0) {</span>
+<span class="fc bfc" id="L940" title="All 2 branches covered.">                        } else if (&quot;build-id&quot;.equals(key)) {</span>
+<span class="fc" id="L941">                            int pos = value.indexOf('(');</span>
+<span class="pc bpc" id="L942" title="1 of 2 branches missed.">                            if (pos &gt; 0) {</span>
 <span class="nc" id="L943">                                value = value.substring(0, pos - 1);</span>
                             }
-<span class="nc" id="L945">                            pos = value.indexOf('[');</span>
-<span class="nc bnc" id="L946" title="All 2 branches missed.">                            if (pos &gt; 0) {</span>
+<span class="fc" id="L945">                            pos = value.indexOf('[');</span>
+<span class="pc bpc" id="L946" title="1 of 2 branches missed.">                            if (pos &gt; 0) {</span>
 <span class="nc" id="L947">                                value = value.substring(0, pos - 1);</span>
                             }
-<span class="nc" id="L949">                            dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);</span>
-<span class="pc bfc" id="L950" title="All 2 branches covered.">                        } else if (key.contains(&quot;title&quot;)) {</span>
+<span class="fc" id="L949">                            dependency.addEvidence(EvidenceType.VERSION, source, key, value, Confidence.MEDIUM);</span>
+<span class="fc bfc" id="L950" title="All 2 branches covered.">                        } else if (key.contains(&quot;title&quot;)) {</span>
 <span class="fc" id="L951">                            dependency.addEvidence(EvidenceType.PRODUCT, source, key, value, Confidence.MEDIUM);</span>
 <span class="fc" id="L952">                            addMatchingValues(classInformation, value, dependency, EvidenceType.PRODUCT);</span>
 <span class="fc bfc" id="L953" title="All 2 branches covered.">                        } else if (key.contains(&quot;vendor&quot;)) {</span>
@@ -1017,7 +1017,7 @@ import org.slf4j.LoggerFactory;
 <span class="nc" id="L1017">                foundSomething = true;</span>
 <span class="nc" id="L1018">                dependency.addEvidence(EvidenceType.VERSION, source, &quot;specification-version&quot;, specificationVersion, Confidence.HIGH);</span>
             }
-        }
+<span class="fc" id="L1020">        }</span>
 <span class="fc" id="L1021">        return foundSomething;</span>
     }
     //CSON: MethodLength
@@ -1056,7 +1056,7 @@ import org.slf4j.LoggerFactory;
 
 <span class="fc" id="L1057">            int pos = -1;</span>
 <span class="fc" id="L1058">            pos = Math.max(pos, posSuchAs);</span>
-<span class="pc bpc" id="L1059" title="3 of 4 branches missed.">            if (pos &gt;= 0 &amp;&amp; posLike &gt;= 0) {</span>
+<span class="pc bpc" id="L1059" title="1 of 4 branches missed.">            if (pos &gt;= 0 &amp;&amp; posLike &gt;= 0) {</span>
 <span class="nc" id="L1060">                pos = Math.min(pos, posLike);</span>
             } else {
 <span class="fc" id="L1062">                pos = Math.max(pos, posLike);</span>
@@ -1157,7 +1157,7 @@ import org.slf4j.LoggerFactory;
     private boolean isImportPackage(String key, String value) {
 <span class="fc" id="L1158">        final Pattern packageRx = Pattern.compile(&quot;^(\\s*[a-zA-Z0-9_#\\$\\*\\.]+\\s*[,;])+(\\s*[a-zA-Z0-9_#\\$\\*\\.]+\\s*)?$&quot;);</span>
 <span class="fc" id="L1159">        final boolean matches = packageRx.matcher(value).matches();</span>
-<span class="pc bpc" id="L1160" title="7 of 8 branches missed.">        return matches &amp;&amp; (key.contains(&quot;import&quot;) || key.contains(&quot;include&quot;) || value.length() &gt; 10);</span>
+<span class="pc bpc" id="L1160" title="3 of 8 branches missed.">        return matches &amp;&amp; (key.contains(&quot;import&quot;) || key.contains(&quot;include&quot;) || value.length() &gt; 10);</span>
     }
 
     /**
@@ -1212,7 +1212,7 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L1212">                addEntry(vendor, list.get(1));</span>
 <span class="fc" id="L1213">                addEntry(product, list.get(1));</span>
 <span class="fc" id="L1214">                addEntry(product, list.get(2));</span>
-<span class="pc bpc" id="L1215" title="1 of 2 branches missed.">            } else if (list.size() &gt;= 4) {</span>
+<span class="fc bfc" id="L1215" title="All 2 branches covered.">            } else if (list.size() &gt;= 4) {</span>
 <span class="fc" id="L1216">                addEntry(vendor, list.get(1));</span>
 <span class="fc" id="L1217">                addEntry(vendor, list.get(2));</span>
 <span class="fc" id="L1218">                addEntry(product, list.get(1));</span>
@@ -1250,7 +1250,7 @@ import org.slf4j.LoggerFactory;
      * @param type the type of evidence (vendor, product, or version)
      */
     protected static void addMatchingValues(List&lt;ClassNameInformation&gt; classes, String value, Dependency dep, EvidenceType type) {
-<span class="pc bpc" id="L1253" title="3 of 8 branches missed.">        if (value == null || value.isEmpty() || classes == null || classes.isEmpty()) {</span>
+<span class="pc bpc" id="L1253" title="1 of 8 branches missed.">        if (value == null || value.isEmpty() || classes == null || classes.isEmpty()) {</span>
 <span class="fc" id="L1254">            return;</span>
         }
 <span class="fc" id="L1256">        final HashSet&lt;String&gt; tested = new HashSet&lt;&gt;();</span>
@@ -1331,10 +1331,10 @@ import org.slf4j.LoggerFactory;
 <span class="pc bpc" id="L1331" title="1 of 2 branches missed.">                if (HTML_DETECTION_PATTERN.matcher(tmp).find()) {</span>
 <span class="nc" id="L1332">                    tmp = Jsoup.parse(tmp).text();</span>
                 }
-<span class="pc bpc" id="L1334" title="1 of 2 branches missed.">                if (license == null) {</span>
+<span class="fc bfc" id="L1334" title="All 2 branches covered.">                if (license == null) {</span>
 <span class="fc" id="L1335">                    license = new StringBuilder(tmp);</span>
                 } else {
-<span class="nc" id="L1337">                    license.append(&quot;\n&quot;).append(tmp);</span>
+<span class="fc" id="L1337">                    license.append(&quot;\n&quot;).append(tmp);</span>
                 }
 <span class="fc" id="L1339">            }</span>
 <span class="fc bfc" id="L1340" title="All 2 branches covered.">            if (license != null) {</span>
@@ -1383,7 +1383,7 @@ import org.slf4j.LoggerFactory;
          */
 <span class="fc" id="L1384">        ClassNameInformation(String className) {</span>
 <span class="fc" id="L1385">            name = className;</span>
-<span class="pc bpc" id="L1386" title="1 of 2 branches missed.">            if (name.contains(&quot;/&quot;)) {</span>
+<span class="fc bfc" id="L1386" title="All 2 branches covered.">            if (name.contains(&quot;/&quot;)) {</span>
 <span class="fc" id="L1387">                final String[] tmp = StringUtils.split(className.toLowerCase(), '/');</span>
 <span class="fc" id="L1388">                int start = 0;</span>
 <span class="fc" id="L1389">                int end = 3;</span>
@@ -1396,7 +1396,7 @@ import org.slf4j.LoggerFactory;
                 }
 <span class="fc" id="L1397">                packageStructure.addAll(Arrays.asList(tmp).subList(start, end + 1));</span>
 <span class="fc" id="L1398">            } else {</span>
-<span class="nc" id="L1399">                packageStructure.add(name);</span>
+<span class="fc" id="L1399">                packageStructure.add(name);</span>
             }
 <span class="fc" id="L1401">        }</span>
 
@@ -1448,4 +1448,4 @@ import org.slf4j.LoggerFactory;
 <span class="fc" id="L1448">        return directory;</span>
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
