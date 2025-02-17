@@ -1,1 +1,2 @@
 12.1.0
+The OWASP DependencyCheck project has moved to https://github.com/dependency-check/DependencyCheck/. Please update any automation that points to the old repository.
